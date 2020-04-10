@@ -25,7 +25,7 @@ Finally, when CIM standards are published (e.g. IEC 61970-301, IEC 61968-11 or I
 
 ### Option \#1: EA Model Comparison Logs as Input
 
-The first option is by specifying an **EA model comparison log** file as input to **cim-compare**. This particular usage takes the following form:
+The first option is by specifying an **EA model comparison log** file as input. This particular usage takes the following form:
 
 ```
 java -mx1024m -jar cim-compare.jar <comparison-results-xml-file> [<output-directory-or-html-file>] [--<iec-package-name>]
@@ -76,7 +76,7 @@ java -mx1024m -jar cim-compare.jar <baseline-model-xmi-file> <target-model-xmi-f
 
 Java Technical Requirements
 ---------------------------
-**cim-compare** consists of a self-contained executable jar file executable from the command line with no additional dependencies.  It has been tested and confirmed to run successfully using Java 1.8  through Java 12.
+**cim-compare** ships as a fully self-contained executable jar file with no external dependencies.  It has been tested and confirmed to run successfully using Java 1.8  through Java 12.
 
 Given the large file sizes consumed and produced by the utility, **OutOfMemory** exceptions occur if either the default heap size is used or too little heap is allocated on the command line. The following guidelines should be followed:
 
@@ -104,4 +104,4 @@ java <span style="color:red">-mx2048m</span> -jar **cim-compare.jar** iec61970ci
 
 ## License
 
-Distributed under the MIT license. See [LICENSE](../LICENSE) for more information.
+Distributed under the MIT license. See [LICENSE](LICENSE) for more information.

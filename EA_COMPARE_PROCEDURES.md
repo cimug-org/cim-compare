@@ -37,7 +37,7 @@ The procedure to execute a comparison is done in the following manner
 </p>
 
 ---
-<span style="color:red">*IMPORTANT:*</span>
+<span style="color:red">_**IMPORTANT:**_</span>
 
 <span style="color:red">*EA only supports comparisons against **XMI 1.1** files. If attempting to compare a model against an XMI file that is not in the XMI 1.1 format the following error will be presented:*</span>
 

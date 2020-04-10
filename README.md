@@ -2,7 +2,7 @@
 
 >   Command line tool for generating CIM model comparison reports.
 
-# CIM Model Comparison Report Utility
+## CIM Model Comparison Report Utility
 
 **cim-compare** generates model comparison reports between two points in time.
 The term “target” is used to describe some current (or later) version of the CIM that is to be the target of the comparison. The term “baseline” is used to describe the **historical** model against which the “target” model is to be compared to determine what has changed.
@@ -28,14 +28,14 @@ Finally, when CIM standards are published (e.g. IEC 61970-301, IEC 61968-11 or I
 The first option is by specifying an **EA model comparison log** file as input. This particular usage takes the following form:
 
 ```
-java -mx1024m -jar cim-compare.jar <comparison-results-xml-file> [<output-directory-or-html-file>] [--<iec-package-name>]
+java -jar cim-compare.jar <comparison-results-xml-file> [<output-directory-or-html-file>] [--<iec-package-name>]
 ```
 
 *Parameter Details*:
 
-**\<comparison-results-xml-file\>** (**Required**): The model comparison file. When not specified as an absolute file path the location of the file is assumed to be the directory the utility is being executed in.
+**\<comparison-results-xml-file\> (Required):** The model comparison file. When not specified as an absolute file path the location of the file is assumed to be the directory the utility is being executed in.
 
-**[\<output-directory-or-html-file\>] (Optional)**: An output directory or an output HTML file. In the case where a directory is specified for this parameter it must exist or execution will terminate with an appropriate error. When an HTML file is provided it may be specified as an absolute file path or as simply the name of the HTML file to be generated. If not specified then the application\ will generate an HTML file whose name is derived from the two input files.
+**[\<output-directory-or-html-file\>] (Optional):** An output directory or an output HTML file. In the case where a directory is specified for this parameter it must exist or execution will terminate with an appropriate error. When an HTML file is provided it may be specified as an absolute file path or as simply the name of the HTML file to be generated. If not specified then the application\ will generate an HTML file whose name is derived from the two input files.
 
 **[--\<iec-package-name\>] (Optional):** The root package to compare and generate the comparison report on. Appearing at the end of the command-line, the package must exist in both the baseline and target models (e.g. --IEC61970, --IEC61968, --IEC62325, --TC57CIM, etc.) and be specified with two leading dashes (-). Note that when no IEC package name is specified that the report is generated from the root package in the models.
 
@@ -50,10 +50,10 @@ java -mx1024m -jar cim-compare.jar <comparison-results-xml-file> [<output-direct
 
 ### Option \#2: XMI Baseline and Target Models as Inputs
 
-The second usage option allows one to bypass Enterprise Architect and directly specify two XMI 1.1 compliant files representing the **baseline** and **target** models respectively. In this scenario the command-line usage takes the following form:
+The second usage option allows one to bypass Enterprise Architect and directly specify two XMI 1.1 compliant files representing the "baseline" and "target" models respectively. In this scenario the command-line usage takes the following form:
 
 ```
-java -mx1024m -jar cim-compare.jar <baseline-model-xmi-file> <target-model-xmi-file> [<output-directory-or-html-file>] [--<iec-package-name>]
+java -jar cim-compare.jar <baseline-model-xmi-file> <target-model-xmi-file> [<output-directory-or-html-file>] [--<iec-package-name>]
 ```
 
 *Parameter Details*:
@@ -74,8 +74,8 @@ java -mx1024m -jar cim-compare.jar <baseline-model-xmi-file> <target-model-xmi-f
 | java -jar **cim-compare.jar** CIM15v33.xmi CIM16v26a.xmi CIM15v33_CIM16v26a_ComparisonReport.html            |
 | java -jar **cim-compare.jar** CIM15v33.xmi CIM16v26a.xmi CIM15v33_CIM16v26a_ComparisonReport.html --IEC62325 |
 
-Java Technical Requirements
----------------------------
+## Java Technical Requirements
+
 **cim-compare** ships as a fully self-contained executable jar file with no external dependencies.  It has been tested and confirmed to run successfully using Java 1.8  through Java 12.
 
 Given the large file sizes consumed and produced by the utility, **OutOfMemory** exceptions occur if either the default heap size is used or too little heap is allocated on the command line. The following guidelines should be followed:

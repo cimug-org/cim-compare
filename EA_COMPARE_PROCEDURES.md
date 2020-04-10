@@ -20,20 +20,19 @@ The procedure to execute a comparison is done in the following manner
 1.  From within EA load the “baseline” (or older) model and select the top-level package of the CIM.
 
    <p align="left">
-     <img src="media/e2528011d22641e9be29fd4616c07ac1.png">
+      <img src="media/e2528011d22641e9be29fd4616c07ac1.png">
    </p>
-
 
 2.  Once selected, select the Publish menu as shown in the screenshot and select “Other Formats…”
 
    <p align="left">
-     <img src="media/d0a6a671e1360aaafca37aa4891669fc.png">
+      <img src="media/d0a6a671e1360aaafca37aa4891669fc.png">
    </p>
 
 3.  Export the CIM package as an **XMI 1.1** compliant file of the older model with which to perform the comparison against. The only requirement in the “Publish Model Package” dialog is that the **“UML 1.3 (XMI 1.1)”** XML Type be selected as the export format. In the screenshot below of the export dialog it should be noted that the “Export Diagrams” and “Unisys/Rose Format” may or may not be selected as part of the **XMI 1.1** export.  They play no role as part of the processing done by the command line utility.
 
    <p align="left">
-     <img src="media/8c826de7743d558a12383f7d89406bb2.png">
+      <img src="media/8c826de7743d558a12383f7d89406bb2.png">
    </p>
 
 ---
@@ -69,7 +68,7 @@ The procedure to execute a comparison is done in the following manner
 
 -   Then choose the file.  Once selected the comparison will begin. The comparison process is known to take a number of minutes to complete given the size of the CIM models.
 
-   <p align="center">
+   <p align="left">
      <img src="media/d5611f5e304ce9684e8ac662ce43ad25.png">
    </p>
 

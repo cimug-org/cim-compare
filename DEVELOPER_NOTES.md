@@ -3,7 +3,7 @@
 
 The background provided here may be useful in the future should the need arise to support a later version of the XMI format.  Currently, Enterprise Architect only supports **XMI 1.1** for its comparison utility and **cim-compare** as well in this initial release.
 
-After investigation, an official **XMI_1.1.xsd** for **XMI 1.1** was unavailable for generating JAXB objects for the needed inputs to **cim=-compare**. The same applied for the EA **CompareLog** XML input file format.
+After investigation, an official **XMI_1.1.xsd** for **XMI 1.1** was unavailable for generating JAXB objects for the needed inputs to **cim-compare**. The same applied for the EA **CompareLog** XML input file format.
 
 A variety of open source and online tools for inferring XSD Schemas based on XML instance files were investigated.  We wanted the tool to be able to support reverse engineering XSD schemas in the "Venetian Blinds" design style (and not Salami Slice, Russian Doll, or Garden of Eden). This style caters particularly well for generating JAXB POJOs derived from XSD global complex types and with minimal anonymous classes. For more information check out the "Basic Design Patterns" section of the article [Schema scope: Primer and best practices](https://www.ibm.com/developerworks/library/x-schemascope/)
 

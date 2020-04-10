@@ -30,7 +30,7 @@ The procedure to execute a comparison is done in the following manner
   <img src="media/d0a6a671e1360aaafca37aa4891669fc.png">
 </p>
 
-3.  Export the CIM package as an **XMI 1.1** compliant file of the older model with which to perform the comparison against. The only requirement in the “Publish Model Package” dialog is that the “UML 1.2 (XMI 1.1)” format be selected as the export format. In the screenshot below of the export dialog it should be noted that the “Export Diagrams” and “Unisys/Rose Format” may or may not be selected as part of the **XMI 1.1** export.  They play no role as part of the processing done by the command line utility.
+3.  Export the CIM package as an **XMI 1.1** compliant file of the older model with which to perform the comparison against. The only requirement in the “Publish Model Package” dialog is that the **“UML 1.3 (XMI 1.1)”** XML Type be selected as the export format. In the screenshot below of the export dialog it should be noted that the “Export Diagrams” and “Unisys/Rose Format” may or may not be selected as part of the **XMI 1.1** export.  They play no role as part of the processing done by the command line utility.
 
 <p align="center">
   <img src="media/8c826de7743d558a12383f7d89406bb2.png">

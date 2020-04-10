@@ -78,7 +78,7 @@ java -jar cim-compare.jar <baseline-model-xmi-file> <target-model-xmi-file> [<ou
 
 **cim-compare** ships as a fully self-contained executable jar file with no external dependencies.  It has been tested and confirmed to run successfully using Java 1.8  through Java 12.
 
-Given the large file sizes consumed and produced by the utility, **OutOfMemory** exceptions occur if either the default heap size is used or too little heap is allocated on the command line. The following guidelines should be followed:
+Given the large file sizes consumed and produced by the utility, **OutOfMemory** exceptions occur if either the default heap size is used. The following guidelines should be followed:
 
 > For a 32-bit JRE it is recommended to specify a max heap size of at least 1G
     (i.e. 1024m) resources permitting. With a 1G heap size the execution will

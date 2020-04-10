@@ -1,11 +1,11 @@
 
 ## Developer Notes
 
-These notes provide brief background that may be useful for future reference.  In particular, if the need arises for support of a later version of the XMI format the information which follows should be useful.  Right now Enterprise Architect only supports **XMI 1.1** for its comparison functionality and **cim-compare 1.0.0** does likewise.
+The background provided here may be useful in the future should the need arise to support a later version of the XMI format.  Currently, Enterprise Architect only supports **XMI 1.1** for its comparison utility and **cim-compare** as well in this initial release.
 
-After a search to locate one, an official **XMI_1.1.xsd** for XMI 1.1 was not available that could be used to generate JAXB classes for the needed inputs for processing. The same applied for the EA **CompareLog** XNL input file format.
+After investigation, an official **XMI_1.1.xsd** for **XMI 1.1** was unavailable for generating JAXB objects for the needed inputs to **cim=-compare**. The same applied for the EA **CompareLog** XML input file format.
 
-A variety of open source and online tools for inferring XSD Schemas based on XML instance files were investigated.  We wanted the tool to be able to support reverse engineering XSD schemas in the "Venetian Blinds" design style (and not Salami Slice, Russian Doll, or Garden of Eden). This style caters particularly well for generating JAXB POJOs derived from XSD global complex types and with minimal anonymous classes. For more information check out the **"Basic Design Patterns"** section of the article [Schema scope: Primer and best practices](https://www.ibm.com/developerworks/library/x-schemascope/)
+A variety of open source and online tools for inferring XSD Schemas based on XML instance files were investigated.  We wanted the tool to be able to support reverse engineering XSD schemas in the "Venetian Blinds" design style (and not Salami Slice, Russian Doll, or Garden of Eden). This style caters particularly well for generating JAXB POJOs derived from XSD global complex types and with minimal anonymous classes. For more information check out the "Basic Design Patterns" section of the article [Schema scope: Primer and best practices](https://www.ibm.com/developerworks/library/x-schemascope/)
 
 The outcome was the use of release 3.1.0 of the Apache XMLBeans open source project.  The tool generated the desired XSDs using a variety of CIM exports in the **"UML 1.3/XMI 1.1"** format type. An example of the command line invocation used to generate the XSDs used for this project:
 
@@ -17,13 +17,15 @@ java -Xmx2048m -classpath D:\xmlbeans-3.1.0\lib\xmlbeans-3.1.0.jar;D:\xmlbeans-3
 
 Several things to note in the above command line example:
 
-1. A larger max Java heap size is specified (```-Xmx1024m``` or ```-Xmx2048m``` depending on whether x86 or x64 JREs are used) and was necessary in order to be able
+1. A larger max Java heap size was specified (```-Xmx1024m``` or ```-Xmx2048m``` depending on whether x86 or x64 JREs are used) and was necessary in order to be able
    to process the larger XMI files and eliminate **OutOfMemory** errors.
-2. The standard extensions on the **XMI 1.1** instance data files needed to be renamed from **.xmi** to **.xml** for XMLBeans to execute.
-3. Both the ```-design vb``` and ```-simple-content-types string``` command line options are required in order to produce the desired XSD style previously mentioned.
+2. The standard extensions on **XMI 1.1** instance data files needed to be renamed from **.xmi** to **.xml** for XMLBeans to execute correctly.
+3. Both the ```-design vb``` and ```-simple-content-types string``` command line options were required in order to produce the desired XSD style previously mentioned.
 
-The result of executing this from the command line is two new XSD schemas (**schema0.xsd** and **schema1.xsd**).  **schema0.xsd** was renamed to **UML_1.3.xsd** and **schema1.xsd** to **XMI_1.1.xsd**.  Additionally, an import statement had to be added to the **XMI_1.1.xsd** file in order to properly reference the **UML_1.3.xsd**. Finally, the XSDs were  added to the ```src/main/resources/``` schema folder for use within the Maven build for the "clean generate-sources" goal.  This generates the necessary POJOs needed for the project.  Note that additionally, a **jaxb-bindings.xjb** file was necessary for the JAXB plugin config customizations in order to address a few runtime code generation issues.  For example, the name of a "value" XSD attribute had to be renamed to "theValue" and a duplicate **DiagramElementType** java class was also being  generated that required custom bindings to fix build time errors.  The following is the resulting JAXB bindings file that was added to the ```src/main/resources/schema
-directory```:
+This resulted in two new XSD schemas (schema0.xsd and schema1.xsd) with **schema0.xsd** renamed to **UML_1.3.xsd** and **schema1.xsd** to **XMI_1.1.xsd**. An import statement had to be added to the **XMI_1.1.xsd** to properly reference the **UML_1.3.xsd**.  The renamed XSDs were added to the ```src/main/resources/schema``` folder for access by Maven during a ```clean generate-sources``` to generate the JAXB POJOs.  Finally, a **jaxb-bindings.xjb** bindings file had to be added to the ```src/main/resources/schema``` directory to address a couple of runtime code generation issues.  For example, for an XSD attribute named "value" the bindings file needed to provide configuration to rename the attribute to "theValue".
+
+The following **jaxb-bindings.xjb** file was added to the ```src/main/resources/schema```
+directory:
 
 ``` XML
 <?xml version="1.0" encoding="UTF-8"?>
@@ -33,7 +35,8 @@ directory```:
           xmlns:xs="http://www.w3.org/2001/XMLSchema"
           version="1.0">      
 	<globalBindings>  
-		<!-- By default JAXB generates Java POJOs with a suffix of "Type".  By specifying the simple global binding this is removed. -->           
+		<!-- By default JAXB generates Java POJOs with a suffix of "Type".  
+    By specifying the simple global binding this is removed. -->           
     	<xjc:simple/>
   	</globalBindings>
     <bindings schemaLocation="XMI_1.1.xsd" version="1.0">

@@ -44,7 +44,7 @@ java -jar cim-compare.jar <comparison-results-xml-file> [<output-directory-or-ht
 | java -jar **cim-compare.jar** "C:\\CIM XMI Exports\\CIM15v33_CIM16v26a_EA_Comparison_Report.xml" "C:\\Reports" |
 | java -jar **cim-compare.jar** CIM15v33_CIM16v26a_EA_Comparison_Report.xml "C:\\Reports"                        |
 | java -jar **cim-compare.jar** CIM15v33_CIM16v26a_EA_Comparison_Report.xml "C:\\Reports" --IEC61968             |
-| java -jar **cim-compare.jar** CIM15v33_CIM16v26a_EA_Comparison_Report.xml ComparisonReport_15v33_16v26a.html  |
+| java -jar **cim-compare.jar** CIM15v33_CIM16v26a_EA_Comparison_Report.xml ComparisonReport_CIM15v33_CIM16v26a.html  |
 | java -jar **cim-compare.jar** CIM15v33_CIM16v26a_EA_Comparison_Report.xml                                     |
 | java -jar **cim-compare.jar** CIM15v33_CIM16v26a_EA_Comparison_Report.xml --IEC61970                          |
 
@@ -68,9 +68,9 @@ java -jar cim-compare.jar <baseline-model-xmi-file> <target-model-xmi-file> [<ou
 
 | **Command Line Examples:**                                                                               |
 |----------------------------------------------------------------------------------------------------------|
-| java -jar **cim-compare.jar** "C:\\XMI exports\\15v33.xmi" "C:\\XMI exports\\16v26a.xmi" "C:\\"                  |
+| java -jar **cim-compare.jar** "C:\\XMI exports\\15v33.xmi" "C:\\XMI exports\\CIM16v26a.xmi" "C:\\"                  |
 | java -jar **cim-compare.jar** CIM15v33.xmi CIM16v26a.xmi "C:\\"                                              |
-| java -jar **cim-compare.jar** CIM15v33.xmi CIM16v26a.xmi "C:\\15v33_CIM16v26a_ComparisonReport.html"           |
+| java -jar **cim-compare.jar** CIM15v33.xmi CIM16v26a.xmi "C:\\CIM15v33_CIM16v26a_ComparisonReport.html"           |
 | java -jar **cim-compare.jar** CIM15v33.xmi CIM16v26a.xmi CIM15v33_CIM16v26a_ComparisonReport.html            |
 | java -jar **cim-compare.jar** CIM15v33.xmi CIM16v26a.xmi CIM15v33_CIM16v26a_ComparisonReport.html --IEC62325 |
 

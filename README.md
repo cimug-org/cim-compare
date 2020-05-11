@@ -35,9 +35,9 @@ java -jar cim-compare.jar <comparison-results-xml-file> [<output-directory-or-ht
 
 **\<comparison-results-xml-file\> (Required):** The model comparison file. When not specified as an absolute file path the location of the file is assumed to be the directory the utility is being executed in.
 
-**[\<output-directory-or-html-file\>] (Optional):** An output directory or an output HTML file. In the case where a directory is specified for this parameter it must exist or execution will terminate with an appropriate error. When an HTML file is provided it may be specified as an absolute file path or as simply the name of the HTML file to be generated. If not specified then the application\ will generate an HTML file whose name is derived from the two input files.
+**[\<output-directory-or-html-file\>] (Optional):** An output directory or an output HTML file. In the case where a directory is specified for this parameter it must exist or execution will terminate with an appropriate error. When an HTML file is provided it may be specified as an absolute file path or as simply the name of the HTML file to be generated. If not specified then the application will generate an HTML file whose name is derived from the two input files.
 
-**[--\<iec-package-name\>] (Optional):** The root package to compare and generate the comparison report on. Appearing at the end of the command-line, the package must exist in both the baseline and target models (e.g. --IEC61970, --IEC61968, --IEC62325, --TC57CIM, etc.) and be specified with two leading dashes (-). Note that when no IEC package name is specified that the report is generated from the root package in the models.
+**[--\<iec-package-name\>] (Optional):** The root package to compare and generate the comparison report on. Appearing at the end of the command-line, the package must exist in both the baseline and target models (e.g. --IEC61970, --IEC61968, --IEC62325, --TC57CIM, etc.) and be specified with two leading dashes (--). Note that when no IEC package name is specified that the report is generated from the root package in the models.
 
 | **Command Line Examples:**                                                                                |
 |-----------------------------------------------------------------------------------------------------------|
@@ -64,7 +64,7 @@ java -jar cim-compare.jar <baseline-model-xmi-file> <target-model-xmi-file> [<ou
 
 **[\<output-directory-or-html-file\>] (Optional)**: An output directory or an output HTML file. In the case where a directory is specified for this parameter it must exist or execution will terminate with an appropriate error. When an HTML file is provided it may be specified as an absolute file path or as simply the name of the HTML file to be generated. If not specified then the application will generate an HTML file whose name is derived from the two input files.
 
-**[--\<iec-package-name\>] (Optional):** The root package within the models from which to start the comparison report from. Appearing at the end of the command-line, when specified the package must exist in both the baseline and target models (e.g. --IEC61970, --IEC61968, --IEC62325, --TC57CIM, etc.) and be specified with two leading dashes (-). Note that when no IEC package name is specified that the report is generated from the root package in the models.
+**[--\<iec-package-name\>] (Optional):** The root package within the models from which to start the comparison report from. Appearing at the end of the command-line, when specified the package must exist in both the baseline and target models (e.g. --IEC61970, --IEC61968, --IEC62325, --TC57CIM, etc.) and be specified with two leading dashes (--). Note that when no IEC package name is specified that the report is generated from the root package in the models.
 
 | **Command Line Examples:**                                                                               |
 |----------------------------------------------------------------------------------------------------------|

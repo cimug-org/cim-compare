@@ -27,9 +27,11 @@ class DiffXMLGenerator {
 			XMI baselineXmi = loadCimModel(baselineXmiFile);
 			XMI targetXmi = loadCimModel(targetXmiFile);
 
-			// Currently we have not fully implemented the legacy functionality for CIM
-			// models prior to CIM15. So this has been commented out and a
-			// GUIDBasedDiffReportGeneratorImpl used directly:
+			/**
+			 * Currently we have not fully implemented the legacy functionality for CIM models prior
+			 * to CIM15. So this has been commented out and a GUIDBasedDiffReportGeneratorImpl used 
+			 * directly:
+			 */
 
 			// DiffReportGenerator generator = DiffReportGeneratorFactory.createInstance(
 			// baselineXmi.getXMIContent().getModel(), targetXmi.getXMIContent().getModel(),

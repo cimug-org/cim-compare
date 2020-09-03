@@ -1,13 +1,13 @@
 
 ## Developer Notes
 
-The background provided here may be useful in the future should the need arise to support a later version of the XMI format.  Currently, Enterprise Architect only supports **XMI 1.1** for its comparison utility and **cim-compare** as well in this initial release.
+The background provided here may be useful in the future should the need arise to support a later version of the XMI format.  Currently, Enterprise Architect only supports **XMI 1.1** for its comparison utility and, correspondingly **cim-compare** as well for its initial release (1.0.0).
 
 After investigation, an official **XMI_1.1.xsd** for **XMI 1.1** was unavailable for generating JAXB objects for the needed inputs to **cim-compare**. The same applied for the EA **CompareLog** XML input file format.
 
 A variety of open source and online tools for inferring XSD Schemas based on XML instance files were investigated.  We wanted the tool to be able to support reverse engineering XSD schemas in the "Venetian Blinds" design style (and not Salami Slice, Russian Doll, or Garden of Eden). This style caters particularly well for generating JAXB POJOs derived from XSD global complex types and with minimal anonymous classes. For more information check out the "Basic Design Patterns" section of the article [Schema scope: Primer and best practices](https://www.ibm.com/developerworks/library/x-schemascope/)
 
-The outcome was the use of release 3.1.0 of the [Apache XMLBeans](https://xmlbeans.apache.org/) open source project.  The tool generated the desired XSDs using a variety of CIM model export files in the **"UML 1.3/XMI 1.1"** format. The following is example of the command line invocation used to generate the XSDs is:
+The outcome was the use of release 3.1.0 of the [Apache XMLBeans](https://xmlbeans.apache.org/) open source project.  The tool generated the desired XSDs using a variety of CIM model export files in the **"UML 1.3/XMI 1.1"** format and exported from Enterprise Architect. The following is an example of the command line invocation used to generate XSDs for XMI 1.1:
 
 ```
 java -Xmx2048m -classpath D:\xmlbeans-3.1.0\lib\xmlbeans-3.1.0.jar;D:\xmlbeans-3.1.0\lib\xmlbeans-3.1.0\resolver.jar org.apache.xmlbeans.impl.inst2xsd.Inst2Xsd -design vb -simple-content-types string -enumerations never iec61970cim17v10_iec61968cim12v10_iec62325cim03v02-ea-xmi11.xml iec61970cim15v33_iec61968cim11v13_iec62325cim01v07-ea-xmi11.xml
@@ -17,8 +17,7 @@ java -Xmx2048m -classpath D:\xmlbeans-3.1.0\lib\xmlbeans-3.1.0.jar;D:\xmlbeans-3
 
 Several things to note in the above command line example:
 
-1. A larger max Java heap size was specified (```-Xmx1024m``` or ```-Xmx2048m``` depending on whether x86 or x64 JREs are used) and was necessary in order to be able
-   to process the larger XMI files and eliminate **OutOfMemory** errors.
+1. A larger max Java heap size was specified (```-Xmx1024m``` or ```-Xmx2048m``` depending on whether x86 or x64 JREs are used) and was necessary in order to be able to process the larger XMI files and eliminate **OutOfMemory** errors.
 2. The standard extensions on **XMI 1.1** instance data files needed to be renamed from **.xmi** to **.xml** for XMLBeans to execute correctly.
 3. Both the ```-design vb``` and ```-simple-content-types string``` command line options were required in order to produce the desired XSD style previously mentioned.
 

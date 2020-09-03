@@ -125,7 +125,7 @@ public class CIMModelComparisonGenerator {
 			// Note that the ternary condition is to ensure that we only test that a file or
 			// directory exists IF it is an argument that does not end in .html or .htm.
 			// This is because when an explicit HTML file is specified (as opposed to a
-			// target output directory) the file is note assumed to exist yet...
+			// target output directory) the file is not assumed to exist yet...
 			isValid = isValid
 					&& (!(arg.getName().toLowerCase().endsWith(HTML) || arg.getName().toLowerCase().endsWith(HTM))
 							? arg.exists()

@@ -99,7 +99,7 @@ java <span style="color:red">-mx2048m</span> -jar **cim-compare.jar** iec61970ci
 
 -   1.0.0
 
-    -   Initial Release
+    -   The initial release can be downloaded [here](https://github.com/CIMug-org/cim-compare/releases/tag/1.0.0) and executed as described in this readme.
 
 
 ## License

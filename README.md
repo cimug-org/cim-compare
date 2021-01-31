@@ -21,7 +21,7 @@ Finally, when CIM standards are published (e.g. IEC 61970-301, IEC 61968-11 or I
 
 ## Command Line Usage
 
-**cim-compare** has two possible command-line usages to produce comparison reports. Option #2 is typically the preferred option as it does not require the extra steps required to generate a comparison log file from within Enterprise Architect ([see: EA_COMPARISON_PROCEDURES.md](https://github.com/CIMug-org/cim-compare/blob/gh-pages/EA_COMPARE_PROCEDURES.md)).
+**cim-compare** has two possible command-line usages to produce comparison reports. Option #2 is typically the preferred option as it does not require the extra steps required to generate a comparison log file from within Enterprise Architect (see: [EA_COMPARISON_PROCEDURES.md](https://github.com/CIMug-org/cim-compare/blob/gh-pages/EA_COMPARE_PROCEDURES.md)).
 
 Note that for Option #2 that the XMI export files must be **XMI 1.1** compliant files exported with **“UML 1.3 (XMI 1.1)”** selected as the export format and the "Unisys/Rose Format" option unchecked. Unchecking the "Export Diagrams" option produces a smaller XMI export file which requires less memory during **cim-compare** processing. Currently, **cim-compare** only does comparisons on the UML and not diagrams. 
 

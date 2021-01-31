@@ -943,9 +943,49 @@
                                <th style="width:49%;white-space:nowrap"><p style="font-size:1.1rem;font-weight:bold;text-align:left"><xsl:value-of select="$dst-name-and-role"/></p></th>
                            </tr>
                            <tr>
-                               <td><p><xsl:apply-templates select="child::CompareItem[@type='Src']"/></p></td>
-    	                       <td><p><i class="fas fa-arrow-right" style="text-align:center;font-size:2.5rem"/></p></td>
-    	                       <td><p><xsl:apply-templates select="child::CompareItem[@type='Dst']"/></p></td>
+                            <xsl:choose>
+                                <xsl:when test="CompareItem[(@type='Src') and count(./Properties/Property[not(@status='Identical')]) > 0]">
+                                    <td><p><xsl:apply-templates select="child::CompareItem[@type='Src']"/></p></td>
+                                </xsl:when>
+                                <xsl:otherwise>
+                                    <td><p>
+                                    <div>
+                                        <table id="properties">
+                                            <tr>
+                                                <th style="background-color:lightgray;width:10%"><p>&#160;</p></th>
+                                                <th style="text-align:left;font-weight:bold;background-color:lightgray;width:45%"><p><xsl:value-of select="$base-version"/></p></th>
+                                                <th style="text-align:left;font-weight:bold;background-color:lightgray;width:45%"><p><xsl:value-of select="$latest-version"/></p></th>
+                                            </tr>
+                                            <tr valign="top">
+                                                <th colspan="3"><p style="color:red;weight:bold;text-align:center">No changes to metadata on the source side.</p></th>
+                                            </tr>
+                                        </table>
+                                    </div>
+                                    </p></td>
+                                </xsl:otherwise>
+                            </xsl:choose>
+    	                    <td><p><i class="fas fa-arrow-right" style="text-align:center;font-size:2.5rem"/></p></td>
+                            <xsl:choose>
+                                <xsl:when test="CompareItem[(@type='Dst') and count(./Properties/Property[not(@status='Identical')]) > 0]">
+                                    <td><p><xsl:apply-templates select="child::CompareItem[@type='Dst']"/></p></td>
+                                </xsl:when>
+                                <xsl:otherwise>
+                                    <td><p>
+                                    <div>
+                                        <table id="properties">
+                                            <tr>
+                                                <th style="background-color:lightgray;width:10%"><p>&#160;</p></th>
+                                                <th style="text-align:left;font-weight:bold;background-color:lightgray;width:45%"><p><xsl:value-of select="$base-version"/></p></th>
+                                                <th style="text-align:left;font-weight:bold;background-color:lightgray;width:45%"><p><xsl:value-of select="$latest-version"/></p></th>
+                                            </tr>
+                                            <tr valign="top">
+                                                <th colspan="3"><p style="color:red;weight:bold;text-align:center">No changes to metadata on the target side.</p></th>
+                                            </tr>
+                                        </table>
+                                    </div>
+                                    </p></td>
+                                </xsl:otherwise>
+                            </xsl:choose>
     	                   </tr>
                        </table>
     	               </p>

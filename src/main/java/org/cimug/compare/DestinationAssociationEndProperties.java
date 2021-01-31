@@ -16,7 +16,6 @@ public class DestinationAssociationEndProperties extends AbstractAssociationEndP
 
 	@Override
 	protected void initializeTagNamesMap() {
-		tagNamesMap.put("rb", "Cardinality");
 		tagNamesMap.put("ea_targetName", "End");
 		tagNamesMap.put("stereotype", "Stereotype");
 		tagNamesMap.put("description", "RoleNote");
@@ -31,7 +30,6 @@ public class DestinationAssociationEndProperties extends AbstractAssociationEndP
 			default:
 				return tv.getTheValue().replaceAll("\n", "");
 			}
-
 	}
 
 }

@@ -457,74 +457,67 @@ class GUIDBasedDiffReportGeneratorImpl implements DiffReportGenerator {
 		if (baselineClass == null) {
 			// Only model class exists...
 
-			for (GeneralizationType targetGeneralization : targetParentPackage.getGeneralizations()) {
-				GeneralizationProperties propsProcessor = new GeneralizationProperties(null, targetGeneralization);
-				Properties properties = propsProcessor.getProperties();
+			for (GeneralizationType targetGeneralization : targetParentPackage
+					.getGeneralizations(targetClass.getXmiId())) {
 
-				CompareItem generalizationCompareItem = new CompareItem(properties, "Generalization", "",
-						targetGeneralization.getKey(), propsProcessor.getStatus().toString());
+				GeneralizationProperties propsProcessor = new GeneralizationProperties(null, targetGeneralization);
+
+				CompareItem generalizationCompareItem = new CompareItem(propsProcessor.getProperties(),
+						"Generalization", "", targetGeneralization.getKey(), propsProcessor.getStatus().toString());
 
 				/** Source end... */
-				SourceGeneralizationEndProperties sourcePropsProcessor = new SourceGeneralizationEndProperties(null,
-						targetGeneralization);
-				Properties sourceEndProperties = sourcePropsProcessor.getProperties();
+				CompareItem sourceCompareItem = new CompareItem(
+						propsProcessor.getSourcePropsProcessor().getProperties(),
+						"Source: (" + propsProcessor.getSourcePropsProcessor().getRoleName() + ")", "Src",
+						"Src-" + targetGeneralization.getKey(),
+						propsProcessor.getSourcePropsProcessor().getStatus().toString());
 
-				CompareItem sourceCompareItem = new CompareItem(sourceEndProperties,
-						"Source: (" + targetGeneralization.getName() + ")", "Src",
-						"Src-" + targetGeneralization.getKey(), sourcePropsProcessor.getStatus().toString());
 				generalizationCompareItem.getCompareItem().add(sourceCompareItem);
 
 				/** Destination end... */
-				DestinationGeneralizationEndProperties destinationPropsProcessor = new DestinationGeneralizationEndProperties(
-						null, targetGeneralization);
-				Properties destinationEndProperties = destinationPropsProcessor.getProperties();
+				CompareItem destinationCompareItem = new CompareItem(
+						propsProcessor.getDestinationPropsProcessor().getProperties(),
+						"Target: (" + propsProcessor.getDestinationPropsProcessor().getRoleName() + ")", "Dst",
+						"Dst-" + targetGeneralization.getKey(),
+						propsProcessor.getDestinationPropsProcessor().getStatus().toString());
 
-				CompareItem destinationCompareItem = new CompareItem(destinationEndProperties,
-						"Target: (" + targetGeneralization.getName() + ")", "Dst",
-						"Dst-" + targetGeneralization.getKey(), destinationPropsProcessor.getStatus().toString());
 				generalizationCompareItem.getCompareItem().add(destinationCompareItem);
 
 				// Finally we add the new generalization compare item to the links
 				links.getCompareItem().add(generalizationCompareItem);
 			}
 
-			for (AssociationType targetAssociation : targetParentPackage.getAssociations()) {
-				AssociationProperties propsProcessor = new AssociationProperties(null, targetAssociation);
-				Properties properties = propsProcessor.getProperties();
+			for (AssociationType targetAssociation : targetParentPackage.getAssociations(targetClass.getXmiId())) {
 
-				CompareItem associationCompareItem = new CompareItem(properties, "Association", "",
+				AssociationProperties propsProcessor = new AssociationProperties(null, targetAssociation);
+
+				CompareItem associationCompareItem = new CompareItem(propsProcessor.getProperties(), "Association", "",
 						targetAssociation.getKey(), propsProcessor.getStatus().toString());
 
 				/**
 				 * Create 'Src' end of the association...
 				 */
-				AssociationEndType targetSourceAssocationEnd = targetAssociation.getSourceAssocationEnd();
-				SourceAssociationEndProperties sourcePropsProcessor = new SourceAssociationEndProperties(null, null,
-						targetSourceAssocationEnd, targetAssociation);
-				Properties sourceEndProperties = sourcePropsProcessor.getProperties();
+				String sourceGUID = generateSourceGUID(targetClass, targetAssociation,
+						propsProcessor.getTargetSourceAssociationEnd());
 
-				String sourceGUID = generateSourceGUID(targetClass, targetAssociation, targetSourceAssocationEnd);
-
-				CompareItem sourceEndCompareItem = new CompareItem(sourceEndProperties,
-						"Source: (" + targetAssociation.getName() + ")", "Src", sourceGUID,
-						Status.ModelOnly.toString());
+				CompareItem sourceEndCompareItem = new CompareItem(
+						propsProcessor.getSourcePropsProcessor().getProperties(),
+						"Source: (" + targetAssociation.getSourceAssociationEnd().getName() + ")", "Src", sourceGUID,
+						propsProcessor.getSourcePropsProcessor().getStatus().toString());
 
 				associationCompareItem.getCompareItem().add(sourceEndCompareItem);
 
 				/**
 				 * Create 'Dst' end of the association...
 				 */
-				AssociationEndType targetDestinationAssocationEnd = targetAssociation.getDestinationAssocationEnd();
-				DestinationAssociationEndProperties destinationPropsProcessor = new DestinationAssociationEndProperties(
-						null, null, targetDestinationAssocationEnd, targetAssociation);
-				Properties destinationEndProperties = destinationPropsProcessor.getProperties();
-
 				String destinationGUID = generateDestinationGUID(targetClass, targetAssociation,
-						targetDestinationAssocationEnd);
+						propsProcessor.getTargetDestinationAssociationEnd());
 
-				CompareItem destinationEndCompareItem = new CompareItem(destinationEndProperties,
-						"Target: (" + targetAssociation.getName() + ")", "Dst", destinationGUID,
-						Status.ModelOnly.toString());
+				CompareItem destinationEndCompareItem = new CompareItem(
+						propsProcessor.getDestinationPropsProcessor().getProperties(),
+						"Target: (" + targetAssociation.getDestinationAssociationEnd().getName() + ")", "Dst",
+						destinationGUID, propsProcessor.getDestinationPropsProcessor().getStatus().toString());
+
 				associationCompareItem.getCompareItem().add(destinationEndCompareItem);
 
 				// Finally we add the new association compare item to the links
@@ -532,76 +525,69 @@ class GUIDBasedDiffReportGeneratorImpl implements DiffReportGenerator {
 			}
 		} else if (targetClass == null) {
 			// Only baseline class exists...so we know the class has been deleted.
-			// In this case
 
-			for (GeneralizationType baselineGeneralization : baselineParentPackage.getGeneralizations()) {
-				GeneralizationProperties propsProcessor = new GeneralizationProperties(baselineGeneralization, null);
-				Properties properties = propsProcessor.getProperties();
+			for (GeneralizationType baselineGeneralization : baselineParentPackage
+					.getGeneralizations(baselineClass.getKey())) {
 
-				CompareItem generalizationCompareItem = new CompareItem(properties, "Generalization", "",
-						baselineGeneralization.getKey(), propsProcessor.getStatus().toString());
+				GeneralizationProperties propsProcessor = new GeneralizationProperties(null, baselineGeneralization);
+
+				CompareItem generalizationCompareItem = new CompareItem(propsProcessor.getProperties(),
+						"Generalization", "", baselineGeneralization.getKey(), propsProcessor.getStatus().toString());
 
 				/** Source end... */
-				SourceGeneralizationEndProperties sourcePropsProcessor = new SourceGeneralizationEndProperties(
-						baselineGeneralization, null);
-				Properties sourceEndProperties = sourcePropsProcessor.getProperties();
+				CompareItem sourceCompareItem = new CompareItem(
+						propsProcessor.getSourcePropsProcessor().getProperties(),
+						"Source: (" + propsProcessor.getSourcePropsProcessor().getRoleName() + ")", "Src",
+						"Src-" + baselineGeneralization.getKey(),
+						propsProcessor.getSourcePropsProcessor().getStatus().toString());
 
-				CompareItem sourceCompareItem = new CompareItem(sourceEndProperties,
-						"Source: (" + baselineGeneralization.getTheValue("ea_sourceName") + ")", "Src",
-						"Src-" + baselineGeneralization.getKey(), sourcePropsProcessor.getStatus().toString());
 				generalizationCompareItem.getCompareItem().add(sourceCompareItem);
 
 				/** Destination end... */
-				DestinationGeneralizationEndProperties destinationPropsProcessor = new DestinationGeneralizationEndProperties(
-						null, baselineGeneralization);
-				Properties destinationEndProperties = destinationPropsProcessor.getProperties();
+				CompareItem destinationCompareItem = new CompareItem(
+						propsProcessor.getDestinationPropsProcessor().getProperties(),
+						"Target: (" + propsProcessor.getDestinationPropsProcessor().getRoleName() + ")", "Dst",
+						"Dst-" + baselineGeneralization.getKey(),
+						propsProcessor.getDestinationPropsProcessor().getStatus().toString());
 
-				CompareItem destinationCompareItem = new CompareItem(destinationEndProperties,
-						"Target: (" + baselineGeneralization.getTheValue("ea_targetName") + ")", "Dst",
-						"Dst-" + baselineGeneralization.getKey(), destinationPropsProcessor.getStatus().toString());
 				generalizationCompareItem.getCompareItem().add(destinationCompareItem);
 
 				// Finally we add the new generalization compare item to the links
 				links.getCompareItem().add(generalizationCompareItem);
 			}
 
-			for (AssociationType baselineAssociation : baselineParentPackage.getAssociations()) {
-				AssociationProperties propsProcessor = new AssociationProperties(baselineAssociation, null);
-				Properties properties = propsProcessor.getProperties();
+			for (AssociationType baselineAssociation : baselineParentPackage
+					.getAssociations(baselineClass.getXmiId())) {
 
-				CompareItem associationCompareItem = new CompareItem(properties, "Association", "",
+				AssociationProperties propsProcessor = new AssociationProperties(baselineAssociation, null);
+
+				CompareItem associationCompareItem = new CompareItem(propsProcessor.getProperties(), "Association", "",
 						baselineAssociation.getKey(), propsProcessor.getStatus().toString());
 
 				/**
 				 * Create 'Src' end of the association...
 				 */
-				AssociationEndType baselineSourceAssocationEnd = baselineAssociation.getSourceAssocationEnd();
-				SourceAssociationEndProperties sourcePropsProcessor = new SourceAssociationEndProperties(
-						baselineSourceAssocationEnd, baselineAssociation, null, null);
-				Properties sourceEndProperties = sourcePropsProcessor.getProperties();
+				String sourceGUID = generateSourceGUID(baselineClass, baselineAssociation,
+						propsProcessor.getBaselineSourceAssociationEnd());
 
-				String sourceGUID = generateSourceGUID(baselineClass, baselineAssociation, baselineSourceAssocationEnd);
-
-				CompareItem sourceEndCompareItem = new CompareItem(sourceEndProperties,
-						"Source: (" + baselineSourceAssocationEnd.getName() + ")", "Src", sourceGUID,
-						Status.BaselineOnly.toString());
+				CompareItem sourceEndCompareItem = new CompareItem(
+						propsProcessor.getSourcePropsProcessor().getProperties(),
+						"Source: (" + baselineAssociation.getSourceAssociationEnd().getName() + ")", "Src", sourceGUID,
+						propsProcessor.getSourcePropsProcessor().getStatus().toString());
 
 				associationCompareItem.getCompareItem().add(sourceEndCompareItem);
 
 				/**
 				 * Create 'Dst' end of the association...
 				 */
-				AssociationEndType baselineDestinationAssocationEnd = baselineAssociation.getDestinationAssocationEnd();
-				DestinationAssociationEndProperties destinationPropsProcessor = new DestinationAssociationEndProperties(
-						baselineDestinationAssocationEnd, baselineAssociation, null, null);
-				Properties destinationEndProperties = destinationPropsProcessor.getProperties();
-
 				String destinationGUID = generateDestinationGUID(baselineClass, baselineAssociation,
-						baselineDestinationAssocationEnd);
+						propsProcessor.getBaselineDestinationAssociationEnd());
 
-				CompareItem destinationEndCompareItem = new CompareItem(destinationEndProperties,
-						"Target: (" + baselineDestinationAssocationEnd.getName() + ")", "Dst", destinationGUID,
-						Status.BaselineOnly.toString());
+				CompareItem destinationEndCompareItem = new CompareItem(
+						propsProcessor.getDestinationPropsProcessor().getProperties(),
+						"Target: (" + baselineAssociation.getDestinationAssociationEnd().getName() + ")", "Dst",
+						destinationGUID, propsProcessor.getDestinationPropsProcessor().getStatus().toString());
+
 				associationCompareItem.getCompareItem().add(destinationEndCompareItem);
 
 				// Finally we add the new association compare item to the links
@@ -609,108 +595,159 @@ class GUIDBasedDiffReportGeneratorImpl implements DiffReportGenerator {
 			}
 		} else {
 			// Both classes exist...
-			// NOTE: For "root" classes there is NO parent package so we must ensure it is
-			// != null
-			/**
-			 * if (targetParentPackage != null) { for (GeneralizationType
-			 * targetGeneralization : targetParentPackage.getGeneralizations()) { //
-			 * Retrieve the baselineGeneralization in order to process generalization //
-			 * properties... GeneralizationType baselineGeneralization =
-			 * (preProcessor.getBaselineGeneralizationsGUIDs()
-			 * .containsKey(targetGeneralization.getKey()) ?
-			 * preProcessor.getBaselineGeneralizationsGUIDs().get(targetGeneralization.getKey())
-			 * : null);
-			 * 
-			 * GeneralizationProperties propsProcessor = new
-			 * GeneralizationProperties(baselineGeneralization, targetGeneralization);
-			 * Properties properties = propsProcessor.getProperties();
-			 * 
-			 * CompareItem generalizationCompareItem = new CompareItem(properties,
-			 * "Generalization", "", targetGeneralization.getKey(),
-			 * propsProcessor.getStatus().toString());
-			 * 
-			 * SourceGeneralizationEndProperties sourcePropsProcessor = new
-			 * SourceGeneralizationEndProperties(null, targetGeneralization); Properties
-			 * sourceEndProperties = sourcePropsProcessor.getProperties();
-			 * 
-			 * CompareItem sourceCompareItem = new CompareItem(sourceEndProperties, "Source:
-			 * (" + targetGeneralization.getName() + ")", "Src", "Src-" +
-			 * targetGeneralization.getKey(), sourcePropsProcessor.getStatus().toString());
-			 * generalizationCompareItem.getCompareItem().add(sourceCompareItem);
-			 * 
-			 * DestinationGeneralizationEndProperties destinationPropsProcessor = new
-			 * DestinationGeneralizationEndProperties( baselineGeneralization,
-			 * targetGeneralization); Properties destinationEndProperties =
-			 * destinationPropsProcessor.getProperties();
-			 * 
-			 * CompareItem destinationCompareItem = new
-			 * CompareItem(destinationEndProperties, "Target: (" +
-			 * targetGeneralization.getName() + ")", "Dst", "Dst-" +
-			 * targetGeneralization.getKey(),
-			 * destinationPropsProcessor.getStatus().toString());
-			 * generalizationCompareItem.getCompareItem().add(destinationCompareItem);
-			 * 
-			 * links.getCompareItem().add(generalizationCompareItem); }
-			 * 
-			 * for (AssociationType targetAssociation :
-			 * targetParentPackage.getAssociations()) { // Retrieve the baselineAssociations
-			 * in order to process association // properties... AssociationType
-			 * baselineAssociation = (preProcessor.getBaselineAssociationsGUIDs()
-			 * .containsKey(targetAssociation.getKey()) ?
-			 * preProcessor.getBaselineAssociationsGUIDs().get(targetAssociation.getKey()) :
-			 * null);
-			 * 
-			 * AssociationProperties propsProcessor = new
-			 * AssociationProperties(baselineAssociation, targetAssociation); Properties
-			 * properties = propsProcessor.getProperties();
-			 * 
-			 * CompareItem associationCompareItem = new CompareItem(properties,
-			 * "Association", "", targetAssociation.getKey(),
-			 * propsProcessor.getStatus().toString());
-			 * 
-			 * AssociationEndType targetSourceAssocationEnd =
-			 * targetAssociation.getSourceAssocationEnd(); AssociationEndType
-			 * baselineSourceAssocationEnd = (baselineAssociation != null ?
-			 * baselineAssociation.getSourceAssocationEnd() : null);
-			 * 
-			 * SourceAssociationEndProperties sourcePropsProcessor = new
-			 * SourceAssociationEndProperties( baselineSourceAssocationEnd,
-			 * baselineAssociation, targetSourceAssocationEnd, targetAssociation);
-			 * Properties sourceEndProperties = sourcePropsProcessor.getProperties();
-			 * 
-			 * String sourceGUID = generateSourceGUID(targetClass, targetAssociation,
-			 * targetSourceAssocationEnd);
-			 * 
-			 * CompareItem sourceEndCompareItem = new CompareItem(sourceEndProperties,
-			 * "Source: (" + targetAssociation.getName() + ")", "Src", sourceGUID,
-			 * Status.ModelOnly.toString());
-			 * 
-			 * associationCompareItem.getCompareItem().add(sourceEndCompareItem);
-			 * 
-			 * AssociationEndType targetDestinationAssocationEnd =
-			 * targetAssociation.getDestinationAssocationEnd(); AssociationEndType
-			 * baselineDestinationAssocationEnd = (baselineAssociation != null ?
-			 * baselineAssociation.getDestinationAssocationEnd() : null);
-			 * 
-			 * DestinationAssociationEndProperties destinationPropsProcessor = new
-			 * DestinationAssociationEndProperties( baselineDestinationAssocationEnd,
-			 * baselineAssociation, targetDestinationAssocationEnd, targetAssociation);
-			 * Properties destinationEndProperties =
-			 * destinationPropsProcessor.getProperties();
-			 * 
-			 * String destinationGUID = generateDestinationGUID(targetClass,
-			 * targetAssociation, targetDestinationAssocationEnd);
-			 * 
-			 * CompareItem destinationEndCompareItem = new
-			 * CompareItem(destinationEndProperties, "Target: (" +
-			 * targetAssociation.getName() + ")", "Dst", destinationGUID,
-			 * Status.ModelOnly.toString());
-			 * associationCompareItem.getCompareItem().add(destinationEndCompareItem);
-			 * 
-			 * links.getCompareItem().add(associationCompareItem); }
-			 * 
-			 * }
-			 */
+			// NOTE: For "root" classes there is NO parent package. So ensure it is != null
+
+			if (targetParentPackage != null) {
+				for (GeneralizationType targetGeneralization : targetParentPackage
+						.getGeneralizations(targetClass.getXmiId())) {
+
+					GeneralizationType baselineGeneralization = (preProcessor.getBaselineGeneralizationsGUIDs()
+							.containsKey(targetGeneralization.getKey())
+									? preProcessor.getBaselineGeneralizationsGUIDs().get(targetGeneralization.getKey())
+									: null);
+
+					GeneralizationProperties propsProcessor = new GeneralizationProperties(baselineGeneralization,
+							targetGeneralization);
+
+					CompareItem generalizationCompareItem = new CompareItem(propsProcessor.getProperties(),
+							"Generalization", "", targetGeneralization.getKey(), propsProcessor.getStatus().toString());
+
+					CompareItem sourceCompareItem = new CompareItem(
+							propsProcessor.getSourcePropsProcessor().getProperties(),
+							"Source: (" + propsProcessor.getSourcePropsProcessor().getRoleName() + ")", "Src",
+							"Src-" + targetGeneralization.getKey(),
+							propsProcessor.getSourcePropsProcessor().getStatus().toString());
+
+					generalizationCompareItem.getCompareItem().add(sourceCompareItem);
+
+					CompareItem destinationCompareItem = new CompareItem(
+							propsProcessor.getDestinationPropsProcessor().getProperties(),
+							"Target: (" + propsProcessor.getDestinationPropsProcessor().getRoleName() + ")", "Dst",
+							"Dst-" + targetGeneralization.getKey(),
+							propsProcessor.getDestinationPropsProcessor().getStatus().toString());
+
+					generalizationCompareItem.getCompareItem().add(destinationCompareItem);
+
+					links.getCompareItem().add(generalizationCompareItem);
+				}
+
+				/**
+				 * We ensure that we don't forget about generalizations that are ONLY in the
+				 * baseline (i.e. have been deleted):
+				 */
+				for (String generalizationXmiId : preProcessor.getBaselineDeletedGeneralizationsGUIDs().keySet()) {
+					GeneralizationType deletedBaselineGeneralization = preProcessor
+							.getBaselineDeletedGeneralizationsGUIDs().get(generalizationXmiId);
+
+					// If the below condition is true then we have a deleted generalization.
+					if (deletedBaselineGeneralization.getSubtype().equals(baselineClass.getXmiId())
+							|| deletedBaselineGeneralization.getSupertype().equals(baselineClass.getXmiId())) {
+
+						GeneralizationProperties propsProcessor = new GeneralizationProperties(
+								deletedBaselineGeneralization, null);
+
+						CompareItem deletedGeneralizationCompareItem = new CompareItem(propsProcessor.getProperties(),
+								"Generalization", "", deletedBaselineGeneralization.getKey(),
+								propsProcessor.getStatus().toString());
+
+						CompareItem sourceCompareItem = new CompareItem(
+								propsProcessor.getSourcePropsProcessor().getProperties(),
+								"Source: (" + propsProcessor.getSourcePropsProcessor().getRoleName() + ")", "Src",
+								"Src-" + deletedBaselineGeneralization.getKey(),
+								propsProcessor.getSourcePropsProcessor().getStatus().toString());
+
+						deletedGeneralizationCompareItem.getCompareItem().add(sourceCompareItem);
+
+						CompareItem destinationCompareItem = new CompareItem(
+								propsProcessor.getDestinationPropsProcessor().getProperties(),
+								"Target: (" + propsProcessor.getDestinationPropsProcessor().getRoleName() + ")", "Dst",
+								"Dst-" + deletedBaselineGeneralization.getKey(),
+								propsProcessor.getDestinationPropsProcessor().getStatus().toString());
+
+						deletedGeneralizationCompareItem.getCompareItem().add(destinationCompareItem);
+
+						links.getCompareItem().add(deletedGeneralizationCompareItem);
+					}
+				}
+
+				for (AssociationType targetAssociation : targetParentPackage.getAssociations(targetClass.getXmiId())) {
+					AssociationType baselineAssociation = (preProcessor.getBaselineAssociationsGUIDs()
+							.containsKey(targetAssociation.getKey())
+									? preProcessor.getBaselineAssociationsGUIDs().get(targetAssociation.getKey())
+									: null);
+
+					AssociationProperties propsProcessor = new AssociationProperties(baselineAssociation,
+							targetAssociation);
+					//
+					CompareItem associationCompareItem = new CompareItem(propsProcessor.getProperties(), "Association",
+							"", targetAssociation.getKey(), propsProcessor.getStatus().toString());
+
+					String sourceGUID = generateSourceGUID(targetClass, targetAssociation,
+							propsProcessor.getTargetSourceAssociationEnd());
+					//
+					CompareItem sourceEndCompareItem = new CompareItem(
+							propsProcessor.getSourcePropsProcessor().getProperties(),
+							"Source: (" + targetAssociation.getSourceAssociationEnd().getName() + ")", "Src",
+							sourceGUID, propsProcessor.getSourcePropsProcessor().getStatus().toString());
+
+					String destinationGUID = generateDestinationGUID(targetClass, targetAssociation,
+							propsProcessor.getTargetDestinationAssociationEnd());
+					//
+					CompareItem destinationEndCompareItem = new CompareItem(
+							propsProcessor.getDestinationPropsProcessor().getProperties(),
+							"Target: (" + targetAssociation.getDestinationAssociationEnd().getName() + ")", "Dst",
+							destinationGUID, propsProcessor.getDestinationPropsProcessor().getStatus().toString());
+
+					associationCompareItem.getCompareItem().add(sourceEndCompareItem);
+					associationCompareItem.getCompareItem().add(destinationEndCompareItem);
+
+					links.getCompareItem().add(associationCompareItem);
+				}
+
+				/**
+				 * We ensure that we don't forget about associations that are ONLY in the
+				 * baseline (i.e. have been deleted):
+				 */
+				for (String associationXmiId : preProcessor.getBaselineDeletedAssociationsGUIDs().keySet()) {
+					AssociationType deletedBaselineAssociation = preProcessor.getBaselineDeletedAssociationsGUIDs()
+							.get(associationXmiId);
+
+					// If the below condition is true then we have a deleted associations.
+					if (deletedBaselineAssociation.getSourceAssociationEnd().getType().equals(baselineClass.getXmiId())
+							|| deletedBaselineAssociation.getDestinationAssociationEnd().getType()
+									.equals(baselineClass.getXmiId())) {
+
+						AssociationProperties propsProcessor = new AssociationProperties(deletedBaselineAssociation,
+								null);
+						//
+						CompareItem associationCompareItem = new CompareItem(propsProcessor.getProperties(),
+								"Association", "", deletedBaselineAssociation.getKey(),
+								propsProcessor.getStatus().toString());
+
+						String sourceGUID = generateSourceGUID(baselineClass, deletedBaselineAssociation,
+								propsProcessor.getBaselineSourceAssociationEnd());
+						//
+						CompareItem sourceEndCompareItem = new CompareItem(
+								propsProcessor.getSourcePropsProcessor().getProperties(),
+								"Source: (" + deletedBaselineAssociation.getSourceAssociationEnd().getName() + ")",
+								"Src", sourceGUID, propsProcessor.getSourcePropsProcessor().getStatus().toString());
+
+						String destinationGUID = generateDestinationGUID(baselineClass, deletedBaselineAssociation,
+								propsProcessor.getBaselineDestinationAssociationEnd());
+						//
+						CompareItem destinationEndCompareItem = new CompareItem(
+								propsProcessor.getDestinationPropsProcessor().getProperties(),
+								"Target: (" + deletedBaselineAssociation.getDestinationAssociationEnd().getName() + ")",
+								"Dst", destinationGUID,
+								propsProcessor.getDestinationPropsProcessor().getStatus().toString());
+
+						associationCompareItem.getCompareItem().add(sourceEndCompareItem);
+						associationCompareItem.getCompareItem().add(destinationEndCompareItem);
+
+						links.getCompareItem().add(associationCompareItem);
+					}
+				}
+			}
 		}
 
 		return links;

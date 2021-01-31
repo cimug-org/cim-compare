@@ -30,6 +30,9 @@ public class GeneralizationProperties {
 	private GeneralizationType baselineGeneralization;
 	private GeneralizationType targetGeneralization;
 
+	private SourceGeneralizationEndProperties sourcePropsProcessor;
+	private DestinationGeneralizationEndProperties destinationPropsProcessor;
+	
 	private List<TaggedValueType> baselineTaggedValues;
 	private List<TaggedValueType> targetTaggedValues;
 
@@ -40,10 +43,16 @@ public class GeneralizationProperties {
 		this.baselineGeneralization = baselineGeneralization;
 		this.targetGeneralization = targetGeneralization;
 		//
+		this.sourcePropsProcessor = new SourceGeneralizationEndProperties(baselineGeneralization,
+				targetGeneralization);
+		this.destinationPropsProcessor = new DestinationGeneralizationEndProperties(baselineGeneralization, targetGeneralization);
+		//
 		if (this.baselineGeneralization != null) {
 			ModelElementTaggedValue baselineElement = this.baselineGeneralization.getModelElementTaggedValue();
 			if (baselineElement != null) {
-				this.baselineTaggedValues = baselineElement.getTaggedValues();
+				if (this.baselineTaggedValues == null)
+					this.baselineTaggedValues = new ArrayList<TaggedValueType>();
+				this.baselineTaggedValues.addAll(baselineElement.getTaggedValues());
 				baselineElement.getTaggedValues().forEach(taggedValue -> tagNames.add(taggedValue.getTag()));
 			}
 		}
@@ -51,42 +60,30 @@ public class GeneralizationProperties {
 		if (this.targetGeneralization != null) {
 			ModelElementTaggedValue targetElement = this.targetGeneralization.getModelElementTaggedValue();
 			if (targetElement != null) {
-				this.targetTaggedValues = targetElement.getTaggedValues();
+				if (this.targetTaggedValues == null)
+					this.targetTaggedValues = new ArrayList<TaggedValueType>();
+				this.targetTaggedValues.addAll(targetElement.getTaggedValues()); 
 				targetElement.getTaggedValues().forEach(taggedValue -> tagNames.add(taggedValue.getTag()));
 			}
 		}
 
 		processDiffs(baselineGeneralization, targetGeneralization);
 	}
+	
+	public SourceGeneralizationEndProperties getSourcePropsProcessor() {
+		return this.sourcePropsProcessor;
+	}
+
+	public DestinationGeneralizationEndProperties getDestinationPropsProcessor() {
+		return this.destinationPropsProcessor;
+	}
 
 	protected void processDiffs(GeneralizationType baselineGeneralization, GeneralizationType targetGeneralization) {
 		Properties properties = new Properties(new ArrayList<Property>());
 
 		properties.getProperty().add(new Property("Alias", null, null, Status.Identical.toString()));
-
-		if (baselineGeneralization != null && targetGeneralization != null) {
-			// Changed or Identical
-			properties.getProperty().add(new Property("Name", //
-					(baselineGeneralization.getName() != null ? baselineGeneralization.getName() : null), //
-					(targetGeneralization.getName() != null ? targetGeneralization.getName() : null), //
-					getStatus(baselineGeneralization.getName(), targetGeneralization.getName()) //
-			));
-		} else if (baselineGeneralization != null) {
-			// Baseline only
-			properties.getProperty().add(new Property("Name", //
-					(baselineGeneralization.getName() != null ? baselineGeneralization.getName() : null), //
-					null, // null model
-					getStatus(baselineGeneralization.getName(), null) //
-			));
-		} else {
-			// Model only
-			properties.getProperty().add(new Property("Name", //
-					null, // null baseline
-					(targetGeneralization.getName() != null ? targetGeneralization.getName() : null), //
-					getStatus(null, targetGeneralization.getName()) //
-			));
-		}
-
+		properties.getProperty().add(new Property("Name", null, null, Status.Identical.toString()));
+		
 		for (String name : TAG_NAME_MAP.keySet()) {
 			if (tagNames.contains(name)) {
 				properties.getProperty().add(new Property(TAG_NAME_MAP.get(name), getValue(name, baselineTaggedValues),
@@ -125,7 +122,7 @@ public class GeneralizationProperties {
 		if (taggedValues != null) {
 			for (TaggedValueType tv : taggedValues) {
 				if (tv.getTag().equals(name)) {
-					return tv.getTheValue();
+					return tv.getTheValue().replaceAll("\n", "");
 				}
 			}
 		}
@@ -153,7 +150,7 @@ public class GeneralizationProperties {
 	 * @return
 	 */
 	private String getStatus(String name) {
-		Status status = Status.Changed; // Assume a status of 'Changed' until it is determined otherwise...
+		Status status = Status.Identical; // Assume a status of 'Identical' until it is determined otherwise...
 		if (baselineTaggedValues != null && targetTaggedValues == null) {
 			status = Status.BaselineOnly;
 		} else if (baselineTaggedValues == null && targetTaggedValues != null) {

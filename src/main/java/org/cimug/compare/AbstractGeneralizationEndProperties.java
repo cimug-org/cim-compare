@@ -39,7 +39,8 @@ public abstract class AbstractGeneralizationEndProperties {
 		if (this.baselineGeneralization != null) {
 			ModelElementTaggedValue baselineElement = this.baselineGeneralization.getModelElementTaggedValue();
 			if (baselineElement != null) {
-				this.baselineTaggedValues = baselineElement.getTaggedValues();
+				this.baselineTaggedValues = new ArrayList<TaggedValueType>();
+				this.baselineTaggedValues.addAll(baselineElement.getTaggedValues());
 				baselineElement.getTaggedValues().forEach(taggedValue -> tagNames.add(taggedValue.getTag()));
 			}
 		}
@@ -47,7 +48,8 @@ public abstract class AbstractGeneralizationEndProperties {
 		if (this.targetGeneralization != null) {
 			ModelElementTaggedValue targetElement = this.targetGeneralization.getModelElementTaggedValue();
 			if (targetElement != null) {
-				this.targetTaggedValues = targetElement.getTaggedValues();
+				this.targetTaggedValues = new ArrayList<TaggedValueType>();
+				this.targetTaggedValues.addAll(targetElement.getTaggedValues());
 				targetElement.getTaggedValues().forEach(taggedValue -> tagNames.add(taggedValue.getTag()));
 			}
 		}
@@ -56,34 +58,18 @@ public abstract class AbstractGeneralizationEndProperties {
 	}
 
 	protected abstract void initializeTagNamesMap();
+	
+	protected abstract String getEndName();
 
 	protected void processDiffs(GeneralizationType baselineGeneralization, GeneralizationType targetGeneralization) {
 		Properties properties = new Properties(new ArrayList<Property>());
 
+		properties.getProperty().add(new Property("Name", null, null, Status.Identical.toString()));
 		properties.getProperty().add(new Property("Alias", null, null, Status.Identical.toString()));
-
-		if (baselineGeneralization != null && targetGeneralization != null) {
-			// Changed or Identical
-			properties.getProperty().add(new Property("Name", //
-					(baselineGeneralization.getName() != null ? baselineGeneralization.getName() : null), //
-					(targetGeneralization.getName() != null ? targetGeneralization.getName() : null), //
-					getStatus(baselineGeneralization.getName(), targetGeneralization.getName()) //
-			));
-		} else if (baselineGeneralization != null) {
-			// Baseline only
-			properties.getProperty().add(new Property("Name", //
-					(baselineGeneralization.getName() != null ? baselineGeneralization.getName() : null), //
-					null, // null model
-					getStatus(baselineGeneralization.getName(), null) //
-			));
-		} else {
-			// Model only
-			properties.getProperty().add(new Property("Name", //
-					null, // null baseline
-					(targetGeneralization.getName() != null ? targetGeneralization.getName() : null), //
-					getStatus(null, targetGeneralization.getName()) //
-			));
-		}
+		properties.getProperty().add(new Property("Cardinality", //
+				(this.baselineTaggedValues != null && this.targetTaggedValues != null? "0" : (this.baselineTaggedValues != null ? "0" : null)), //
+				(this.baselineTaggedValues != null && this.targetTaggedValues != null? "0" : (this.targetTaggedValues != null ? "0" : null)), //
+				Status.Identical.toString()));
 
 		for (String name : tagNamesMap.keySet()) {
 			if (tagNames.contains(name)) {
@@ -156,6 +142,16 @@ public abstract class AbstractGeneralizationEndProperties {
 			return getStatus(baselineValue, modelValue);
 		}
 		return status.toString();
+	}
+	
+	public String getRoleName() {
+		if (this.baselineTaggedValues == null)
+			return getValue(getEndName(), targetTaggedValues);
+		
+		if (this.targetTaggedValues == null)
+			return getValue(getEndName(), baselineTaggedValues);
+		
+		return getValue(getEndName(), targetTaggedValues);
 	}
 
 	private String getStatus(String baselineValue, String targetValue) {

@@ -130,10 +130,7 @@ public class Model implements PackageContainer, NamedType, KeyIdentifier {
 
 	@Override
 	public String getKey() {
-		if (KeyTypeEnum.GUID.equals(KeyType.KEY_TYPE)) {
-			return getXmiId();
-		}
-		return getName();
+		return getXmiId();
 	}
 
 	@Override

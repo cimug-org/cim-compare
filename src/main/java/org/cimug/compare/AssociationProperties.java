@@ -11,6 +11,7 @@ import java.util.Set;
 
 import org.cimug.compare.logs.Properties;
 import org.cimug.compare.logs.Property;
+import org.cimug.compare.uml1_3.AssociationEndType;
 import org.cimug.compare.uml1_3.AssociationType;
 import org.cimug.compare.uml1_3.ModelElementTaggedValue;
 import org.cimug.compare.uml1_3.TaggedValueType;
@@ -30,6 +31,14 @@ public class AssociationProperties {
 	private AssociationType baselineAssociation;
 	private AssociationType targetAssociation;
 
+	private AssociationEndType baselineSourceAssociationEnd;
+	private AssociationEndType targetSourceAssociationEnd;
+	private AssociationEndType baselineDestinationAssociationEnd;
+	private AssociationEndType targetDestinationAssociationEnd;
+
+	private SourceAssociationEndProperties sourcePropsProcessor;
+	private DestinationAssociationEndProperties destinationPropsProcessor;
+
 	private List<TaggedValueType> baselineTaggedValues;
 	private List<TaggedValueType> targetTaggedValues;
 
@@ -39,10 +48,29 @@ public class AssociationProperties {
 		this.baselineAssociation = baselineAssociation;
 		this.targetAssociation = targetAssociation;
 		//
+		this.baselineSourceAssociationEnd = (baselineAssociation != null ? baselineAssociation.getSourceAssociationEnd()
+				: null);
+		this.targetSourceAssociationEnd = (targetAssociation != null ? targetAssociation.getSourceAssociationEnd()
+				: null);
+
+		this.baselineDestinationAssociationEnd = (baselineAssociation != null
+				? baselineAssociation.getDestinationAssociationEnd()
+				: null);
+		this.targetDestinationAssociationEnd = (targetAssociation != null
+				? targetAssociation.getDestinationAssociationEnd()
+				: null);
+
+		this.sourcePropsProcessor = new SourceAssociationEndProperties(baselineSourceAssociationEnd,
+				baselineAssociation, targetSourceAssociationEnd, targetAssociation);
+		this.destinationPropsProcessor = new DestinationAssociationEndProperties(baselineDestinationAssociationEnd,
+				baselineAssociation, targetDestinationAssociationEnd, targetAssociation);
+		//
 		if (this.baselineAssociation != null) {
 			ModelElementTaggedValue baselineElement = this.baselineAssociation.getModelElementTaggedValue();
 			if (baselineElement != null) {
-				this.baselineTaggedValues = baselineElement.getTaggedValues();
+				if (baselineTaggedValues == null)
+					this.baselineTaggedValues = new ArrayList<TaggedValueType>();
+				this.baselineTaggedValues.addAll(baselineElement.getTaggedValues());
 				baselineElement.getTaggedValues().forEach(taggedValue -> tagNames.add(taggedValue.getTag()));
 			}
 		}
@@ -50,12 +78,38 @@ public class AssociationProperties {
 		if (this.targetAssociation != null) {
 			ModelElementTaggedValue targetElement = this.targetAssociation.getModelElementTaggedValue();
 			if (targetElement != null) {
-				this.targetTaggedValues = targetElement.getTaggedValues();
+				if (targetTaggedValues == null)
+					this.targetTaggedValues = new ArrayList<TaggedValueType>();
+				this.targetTaggedValues.addAll(targetElement.getTaggedValues());
 				targetElement.getTaggedValues().forEach(taggedValue -> tagNames.add(taggedValue.getTag()));
 			}
 		}
 
 		processDiffs(baselineAssociation, targetAssociation);
+	}
+
+	public AssociationEndType getBaselineSourceAssociationEnd() {
+		return baselineSourceAssociationEnd;
+	}
+
+	public AssociationEndType getTargetSourceAssociationEnd() {
+		return this.targetSourceAssociationEnd;
+	}
+
+	public AssociationEndType getBaselineDestinationAssociationEnd() {
+		return baselineDestinationAssociationEnd;
+	}
+
+	public AssociationEndType getTargetDestinationAssociationEnd() {
+		return targetDestinationAssociationEnd;
+	}
+
+	public SourceAssociationEndProperties getSourcePropsProcessor() {
+		return sourcePropsProcessor;
+	}
+
+	public DestinationAssociationEndProperties getDestinationPropsProcessor() {
+		return destinationPropsProcessor;
 	}
 
 	protected void processDiffs(AssociationType baselineAssociation, AssociationType targetAssociation) {
@@ -67,11 +121,6 @@ public class AssociationProperties {
 
 		if (baselineAssociation != null && targetAssociation != null) {
 			// Changed or Identical
-			properties.getProperty().add(new Property("Name", //
-					(baselineAssociation.getName() != null ? baselineAssociation.getName() : null), //
-					(targetAssociation.getName() != null ? targetAssociation.getName() : null), //
-					getStatus(baselineAssociation.getName(), targetAssociation.getName()) //
-			));
 			properties.getProperty().add(new Property("IsLeaf", //
 					(baselineAssociation.getIsLeaf() != null ? baselineAssociation.getIsLeaf() : null), //
 					(targetAssociation.getIsLeaf() != null ? targetAssociation.getIsLeaf() : null), //
@@ -84,11 +133,6 @@ public class AssociationProperties {
 			));
 		} else if (baselineAssociation != null) {
 			// Baseline only
-			properties.getProperty().add(new Property("Name", //
-					(baselineAssociation.getName() != null ? baselineAssociation.getName() : null), //
-					null, // null model
-					getStatus(baselineAssociation.getName(), null) //
-			));
 			properties.getProperty()
 					.add(new Property("IsLeaf",
 							(baselineAssociation.getIsLeaf() != null ? baselineAssociation.getIsLeaf() : null), //
@@ -103,11 +147,6 @@ public class AssociationProperties {
 			));
 		} else {
 			// Model only
-			properties.getProperty().add(new Property("Name", //
-					null, // null baseline
-					(targetAssociation.getName() != null ? targetAssociation.getName() : null), //
-					getStatus(null, targetAssociation.getName()) //
-			));
 			properties.getProperty().add(new Property("IsLeaf", //
 					null, // null baseline
 					(targetAssociation.getIsLeaf() != null ? targetAssociation.getIsLeaf() : null), //

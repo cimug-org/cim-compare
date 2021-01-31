@@ -37,7 +37,7 @@ public class AttributeProperties {
 		TAG_NAME_MAP.put("precision", "Precision");
 		TAG_NAME_MAP.put("scale", "Scale");
 		TAG_NAME_MAP.put("static", "Static");
-
+		TAG_NAME_MAP.put("type", "Type");
 	}
 
 	private AttributeType baselineAttribute;

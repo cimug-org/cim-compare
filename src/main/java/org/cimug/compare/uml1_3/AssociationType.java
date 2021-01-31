@@ -24,7 +24,6 @@ import org.cimug.compare.DiffUtils;
 import org.cimug.compare.uml1_3.ifaces.ConnectionContainer;
 import org.cimug.compare.uml1_3.ifaces.ContentsContainer;
 import org.cimug.compare.uml1_3.ifaces.KeyIdentifier;
-import org.cimug.compare.uml1_3.ifaces.NamedType;
 
 /**
  * <p>
@@ -49,13 +48,6 @@ import org.cimug.compare.uml1_3.ifaces.NamedType;
  *       &lt;attribute name="isRoot" type="{http://www.w3.org/2001/XMLSchema}string" /&gt;
  *       &lt;attribute name="isLeaf" type="{http://www.w3.org/2001/XMLSchema}string" /&gt;
  *       &lt;attribute name="isAbstract" type="{http://www.w3.org/2001/XMLSchema}string" /&gt;
- *       &lt;attribute name="subtype" type="{http://www.w3.org/2001/XMLSchema}string" /&gt;
- *       &lt;attribute name="supertype" type="{http://www.w3.org/2001/XMLSchema}string" /&gt;
- *       &lt;attribute name="name" type="{http://www.w3.org/2001/XMLSchema}string" /&gt;
- *       &lt;attribute name="namespace" type="{http://www.w3.org/2001/XMLSchema}string" /&gt;
- *       &lt;attribute name="isActive" type="{http://www.w3.org/2001/XMLSchema}string" /&gt;
- *       &lt;attribute name="client" type="{http://www.w3.org/2001/XMLSchema}string" /&gt;
- *       &lt;attribute name="supplier" type="{http://www.w3.org/2001/XMLSchema}string" /&gt;
  *     &lt;/restriction&gt;
  *   &lt;/complexContent&gt;
  * &lt;/complexType&gt;
@@ -65,7 +57,7 @@ import org.cimug.compare.uml1_3.ifaces.NamedType;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "AssociationType", propOrder = { "content" })
-public class AssociationType implements ContentsContainer, ConnectionContainer, NamedType, KeyIdentifier {
+public class AssociationType implements ContentsContainer, ConnectionContainer, KeyIdentifier {
 
 	@XmlElementRefs({
 			@XmlElementRef(name = "ModelElement.stereotype", namespace = "omg.org/UML1.3", type = JAXBElement.class, required = false),
@@ -84,20 +76,6 @@ public class AssociationType implements ContentsContainer, ConnectionContainer, 
 	protected String isLeaf;
 	@XmlAttribute(name = "isAbstract")
 	protected String isAbstract;
-	@XmlAttribute(name = "subtype")
-	protected String subtype;
-	@XmlAttribute(name = "supertype")
-	protected String supertype;
-	@XmlAttribute(name = "name")
-	protected String name;
-	@XmlAttribute(name = "namespace")
-	protected String namespace;
-	@XmlAttribute(name = "isActive")
-	protected String isActive;
-	@XmlAttribute(name = "client")
-	protected String client;
-	@XmlAttribute(name = "supplier")
-	protected String supplier;
 
 	/**
 	 * Gets the value of the content property.
@@ -237,159 +215,9 @@ public class AssociationType implements ContentsContainer, ConnectionContainer, 
 		this.isAbstract = value;
 	}
 
-	/**
-	 * Gets the value of the subtype property.
-	 * 
-	 * @return possible object is {@link String }
-	 * 
-	 */
-	public String getSubtype() {
-		return subtype;
-	}
-
-	/**
-	 * Sets the value of the subtype property.
-	 * 
-	 * @param value
-	 *            allowed object is {@link String }
-	 * 
-	 */
-	public void setSubtype(String value) {
-		this.subtype = value;
-	}
-
-	/**
-	 * Gets the value of the supertype property.
-	 * 
-	 * @return possible object is {@link String }
-	 * 
-	 */
-	public String getSupertype() {
-		return supertype;
-	}
-
-	/**
-	 * Sets the value of the supertype property.
-	 * 
-	 * @param value
-	 *            allowed object is {@link String }
-	 * 
-	 */
-	public void setSupertype(String value) {
-		this.supertype = value;
-	}
-
-	/**
-	 * Gets the value of the name property.
-	 * 
-	 * @return possible object is {@link String }
-	 * 
-	 */
-	public String getName() {
-		return name;
-	}
-
-	/**
-	 * Sets the value of the name property.
-	 * 
-	 * @param value
-	 *            allowed object is {@link String }
-	 * 
-	 */
-	public void setName(String value) {
-		this.name = value;
-	}
-
-	/**
-	 * Gets the value of the namespace property.
-	 * 
-	 * @return possible object is {@link String }
-	 * 
-	 */
-	public String getNamespace() {
-		return namespace;
-	}
-
-	/**
-	 * Sets the value of the namespace property.
-	 * 
-	 * @param value
-	 *            allowed object is {@link String }
-	 * 
-	 */
-	public void setNamespace(String value) {
-		this.namespace = value;
-	}
-
-	/**
-	 * Gets the value of the isActive property.
-	 * 
-	 * @return possible object is {@link String }
-	 * 
-	 */
-	public String getIsActive() {
-		return isActive;
-	}
-
-	/**
-	 * Sets the value of the isActive property.
-	 * 
-	 * @param value
-	 *            allowed object is {@link String }
-	 * 
-	 */
-	public void setIsActive(String value) {
-		this.isActive = value;
-	}
-
-	/**
-	 * Gets the value of the client property.
-	 * 
-	 * @return possible object is {@link String }
-	 * 
-	 */
-	public String getClient() {
-		return client;
-	}
-
-	/**
-	 * Sets the value of the client property.
-	 * 
-	 * @param value
-	 *            allowed object is {@link String }
-	 * 
-	 */
-	public void setClient(String value) {
-		this.client = value;
-	}
-
-	/**
-	 * Gets the value of the supplier property.
-	 * 
-	 * @return possible object is {@link String }
-	 * 
-	 */
-	public String getSupplier() {
-		return supplier;
-	}
-
-	/**
-	 * Sets the value of the supplier property.
-	 * 
-	 * @param value
-	 *            allowed object is {@link String }
-	 * 
-	 */
-	public void setSupplier(String value) {
-		this.supplier = value;
-	}
-
 	@Override
 	public String getKey() {
-		if (KeyTypeEnum.GUID.equals(KeyType.KEY_TYPE)) {
-			return DiffUtils.convertXmiIdToEAGUID(getXmiId());
-		}
-		return getName();
+		return DiffUtils.convertXmiIdToEAGUID(getXmiId());
 	}
 
 }

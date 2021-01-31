@@ -282,10 +282,7 @@ public class AttributeType implements ModelElementTaggedValueContainer, NamedTyp
 
 	@Override
 	public String getKey() {
-		if (KeyTypeEnum.GUID.equals(KeyType.KEY_TYPE)) {
-			return getTheValue("ea_guid");
-		}
-		return getName();
+		return getTheValue("ea_guid");
 	}
 
 	@Override

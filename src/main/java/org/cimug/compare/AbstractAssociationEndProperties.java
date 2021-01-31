@@ -35,7 +35,9 @@ public abstract class AbstractAssociationEndProperties {
 		if (baseline != null) {
 			ModelElementTaggedValue baselineElement = baseline.getModelElementTaggedValue();
 			if (baselineElement != null) {
-				this.baselineTaggedValues = baselineElement.getTaggedValues();
+				if (this.baselineTaggedValues == null)
+					this.baselineTaggedValues = new ArrayList<TaggedValueType>();
+				this.baselineTaggedValues.addAll(baselineElement.getTaggedValues());
 				baselineElement.getTaggedValues().forEach(taggedValue -> tagNames.add(taggedValue.getTag()));
 			}
 		}
@@ -43,7 +45,9 @@ public abstract class AbstractAssociationEndProperties {
 		if (baselineParent != null) {
 			ModelElementTaggedValue baselineElement = baselineParent.getModelElementTaggedValue();
 			if (baselineElement != null) {
-				this.baselineTaggedValues = baselineElement.getTaggedValues();
+				if (this.baselineTaggedValues == null)
+					this.baselineTaggedValues = new ArrayList<TaggedValueType>();
+				this.baselineTaggedValues.addAll(baselineElement.getTaggedValues());
 				baselineElement.getTaggedValues().forEach(taggedValue -> tagNames.add(taggedValue.getTag()));
 			}
 		}
@@ -51,7 +55,9 @@ public abstract class AbstractAssociationEndProperties {
 		if (target != null) {
 			ModelElementTaggedValue targetElement = target.getModelElementTaggedValue();
 			if (targetElement != null) {
-				this.targetTaggedValues = targetElement.getTaggedValues();
+				if (this.targetTaggedValues == null)
+					this.targetTaggedValues = new ArrayList<TaggedValueType>();
+				this.targetTaggedValues.addAll(targetElement.getTaggedValues());
 				targetElement.getTaggedValues().forEach(taggedValue -> tagNames.add(taggedValue.getTag()));
 			}
 		}
@@ -59,7 +65,9 @@ public abstract class AbstractAssociationEndProperties {
 		if (targetParent != null) {
 			ModelElementTaggedValue targetElement = targetParent.getModelElementTaggedValue();
 			if (targetElement != null) {
-				this.targetTaggedValues = targetElement.getTaggedValues();
+				if (this.targetTaggedValues == null)
+					this.targetTaggedValues = new ArrayList<TaggedValueType>();
+				this.targetTaggedValues.addAll(targetElement.getTaggedValues());
 				targetElement.getTaggedValues().forEach(taggedValue -> tagNames.add(taggedValue.getTag()));
 			}
 		}
@@ -115,6 +123,12 @@ public abstract class AbstractAssociationEndProperties {
 					(targetAssociationEnd.getName() != null ? targetAssociationEnd.getName() : null), //
 					getStatus(baselineAssociationEnd.getName(), targetAssociationEnd.getName()) //
 			));
+			properties.getProperty().add(new Property("Cardinality", //
+					(baselineAssociationEnd.getMultiplicity() != null ? baselineAssociationEnd.getMultiplicity()
+							: null), //
+					(targetAssociationEnd.getMultiplicity() != null ? targetAssociationEnd.getMultiplicity() : null), //
+					getStatus(baselineAssociationEnd.getMultiplicity(), targetAssociationEnd.getMultiplicity()) //
+			));
 		} else if (baselineAssociationEnd != null) {
 			// Baseline only
 			properties.getProperty().add(new Property("Ordering",
@@ -153,6 +167,13 @@ public abstract class AbstractAssociationEndProperties {
 							null, // null model
 							getStatus(baselineAssociationEnd.getName(), null) //
 			));
+			properties.getProperty()
+					.add(new Property("Cardinality",
+							(baselineAssociationEnd.getMultiplicity() != null ? baselineAssociationEnd.getMultiplicity()
+									: null), //
+							null, // null model
+							getStatus(baselineAssociationEnd.getMultiplicity(), null) //
+			));
 		} else {
 			// Model only
 			properties.getProperty().add(new Property("Ordering", //
@@ -189,6 +210,11 @@ public abstract class AbstractAssociationEndProperties {
 					null, // null baseline
 					(targetAssociationEnd.getName() != null ? targetAssociationEnd.getName() : null), //
 					getStatus(null, targetAssociationEnd.getName()) //
+			));
+			properties.getProperty().add(new Property("Cardinality", //
+					null, // null baseline
+					(targetAssociationEnd.getMultiplicity() != null ? targetAssociationEnd.getMultiplicity() : null), //
+					getStatus(null, targetAssociationEnd.getMultiplicity()) //
 			));
 		}
 
@@ -239,6 +265,21 @@ public abstract class AbstractAssociationEndProperties {
 		return tv.getTheValue().replaceAll("\n", "");
 	}
 
+	public Status getStatus() {
+		if (baselineTaggedValues != null && targetTaggedValues == null) {
+			return Status.BaselineOnly;
+		} else if (baselineTaggedValues == null && targetTaggedValues != null) {
+			return Status.ModelOnly;
+		} else {
+			for (Property property : properties.getProperty()) {
+				if (!Status.Identical.toString().equals(property.getStatus())) {
+					return Status.Changed;
+				}
+			}
+			return Status.Identical;
+		}
+	}
+	
 	protected String getStatus(String name) {
 		Status status = Status.Changed; // Assume a status of 'Changed' until it is determined otherwise...
 		if (baselineTaggedValues != null && targetTaggedValues == null) {

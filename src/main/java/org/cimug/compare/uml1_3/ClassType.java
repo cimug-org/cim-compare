@@ -419,10 +419,7 @@ public class ClassType implements ContentsContainer, PackagedElement, NamedType,
 
 	@Override
 	public String getKey() {
-		if (KeyTypeEnum.GUID.equals(KeyType.KEY_TYPE)) {
-			return DiffUtils.convertXmiIdToEAGUID(getXmiId());
-		}
-		return getName();
+		return DiffUtils.convertXmiIdToEAGUID(getXmiId());
 	}
 
 	@Override

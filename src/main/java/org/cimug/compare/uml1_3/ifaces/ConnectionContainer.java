@@ -28,7 +28,7 @@ public interface ConnectionContainer extends ContentContainer {
 		return null;
 	}
 
-	default AssociationEndType getSourceAssocationEnd() {
+	default AssociationEndType getSourceAssociationEnd() {
 		if (getAssociationConnection() != null) {
 			for (AssociationEndType end : getAssociationConnection().getAssociationEnds()) {
 				if ("source".equals(end.getModelElementTaggedValue().getTaggedValue("ea_end").getTheValue())) {
@@ -39,7 +39,7 @@ public interface ConnectionContainer extends ContentContainer {
 		return null;
 	}
 
-	default AssociationEndType getDestinationAssocationEnd() {
+	default AssociationEndType getDestinationAssociationEnd() {
 		if (getAssociationConnection() != null) {
 			for (AssociationEndType end : getAssociationConnection().getAssociationEnds()) {
 				if ("target".equals(end.getModelElementTaggedValue().getTaggedValue("ea_end").getTheValue())) {

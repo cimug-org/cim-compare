@@ -101,24 +101,30 @@ public interface OwnedElementsContainer {
 	}
 
 	default List<GeneralizationType> getGeneralizations() {
+		GeneralizationType element;
 		List<GeneralizationType> generalizations = new ArrayList<GeneralizationType>();
 		for (Serializable item : getContent()) {
 			if (item instanceof GeneralizationType) {
-				generalizations.add((GeneralizationType) item);
+				element = (GeneralizationType) item;
+				generalizations.add(element);
 			} else if (item instanceof JAXBElement && ((JAXBElement) item).getValue() instanceof GeneralizationType) {
-				generalizations.add((GeneralizationType) ((JAXBElement) item).getValue());
+				element = (GeneralizationType) ((JAXBElement) item).getValue();
+				generalizations.add(element);
 			}
 		}
 		return generalizations;
 	}
 
 	default List<AssociationType> getAssociations() {
+		AssociationType element;
 		List<AssociationType> associations = new ArrayList<AssociationType>();
 		for (Serializable item : getContent()) {
 			if (item instanceof AssociationType) {
-				associations.add((AssociationType) item);
+				element = (AssociationType) item;
+				associations.add(element);
 			} else if (item instanceof JAXBElement && ((JAXBElement) item).getValue() instanceof AssociationType) {
-				associations.add((AssociationType) ((JAXBElement) item).getValue());
+				element = (AssociationType) ((JAXBElement) item).getValue();
+				associations.add(element);
 			}
 		}
 		return associations;

@@ -16,7 +16,6 @@ public class SourceAssociationEndProperties extends AbstractAssociationEndProper
 
 	@Override
 	protected void initializeTagNamesMap() {
-		tagNamesMap.put("lb", "Cardinality");
 		tagNamesMap.put("ea_sourceName", "End");
 		tagNamesMap.put("stereotype", "Stereotype");
 		tagNamesMap.put("description", "RoleNote");

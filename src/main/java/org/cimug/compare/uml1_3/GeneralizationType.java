@@ -48,14 +48,6 @@ import org.cimug.compare.uml1_3.ifaces.NamedType;
  *       &lt;attribute name="supertype" type="{http://www.w3.org/2001/XMLSchema}string" /&gt;
  *       &lt;attribute name="xmi.id" type="{http://www.w3.org/2001/XMLSchema}string" /&gt;
  *       &lt;attribute name="visibility" type="{http://www.w3.org/2001/XMLSchema}string" /&gt;
- *       &lt;attribute name="name" type="{http://www.w3.org/2001/XMLSchema}string" /&gt;
- *       &lt;attribute name="isRoot" type="{http://www.w3.org/2001/XMLSchema}string" /&gt;
- *       &lt;attribute name="isLeaf" type="{http://www.w3.org/2001/XMLSchema}string" /&gt;
- *       &lt;attribute name="isAbstract" type="{http://www.w3.org/2001/XMLSchema}string" /&gt;
- *       &lt;attribute name="namespace" type="{http://www.w3.org/2001/XMLSchema}string" /&gt;
- *       &lt;attribute name="isActive" type="{http://www.w3.org/2001/XMLSchema}string" /&gt;
- *       &lt;attribute name="client" type="{http://www.w3.org/2001/XMLSchema}string" /&gt;
- *       &lt;attribute name="supplier" type="{http://www.w3.org/2001/XMLSchema}string" /&gt;
  *     &lt;/restriction&gt;
  *   &lt;/complexContent&gt;
  * &lt;/complexType&gt;
@@ -82,40 +74,15 @@ public class GeneralizationType implements ContentsContainer, ConnectionContaine
 	protected String xmiId;
 	@XmlAttribute(name = "visibility")
 	protected String visibility;
-	@XmlAttribute(name = "name")
-	protected String name;
-	@XmlAttribute(name = "isRoot")
-	protected String isRoot;
-	@XmlAttribute(name = "isLeaf")
-	protected String isLeaf;
-	@XmlAttribute(name = "isAbstract")
-	protected String isAbstract;
-	@XmlAttribute(name = "namespace")
-	protected String namespace;
-	@XmlAttribute(name = "isActive")
-	protected String isActive;
-	@XmlAttribute(name = "client")
-	protected String client;
-	@XmlAttribute(name = "supplier")
-	protected String supplier;
 
-	public GeneralizationType(List<Serializable> content, String xmiId, String visibility, String isRoot, String isLeaf,
-			String isAbstract, String name, String namespace, String isActive, String subtype, String supertype,
-			String client, String supplier) {
+	public GeneralizationType(List<Serializable> content, String subtype, String supertype, String xmiId,
+			String visibility) {
 		super();
 		this.content = content;
-		this.xmiId = xmiId;
-		this.visibility = visibility;
-		this.isRoot = isRoot;
-		this.isLeaf = isLeaf;
-		this.isAbstract = isAbstract;
-		this.name = name;
-		this.namespace = namespace;
-		this.isActive = isActive;
 		this.subtype = subtype;
 		this.supertype = supertype;
-		this.client = client;
-		this.supplier = supplier;
+		this.xmiId = xmiId;
+		this.visibility = visibility;
 	}
 
 	public GeneralizationType() {
@@ -239,186 +206,27 @@ public class GeneralizationType implements ContentsContainer, ConnectionContaine
 		this.visibility = value;
 	}
 
-	/**
-	 * Gets the value of the name property.
-	 * 
-	 * @return possible object is {@link String }
-	 * 
-	 */
-	public String getName() {
-		return name;
-	}
-
-	/**
-	 * Sets the value of the name property.
-	 * 
-	 * @param value
-	 *            allowed object is {@link String }
-	 * 
-	 */
-	public void setName(String value) {
-		this.name = value;
-	}
-
-	/**
-	 * Gets the value of the isRoot property.
-	 * 
-	 * @return possible object is {@link String }
-	 * 
-	 */
-	public String getIsRoot() {
-		return isRoot;
-	}
-
-	/**
-	 * Sets the value of the isRoot property.
-	 * 
-	 * @param value
-	 *            allowed object is {@link String }
-	 * 
-	 */
-	public void setIsRoot(String value) {
-		this.isRoot = value;
-	}
-
-	/**
-	 * Gets the value of the isLeaf property.
-	 * 
-	 * @return possible object is {@link String }
-	 * 
-	 */
-	public String getIsLeaf() {
-		return isLeaf;
-	}
-
-	/**
-	 * Sets the value of the isLeaf property.
-	 * 
-	 * @param value
-	 *            allowed object is {@link String }
-	 * 
-	 */
-	public void setIsLeaf(String value) {
-		this.isLeaf = value;
-	}
-
-	/**
-	 * Gets the value of the isAbstract property.
-	 * 
-	 * @return possible object is {@link String }
-	 * 
-	 */
-	public String getIsAbstract() {
-		return isAbstract;
-	}
-
-	/**
-	 * Sets the value of the isAbstract property.
-	 * 
-	 * @param value
-	 *            allowed object is {@link String }
-	 * 
-	 */
-	public void setIsAbstract(String value) {
-		this.isAbstract = value;
-	}
-
-	/**
-	 * Gets the value of the namespace property.
-	 * 
-	 * @return possible object is {@link String }
-	 * 
-	 */
-	public String getNamespace() {
-		return namespace;
-	}
-
-	/**
-	 * Sets the value of the namespace property.
-	 * 
-	 * @param value
-	 *            allowed object is {@link String }
-	 * 
-	 */
-	public void setNamespace(String value) {
-		this.namespace = value;
-	}
-
-	/**
-	 * Gets the value of the isActive property.
-	 * 
-	 * @return possible object is {@link String }
-	 * 
-	 */
-	public String getIsActive() {
-		return isActive;
-	}
-
-	/**
-	 * Sets the value of the isActive property.
-	 * 
-	 * @param value
-	 *            allowed object is {@link String }
-	 * 
-	 */
-	public void setIsActive(String value) {
-		this.isActive = value;
-	}
-
-	/**
-	 * Gets the value of the client property.
-	 * 
-	 * @return possible object is {@link String }
-	 * 
-	 */
-	public String getClient() {
-		return client;
-	}
-
-	/**
-	 * Sets the value of the client property.
-	 * 
-	 * @param value
-	 *            allowed object is {@link String }
-	 * 
-	 */
-	public void setClient(String value) {
-		this.client = value;
-	}
-
-	/**
-	 * Gets the value of the supplier property.
-	 * 
-	 * @return possible object is {@link String }
-	 * 
-	 */
-	public String getSupplier() {
-		return supplier;
-	}
-
-	/**
-	 * Sets the value of the supplier property.
-	 * 
-	 * @param value
-	 *            allowed object is {@link String }
-	 * 
-	 */
-	public void setSupplier(String value) {
-		this.supplier = value;
-	}
-
 	@Override
 	public String getKey() {
-		if (KeyTypeEnum.GUID.equals(KeyType.KEY_TYPE)) {
-			return DiffUtils.convertXmiIdToEAGUID(getXmiId());
-		}
-		return getName();
+		return DiffUtils.convertXmiIdToEAGUID(getXmiId());
 	}
 
 	@Override
 	public String toString() {
 		return "GeneralizationType [subtype = " + subtype + ", supertype = " + supertype + ", xmiId = " + xmiId
-				+ ", name = " + name + ", \ncontent = " + content + "]";
+				+ ", visibility = " + visibility + ", \ncontent = " + content + "]";
+	}
+
+	/**
+	 * This is just a "fill". Technically, the GeneralizationType does not support a
+	 * name. This was necessary for the implementation of the
+	 * non-GUIDBasedDiffReportGeneratorImpl name-based implementation which it looks
+	 * like may not need to be implemented. In that case we'd remove this method and
+	 * the associated NamedType interface from the GeneralizationType.
+	 */
+	@Override
+	public String getName() {
+		return null;
 	}
 
 }

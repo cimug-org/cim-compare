@@ -8,17 +8,21 @@ public class DestinationGeneralizationEndProperties extends AbstractGeneralizati
 			GeneralizationType targetGeneralization) {
 		super(baselineGeneralization, targetGeneralization);
 	}
+	
+	protected String getEndName() {
+		return "ea_targetName";
+	}
 
 	@Override
 	protected void initializeTagNamesMap() {
-		tagNamesMap.put("ea_targetName", "Name");
-		tagNamesMap.put("dst_changeable", "IsAggregation");
-		tagNamesMap.put("dst_aggregation", "Cardinality");
+		tagNamesMap.put("dst_aggregation", "IsAggregation");
+		tagNamesMap.put("dst_changeable", "IsChangeable");
 		tagNamesMap.put("dst_containment", "Containment");
 		tagNamesMap.put("ea_targetName", "End");
 		tagNamesMap.put("dst_isNavigable", "IsNavigable");
 		tagNamesMap.put("dst_isOrdered", "Ordering");
 		tagNamesMap.put("dst_visibility", "Scope");
+		tagNamesMap.put("dst_targetScope", "TargetScope");
 	}
 
 }

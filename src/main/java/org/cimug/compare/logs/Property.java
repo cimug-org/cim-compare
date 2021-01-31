@@ -44,10 +44,10 @@ public class Property {
 	protected String value;
 	@XmlAttribute(name = "name")
 	protected String name;
-	@XmlAttribute(name = "baseline")
-	protected String baseline;
 	@XmlAttribute(name = "model")
 	protected String model;
+	@XmlAttribute(name = "baseline")
+	protected String baseline;
 	@XmlAttribute(name = "status")
 	protected String status;
 

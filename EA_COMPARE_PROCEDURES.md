@@ -29,7 +29,7 @@ The procedure to execute a comparison is done in the following manner
       <img src="media/d0a6a671e1360aaafca37aa4891669fc.png">
    </p>
 
-3.  Export the CIM package as an **XMI 1.1** compliant file of the older model with which to perform the comparison against. The only requirement in the “Publish Model Package” dialog is that the **“UML 1.3 (XMI 1.1)”** XML Type be selected as the export format. In the screenshot below of the export dialog it should be noted that the “Export Diagrams” and “Unisys/Rose Format” may or may not be selected as part of the **XMI 1.1** export.  They play no role as part of the processing done by the command line utility.
+3. Export the CIM package as an **XMI 1.1** compliant file of the older baseline model with which to perform a comparison against. In the “Publish Model Package” dialog the **“UML 1.3 (XMI 1.1)”** XML Type must be selected as the export format and the "Unisys/Rose Format" option must not be checked. Note that unchecking the "Export Diagrams" option produces a smaller XMI export file which takes of less memory for **cim-compare** processing. Currently, **cim-compare** only does comparisons on the UML and not diagrams at this stage. 
 
    <p align="left">
       <img src="media/8c826de7743d558a12383f7d89406bb2.png">
@@ -47,7 +47,7 @@ The procedure to execute a comparison is done in the following manner
 ---
 
 
-4.   The newer CIM model with which to perform the comparison on should be opened in EA. This is typically done by simply opening the EA project file. For the purposes of the Compare Utility, this is the “target” model which EA will perform diff against the **XMI 1.1** file of the older “baseline” CIM model.
+4. The newer CIM model with which to perform the comparison on should be opened in EA. This is typically done by simply opening the EA project file. For the purposes of the Compare Utility, this is the “target” model which EA will perform diff against the **XMI 1.1** file of the older “baseline” CIM model.
 
 5. Once the “target” model has been loaded in EA you should ensure that the following settings in the “Baseline Compare Options” dialog are set before running the Compare Utility:
 

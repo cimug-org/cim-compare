@@ -14,8 +14,8 @@ import org.junit.Test;
 public class CIMModelComparisonGeneratorUTEST {
 
 	private static final String RESOURCES_PATH = "src/test/resources/";
-	private static final String TARGET_XMI = "cim_17v36a_13v12_03v17a.xmi";
-	private static final String BASELINE_XMI = "cim_15v33_11v13_01v07.xmi";
+	private static final String TARGET_XMI = "iec61970cim16v33c_iec61968cim12v08_iec62325cim03v01a.xmi";
+	private static final String BASELINE_XMI = "iec61970cim15v33_iec61968cim11v13_iec62325cim01v07.xmi";
 	private static final String REPORT_NAME_XML = "JUNIT_CIM_Model_Comparison_Report.xml";
 	private static final String REPORT_NAME_HTML = "JUNIT_CIM_Model_Comparison_Report.html";
 

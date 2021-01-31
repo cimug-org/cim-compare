@@ -84,7 +84,7 @@ public interface PackageContainer {
 		}
 		return null;
 	}
-	
+
 	default PackageType getClassByGUID(String guid) {
 		if (getNamespaceOwnedElement() != null) {
 			for (PackageType aPackage : getNamespaceOwnedElement().getPackages()) {
@@ -114,6 +114,29 @@ public interface PackageContainer {
 		return null;
 	}
 
+	/**
+	 * Retrieve all associations for a specific class. The class's unique xmiId
+	 * identifier is passed and all associations associated with the class (whether
+	 * the class is the source or target) are returned.
+	 * 
+	 * @param classXmiId
+	 * @return The list of all associations that the specified class is a part of.
+	 */
+	default List<AssociationType> getAssociations(String classXmiId) {
+		List<AssociationType> associations = new ArrayList<AssociationType>();
+		if (getNamespaceOwnedElement() != null) {
+			for (AssociationType anAssociation : getNamespaceOwnedElement().getAssociations()) {
+				// Note that the call to getType() returns the xmiId of the class that the
+				// association end is for...
+				if (anAssociation.getSourceAssociationEnd().getType().equals(classXmiId)
+						|| anAssociation.getDestinationAssociationEnd().getType().equals(classXmiId)) {
+					associations.add(anAssociation);
+				}
+			}
+		}
+		return associations;
+	}
+
 	default AssociationType getAssociation(String source, String target) {
 		if (getNamespaceOwnedElement() != null) {
 			for (AssociationType anAssociation : getNamespaceOwnedElement().getAssociations()) {
@@ -134,10 +157,32 @@ public interface PackageContainer {
 		return new ArrayList<GeneralizationType>();
 	}
 
-	default GeneralizationType getGeneralization(String guid) {
+	/**
+	 * Return all generalizations associated with a specific class. The class's
+	 * unique xmiId identifier is passed and all generalizations associated with the
+	 * class (whether the class is the subtype or supertype) are returned.
+	 * 
+	 * @param classXmiId
+	 * @return The list of all generalizations that the specified class is a part
+	 *         of.
+	 */
+	default List<GeneralizationType> getGeneralizations(String classXmiId) {
+		List<GeneralizationType> generalizations = new ArrayList<GeneralizationType>();
 		if (getNamespaceOwnedElement() != null) {
 			for (GeneralizationType aGeneralization : getNamespaceOwnedElement().getGeneralizations()) {
-				if (aGeneralization.getXmiId().equals(guid)) {
+				if (aGeneralization.getSubtype().equals(classXmiId)
+						|| aGeneralization.getSupertype().equals(classXmiId)) {
+					generalizations.add(aGeneralization);
+				}
+			}
+		}
+		return generalizations;
+	}
+
+	default GeneralizationType getGeneralization(String generalizationXmiId) {
+		if (getNamespaceOwnedElement() != null) {
+			for (GeneralizationType aGeneralization : getNamespaceOwnedElement().getGeneralizations()) {
+				if (aGeneralization.getXmiId().equals(generalizationXmiId)) {
 					return aGeneralization;
 				}
 			}

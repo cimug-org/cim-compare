@@ -14,6 +14,8 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
+import org.cimug.compare.DiffUtils;
+import org.cimug.compare.uml1_3.ifaces.GUIDIdentifier;
 import org.cimug.compare.uml1_3.ifaces.NamedType;
 
 /**
@@ -47,7 +49,7 @@ import org.cimug.compare.uml1_3.ifaces.NamedType;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "DiagramType", propOrder = { "modelElementTaggedValue", "diagramElement" })
 @XmlRootElement(name = "Diagram")
-public class Diagram implements NamedType {
+public class Diagram implements NamedType, GUIDIdentifier {
 
 	@XmlElement(name = "ModelElement.taggedValue", required = true)
 	protected ModelElementTaggedValue modelElementTaggedValue;
@@ -226,6 +228,11 @@ public class Diagram implements NamedType {
 	 */
 	public void setToolName(String value) {
 		this.toolName = value;
+	}
+
+	@Override
+	public String getGUID() {
+		return DiffUtils.convertXmiIdToEAGUID(getXmiId());
 	}
 
 }

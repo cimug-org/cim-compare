@@ -115,9 +115,19 @@ public class AssociationProperties {
 	protected void processDiffs(AssociationType baselineAssociation, AssociationType targetAssociation) {
 		Properties properties = new Properties(new ArrayList<Property>());
 
-		properties.getProperty().add(new Property("Alias", null, null, Status.Identical.toString()));
-		properties.getProperty().add(new Property("Source Linked Feature", null, null, Status.Identical.toString()));
-		properties.getProperty().add(new Property("Target Linked Feature", null, null, Status.Identical.toString()));
+		properties.getProperty().add(new Property("Alias", null, null, (this.baselineTaggedValues == null
+				? Status.ModelOnly.toString()
+				: (this.targetTaggedValues == null ? Status.BaselineOnly.toString() : Status.Identical.toString()))));
+		properties.getProperty()
+				.add(new Property("Source Linked Feature", null, null,
+						(this.baselineTaggedValues == null ? Status.ModelOnly.toString()
+								: (this.targetTaggedValues == null ? Status.BaselineOnly.toString()
+										: Status.Identical.toString()))));
+		properties.getProperty()
+				.add(new Property("Target Linked Feature", null, null,
+						(this.baselineTaggedValues == null ? Status.ModelOnly.toString()
+								: (this.targetTaggedValues == null ? Status.BaselineOnly.toString()
+										: Status.Identical.toString()))));
 
 		if (baselineAssociation != null && targetAssociation != null) {
 			// Changed or Identical
@@ -165,7 +175,10 @@ public class AssociationProperties {
 						getValue(name, targetTaggedValues), getStatus(name)));
 			} else {
 				properties.getProperty()
-						.add(new Property(TAG_NAME_MAP.get(name), null, null, Status.Identical.toString()));
+						.add(new Property(TAG_NAME_MAP.get(name), null, null,
+								(this.baselineTaggedValues == null ? Status.ModelOnly.toString()
+										: (this.targetTaggedValues == null ? Status.BaselineOnly.toString()
+												: Status.Identical.toString()))));
 			}
 		}
 

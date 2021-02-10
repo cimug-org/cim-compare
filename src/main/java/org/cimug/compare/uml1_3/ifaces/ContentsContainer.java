@@ -79,12 +79,12 @@ public interface ContentsContainer extends ContentContainer, ModelElementTaggedV
 		return null;
 	}
 
-	default AttributeType getAttributeByGUID(String guid) {
+	default AttributeType getAttributeByGUID(String xmiId) {
 		List<AttributeType> attributes = getAttributes();
 		for (AttributeType attribute : attributes) {
 			if ((attribute.getModelElementTaggedValue() != null)
 					&& (attribute.getModelElementTaggedValue().getTaggedValue("ea_guid") != null)) {
-				if (attribute.getModelElementTaggedValue().getTaggedValue("ea_guid").getTheValue().equals(guid)) {
+				if (attribute.getModelElementTaggedValue().getTaggedValue("ea_guid").getTheValue().equals(xmiId)) {
 					return attribute;
 				}
 			}
@@ -95,7 +95,7 @@ public interface ContentsContainer extends ContentContainer, ModelElementTaggedV
 	default AttributeType getAttribute(String key) {
 		List<AttributeType> attributes = getAttributes();
 		for (AttributeType attribute : attributes) {
-			if (attribute.getKey().equals(key)) {
+			if (attribute.getGUID().equals(key)) {
 				return attribute;
 			}
 		}

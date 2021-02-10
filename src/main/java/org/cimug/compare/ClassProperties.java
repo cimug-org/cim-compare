@@ -72,16 +72,36 @@ public class ClassProperties {
 	protected void processDiffs(ClassType baselineClass, ClassType targetClass) {
 		Properties properties = new Properties(new ArrayList<Property>());
 
-		properties.getProperty().add(new Property("Keywords", null, null, Status.Identical.toString()));
-		properties.getProperty().add(new Property("GenFile", null, null, Status.Identical.toString()));
-		properties.getProperty().add(new Property("Multiplicity", null, null, Status.Identical.toString()));
-		properties.getProperty().add(new Property("Persistence", null, null, Status.Identical.toString()));
-		properties.getProperty().add(new Property("Stereotype", null, null, Status.Identical.toString()));
-		properties.getProperty().add(new Property("Classifier", null, null, Status.Identical.toString()));
-		properties.getProperty().add(new Property("Visibility", null, null, Status.Identical.toString()));
-		properties.getProperty().add(new Property("Concurrency", null, null, Status.Identical.toString()));
-		properties.getProperty().add(new Property("Cardinality", null, null, Status.Identical.toString()));
-		properties.getProperty().add(new Property("Style", null, null, Status.Identical.toString()));
+		properties.getProperty().add(new Property("Keywords", null, null, (this.baselineTaggedValues == null
+				? Status.ModelOnly.toString()
+				: (this.targetTaggedValues == null ? Status.BaselineOnly.toString() : Status.Identical.toString()))));
+		properties.getProperty().add(new Property("GenFile", null, null, (this.baselineTaggedValues == null
+				? Status.ModelOnly.toString()
+				: (this.targetTaggedValues == null ? Status.BaselineOnly.toString() : Status.Identical.toString()))));
+		properties.getProperty().add(new Property("Multiplicity", null, null, (this.baselineTaggedValues == null
+				? Status.ModelOnly.toString()
+				: (this.targetTaggedValues == null ? Status.BaselineOnly.toString() : Status.Identical.toString()))));
+		properties.getProperty().add(new Property("Persistence", null, null, (this.baselineTaggedValues == null
+				? Status.ModelOnly.toString()
+				: (this.targetTaggedValues == null ? Status.BaselineOnly.toString() : Status.Identical.toString()))));
+		properties.getProperty().add(new Property("Stereotype", null, null, (this.baselineTaggedValues == null
+				? Status.ModelOnly.toString()
+				: (this.targetTaggedValues == null ? Status.BaselineOnly.toString() : Status.Identical.toString()))));
+		properties.getProperty().add(new Property("Classifier", null, null, (this.baselineTaggedValues == null
+				? Status.ModelOnly.toString()
+				: (this.targetTaggedValues == null ? Status.BaselineOnly.toString() : Status.Identical.toString()))));
+		properties.getProperty().add(new Property("Visibility", null, null, (this.baselineTaggedValues == null
+				? Status.ModelOnly.toString()
+				: (this.targetTaggedValues == null ? Status.BaselineOnly.toString() : Status.Identical.toString()))));
+		properties.getProperty().add(new Property("Concurrency", null, null, (this.baselineTaggedValues == null
+				? Status.ModelOnly.toString()
+				: (this.targetTaggedValues == null ? Status.BaselineOnly.toString() : Status.Identical.toString()))));
+		properties.getProperty().add(new Property("Cardinality", null, null, (this.baselineTaggedValues == null
+				? Status.ModelOnly.toString()
+				: (this.targetTaggedValues == null ? Status.BaselineOnly.toString() : Status.Identical.toString()))));
+		properties.getProperty().add(new Property("Style", null, null, (this.baselineTaggedValues == null
+				? Status.ModelOnly.toString()
+				: (this.targetTaggedValues == null ? Status.BaselineOnly.toString() : Status.Identical.toString()))));
 
 		if (baselineClass != null && targetClass != null) {
 			// Changed or Identical
@@ -174,7 +194,10 @@ public class ClassProperties {
 						getValue(name, targetTaggedValues), getStatus(name)));
 			} else {
 				properties.getProperty()
-						.add(new Property(TAG_NAME_MAP.get(name), null, null, Status.Identical.toString()));
+						.add(new Property(TAG_NAME_MAP.get(name), null, null,
+								(this.baselineTaggedValues == null ? Status.ModelOnly.toString()
+										: (this.targetTaggedValues == null ? Status.BaselineOnly.toString()
+												: Status.Identical.toString()))));
 			}
 		}
 

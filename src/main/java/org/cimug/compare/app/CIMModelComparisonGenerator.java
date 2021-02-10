@@ -4,6 +4,8 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.LinkedList;
+import java.util.List;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -21,6 +23,8 @@ import org.xml.sax.SAXException;
 
 public class CIMModelComparisonGenerator {
 
+	private static final String PARAM_PACKAGE = "package";
+	private static final String PARAM_MINIMAL = "minimal";
 	private static final String ANSI = "windows-1252";
 	private static final String UTF8 = "UTF-8";
 
@@ -32,10 +36,7 @@ public class CIMModelComparisonGenerator {
 
 	public static void main(String[] args) {
 
-		File[] fileArgs = parseArguments(args);
-
-		String iecPackage = (args[args.length - 1].startsWith("--") ? args[args.length - 1].replaceFirst("--", "")
-				: null);
+		File[] fileArgs = parseFileArguments(args);
 
 		try {
 			DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
@@ -69,8 +70,39 @@ public class CIMModelComparisonGenerator {
 			StreamSource stylesource = new StreamSource(stylesheet);
 			Transformer transformer = f.newTransformer(stylesource);
 
-			if ((iecPackage != null) && !"".equals(iecPackage)) {
-				transformer.setParameter("iecPackage", iecPackage);
+			/**
+			 * Set all XSLT parameters received on the command line. These are passed in as
+			 * various command line options with a leading "--". If the command line option
+			 * includes an equals sign ("=") in it then we know that it is an option that
+			 * has a value associated with it and which must be processed accordingly...
+			 */
+			for (String arg : args) {
+				if (arg.startsWith("--")) {
+					String param = arg.replaceFirst("--", "");
+					String value = null;
+
+					if (arg.contains("=")) {
+						param = param.substring(0, param.indexOf("="));
+						value = arg.substring(arg.indexOf("=") + 1);
+					} 
+
+					switch (param.toLowerCase())
+						{
+						case PARAM_MINIMAL:
+							value = "true"; // defaults to true
+							break;
+						case PARAM_PACKAGE:
+							break;
+						default:
+							System.err.print("Invalid command line option specified: " + arg);
+							System.err.println();
+							printUsage();
+							System.exit(1);
+							break;
+						}
+
+					transformer.setParameter(param, value);
+				}
 			}
 
 			DOMSource source = new DOMSource(document);
@@ -87,19 +119,14 @@ public class CIMModelComparisonGenerator {
 			System.out.println(
 					"\nCIM model comparision report successfully generated:  \n" + outputfile.getAbsolutePath());
 		} catch (SAXException | TransformerException | ParserConfigurationException | IOException e) {
-			Throwable t = e;
-
-			if (e.getCause() != null) {
-				t = e.getCause();
-			}
 			e.printStackTrace();
 		}
 	}
 
-	private static File[] parseArguments(String[] args) {
+	private static File[] parseFileArguments(String[] args) {
 
-		if (((args.length == 1) && ("--help".equals(args[0].toLowerCase()) || "--h".equals(args[0].toLowerCase())))
-				|| (args.length < 1 || ((args.length > 3) && !args[args.length - 1].startsWith("--")))) {
+		if (((args.length == 1) && ("--help".equals(args[0].toLowerCase()) || "--h".equals(args[0].toLowerCase()))) || //
+				(args.length < 1 || ((args.length > 3) && !args[args.length - 1].startsWith("--")))) {
 			printUsage();
 			System.exit(1);
 		}
@@ -107,17 +134,15 @@ public class CIMModelComparisonGenerator {
 		File modelComparisonXMLFile = null;
 		File targetOutputHTMLFile = null;
 
-		File[] arguments = new File[(args[args.length - 1].startsWith("--") ? args.length - 1 : args.length)];
+		List<File> fileArgs = new LinkedList<File>();
 
-		arguments[0] = new File(args[0]);
-
-		if (arguments.length > 1) {
-			arguments[1] = new File(args[1]);
+		for (String arg : args) {
+			if (!arg.startsWith("--")) {
+				fileArgs.add(new File(arg));
+			}
 		}
 
-		if (arguments.length > 2) {
-			arguments[2] = new File(args[2]);
-		}
+		File[] arguments = fileArgs.toArray(new File[fileArgs.size()]);
 
 		boolean isValid = true;
 
@@ -255,41 +280,49 @@ public class CIMModelComparisonGenerator {
 	}
 
 	private static void printUsage() {
-		System.err.println("There are two possible command line usages for the CIM Model Comparison Report utility.");
+		System.err.println();
+		System.err.println("There are two possible command line usages for the CIM Model Comparison Report utility:");
 		System.err.println();
 		System.err.println(
-				"To generate an HTML report using the results file (*.xml) of an Enterprise Architect model comparison use the command line option:");
+				"To generate an HTML report using the results file (*.xml) of an Enterprise Architect model comparison use the command line option.");
 		System.err.println(
-				"   Usage: java -jar cim-compare.jar <comparison-results-xml-file> [<output-directory-or-html-file>] [--<iec-package-name>]");
+				"   Usage: java -jar cim-compare.jar <comparison-results-xml-file> [<output-directory-or-html-file>] [--package=<iec-package-name>] [--minimal]");
 		System.err.println();
 		System.err.println("   Examples: ");
 		System.err.println(
-				"          java -jar cim-compare.jar \"C:\\CIM XMI exports\\CIM15v33_CIM16v26a_EA_Comparison_Report.xml\" \"C:\\Reports\\\"");
+				"          java -jar cim-compare.jar \"C:\\CIM XMI exports\\CIM15v33_CIM16v26a_EA_Comparison_Report.xml\" \"C:\\Comparison Reports\\\"");
 		System.err.println(
-				"          java -jar cim-compare.jar CIM15v33_CIM16v26a_EA_Comparison_Report.xml \"C:\\Reports\\\"");
+				"          java -jar cim-compare.jar CIM15v33_CIM16v26a_EA_Comparison_Report.xml \"C:\\Comparison Reports\\\"");
 		System.err.println(
-				"          java -jar cim-compare.jar CIM15v33_CIM16v26a_EA_Comparison_Report.xml \"C:\\Reports\\\" --IEC61968");
+				"          java -jar cim-compare.jar CIM15v33_CIM16v26a_EA_Comparison_Report.xml \"C:\\Comparison Reports\\\" --package=IEC61968");
 		System.err.println(
 				"          java -jar cim-compare.jar CIM15v33_CIM16v26a_EA_Comparison_Report.xml MyComparisonReport_CIM15v33_CIM16v26a.html");
 		System.err.println("          java -jar cim-compare.jar CIM15v33_CIM16v26a_EA_Comparison_Report.xml");
-		System.err
-				.println("          java -jar cim-compare.jar CIM15v33_CIM16v26a_EA_Comparison_Report.xml --IEC61970");
+		System.err.println("          java -jar cim-compare.jar CIM15v33_CIM16v26a_EA_Comparison_Report.xml --minimal");
+		System.err.println(
+				"          java -jar cim-compare.jar CIM15v33_CIM16v26a_EA_Comparison_Report.xml --package=IEC61970");
+		System.err.println(
+				"          java -jar cim-compare.jar CIM15v33_CIM16v26a_EA_Comparison_Report.xml --package=IEC61970 --minimal");
 		System.err.println();
 		System.err.println(
-				"To generate a model comparison report directly from baseline and target models (XMI files) use the command line option:");
+				"To generate a model comparison report directly from baseline and target models (XMI files) use the command line option.");
 		System.err.println(
-				"   Usage: java -jar cim-compare.jar <baseline-model-xmi-file> <target-model-xmi-file> [<output-directory-or-html-file>] [--<iec-package-name>]");
+				"   Usage: java -jar cim-compare.jar <baseline-model-xmi-file> <target-model-xmi-file> [<output-directory-or-html-file>] [--package=<iec-package-name>] [--minimal]");
 		System.err.println();
 		System.err.println("   Examples: ");
 		System.err.println(
-				"          java -jar cim-compare.jar \"C:\\CIM XMI exports\\CIM15v33.xmi\" \"C:\\CIM XMI exports\\CIM16v26a.xmi\" \"C:\\Reports\\\"");
-		System.err.println("          java -jar cim-compare.jar CIM15v33.xmi CIM16v26a.xmi \"C:\\Reports\\\"");
+				"          java -jar cim-compare.jar \"C:\\CIM XMI exports\\CIM15v33.xmi\" \"C:\\CIM XMI exports\\CIM16v26a.xmi\" \"C:\\Comparison Reports\\\"");
+		System.err.println("          java -jar cim-compare.jar CIM15v33.xmi CIM16v26a.xmi \"C:\\Comparison Reports\\\"");
 		System.err.println(
-				"          java -jar cim-compare.jar CIM15v33.xmi CIM16v26a.xmi \"C:\\Reports\\CIM15v33_CIM16v26a_ComparisonReport.html\"");
+				"          java -jar cim-compare.jar CIM15v33.xmi CIM16v26a.xmi \"C:\\Comparison Reports\\CIM15v33_CIM16v26a_ComparisonReport.html\"");
 		System.err.println(
 				"          java -jar cim-compare.jar CIM15v33.xmi CIM16v26a.xmi CIM15v33_CIM16v26a_ComparisonReport.html");
 		System.err.println(
-				"          java -jar cim-compare.jar CIM15v33.xmi CIM16v26a.xmi CIM15v33_CIM16v26a_ComparisonReport.html --IEC62325");
+				"          java -jar cim-compare.jar CIM15v33.xmi CIM16v26a.xmi CIM15v33_CIM16v26a_ComparisonReport.html --package=IEC62325");
+		System.err.println(
+				"          java -jar cim-compare.jar CIM15v33.xmi CIM16v26a.xmi CIM15v33_CIM16v26a_ComparisonReport.html --minimal");
+		System.err
+				.println("          java -jar cim-compare.jar CIM15v33.xmi CIM16v26a.xmi --package=IEC62325 --minimal");
 		System.err.println();
 	}
 }

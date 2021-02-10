@@ -26,14 +26,19 @@ public class AttributeProperties {
 		TAG_NAME_MAP.put("duplicates", "AllowDuplicates");
 		TAG_NAME_MAP.put("collection", "Collection");
 		TAG_NAME_MAP.put("containment", "Containment");
-		TAG_NAME_MAP.put("derived", "IsDerived");
 		TAG_NAME_MAP.put("styleex", "IsLiteral");
 		TAG_NAME_MAP.put("ordered", "IsOrdered");
 		TAG_NAME_MAP.put("description", "Notes");
 		TAG_NAME_MAP.put("length", "Length");
 		TAG_NAME_MAP.put("lowerBound", "LowerBound");
 		TAG_NAME_MAP.put("upperBound", "UpperBound");
-		TAG_NAME_MAP.put("position", "Position");
+		/**
+		 * We are intentionally commenting out the "position" for the attribute as we do
+		 * not want an attribute flagged as Change due to a change in position. Do not
+		 * remove this comment or the code below...
+		 */
+		// TAG_NAME_MAP.put("position", "Position");
+		// TAG_NAME_MAP.put("derived", "IsDerived");
 		TAG_NAME_MAP.put("precision", "Precision");
 		TAG_NAME_MAP.put("scale", "Scale");
 		TAG_NAME_MAP.put("static", "Static");
@@ -74,10 +79,18 @@ public class AttributeProperties {
 	protected void processDiffs(AttributeType baselineAttribute, AttributeType targetAttribute) {
 		Properties properties = new Properties(new ArrayList<Property>());
 
-		properties.getProperty().add(new Property("Alias", null, null, Status.Identical.toString()));
-		properties.getProperty().add(new Property("Qualifier", null, null, Status.Identical.toString()));
-		properties.getProperty().add(new Property("Container", null, null, Status.Identical.toString()));
-		properties.getProperty().add(new Property("Type", null, null, Status.Identical.toString()));
+		properties.getProperty().add(new Property("Alias", null, null, (this.baselineTaggedValues == null
+				? Status.ModelOnly.toString()
+				: (this.targetTaggedValues == null ? Status.BaselineOnly.toString() : Status.Identical.toString()))));
+		properties.getProperty().add(new Property("Qualifier", null, null, (this.baselineTaggedValues == null
+				? Status.ModelOnly.toString()
+				: (this.targetTaggedValues == null ? Status.BaselineOnly.toString() : Status.Identical.toString()))));
+		properties.getProperty().add(new Property("Container", null, null, (this.baselineTaggedValues == null
+				? Status.ModelOnly.toString()
+				: (this.targetTaggedValues == null ? Status.BaselineOnly.toString() : Status.Identical.toString()))));
+		properties.getProperty().add(new Property("Type", null, null, (this.baselineTaggedValues == null
+				? Status.ModelOnly.toString()
+				: (this.targetTaggedValues == null ? Status.BaselineOnly.toString() : Status.Identical.toString()))));
 
 		if (baselineAttribute != null && targetAttribute != null) {
 			// Changed or Identical
@@ -91,6 +104,12 @@ public class AttributeProperties {
 					(targetAttribute.getVisibility() != null ? targetAttribute.getVisibility() : null), //
 					getStatus(baselineAttribute.getVisibility(), targetAttribute.getVisibility()) //
 			));
+			/**
+			 * We are intentionally commenting out the "Classifier" for the attribute as we
+			 * do not want an attribute flagged as 'Changed' due to a change in the value of
+			 * the classifier. Do not remove this comment or the code below...
+			 */
+			/*
 			properties.getProperty().add(new Property("Classifier", //
 					(baselineAttribute.getStructuralFeatureType() != null
 							&& baselineAttribute.getStructuralFeatureType().getClassifier() != null
@@ -110,6 +129,7 @@ public class AttributeProperties {
 											? targetAttribute.getStructuralFeatureType().getClassifier().getXmiIdref()
 											: null)) //
 			));
+			*/
 			properties.getProperty().add(new Property("Default", //
 					(baselineAttribute.getAttributeInitialValue() != null
 							&& baselineAttribute.getAttributeInitialValue().getExpression() != null
@@ -185,6 +205,12 @@ public class AttributeProperties {
 					null, // null model
 					getStatus(baselineAttribute.getVisibility(), null) //
 			));
+			/**
+			 * We are intentionally commenting out the "Classifier" for the attribute as we
+			 * do not want an attribute flagged as 'Changed' due to a change in the value of
+			 * the classifier. Do not remove this comment or the code below...
+			 */
+			/*
 			properties.getProperty().add(new Property("Classifier", //
 					(baselineAttribute.getStructuralFeatureType() != null
 							&& baselineAttribute.getStructuralFeatureType().getClassifier() != null
@@ -197,6 +223,7 @@ public class AttributeProperties {
 									: null),
 							null) //
 			));
+			*/
 			properties.getProperty().add(new Property("Default", //
 					(baselineAttribute.getAttributeInitialValue() != null
 							&& baselineAttribute.getAttributeInitialValue().getExpression() != null
@@ -247,6 +274,12 @@ public class AttributeProperties {
 					(targetAttribute.getVisibility() != null ? targetAttribute.getVisibility() : null), //
 					getStatus(null, targetAttribute.getVisibility()) //
 			));
+			/**
+			 * We are intentionally commenting out the "Classifier" for the attribute as we
+			 * do not want an attribute flagged as 'Changed' due to a change in the value of
+			 * the classifier. Do not remove this comment or the code below...
+			 */
+			/*
 			properties.getProperty().add(new Property("Classifier", //
 					null, // null baseline
 					(targetAttribute.getStructuralFeatureType() != null
@@ -259,6 +292,7 @@ public class AttributeProperties {
 											? targetAttribute.getStructuralFeatureType().getClassifier().getXmiIdref()
 											: null)) //
 			));
+			*/
 			properties.getProperty().add(new Property("Default", //
 					null, // null baseline
 					(targetAttribute.getAttributeInitialValue() != null
@@ -306,7 +340,10 @@ public class AttributeProperties {
 						getValue(name, targetTaggedValues), getStatus(name)));
 			} else {
 				properties.getProperty()
-						.add(new Property(TAG_NAME_MAP.get(name), null, null, Status.Identical.toString()));
+						.add(new Property(TAG_NAME_MAP.get(name), null, null,
+								(this.baselineTaggedValues == null ? Status.ModelOnly.toString()
+										: (this.targetTaggedValues == null ? Status.BaselineOnly.toString()
+												: Status.Identical.toString()))));
 			}
 		}
 
@@ -363,6 +400,19 @@ public class AttributeProperties {
 			}
 		}
 		return null;
+	}
+
+	public Status getStatus() {
+		if (this.baselineAttribute == null)
+			return Status.ModelOnly;
+		if (this.targetAttribute == null)
+			return Status.BaselineOnly;
+		for (Property property : properties.getProperty()) {
+			if (!Status.Identical.toString().equals(property.getStatus())) {
+				return Status.Changed;
+			}
+		}
+		return Status.Identical;
 	}
 
 	private String getStatus(String name) {

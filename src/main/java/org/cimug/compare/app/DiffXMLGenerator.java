@@ -29,8 +29,8 @@ class DiffXMLGenerator {
 
 			validateExporterVersion(baselineXmiFile, targetXmiFile, baselineXmi, targetXmi);
 
-			DiffReportGenerator generator = new GUIDBasedDiffReportGeneratorImpl(baselineXmi.getXMIContent().getModel(),
-					targetXmi.getXMIContent().getModel(), outputFile);
+			DiffReportGenerator generator = new GUIDBasedDiffReportGeneratorImpl(baselineXmi.getXMIContent(),
+					targetXmi.getXMIContent(), outputFile);
 
 			generator.processDiffReport();
 		} catch (Exception e) {

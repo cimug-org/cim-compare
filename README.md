@@ -22,7 +22,7 @@ As illustrated next, UML diagrams that have been added, removed or modified can 
 
 ## Enterprise Architect XMI Export Procedures
 
-The procedure to perform an export of an EA model in an **XMI 1.1** compliant format is as follows (screenshots taken from EA v15.1):
+The procedure to perform an export of EA baseline and target models as **XMI 1.1** compliant files is as follows (screenshots taken from EA v15.1):
 
 1.  In Enterprise Architect load the “baseline” (or older) model and select the top-level package of the model as shown.
 

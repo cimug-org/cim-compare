@@ -22,13 +22,7 @@ As illustrated next, UML diagrams that have been added, removed or modified can 
 
 ## Enterprise Architect XMI Export Procedures
 
-The term “target” is used to describe some current (or later) version of the CIM
-that is to be the target of the comparison. The term “baseline” is used to
-describe the **historical** model against which the “target” model is to be
-compared to by **cim-compare** to determine what has changed.
-
-
-The procedure to perform an export of an EA model in an **XMI 1.1** compliant format is as follows (screenshots taken from EA v15.1):
+The procedure to perform an export of EA baseline and target models as **XMI 1.1** compliant files is as follows (screenshots taken from EA v15.1):
 
 1.  In Enterprise Architect load the “baseline” (or older) model and select the top-level package of the model as shown.
 
@@ -68,7 +62,7 @@ The **cim-compare** utility has two possible command-line options to produce com
 The preferred usage is to directly specify two XMI 1.1 compliant files representing the "baseline" and "target" models exported as previously described in "Enterprise Architect XMI Export Procedures". In this scenario the command-line usage takes the following form:
 
 ```
-java -jar cim-compare.jar <baseline-model-xmi-file> <target-model-xmi-file> [<output-directory-or-html-file>] [--package=<iec-package-name>] [--minimum]
+java -jar cim-compare.jar <baseline-model-xmi-file> <target-model-xmi-file> [<output-directory-or-html-file>] [--package=<iec-package-name>] [--minimal]
 ```
 
 *Parameter Details*:
@@ -81,17 +75,17 @@ java -jar cim-compare.jar <baseline-model-xmi-file> <target-model-xmi-file> [<ou
 
 **[--package=\<iec-package-name\>] (Optional):** The root package within the models from which to start the comparison report from. Appearing at the end of the command-line after file and directory specifications, when specified the package must exist in both the baseline and target models (e.g. --package=IEC61970, --package=IEC61968, --package=IEC62325, --package=TC57CIM, etc.) and be specified with two leading dashes (--). Note that when no IEC package name is specified that the report is generated from the root package in the models.
 
-**[--minimum] (Optional):** When specified **cim-compare** will exclude all "Identical" packages, classes, attributes, links, diagrams, etc. from the generated report. This is useful when it is necessary to perform detailed analysis of only the most concise set of changes between models.
+**[--minimal] (Optional):** When specified **cim-compare** will exclude all "Identical" packages, classes, attributes, links, diagrams, etc. from the generated report. This is useful when it is necessary to perform detailed analysis of only the most concise set of changes between models.
 
 Note that in command line examples that follow whenever a directory or file path contains spaces it is specified within quotes.
 
 | **Command Line Examples:**                                                                               |
 |----------------------------------------------------------------------------------------------------------|
 | java -jar **cim-compare.jar** "C:\\XMI exports\\15v33.xmi" "C:\\XMI exports\\CIM16v26a.xmi" "C:\\" |
-| java -jar **cim-compare.jar** "C:\\XMI exports\\15v33.xmi" "C:\\XMI exports\\CIM16v26a.xmi" --package=IEC61970 --minimum |
-| java -jar **cim-compare.jar** CIM15v33.xmi CIM16v26a.xmi C:\\ --minimum  |
+| java -jar **cim-compare.jar** "C:\\XMI exports\\15v33.xmi" "C:\\XMI exports\\CIM16v26a.xmi" --package=IEC61970 --minimal |
+| java -jar **cim-compare.jar** CIM15v33.xmi CIM16v26a.xmi C:\\ --minimal  |
 | java -jar **cim-compare.jar** CIM15v33.xmi CIM16v26a.xmi C:\\CIM15v33_CIM16v26a_ComparisonReport.html |
-| java -jar **cim-compare.jar** CIM15v33.xmi CIM16v26a.xmi CIM15v33_CIM16v26a_ComparisonReport.html --minimum |
+| java -jar **cim-compare.jar** CIM15v33.xmi CIM16v26a.xmi CIM15v33_CIM16v26a_ComparisonReport.html --minimal |
 | java -jar **cim-compare.jar** CIM15v33.xmi CIM16v26a.xmi CIM15v33_CIM16v26a_ComparisonReport.html --package=IEC62325 |
 
 ### Option \#2: EA Model Comparison Logs as Input
@@ -101,7 +95,7 @@ The second option is by specifying an **EA model comparison log** file as input 
 This particular usage takes the following form:
 
 ```
-java -jar cim-compare.jar <comparison-results-xml-file> [<output-directory-or-html-file>] [--package=<iec-package-name>] [--minimum]
+java -jar cim-compare.jar <comparison-results-xml-file> [<output-directory-or-html-file>] [--package=<iec-package-name>] [--minimal]
 ```
 
 *Parameter Details*:
@@ -112,19 +106,19 @@ java -jar cim-compare.jar <comparison-results-xml-file> [<output-directory-or-ht
 
 **[--package=\<iec-package-name\>] (Optional):** The root package to compare and generate the comparison report on. Appearing at the end of the command-line after file and directory specifications, the package must exist in both the baseline and target models (e.g. --package=IEC61970, --package=IEC61968, --package=IEC62325, --package=TC57CIM, etc.) and be specified with two leading dashes (--). Note that when no IEC package name is specified that the report is generated from the root package in the models.
 
-**[--minimum] (Optional):** When specified **cim-compare** will exclude all "Identical" packages, classes, attributes, links, diagrams, etc. from the generated report. This is useful when it is necessary to perform detailed analysis of only the most concise set of changes between models.
+**[--minimal] (Optional):** When specified **cim-compare** will exclude all "Identical" packages, classes, attributes, links, diagrams, etc. from the generated report. This is useful when it is necessary to perform detailed analysis of only the most concise set of changes between models.
 
 Again, in the command line examples that follow directory or file path containing spaces are specified within quotes.
 
 | **Command Line Examples:**                                                                                |
 |-----------------------------------------------------------------------------------------------------------|
 | java -jar **cim-compare.jar** "C:\\CIM XMI Exports\\CIM15v33_CIM16v26a_EA_Comparison_Report.xml" "C:\\Reports" |
-| java -jar **cim-compare.jar** CIM15v33_CIM16v26a_EA_Comparison_Report.xml "C:\\Comparison Reports" --minimum |
+| java -jar **cim-compare.jar** CIM15v33_CIM16v26a_EA_Comparison_Report.xml "C:\\Comparison Reports" --minimal |
 | java -jar **cim-compare.jar** CIM15v33_CIM16v26a_EA_Comparison_Report.xml "C:\\Comparison Reports" --package=IEC61968 |
 | java -jar **cim-compare.jar** CIM15v33_CIM16v26a_EA_Comparison_Report.xml ComparisonReport_CIM15v33_CIM16v26a.html |
 | java -jar **cim-compare.jar** CIM15v33_CIM16v26a_EA_Comparison_Report.xml|
 | java -jar **cim-compare.jar** CIM15v33_CIM16v26a_EA_Comparison_Report.xml --package=IEC61970|
-| java -jar **cim-compare.jar** CIM15v33_CIM16v26a_EA_Comparison_Report.xml --package=IEC61970 --minimum|
+| java -jar **cim-compare.jar** CIM15v33_CIM16v26a_EA_Comparison_Report.xml --package=IEC61970 --minimal|
 
 ## Java Technical Requirements
 

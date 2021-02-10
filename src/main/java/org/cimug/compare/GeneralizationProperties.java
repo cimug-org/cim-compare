@@ -32,7 +32,7 @@ public class GeneralizationProperties {
 
 	private SourceGeneralizationEndProperties sourcePropsProcessor;
 	private DestinationGeneralizationEndProperties destinationPropsProcessor;
-	
+
 	private List<TaggedValueType> baselineTaggedValues;
 	private List<TaggedValueType> targetTaggedValues;
 
@@ -43,9 +43,9 @@ public class GeneralizationProperties {
 		this.baselineGeneralization = baselineGeneralization;
 		this.targetGeneralization = targetGeneralization;
 		//
-		this.sourcePropsProcessor = new SourceGeneralizationEndProperties(baselineGeneralization,
+		this.sourcePropsProcessor = new SourceGeneralizationEndProperties(baselineGeneralization, targetGeneralization);
+		this.destinationPropsProcessor = new DestinationGeneralizationEndProperties(baselineGeneralization,
 				targetGeneralization);
-		this.destinationPropsProcessor = new DestinationGeneralizationEndProperties(baselineGeneralization, targetGeneralization);
 		//
 		if (this.baselineGeneralization != null) {
 			ModelElementTaggedValue baselineElement = this.baselineGeneralization.getModelElementTaggedValue();
@@ -62,14 +62,14 @@ public class GeneralizationProperties {
 			if (targetElement != null) {
 				if (this.targetTaggedValues == null)
 					this.targetTaggedValues = new ArrayList<TaggedValueType>();
-				this.targetTaggedValues.addAll(targetElement.getTaggedValues()); 
+				this.targetTaggedValues.addAll(targetElement.getTaggedValues());
 				targetElement.getTaggedValues().forEach(taggedValue -> tagNames.add(taggedValue.getTag()));
 			}
 		}
 
 		processDiffs(baselineGeneralization, targetGeneralization);
 	}
-	
+
 	public SourceGeneralizationEndProperties getSourcePropsProcessor() {
 		return this.sourcePropsProcessor;
 	}
@@ -81,16 +81,23 @@ public class GeneralizationProperties {
 	protected void processDiffs(GeneralizationType baselineGeneralization, GeneralizationType targetGeneralization) {
 		Properties properties = new Properties(new ArrayList<Property>());
 
-		properties.getProperty().add(new Property("Alias", null, null, Status.Identical.toString()));
-		properties.getProperty().add(new Property("Name", null, null, Status.Identical.toString()));
-		
+		properties.getProperty().add(new Property("Alias", null, null, (this.baselineTaggedValues == null
+				? Status.ModelOnly.toString()
+				: (this.targetTaggedValues == null ? Status.BaselineOnly.toString() : Status.Identical.toString()))));
+		properties.getProperty().add(new Property("Name", null, null, (this.baselineTaggedValues == null
+				? Status.ModelOnly.toString()
+				: (this.targetTaggedValues == null ? Status.BaselineOnly.toString() : Status.Identical.toString()))));
+
 		for (String name : TAG_NAME_MAP.keySet()) {
 			if (tagNames.contains(name)) {
 				properties.getProperty().add(new Property(TAG_NAME_MAP.get(name), getValue(name, baselineTaggedValues),
 						getValue(name, targetTaggedValues), getStatus(name)));
 			} else {
 				properties.getProperty()
-						.add(new Property(TAG_NAME_MAP.get(name), null, null, Status.Identical.toString()));
+						.add(new Property(TAG_NAME_MAP.get(name), null, null,
+								(this.baselineTaggedValues == null ? Status.ModelOnly.toString()
+										: (this.targetTaggedValues == null ? Status.BaselineOnly.toString()
+												: Status.Identical.toString()))));
 			}
 		}
 

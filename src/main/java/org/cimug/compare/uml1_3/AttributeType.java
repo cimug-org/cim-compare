@@ -13,7 +13,7 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 
-import org.cimug.compare.uml1_3.ifaces.KeyIdentifier;
+import org.cimug.compare.uml1_3.ifaces.GUIDIdentifier;
 import org.cimug.compare.uml1_3.ifaces.ModelElementTaggedValueContainer;
 import org.cimug.compare.uml1_3.ifaces.NamedType;
 
@@ -50,7 +50,7 @@ import org.cimug.compare.uml1_3.ifaces.NamedType;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "AttributeType", propOrder = { "attributeInitialValue", "structuralFeatureType",
 		"modelElementStereotype", "modelElementTaggedValue" })
-public class AttributeType implements ModelElementTaggedValueContainer, NamedType, KeyIdentifier {
+public class AttributeType implements ModelElementTaggedValueContainer, NamedType, GUIDIdentifier {
 
 	@XmlElement(name = "Attribute.initialValue", required = true)
 	protected AttributeInitialValueType attributeInitialValue;
@@ -281,7 +281,7 @@ public class AttributeType implements ModelElementTaggedValueContainer, NamedTyp
 	}
 
 	@Override
-	public String getKey() {
+	public String getGUID() {
 		return getTheValue("ea_guid");
 	}
 
@@ -289,7 +289,7 @@ public class AttributeType implements ModelElementTaggedValueContainer, NamedTyp
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((getKey() == null) ? 0 : getKey().hashCode());
+		result = prime * result + ((getGUID() == null) ? 0 : getGUID().hashCode());
 		return result;
 	}
 
@@ -302,10 +302,10 @@ public class AttributeType implements ModelElementTaggedValueContainer, NamedTyp
 		if (getClass() != obj.getClass())
 			return false;
 		AttributeType other = (AttributeType) obj;
-		if (getKey() == null) {
-			if (other.getKey() != null)
+		if (getGUID() == null) {
+			if (other.getGUID() != null)
 				return false;
-		} else if (!getKey().equals(other.getKey()))
+		} else if (!getGUID().equals(other.getGUID()))
 			return false;
 		return true;
 	}

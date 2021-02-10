@@ -30,7 +30,7 @@ public interface PackageContainer {
 	default PackageType getPackage(String key) {
 		if (getNamespaceOwnedElement() != null) {
 			for (PackageType aPackage : getNamespaceOwnedElement().getPackages()) {
-				if (aPackage.getKey().equals(key)) {
+				if (aPackage.getGUID().equals(key)) {
 					return aPackage;
 				}
 			}
@@ -41,7 +41,7 @@ public interface PackageContainer {
 	default PackageType getPackageByGUID(String guid) {
 		if (getNamespaceOwnedElement() != null) {
 			for (PackageType aPackage : getNamespaceOwnedElement().getPackages()) {
-				if (aPackage.getKey().equals(guid)) {
+				if (aPackage.getGUID().equals(guid)) {
 					return aPackage;
 				}
 			}
@@ -59,7 +59,7 @@ public interface PackageContainer {
 	default boolean hasPackage(String guid) {
 		if (getNamespaceOwnedElement() != null) {
 			for (PackageType aPackage : getNamespaceOwnedElement().getPackages()) {
-				if (aPackage.getKey().equals(guid)) {
+				if (aPackage.getGUID().equals(guid)) {
 					return true;
 				}
 			}
@@ -77,7 +77,7 @@ public interface PackageContainer {
 	default ClassType getClass(String key) {
 		if (getNamespaceOwnedElement() != null) {
 			for (ClassType aClass : getNamespaceOwnedElement().getClasses()) {
-				if (aClass.getKey().equals(key)) {
+				if (aClass.getGUID().equals(key)) {
 					return aClass;
 				}
 			}
@@ -88,7 +88,7 @@ public interface PackageContainer {
 	default PackageType getClassByGUID(String guid) {
 		if (getNamespaceOwnedElement() != null) {
 			for (PackageType aPackage : getNamespaceOwnedElement().getPackages()) {
-				if (aPackage.getKey().equals(guid)) {
+				if (aPackage.getGUID().equals(guid)) {
 					return aPackage;
 				}
 			}

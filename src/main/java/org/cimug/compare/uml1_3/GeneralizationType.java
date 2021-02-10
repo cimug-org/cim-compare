@@ -23,7 +23,7 @@ import javax.xml.bind.annotation.XmlType;
 import org.cimug.compare.DiffUtils;
 import org.cimug.compare.uml1_3.ifaces.ConnectionContainer;
 import org.cimug.compare.uml1_3.ifaces.ContentsContainer;
-import org.cimug.compare.uml1_3.ifaces.KeyIdentifier;
+import org.cimug.compare.uml1_3.ifaces.GUIDIdentifier;
 import org.cimug.compare.uml1_3.ifaces.NamedType;
 
 /**
@@ -57,7 +57,8 @@ import org.cimug.compare.uml1_3.ifaces.NamedType;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "GeneralizationType", propOrder = { "content" })
-public class GeneralizationType implements ContentsContainer, ConnectionContainer, NamedType, KeyIdentifier {
+public class GeneralizationType
+		implements ContentsContainer, ConnectionContainer, NamedType, GUIDIdentifier, Comparable<GeneralizationType> {
 
 	@XmlElementRefs({
 			@XmlElementRef(name = "ModelElement.stereotype", namespace = "omg.org/UML1.3", type = JAXBElement.class, required = false),
@@ -207,7 +208,7 @@ public class GeneralizationType implements ContentsContainer, ConnectionContaine
 	}
 
 	@Override
-	public String getKey() {
+	public String getGUID() {
 		return DiffUtils.convertXmiIdToEAGUID(getXmiId());
 	}
 
@@ -227,6 +228,41 @@ public class GeneralizationType implements ContentsContainer, ConnectionContaine
 	@Override
 	public String getName() {
 		return null;
+	}
+
+	/**
+	 * Compares this GeneralizationType with the specified GeneralizationType. This
+	 * method is provided in preference to individual methods for each of the six
+	 * boolean comparison operators ({@literal <}, ==, {@literal >}, {@literal >=},
+	 * !=, {@literal <=}). The suggested idiom for performing these comparisons is:
+	 * {@code
+	 * (x.compareTo(y)} &lt;<i>op</i>&gt; {@code 0)}, where &lt;<i>op</i>&gt; is one
+	 * of the six comparison operators.
+	 *
+	 * @param otherGeneralizationType
+	 *            GeneralizationType to which this GeneralizationType is to be
+	 *            compared.
+	 * @return -1, 0 or 1 as this GeneralizationType is numerically less than, equal
+	 *         to, or greater than {@code otherGeneralizationType}.
+	 */
+	public int compareTo(GeneralizationType otherGeneralizationType) {
+		if (otherGeneralizationType == null) {
+			return 1;
+		}
+
+		String xmiId = getXmiId();
+		String otherXmiId = otherGeneralizationType.getXmiId();
+
+		if (xmiId == null && otherXmiId == null) {
+			return 0;
+		}
+		if (xmiId == null) {
+			return -1;
+		}
+		if (otherXmiId == null) {
+			return 1;
+		}
+		return xmiId.compareTo(otherXmiId);
 	}
 
 }

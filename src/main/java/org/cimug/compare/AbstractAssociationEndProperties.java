@@ -81,10 +81,10 @@ public abstract class AbstractAssociationEndProperties {
 			AssociationEndType targetAssociationEnd, AssociationType targetParent) {
 		Properties properties = new Properties(new ArrayList<Property>());
 
-		properties.getProperty().add(new Property("Alias", null, null, Status.Identical.toString()));
-		properties.getProperty().add(new Property("Constraint", null, null, Status.Identical.toString()));
-		properties.getProperty().add(new Property("roleType", null, null, Status.Identical.toString()));
-		properties.getProperty().add(new Property("Qualifier", null, null, Status.Identical.toString()));
+		properties.getProperty().add(new Property("Alias", null, null, (this.baselineTaggedValues == null ? Status.ModelOnly.toString() : (this.targetTaggedValues == null ? Status.BaselineOnly.toString() : Status.Identical.toString()))));
+		properties.getProperty().add(new Property("Constraint", null, null, (this.baselineTaggedValues == null ? Status.ModelOnly.toString() : (this.targetTaggedValues == null ? Status.BaselineOnly.toString() : Status.Identical.toString()))));
+		properties.getProperty().add(new Property("roleType", null, null, (this.baselineTaggedValues == null ? Status.ModelOnly.toString() : (this.targetTaggedValues == null ? Status.BaselineOnly.toString() : Status.Identical.toString()))));
+		properties.getProperty().add(new Property("Qualifier", null, null, (this.baselineTaggedValues == null ? Status.ModelOnly.toString() : (this.targetTaggedValues == null ? Status.BaselineOnly.toString() : Status.Identical.toString()))));
 
 		if (baselineAssociationEnd != null && targetAssociationEnd != null) {
 			// Changed or Identical
@@ -224,7 +224,7 @@ public abstract class AbstractAssociationEndProperties {
 						getValue(name, targetTaggedValues), getStatus(name)));
 			} else {
 				properties.getProperty()
-						.add(new Property(tagNamesMap.get(name), null, null, Status.Identical.toString()));
+						.add(new Property(tagNamesMap.get(name), null, null, (this.baselineTaggedValues == null ? Status.ModelOnly.toString() : (this.targetTaggedValues == null ? Status.BaselineOnly.toString() : Status.Identical.toString()))));
 			}
 		}
 

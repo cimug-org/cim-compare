@@ -23,7 +23,7 @@ import javax.xml.bind.annotation.XmlType;
 import org.cimug.compare.DiffUtils;
 import org.cimug.compare.uml1_3.ifaces.ConnectionContainer;
 import org.cimug.compare.uml1_3.ifaces.ContentsContainer;
-import org.cimug.compare.uml1_3.ifaces.KeyIdentifier;
+import org.cimug.compare.uml1_3.ifaces.GUIDIdentifier;
 
 /**
  * <p>
@@ -57,7 +57,8 @@ import org.cimug.compare.uml1_3.ifaces.KeyIdentifier;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "AssociationType", propOrder = { "content" })
-public class AssociationType implements ContentsContainer, ConnectionContainer, KeyIdentifier {
+public class AssociationType
+		implements ContentsContainer, ConnectionContainer, GUIDIdentifier, Comparable<AssociationType> {
 
 	@XmlElementRefs({
 			@XmlElementRef(name = "ModelElement.stereotype", namespace = "omg.org/UML1.3", type = JAXBElement.class, required = false),
@@ -216,8 +217,73 @@ public class AssociationType implements ContentsContainer, ConnectionContainer, 
 	}
 
 	@Override
-	public String getKey() {
+	public String getGUID() {
 		return DiffUtils.convertXmiIdToEAGUID(getXmiId());
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((xmiId == null) ? 0 : xmiId.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		AssociationType other = (AssociationType) obj;
+		if (xmiId == null) {
+			if (other.xmiId != null)
+				return false;
+		} else if (!xmiId.equals(other.xmiId))
+			return false;
+		return true;
+	}
+
+	@Override
+	public String toString() {
+		return "AssociationType [xmiId=" + xmiId + ", source=" + getSourceAssociationEnd() + ", target="
+				+ getDestinationAssociationEnd() + "]";
+	}
+
+	/**
+	 * Compares this AssociationType with the specified AssociationType. This method
+	 * is provided in preference to individual methods for each of the six boolean
+	 * comparison operators ({@literal <}, ==, {@literal >}, {@literal >=}, !=,
+	 * {@literal <=}). The suggested idiom for performing these comparisons is:
+	 * {@code
+	 * (x.compareTo(y)} &lt;<i>op</i>&gt; {@code 0)}, where &lt;<i>op</i>&gt; is one
+	 * of the six comparison operators.
+	 *
+	 * @param otherAssociationType
+	 *            AssociationType to which this AssociationType is to be compared.
+	 * @return -1, 0 or 1 as this AssociationType is numerically less than, equal
+	 *         to, or greater than {@code otherAssociationType}.
+	 */
+	public int compareTo(AssociationType otherAssociationType) {
+		if (otherAssociationType == null) {
+			return 1;
+		}
+
+		String xmiId = getXmiId();
+		String otherXmiId = otherAssociationType.getXmiId();
+
+		if (xmiId == null && otherXmiId == null) {
+			return 0;
+		}
+		if (xmiId == null) {
+			return -1;
+		}
+		if (otherXmiId == null) {
+			return 1;
+		}
+		return xmiId.compareTo(otherXmiId);
 	}
 
 }

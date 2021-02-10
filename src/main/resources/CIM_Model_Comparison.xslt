@@ -2,10 +2,35 @@
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" version="1.0">
     <xsl:output method="html" />
 
-    <!-- Receives an IEC package if one is specified on the command line.  Will be used
-    to  -->
-    <xsl:param name="iecPackage" />
+    <!-- Receives an IEC package if one is specified on the command line.  Will be used to filter out and ONLY generate a report for just the specified package. -->
+    <xsl:param name="package" />
+    <!-- Receives the 'minimal' command line option if one is specified.  -->
+    <xsl:param name="minimal" />
 
+    <!-- We introduced the 'non-minimal' variable as it is logically cleaner when used in the condition statements in this XSLT.
+         From an end-user perspective, the 'minimal' command line option makes more sense from that perspective.  Thus the pivot 
+         here of the logic. -->
+    <xsl:variable name="non-minimal">
+        <xsl:choose>
+            <!--  We test for existence of the $minimal parameter. If it doesn't exist we drop through and we set the value
+                  for the $non-minimal variable to 'true' meaning that we do want to include all classes/packages that are 
+                  identical. If it does exist we proceed to check if the value is 'true' and set $non-minimal accordingly.  -->
+            <xsl:when test="$minimal">
+                <xsl:choose>
+                    <xsl:when test="$minimal = 'true'">
+                        <xsl:text>false</xsl:text>
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <xsl:text>true</xsl:text>
+                    </xsl:otherwise>
+            	</xsl:choose>
+            </xsl:when>
+            <xsl:otherwise>
+                <xsl:text>true</xsl:text>
+            </xsl:otherwise>
+    	</xsl:choose>
+    </xsl:variable>
+    
     <!-- THE following variable declaration handles pre-processing of what would be costly (and repetitive) XSLT calls to obtain class  
          information such as GUID and color.  By building out a simple formatted string the XSLT processing speed is greatly improved. 
          The format of the string is:      |name:guid:color|...|name:guid:color|   
@@ -41,20 +66,122 @@
         </xsl:for-each>
         <xsl:text>|</xsl:text>
     </xsl:variable>
+
+    <!-- THE following variable declaration handles pre-processing of what would be costly (and repetitive) XSLT calls to obtain diagram  
+         information such as GUID and color.  By building out a simple formatted string the XSLT processing speed is greatly improved. 
+         The format of the string is:      |name:guid:color|...|name:guid:color|   
+         with the pipe (|) serving as the delimiter between diagrams.   -->
+    <xsl:variable name="all-diagrams">
+        <xsl:for-each select="/.//CompareItem[@type='Diagram']">
+            <xsl:value-of select="concat('|', @name, ':', @guid, ':')" />
+            <xsl:choose>
+                <xsl:when test="@status='Baseline only'">
+                    <xsl:text>#F5B7B1</xsl:text>
+                </xsl:when>
+                <xsl:when test="@status='Model only'">
+                    <xsl:text>#ABEBC6</xsl:text>
+                </xsl:when>
+                <xsl:when test="@status='Moved'">
+                    <xsl:text>#F9E79F</xsl:text>
+                </xsl:when>
+                <xsl:when test="@status='Changed'">
+                    <xsl:text>#D6EAF8</xsl:text>
+                </xsl:when>
+                <xsl:when test="@status='Identical'">
+                    <xsl:text>#EBDEF0</xsl:text>
+                </xsl:when>
+                <xsl:otherwise>
+                    <!--  Defaults to white... -->
+                    <xsl:text>#FFFFFF</xsl:text>
+                </xsl:otherwise>
+            </xsl:choose>
+        </xsl:for-each>
+        <xsl:text>|</xsl:text>
+        <xsl:for-each select="/.//CompareItem[@type='' and ./Properties/Property[@name='DiagramType']]">
+           <xsl:value-of select="concat('|', @name, ':', @guid, ':', '#F5B7B1')" />
+        </xsl:for-each>
+        <xsl:text>|</xsl:text>
+    </xsl:variable>
+
+    <xsl:variable name="baseline-version-61970">     
+        <xsl:if test="//CompareItem[@type='Class' and @name='IEC61970CIMVersion']/CompareItem[@name='version']/Properties/Property[@name='Default']/@baseline">
+            <xsl:value-of select="//CompareItem[@type='Class' and @name='IEC61970CIMVersion']/CompareItem[@name='version']/Properties/Property[@name='Default']/@baseline"/>
+        </xsl:if>
+    </xsl:variable>
     
-    <xsl:variable name="base-version">	   
+    <xsl:variable name="target-version-61970">     
+        <xsl:if test="//CompareItem[@type='Class' and @name='IEC61970CIMVersion']/CompareItem[@name='version']/Properties/Property[@name='Default']/@model">
+            <xsl:value-of select="//CompareItem[@type='Class' and @name='IEC61970CIMVersion']/CompareItem[@name='version']/Properties/Property[@name='Default']/@model"/>
+        </xsl:if>
+    </xsl:variable>
+    
+    <xsl:variable name="baseline-version-61968">     
+        <xsl:if test="//CompareItem[@type='Class' and @name='IEC61968CIMVersion']/CompareItem[@name='version']/Properties/Property[@name='Default']/@baseline">
+            <xsl:value-of select="//CompareItem[@type='Class' and @name='IEC61968CIMVersion']/CompareItem[@name='version']/Properties/Property[@name='Default']/@baseline"/>
+        </xsl:if>
+    </xsl:variable>
+    
+    <xsl:variable name="target-version-61968">     
+        <xsl:if test="//CompareItem[@type='Class' and @name='IEC61968CIMVersion']/CompareItem[@name='version']/Properties/Property[@name='Default']/@model">
+            <xsl:value-of select="//CompareItem[@type='Class' and @name='IEC61968CIMVersion']/CompareItem[@name='version']/Properties/Property[@name='Default']/@model"/>
+        </xsl:if>
+    </xsl:variable>
+    
+    <xsl:variable name="baseline-version-62325">     
+        <xsl:if test="//CompareItem[@type='Class' and @name='IEC62325CIMVersion']/CompareItem[@name='version']/Properties/Property[@name='Default']/@baseline">
+            <xsl:value-of select="//CompareItem[@type='Class' and @name='IEC62325CIMVersion']/CompareItem[@name='version']/Properties/Property[@name='Default']/@baseline"/>
+        </xsl:if>
+    </xsl:variable>
+    
+    <xsl:variable name="target-version-62325">     
+        <xsl:if test="//CompareItem[@type='Class' and @name='IEC62325CIMVersion']/CompareItem[@name='version']/Properties/Property[@name='Default']/@model">
+            <xsl:value-of select="//CompareItem[@type='Class' and @name='IEC62325CIMVersion']/CompareItem[@name='version']/Properties/Property[@name='Default']/@model"/>
+        </xsl:if>
+    </xsl:variable>
+    
+    <xsl:variable name="baseline-version">	   
         <xsl:choose>
-            <xsl:when test="//CompareItem[@type='Class' and @name='IEC61970CIMVersion']/CompareItem[@name='version']/Properties/Property[@name='Default']/@baseline">
-                <xsl:value-of select="//CompareItem[@type='Class' and @name='IEC61970CIMVersion']/CompareItem[@name='version']/Properties/Property[@name='Default']/@baseline"/>
+            <xsl:when test="$baseline-version-61970 and $baseline-version-61968 and $baseline-version-62325">
+            	<xsl:choose>
+                	<xsl:when test="$baseline-version-61970 = $target-version-61970">
+                        <!-- Since the baseline and target packages for 61970 are identical we need to concat the differeniate between the baseline and target models. -->
+                    	<xsl:value-of select="concat($baseline-version-61970, '_', $baseline-version-61968, '_', $baseline-version-62325)"/>
+                	</xsl:when>
+                    <xsl:otherwise>
+                        <!-- Since the baseline and target packages for 61970 are NOT identical we just use the 61970 baseline package to differentiate. Makes for shorter table headers. -->
+                        <xsl:value-of select="$baseline-version-61970"/>
+                    </xsl:otherwise>
+                </xsl:choose>
+            </xsl:when>
+            <xsl:when test="$baseline-version-61968">
+                <xsl:value-of select="$baseline-version-61968"/>
+            </xsl:when>
+            <xsl:when test="$baseline-version-62325">
+                <xsl:value-of select="$baseline-version-62325"/>
             </xsl:when>
             <xsl:otherwise><xsl:text>Unspecified</xsl:text></xsl:otherwise>
         </xsl:choose>
     </xsl:variable>
     
-    <xsl:variable name="latest-version">     
+    <xsl:variable name="target-version">     
         <xsl:choose>
-            <xsl:when test="//CompareItem[@type='Class' and @name='IEC61970CIMVersion']/CompareItem[@name='version']/Properties/Property[@name='Default']/@model">
-                <xsl:value-of select="//CompareItem[@type='Class' and @name='IEC61970CIMVersion']/CompareItem[@name='version']/Properties/Property[@name='Default']/@model"/>
+            <xsl:when test="$target-version-61970 and $target-version-61968 and $target-version-62325">
+                <xsl:choose>
+                    <xsl:when test="$target-version-61970 = $baseline-version-61970">
+                        <!-- Since the baseline and target packages for 61970 are identical we need to concat the differeniate between the baseline and target models. -->
+                        <xsl:value-of select="concat($target-version-61970, '_', $target-version-61968, '_', $target-version-62325)"/>
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <!-- Since the baseline and target packages for 61970 are NOT identical we just use the 61970 target package to differentiate. Makes for shorter table headers. -->
+                        <xsl:value-of select="$target-version-61970"/>
+                    </xsl:otherwise>
+                </xsl:choose>
+            </xsl:when>
+            <xsl:when test="$target-version-61968">
+                <xsl:value-of select="$target-version-61968"/>
+            </xsl:when>
+            <xsl:when test="$target-version-62325">
+                <xsl:value-of select="$target-version-62325"/>
             </xsl:when>
             <xsl:otherwise><xsl:text>Unspecified</xsl:text></xsl:otherwise>
         </xsl:choose>
@@ -601,13 +728,13 @@
                 <p>
                   <div class="topnav">
                     <div class="title-container">
-                        <span style="font-size:1rem;font-weight:bold">Comparison Report of Changes Between CIM model <xsl:value-of select="$base-version"/> (baseline) and <xsl:value-of select="$latest-version"/></span>
+                        <span style="font-size:1rem;font-weight:bold">Comparison Report of Changes Between CIM model <xsl:value-of select="$baseline-version"/> (baseline) and <xsl:value-of select="$target-version"/></span>
                     </div>
                     <div class="button-container"><button type="button" onClick="return toggleHeaders(false);"><i class="fas fa-compress-arrows-alt"></i></button></div>
                     <div class="button-container"><button type="button" onClick="return toggleHeaders(true);"><i class="fas fa-expand-arrows-alt"></i></button></div>
                     <div class="search-container">
                         <input id="search-class-field" name="search-class-field" type="text" placeholder="Enter class name to search for..." size="35"/>
-                        <a id="search-link" href="#" onClick="return executeSearch();"><i class="fa fa-search"></i></a>
+                        <a id="search-link" href="#" onClick="return executeSearch();"><i class="fas fa-search"></i></a>
                     </div>
                   </div>
                 </p>
@@ -618,8 +745,8 @@
 
     <xsl:template match="CompareResults[@hasChanges='true']">
         <xsl:choose>
-            <xsl:when test="$iecPackage">
-                <xsl:apply-templates select="//CompareItem[@type='Package' and @name=$iecPackage]" />
+            <xsl:when test="$package">
+                <xsl:apply-templates select="//CompareItem[@type='Package' and @name=$package]" />
             </xsl:when>
             <xsl:otherwise>
                 <!-- Default is to process from the top-most 'Model' package on down... -->
@@ -629,101 +756,134 @@
     </xsl:template>
 
     <xsl:template match="CompareItem[@type='Package']|CompareItem[@type='' and @status='Baseline only' and ./Properties/Property[@name='Type' and @baseline='Package']]">
-       <xsl:variable name="color">
-            <xsl:choose>
-                <xsl:when test="@status='Baseline only'">
-                    <xsl:text>#F5B7B1</xsl:text>
-                </xsl:when>
-                <xsl:when test="@status='Model only'">
-                    <xsl:text>#ABEBC6</xsl:text>
-                </xsl:when>
-                <xsl:when test="@status='Moved'">
-                    <xsl:text>#F9E79F</xsl:text>
-                </xsl:when>
-                <xsl:otherwise>
-                    <!--  Color for all packages that are not new, remove or moved...  -->
-                <xsl:text>lightgray</xsl:text>
-                </xsl:otherwise>
-            </xsl:choose>
-       </xsl:variable>
-       <xsl:variable name="notes">
-            <xsl:choose>
-                <xsl:when test="Properties/Property[@name='Notes' and @status='Baseline only']">
-                    <xsl:choose>
-                        <xsl:when test="string-length(Properties/Property[@name='Notes']/@baseline) > 0">
-                            <xsl:value-of select="Properties/Property[@name='Notes']/@baseline"/>
-                        </xsl:when>
-                        <xsl:otherwise>
-                            <xsl:text>No notes available.</xsl:text>
-                        </xsl:otherwise>
-                    </xsl:choose>
-                </xsl:when>
-                <xsl:otherwise>
-                    <xsl:choose>
-                        <xsl:when test="string-length(Properties/Property[@name='Notes']/@model) > 0">
-                            <xsl:value-of select="Properties/Property[@name='Notes']/@model"/>
-                        </xsl:when>
-                        <xsl:otherwise>
-                            <xsl:text>No notes available.</xsl:text>
-                        </xsl:otherwise>
-                    </xsl:choose>
-                </xsl:otherwise>
-            </xsl:choose>
-        </xsl:variable>
-
-        <p>
-        <div class="wrap-collapsible">
-            <input id="collapsible-{@guid}" packageNameId="{@guid}" parentCollapsibleId="{ancestor::CompareItem[1]/@guid}" onClick="return togglePackageHeaderIcon(this);" class="toggle" type="checkbox" />
-            <label for="collapsible-{@guid}" class="lbl-toggle" style="background-color:{$color}">
-                <i id="package-icon-{@guid}" class="fas fa-folder" style="font-size:20px;color:white;text-shadow:2px 2px 4px #000000;"/>&#160;<xsl:value-of select='@name' />
-                <div class="tooltip"><i class="fas fa-info-circle" style="text-align:left;font-size:14px;color:white;text-shadow:1px 1px 2px #000000;"/><span class="tooltiptext"><xsl:value-of select="$notes"/></span></div>
-                <div class="lbl-home-icon"><a href="#"><i class="fas fa-home" style="font-size:20px;color:white;text-shadow:2px 2px 4px #000000;"/></a></div>
-            </label>
-            <div class="collapsible-content">
-            	<div class="content-inner">
-                    <xsl:if test="count(CompareItem[@type='Package']|CompareItem[@type='' and ./Properties/Property[@name='Type' and @baseline='Package']]) > 0">
-                    	<xsl:apply-templates select="CompareItem[@type='Package']|CompareItem[@type='' and ./Properties/Property[@name='Type' and @baseline='Package']]" />
-                    </xsl:if>
-                    <p>
-                    <xsl:choose>
-                        <xsl:when test="(count(CompareItem[@type='Class' and @status='Identical']) > 0) or (count(CompareItem[@type='' and ./Properties/Property[@name='Type' and @baseline='Class']]) > 0) or (count(CompareItem[@type='Class' and @status='Model only']) > 0) or (count(CompareItem[@type='Class' and @status='Moved']) > 0) or (count(CompareItem[@type='Class' and @status='Changed']) > 0)">
-                            <xsl:if test="count(CompareItem[@type='Class' and @status='Identical' and not(.//Properties/Property[not(@status='Identical')]) and not(.//CompareItem[not(@status='Identical')])]) > 0">
-                                <h2>Identical Classes:</h2>
-                                <!-- The XPATH expression for this select for "Identical Classes" ensures that ONLY classes with absolutely no changes are included.  
-                                This was necessary as the results produced by Enterprise Architect may have the @status of a Class declared as 'Identical' and yet 
-                                have changes in child properties or elements.  The conclusion is that the @status attribute is intended to ONLY indicate if direct 
-                                properties have changed on the Class. -->
-                                <xsl:apply-templates select="CompareItem[@type='Class' and @status='Identical' and not(.//Properties/Property[not(@status='Identical')]) and not(.//CompareItem[not(@status='Identical')])]" />
-                            </xsl:if>
-                            <xsl:if test="count(CompareItem[@type='' and ./Properties/Property[@name='Type' and @baseline='Class']]) > 0">
-                                <h2>Deleted Classes:</h2>
-                                <xsl:apply-templates select="CompareItem[@type='' and ./Properties/Property[@name='Type' and @baseline='Class']]" />
-                            </xsl:if>
-                            <xsl:if test="count(CompareItem[@type='Class' and @status='Model only']) > 0">
-                                <h2>Added Classes:</h2>
-                                <xsl:apply-templates select="CompareItem[@type='Class' and @status='Model only']" />
-                            </xsl:if>
-                            <xsl:if test="count(CompareItem[@type='Class' and @status='Moved']) > 0">
-                                <h2>Moved Classes:</h2>
-                                <xsl:apply-templates select="CompareItem[@type='Class' and @status='Moved']" />
-                            </xsl:if>
-                            <xsl:if test="(count(CompareItem[@type='Class' and @status='Changed']) > 0) or (count(CompareItem[@type='Class' and @status='Identical' and ((count(./Properties/Property[not(@status='Identical')]) > 0) or ((count(./CompareItem[@type='Attribute']/Properties/Property[not(@status='Identical')]) + count(./CompareItem[@type=''and not(./CompareItem)]/Properties/Property[not(@status='Identical')])) > 0) or (./CompareItem[@type='Links' and ./CompareItem[(@name='Association' or @name='Generalization' or @name='Aggregation') and (./Properties/Property[not(@status='Identical')] or ./CompareItem[(@type='Src' or @type='Dst') and ./Properties/Property[not(@status='Identical')]])]]))]) > 0)">
-                                <h2>Changed Classes:</h2>
-                                <!-- The XPATH expression for this select for "Changed Classes" ensures that we are including classes  
-                                declared with a status of 'Identical' but which do have changes in child properties or elements. -->
-                                <xsl:apply-templates select="CompareItem[@type='Class' and @status='Changed']|CompareItem[@type='Class' and @status='Identical' and .//Properties/Property[not(@status='Identical')] and .//CompareItem[not(@status='Identical')]]" />
-                            </xsl:if>
-                        </xsl:when>
-                        <xsl:otherwise>
-                            <h3><p style="font-size: 1.1rem">Package '<xsl:value-of select='@name'/>' has no changes to the classes it contains.</p></h3>
-                        </xsl:otherwise>
-                    </xsl:choose>
-                    </p>
-                    <!-- </xsl:if>  --> 
-        	   </div>
-            </div>
-	    </div>
-        </p>
+        <xsl:if test="($non-minimal = 'true') or descendant::CompareItem[not(@status='Identical')] or descendant::Property[not(@status='Identical')]">
+           <xsl:variable name="color">
+                <xsl:choose>
+                    <xsl:when test="@status='Baseline only'">
+                        <xsl:text>#F5B7B1</xsl:text>
+                    </xsl:when>
+                    <xsl:when test="@status='Model only'">
+                        <xsl:text>#ABEBC6</xsl:text>
+                    </xsl:when>
+                    <xsl:when test="@status='Moved'">
+                        <xsl:text>#F9E79F</xsl:text>
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <!--  Color for all packages that are not new, remove or moved...  -->
+                    <xsl:text>lightgray</xsl:text>
+                    </xsl:otherwise>
+                </xsl:choose>
+           </xsl:variable>
+           <xsl:variable name="notes">
+                <xsl:choose>
+                    <xsl:when test="Properties/Property[@name='Notes' and @status='Baseline only']">
+                        <xsl:choose>
+                            <xsl:when test="string-length(Properties/Property[@name='Notes']/@baseline) > 0">
+                                <xsl:value-of select="Properties/Property[@name='Notes']/@baseline"/>
+                            </xsl:when>
+                            <xsl:otherwise>
+                                <xsl:text>No notes available.</xsl:text>
+                            </xsl:otherwise>
+                        </xsl:choose>
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <xsl:choose>
+                            <xsl:when test="string-length(Properties/Property[@name='Notes']/@model) > 0">
+                                <xsl:value-of select="Properties/Property[@name='Notes']/@model"/>
+                            </xsl:when>
+                            <xsl:otherwise>
+                                <xsl:text>No notes available.</xsl:text>
+                            </xsl:otherwise>
+                        </xsl:choose>
+                    </xsl:otherwise>
+                </xsl:choose>
+            </xsl:variable>
+            <p>
+            <div class="wrap-collapsible">
+                <input id="collapsible-{@guid}" packageNameId="{@guid}" parentCollapsibleId="{ancestor::CompareItem[1]/@guid}" onClick="return togglePackageHeaderIcon(this);" class="toggle" type="checkbox" />
+                <label for="collapsible-{@guid}" class="lbl-toggle" style="background-color:{$color}">
+                    <i id="package-icon-{@guid}" class="fas fa-folder" style="font-size:20px;color:white;text-shadow:2px 2px 4px #000000;"/>&#160;<xsl:value-of select='@name' />
+                    <div class="tooltip"><i class="fas fa-info-circle" style="text-align:left;font-size:14px;color:white;text-shadow:1px 1px 2px #000000;"/><span class="tooltiptext"><xsl:value-of select="$notes"/></span></div>
+                    <div class="lbl-home-icon"><a href="#"><i class="fas fa-home" style="font-size:20px;color:white;text-shadow:2px 2px 4px #000000;"/></a></div>
+                </label>
+                <div class="collapsible-content">
+                	<div class="content-inner">
+                        <xsl:if test="count(CompareItem[@type='Package']|CompareItem[@type='' and ./Properties/Property[@name='Type' and @baseline='Package']]) > 0">
+                        	<xsl:apply-templates select="CompareItem[@type='Package']|CompareItem[@type='' and ./Properties/Property[@name='Type' and @baseline='Package']]" />
+                        </xsl:if>
+                        <p>
+                        <xsl:choose>
+                            <xsl:when test="(count(CompareItem[@type='Class' and @status='Identical']) > 0) or (count(CompareItem[@type='' and ./Properties/Property[@name='Type' and @baseline='Class']]) > 0) or (count(CompareItem[@type='Class' and @status='Model only']) > 0) or (count(CompareItem[@type='Class' and @status='Moved']) > 0) or (count(CompareItem[@type='Class' and @status='Changed']) > 0)">
+                                <xsl:if test="($non-minimal = 'true') and count(CompareItem[@type='Class' and @status='Identical' and not(.//Properties/Property[not(@status='Identical')]) and not(.//CompareItem[not(@status='Identical')])]) > 0">
+                                    <h2>Identical Classes:</h2>
+                                    <!-- The XPATH expression for this select for "Identical Classes" ensures that ONLY classes with absolutely no changes are included.  
+                                    This was necessary as the results produced by Enterprise Architect may have the @status of a Class declared as 'Identical' and yet 
+                                    have changes in child properties or elements.  The conclusion is that the @status attribute is intended to ONLY indicate if direct 
+                                    properties (i.e. Enterprise Architect metadata) have changed on the Class. -->
+                                    <xsl:apply-templates select="CompareItem[@type='Class' and @status='Identical' and not(.//Properties/Property[not(@status='Identical')]) and not(.//CompareItem[not(@status='Identical')])]" />
+                                </xsl:if>
+                                <xsl:if test="count(CompareItem[@type='' and ./Properties/Property[@name='Type' and @baseline='Class']]) > 0">
+                                    <h2>Deleted Classes:</h2>
+                                    <xsl:apply-templates select="CompareItem[@type='' and ./Properties/Property[@name='Type' and @baseline='Class']]" />
+                                </xsl:if>
+                                <xsl:if test="count(CompareItem[@type='Class' and @status='Model only']) > 0">
+                                    <h2>Added Classes:</h2>
+                                    <xsl:apply-templates select="CompareItem[@type='Class' and @status='Model only']" />
+                                </xsl:if>
+                                <xsl:if test="count(CompareItem[@type='Class' and @status='Moved']) > 0">
+                                    <h2>Moved Classes:</h2>
+                                    <xsl:apply-templates select="CompareItem[@type='Class' and @status='Moved']" />
+                                </xsl:if>
+                                <xsl:if test="(count(CompareItem[@type='Class' and @status='Changed']) > 0) or (count(CompareItem[@type='Class' and @status='Identical' and ((count(./Properties/Property[not(@status='Identical')]) > 0) or ((count(./CompareItem[@type='Attribute']/Properties/Property[not(@status='Identical')]) + count(./CompareItem[@type=''and not(./CompareItem)]/Properties/Property[not(@status='Identical')])) > 0) or (./CompareItem[@type='Links' and ./CompareItem[(@name='Association' or @name='Generalization' or @name='Aggregation') and (./Properties/Property[not(@status='Identical')] or ./CompareItem[(@type='Src' or @type='Dst') and ./Properties/Property[not(@status='Identical')]])]]))]) > 0)">
+                                    <h2>Changed Classes:</h2>
+                                    <!-- The XPATH expression for this select for "Changed Classes" ensures that we are including classes  
+                                    declared with a status of 'Identical' but which do have changes in child properties or elements. -->
+                                    <xsl:apply-templates select="CompareItem[@type='Class' and @status='Changed']|CompareItem[@type='Class' and @status='Identical' and .//Properties/Property[not(@status='Identical')] and .//CompareItem[not(@status='Identical')]]" />
+                                </xsl:if>
+                            </xsl:when>
+                            <xsl:otherwise>
+                                <h3><p style="font-size: 1.1rem">Package '<xsl:value-of select='@name'/>' has no changes to the classes it contains.</p></h3>
+                            </xsl:otherwise>
+                        </xsl:choose>
+                        <xsl:choose>
+                            <xsl:when test="(count(CompareItem[@type='Diagram']) > 0) or (count(CompareItem[@type='' and ./Properties/Property[@name='DiagramType']]) > 0)">
+                                <xsl:if test="($non-minimal = 'true') and count(CompareItem[@type='Diagram' and @status='Identical']) > 0">
+                                    <h2>Identical Diagrams:</h2>
+                                    <!-- The XPATH expression for this select for "Identical Diagrams" ensures that ONLY diagrams with absolutely no changes are included.  
+                                    This was necessary as the results produced by cim-compare may have the @status of a Diagram declared as 'Identical' and yet 
+                                    have changes in child properties or elements.  The conclusion is that the @status attribute is intended to ONLY indicate if direct 
+                                    properties have changed on the Diagram. -->
+                                    <xsl:apply-templates select="CompareItem[@type='Diagram' and @status='Identical']" />
+                                </xsl:if>
+                                <xsl:if test="count(CompareItem[@type='' and ./Properties/Property[@name='DiagramType' and @status='Baseline only']]) > 0">
+                                    <h2>Deleted Diagrams:</h2>
+                                    <xsl:apply-templates select="CompareItem[@type='' and ./Properties/Property[@name='DiagramType' and @status='Baseline only']]" />
+                                </xsl:if>
+                                <xsl:if test="count(CompareItem[@type='Diagram' and @status='Model only']) > 0">
+                                    <h2>Added Diagrams:</h2>
+                                    <xsl:apply-templates select="CompareItem[@type='Diagram' and @status='Model only']" />
+                                </xsl:if>
+                                <xsl:if test="count(CompareItem[@type='Diagram' and @status='Moved']) > 0">
+                                    <h2>Moved Diagrams:</h2>
+                                    <xsl:apply-templates select="CompareItem[@type='Diagram' and @status='Moved']" />
+                                </xsl:if>
+                                <xsl:if test="count(CompareItem[@type='Diagram' and @status='Changed']) > 0">
+                                    <h2>Changed Diagrams:</h2>
+                                    <!-- The XPATH expression for this select for "Changed Diagrams" ensures that we are including diagrams  
+                                    declared with a status of 'Identical' but which do have changes in child properties or elements. -->
+                                    <xsl:apply-templates select="CompareItem[@type='Diagram' and @status='Changed']" />
+                                </xsl:if>
+                            </xsl:when>
+                            <xsl:otherwise>
+                                <h3><p style="font-size: 1.1rem">Package '<xsl:value-of select='@name'/>' has no changes to the diagrams it contains.</p></h3>
+                            </xsl:otherwise>
+                        </xsl:choose>
+                        </p>
+            	   </div>
+                </div>
+    	    </div>
+            </p>
+        </xsl:if>
     </xsl:template>
 
     <xsl:template match="CompareItem[@type='Class']|CompareItem[@type='' and ./Properties/Property[@name='Type' and @baseline='Class']]">
@@ -754,6 +914,7 @@
         <xsl:variable name="color">
             <xsl:call-template name="class-color">
             	<xsl:with-param name="name" select="@name"/>
+                <xsl:with-param name="guid" select="@guid"/>
             </xsl:call-template>
         </xsl:variable>
         <p>
@@ -781,8 +942,8 @@
                                     <p>
                                         <table id="attributes">
                                             <tr>
-                                                <th style="width:50%" colspan="5"><p><xsl:value-of select="$base-version"/></p></th>
-                                                <th style="width:50%" colspan="5"><p><xsl:value-of select="$latest-version"/></p></th>
+                                                <th style="width:50%" colspan="5"><p><xsl:value-of select="$baseline-version"/></p></th>
+                                                <th style="width:50%" colspan="5"><p><xsl:value-of select="$target-version"/></p></th>
                                             </tr>
                                             <xsl:apply-templates select="CompareItem[@type='Attribute']"/>
                                             <xsl:apply-templates select="CompareItem[@type='' and @status='Baseline only']"/>
@@ -806,6 +967,107 @@
                 </xsl:otherwise>
             </xsl:choose>
         	</div>
+        </div>
+        </p>
+    </xsl:template>
+    
+    <xsl:template match="CompareItem[@type='Diagram']|CompareItem[@type='' and ./Properties/Property[@name='DiagramType']]">
+       <xsl:variable name="notes">
+            <xsl:choose>
+                <xsl:when test="Properties/Property[@name='Notes']/@status='Baseline only'">
+                    <xsl:choose>
+                        <xsl:when test="string-length(Properties/Property[@name='Notes']/@baseline) > 0">
+                            <xsl:value-of select="Properties/Property[@name='Notes']/@baseline"/>
+                        </xsl:when>
+                        <xsl:otherwise>
+                            <xsl:text>No notes available.</xsl:text>
+                        </xsl:otherwise>
+                    </xsl:choose>
+                </xsl:when>
+                <xsl:otherwise>
+                    <xsl:choose>
+                        <xsl:when test="string-length(Properties/Property[@name='Notes']/@model) > 0">
+                            <xsl:value-of select="Properties/Property[@name='Notes']/@model"/>
+                        </xsl:when>
+                        <xsl:otherwise>
+                            <xsl:text>No notes available.</xsl:text>
+                        </xsl:otherwise>
+                    </xsl:choose>
+                </xsl:otherwise>
+            </xsl:choose>
+        </xsl:variable>
+        <xsl:variable name="color">
+            <xsl:call-template name="diagram-color">
+                <xsl:with-param name="name" select="@name"/>
+                <xsl:with-param name="guid" select="@guid"/>
+            </xsl:call-template>
+        </xsl:variable>
+        <xsl:variable name="name" select="@name"/>
+        <xsl:variable name="eaid" select="concat('EAID_', translate(translate(translate(@guid,'-','_'), '{', ''), '}', ''))" />
+        <p>
+        <div id="{@guid}" class="wrap-collapsible">
+            <input id="collapsible-{@guid}" name="{@name}" diagramNameId="{@guid}" parentCollapsibleId="{ancestor::CompareItem[1]/@guid}" class="toggle" type="checkbox" />
+            <label for="collapsible-{@guid}" class="lbl-toggle"  style="background-color:{$color}">
+                <i class="far fa-file-image" style="font-size:18px;color:white;text-shadow:2px 2px 4px #000000;"/>&#160;<a class="class-link" href="#{@guid}"><xsl:value-of select="@name"/></a>
+                <div class="tooltip" style="text-align:right;"><i class="fas fa-info-circle" style="text-align:left;font-size:14px;color:white;text-shadow:1px 1px 2px #000000;"/><span class="tooltiptext"><xsl:value-of select="$notes"/></span></div>
+                <div class="lbl-home-icon"><a href="#"><i class="fas fa-home" style="font-size:20px;color:white;text-shadow:2px 2px 4px #000000;"/></a></div>
+            </label>
+            <div class="collapsible-content">
+            <xsl:choose>
+                <xsl:when test="not(@status='Identical')">
+                    <div class="content-inner">
+                        <xsl:if test="(count(Properties/Property[not(@status='Identical')]) > 0)">
+                            <p>
+                                <h3><p style="font-size: 1.1rem"><i class="fas fa-cubes" />&#160;Metadata:</p></h3>
+                                <xsl:apply-templates select="Properties" />
+                            </p>
+                        </xsl:if>
+                        <p>
+                           <h3><p style="font-size:1.1rem"><i class="far fa-file-image" />&#160;Diagram:</p></h3>
+                           	<div class="group"> 
+                                <p>
+                                <table id="diagrams">
+                                        <tr>
+                                            <th style="width:50%" colspan="5"><p><xsl:value-of select="$baseline-version"/></p></th>
+                                            <th style="width:50%" colspan="5"><p><xsl:value-of select="$target-version"/></p></th>
+                                        </tr>
+                                        <tr>
+                                            <td colspan="5">
+                                                <xsl:choose>
+                                                    <xsl:when test="not(@status='Model only')">
+                                                        <p><img src="Images-baseline/{$eaid}.jpg" alt="{$name} Diagram" /></p>
+                                                    </xsl:when>
+                                                    <xsl:otherwise>
+                                                        <p style="color:red;weight:bold;text-align:center">Diagram '<xsl:value-of select='@name'/>' did not previously exist in the model.</p>
+                                                    </xsl:otherwise>
+                                                </xsl:choose>
+                                            </td>
+                                            <td colspan="5">
+                                                <xsl:choose>
+                                                    <xsl:when test="not(@status='Baseline only')">
+                                                        <p><img src="Images-target/{$eaid}.jpg" alt="{$name} Diagram" /></p>
+                                                    </xsl:when>
+                                                    <xsl:otherwise>
+                                                        <p style="color:red;weight:bold;text-align:center">Diagram '<xsl:value-of select='@name'/>' was removed from the model.</p>
+                                                    </xsl:otherwise>
+                                                </xsl:choose>
+                                            </td>
+                                        </tr>
+                                </table>
+                            	</p>
+                            </div>
+                       </p>
+                    </div>
+                </xsl:when>
+                <xsl:otherwise>
+                    <div class="content-inner">
+                        <p>
+                            <h3><p style="font-size: 1.1rem">No changes occurred to the metadata or layout of this diagram.</p></h3>
+                        </p>
+                    </div>
+                </xsl:otherwise>
+            </xsl:choose>
+            </div>
         </div>
         </p>
     </xsl:template>
@@ -911,7 +1173,7 @@
                         </xsl:otherwise>
                     </xsl:choose>
                 </xsl:variable>
-                <h3><xsl:value-of select="@name"/>:</h3>
+                <h3><p style="font-size: 1.1rem"><xsl:value-of select="@name"/>:</p></h3>
                 <xsl:choose>
                     <xsl:when test="not(@status='Baseline only')">
                         <p>
@@ -929,10 +1191,11 @@
                        </table>
                        </p>
     	               <xsl:if test="count(Properties/Property[not(@status='Identical')]) > 0">
-                           <p>
-                           <br></br>
-    	                   <xsl:apply-templates select="Properties"/>
-                           </p>
+                            <p>
+                                <br/>
+                                <h3><p style="font-size: 1.1rem"><i class="fas fa-cubes" />&#160;Metadata:</p></h3>
+                                <xsl:apply-templates select="Properties"/>
+                            </p>
     	               </xsl:if> 
                        <p>
                        <br></br>
@@ -953,8 +1216,8 @@
                                         <table id="properties">
                                             <tr>
                                                 <th style="background-color:lightgray;width:10%"><p>&#160;</p></th>
-                                                <th style="text-align:left;font-weight:bold;background-color:lightgray;width:45%"><p><xsl:value-of select="$base-version"/></p></th>
-                                                <th style="text-align:left;font-weight:bold;background-color:lightgray;width:45%"><p><xsl:value-of select="$latest-version"/></p></th>
+                                                <th style="text-align:left;font-weight:bold;background-color:lightgray;width:45%"><p><xsl:value-of select="$baseline-version"/></p></th>
+                                                <th style="text-align:left;font-weight:bold;background-color:lightgray;width:45%"><p><xsl:value-of select="$target-version"/></p></th>
                                             </tr>
                                             <tr valign="top">
                                                 <th colspan="3"><p style="color:red;weight:bold;text-align:center">No changes to metadata on the source side.</p></th>
@@ -975,8 +1238,8 @@
                                         <table id="properties">
                                             <tr>
                                                 <th style="background-color:lightgray;width:10%"><p>&#160;</p></th>
-                                                <th style="text-align:left;font-weight:bold;background-color:lightgray;width:45%"><p><xsl:value-of select="$base-version"/></p></th>
-                                                <th style="text-align:left;font-weight:bold;background-color:lightgray;width:45%"><p><xsl:value-of select="$latest-version"/></p></th>
+                                                <th style="text-align:left;font-weight:bold;background-color:lightgray;width:45%"><p><xsl:value-of select="$baseline-version"/></p></th>
+                                                <th style="text-align:left;font-weight:bold;background-color:lightgray;width:45%"><p><xsl:value-of select="$target-version"/></p></th>
                                             </tr>
                                             <tr valign="top">
                                                 <th colspan="3"><p style="color:red;weight:bold;text-align:center">No changes to metadata on the target side.</p></th>
@@ -1027,8 +1290,8 @@
         <table id="properties">
             <tr>
                 <th style="background-color:lightgray;width:10%"><p>&#160;</p></th>
-                <th style="text-align:left;font-weight:bold;background-color:lightgray;width:45%"><p><xsl:value-of select="$base-version"/></p></th>
-                <th style="text-align:left;font-weight:bold;background-color:lightgray;width:45%"><p><xsl:value-of select="$latest-version"/></p></th>
+                <th style="text-align:left;font-weight:bold;background-color:lightgray;width:45%"><p><xsl:value-of select="$baseline-version"/></p></th>
+                <th style="text-align:left;font-weight:bold;background-color:lightgray;width:45%"><p><xsl:value-of select="$target-version"/></p></th>
             </tr>
         	<xsl:for-each select="Property[not(@status='Identical')]">
                 <xsl:variable name="color"><xsl:call-template name="color"/></xsl:variable>   
@@ -1066,7 +1329,7 @@
         </table>
     </xsl:template>
  
-    <xsl:template match="CompareItem[@type='Attribute']|CompareItem[@type='' and not(./Properties/Property['Type']/@baseline='Class' or ./Properties/Property['Type']/@baseline='Package') and not(./CompareItem)]"> 
+    <xsl:template match="CompareItem[@type='Attribute']|CompareItem[@type='' and not(./Properties/Property[@name='DiagramType']) and not(./Properties/Property['Type']/@baseline='Class' or ./Properties/Property['Type']/@baseline='Package') and not(./CompareItem)]"> 
         <xsl:variable name="color"><xsl:call-template name="color"/></xsl:variable>   
         <xsl:choose>    
             <xsl:when test="count(Properties/Property[not(@status='Identical')]) > 0">
@@ -1182,16 +1445,34 @@
  
 	<xsl:template name="class-color">
 	   <!-- The 'name' param corresponds to the 'name' attribute in a CompareItem element and indicates the class name to look for in the formatted string... -->
+       <!-- The 'guid' param corresponds to the 'guid' attribute in a CompareItem element and indicates the class GUID to look for in the formatted string... -->
 	   <xsl:param name="name"/>
-	   <xsl:variable name="string-element" select="concat('|', $name, ':')"/>
+       <xsl:param name="guid"/>
+	   <xsl:variable name="string-element" select="concat('|', $name, ':', $guid, ':')"/>
 	   <xsl:choose>
 	       <xsl:when test="string-length(substring-after($all-classes, $string-element)) > 0">
-	           <xsl:value-of select="substring-after(substring-before(substring-after($all-classes, $string-element), '|'), ':')"/>
+	           <xsl:value-of select="substring-before(substring-after($all-classes, $string-element), '|')"/>
 	       </xsl:when>
 	       <xsl:otherwise>
 	           <xsl:text></xsl:text>
 	       </xsl:otherwise>
 	   </xsl:choose>
+    </xsl:template>
+    
+    <xsl:template name="diagram-color">
+       <!-- The 'name' param corresponds to the 'name' attribute in a CompareItem element and indicates the diagram name to look for in the formatted string... -->
+       <!-- The 'guid' param corresponds to the 'guid' attribute in a CompareItem element and indicates the diagram GUID to look for in the formatted string... -->
+       <xsl:param name="name"/>
+       <xsl:param name="guid"/>
+       <xsl:variable name="string-element" select="concat('|', $name, ':', $guid, ':')"/>
+       <xsl:choose>
+           <xsl:when test="string-length(substring-after($all-diagrams, $string-element)) > 0">
+               <xsl:value-of select="substring-before(substring-after($all-diagrams, $string-element), '|')"/>
+           </xsl:when>
+           <xsl:otherwise>
+               <xsl:text></xsl:text>
+           </xsl:otherwise>
+       </xsl:choose>
     </xsl:template>
     
 	<xsl:template name="link-class-guid">

@@ -18,14 +18,11 @@ import javax.xml.bind.Marshaller;
 import org.cimug.compare.AssociationProperties;
 import org.cimug.compare.AttributeProperties;
 import org.cimug.compare.ClassProperties;
-import org.cimug.compare.DestinationAssociationEndProperties;
-import org.cimug.compare.DestinationGeneralizationEndProperties;
+import org.cimug.compare.DiagramProperties;
 import org.cimug.compare.DiffUtils;
 import org.cimug.compare.GeneralizationProperties;
 import org.cimug.compare.NamedTypeComparator;
 import org.cimug.compare.PackageProperties;
-import org.cimug.compare.SourceAssociationEndProperties;
-import org.cimug.compare.SourceGeneralizationEndProperties;
 import org.cimug.compare.Status;
 import org.cimug.compare.logs.CompareItem;
 import org.cimug.compare.logs.ComparePackage;
@@ -36,23 +33,27 @@ import org.cimug.compare.uml1_3.AssociationEndType;
 import org.cimug.compare.uml1_3.AssociationType;
 import org.cimug.compare.uml1_3.AttributeType;
 import org.cimug.compare.uml1_3.ClassType;
+import org.cimug.compare.uml1_3.Diagram;
+import org.cimug.compare.uml1_3.DiagramElement;
+import org.cimug.compare.uml1_3.DiagramElementType;
 import org.cimug.compare.uml1_3.GeneralizationType;
-import org.cimug.compare.uml1_3.Model;
 import org.cimug.compare.uml1_3.PackageType;
-import org.cimug.compare.uml1_3.ifaces.KeyIdentifier;
+import org.cimug.compare.uml1_3.ifaces.GUIDIdentifier;
+import org.cimug.compare.xmi1_1.XMIContentType;
 
 class GUIDBasedDiffReportGeneratorImpl implements DiffReportGenerator {
 
-	private Model baselineModel;
-	private Model targetModel;
+	private XMIContentType baselineContentType;
+	private XMIContentType targetContentType;
+
 	private PreProcessor preProcessor;
 	private File outputFile;
 
-	public GUIDBasedDiffReportGeneratorImpl(Model baselineModel, Model targetModel, File outputFile)
-			throws JAXBException {
-		this.baselineModel = baselineModel;
-		this.targetModel = targetModel;
-		this.preProcessor = new PreProcessor(baselineModel, targetModel);
+	public GUIDBasedDiffReportGeneratorImpl(XMIContentType baselineContentType, XMIContentType targetContentType,
+			File outputFile) throws JAXBException {
+		this.baselineContentType = baselineContentType;
+		this.targetContentType = targetContentType;
+		this.preProcessor = new PreProcessor(baselineContentType, targetContentType);
 		this.outputFile = outputFile;
 	}
 
@@ -109,7 +110,7 @@ class GUIDBasedDiffReportGeneratorImpl implements DiffReportGenerator {
 	@Override
 	public void processDiffReport() {
 		try {
-			EACompareLog compareLog = processDiffReport(baselineModel, targetModel);
+			EACompareLog compareLog = processDiffReport(baselineContentType, targetContentType);
 			writeCompareLogFile(compareLog);
 		} catch (FileNotFoundException | JAXBException e) {
 			e.printStackTrace();
@@ -129,36 +130,38 @@ class GUIDBasedDiffReportGeneratorImpl implements DiffReportGenerator {
 		}
 	}
 
-	private EACompareLog processDiffReport(Model baselineModel, Model targetModel) {
+	private EACompareLog processDiffReport(XMIContentType theBaselineContentType, XMIContentType theTargetContentType) {
 		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd H:mm:ss");
 		String dateTime = formatter.format(new Date());
 
-		CompareResults compareResults = parseModelRootPackage(baselineModel, targetModel);
+		CompareResults compareResults = parseModelRootPackage(theBaselineContentType, theTargetContentType);
 
-		ComparePackage comparePackage = new ComparePackage(compareResults, targetModel.getName(),
-				DiffUtils.convertRootModelXmiIdToEAGUID(targetModel.getXmiId()), "1", "system", dateTime);
+		ComparePackage comparePackage = new ComparePackage(compareResults, theTargetContentType.getModel().getName(),
+				DiffUtils.convertRootModelXmiIdToEAGUID(targetContentType.getModel().getXmiId()), "1", "system",
+				dateTime);
 
 		EACompareLog compareLog = new EACompareLog(comparePackage);
 		return compareLog;
 	}
 
-	private CompareResults parseModelRootPackage(Model baselineModel, Model targetModel) {
+	private CompareResults parseModelRootPackage(XMIContentType theBaselineContentType,
+			XMIContentType theTargetContentType) {
 
 		boolean hasChanges = true;
 
-		Status rootPackageStatus = (!baselineModel.getKey().equals(targetModel.getKey()) ? Status.Changed
-				: Status.Identical);
+		Status rootPackageStatus = (!theBaselineContentType.getModel().getXmiId()
+				.equals(theTargetContentType.getModel().getXmiId()) ? Status.Changed : Status.Identical);
 
-		CompareItem theRootPackage = new CompareItem(null, targetModel.getName(), "Package", targetModel.getKey(),
-				rootPackageStatus.toString());
+		CompareItem theRootPackage = new CompareItem(null, theBaselineContentType.getModel().getName(), "Package",
+				theTargetContentType.getModel().getGUID(), rootPackageStatus.toString());
 
 		/**
 		 * =========================================================================
 		 * Process child packages.
 		 * =========================================================================
 		 */
-		List<PackageType> baselineChildPackages = baselineModel.getPackages();
-		List<PackageType> targetChildPackages = targetModel.getPackages();
+		List<PackageType> baselineChildPackages = theBaselineContentType.getModel().getPackages();
+		List<PackageType> targetChildPackages = theTargetContentType.getModel().getPackages();
 
 		for (PackageType targetChildPackage : targetChildPackages) {
 			theRootPackage.getCompareItem().add(parsePackage(targetChildPackage));
@@ -168,7 +171,7 @@ class GUIDBasedDiffReportGeneratorImpl implements DiffReportGenerator {
 		 * Process any packages deleted from the baseline.
 		 */
 		for (PackageType baselineChildPackage : baselineChildPackages) {
-			if (preProcessor.getBaselineDeletedPackagesGUIDs().containsKey(baselineChildPackage.getKey())) {
+			if (preProcessor.getBaselineDeletedPackagesXmiIds().containsKey(baselineChildPackage.getXmiId())) {
 				theRootPackage.getCompareItem().add(parsePackage(baselineChildPackage));
 			}
 		}
@@ -178,11 +181,11 @@ class GUIDBasedDiffReportGeneratorImpl implements DiffReportGenerator {
 		 * Process child classes.
 		 * =========================================================================
 		 */
-		List<ClassType> baselineChildClasses = baselineModel.getClasses();
-		List<ClassType> targetChildClasses = targetModel.getClasses();
+		List<ClassType> baselineChildClasses = theBaselineContentType.getModel().getClasses();
+		List<ClassType> targetChildClasses = theTargetContentType.getModel().getClasses();
 
 		for (ClassType targetChildClass : targetChildClasses) {
-			PackageType targetParentPackage = preProcessor.getTargetPackagesGUIDs()
+			PackageType targetParentPackage = preProcessor.getTargetPackagesXmiIds()
 					.get(targetChildClass.getParentPackageGUID());
 			theRootPackage.getCompareItem().add(parseClass(targetChildClass, targetParentPackage));
 		}
@@ -191,8 +194,8 @@ class GUIDBasedDiffReportGeneratorImpl implements DiffReportGenerator {
 		 * Process any classes deleted from the baseline.
 		 */
 		for (ClassType baselineChildClass : baselineChildClasses) {
-			if (preProcessor.getBaselineDeletedClassesGUIDs().containsKey(baselineChildClass.getKey())) {
-				PackageType baselineParentPackage = preProcessor.getBaselinePackagesGUIDs()
+			if (preProcessor.getBaselineDeletedClassesXmiIds().containsKey(baselineChildClass.getXmiId())) {
+				PackageType baselineParentPackage = preProcessor.getBaselinePackagesXmiIds()
 						.get(baselineChildClass.getParentPackageGUID());
 				theRootPackage.getCompareItem().add(parseClass(baselineChildClass, baselineParentPackage));
 			}
@@ -207,18 +210,18 @@ class GUIDBasedDiffReportGeneratorImpl implements DiffReportGenerator {
 
 		// Very first thing we do is to first determine if the package passed in is a
 		// deleted package...
-		if (preProcessor.getBaselineDeletedPackagesGUIDs().containsKey(aPackage.getKey())) {
+		if (preProcessor.getBaselineDeletedPackagesXmiIds().containsKey(aPackage.getXmiId())) {
 			PackageProperties deletedPackageProperties = new PackageProperties(aPackage, null);
 			Properties properties = deletedPackageProperties.getProperties();
 
-			thePackage = new CompareItem(properties, aPackage.getName(), "", aPackage.getKey(),
+			thePackage = new CompareItem(properties, aPackage.getName(), "", aPackage.getGUID(),
 					Status.BaselineOnly.toString());
 
 			for (PackageType childPackage : aPackage.getPackages()) {
 				// Special process for a deleted parent package -- i.e. we only included those
 				// child packages and child classes that also were deleted (and not those that
 				// have been moved)...
-				if (preProcessor.getBaselineDeletedPackagesGUIDs().containsKey(childPackage.getKey())) {
+				if (preProcessor.getBaselineDeletedPackagesXmiIds().containsKey(childPackage.getXmiId())) {
 					thePackage.getCompareItem().add(parsePackage(childPackage));
 				}
 			}
@@ -226,20 +229,28 @@ class GUIDBasedDiffReportGeneratorImpl implements DiffReportGenerator {
 			for (ClassType childClass : aPackage.getClasses()) {
 				// Special process for a deleted child classes -- i.e. we only included those
 				// child classes that also were deleted (and not those that have been moved)...
-				if (preProcessor.getBaselineDeletedClassesGUIDs().containsKey(childClass.getKey())) {
+				if (preProcessor.getBaselineDeletedClassesXmiIds().containsKey(childClass.getXmiId())) {
 					thePackage.getCompareItem().add(parseClass(childClass, aPackage));
+				}
+			}
+
+			for (Diagram deletedDiagram : preProcessor.getBaselineDeletedDiagramsXmiIds().values()) {
+				// Special process for a deleted child diagrams -- i.e. we only included those
+				// child diagrams that also were deleted (and not those that have been moved)...
+				if (aPackage.getXmiId().equals(deletedDiagram.getOwner())) {
+					thePackage.getCompareItem().add(parseDiagram(deletedDiagram, aPackage));
 				}
 			}
 		} else {
 			// Retrieve the baselinePackage in order to process package properties...
-			PackageType baselinePackage = (preProcessor.getBaselinePackagesGUIDs().containsKey(aPackage.getKey())
-					? preProcessor.getBaselinePackagesGUIDs().get(aPackage.getKey())
+			PackageType baselinePackage = (preProcessor.getBaselinePackagesXmiIds().containsKey(aPackage.getXmiId())
+					? preProcessor.getBaselinePackagesXmiIds().get(aPackage.getXmiId())
 					: null);
 
 			PackageProperties packageProperties = new PackageProperties(baselinePackage, aPackage);
 			Properties properties = packageProperties.getProperties();
 
-			thePackage = new CompareItem(properties, aPackage.getName(), "Package", aPackage.getKey(),
+			thePackage = new CompareItem(properties, aPackage.getName(), "Package", aPackage.getGUID(),
 					packageProperties.getStatus().toString());
 
 			List<PackageType> targetChildPackages = aPackage.getPackages();
@@ -251,11 +262,11 @@ class GUIDBasedDiffReportGeneratorImpl implements DiffReportGenerator {
 			// Next we search for any child packages of this target package that were
 			// deleted. This is determined by scanning all deleted baseline packages who's
 			// parent package GUID is that of the target package...
-			for (PackageType deletedChildPackage : preProcessor.getBaselineDeletedPackagesGUIDs().values()) {
+			for (PackageType deletedChildPackage : preProcessor.getBaselineDeletedPackagesXmiIds().values()) {
 				// Special process for a deleted parent package -- i.e. we only included those
 				// child packages and child classes that also were deleted (and not those that
 				// have been moved)...
-				if (aPackage.getKey().equals(deletedChildPackage.getParentPackageGUID())) {
+				if (aPackage.getXmiId().equals(deletedChildPackage.getParentPackageGUID())) {
 					thePackage.getCompareItem().add(parsePackage(deletedChildPackage));
 				}
 			}
@@ -264,12 +275,43 @@ class GUIDBasedDiffReportGeneratorImpl implements DiffReportGenerator {
 				thePackage.getCompareItem().add(parseClass(targetChildClass, aPackage));
 			}
 
-			for (ClassType baselineDeletedClass : preProcessor.getBaselineDeletedClassesGUIDs().values()) {
+			for (ClassType baselineDeletedClass : preProcessor.getBaselineDeletedClassesXmiIds().values()) {
 				// Special process for a deleted child classes -- i.e. we only included those
 				// child classes that also were deleted (and not those that have been moved)...
-				if (aPackage.getKey().equals(baselineDeletedClass.getParentPackageGUID())) {
-					PackageType baselineParentPackage = preProcessor.getBaselinePackagesGUIDs().get(aPackage.getKey());
+				if (aPackage.getXmiId().equals(baselineDeletedClass.getParentPackageGUID())) {
+					PackageType baselineParentPackage = preProcessor.getBaselinePackagesXmiIds()
+							.get(aPackage.getXmiId());
 					thePackage.getCompareItem().add(parseClass(baselineDeletedClass, baselineParentPackage));
+				}
+			}
+
+			for (Diagram targetChildDiagram : preProcessor.getBaselineDiagramsXmiIds().values()) {
+				if (aPackage.getXmiId().equals(targetChildDiagram.getOwner()) && !preProcessor
+						.getBaselineDeletedDiagramsXmiIds().containsKey(targetChildDiagram.getXmiId())) {
+					thePackage.getCompareItem().add(parseDiagram(targetChildDiagram, aPackage));
+				}
+			}
+
+			for (Diagram baselineDeletedDiagram : preProcessor.getBaselineDeletedDiagramsXmiIds().values()) {
+				// Special process for a deleted child diagrams -- i.e. we only included those
+				// child diagrams that also were deleted (and not those that have been moved)...
+				//
+				// NOTE: The getOwner() method returns an xmiId thus the different conditional.
+				if (aPackage.getXmiId().equals(baselineDeletedDiagram.getOwner())) {
+					PackageType baselineParentPackage = preProcessor.getBaselinePackagesXmiIds()
+							.get(aPackage.getXmiId());
+					thePackage.getCompareItem().add(parseDiagram(baselineDeletedDiagram, baselineParentPackage));
+				}
+			}
+
+			for (Diagram targetNewDiagram : preProcessor.getTargetNewDiagramsXmiIds().values()) {
+				// Special process for a deleted child diagrams -- i.e. we only included those
+				// child diagrams that also were deleted (and not those that have been moved)...
+				//
+				// NOTE: The getOwner() method returns an xmiId thus the different conditional.
+				if (aPackage.getXmiId().equals(targetNewDiagram.getOwner())) {
+					PackageType targetParentPackage = preProcessor.getTargetPackagesXmiIds().get(aPackage.getXmiId());
+					thePackage.getCompareItem().add(parseDiagram(targetNewDiagram, targetParentPackage));
 				}
 			}
 		}
@@ -282,11 +324,11 @@ class GUIDBasedDiffReportGeneratorImpl implements DiffReportGenerator {
 
 		// Very first thing we do is to first determine if the package passed in is a
 		// deleted package...
-		if (preProcessor.getBaselineDeletedClassesGUIDs().containsKey(aClass.getKey())) {
+		if (preProcessor.getBaselineDeletedClassesXmiIds().containsKey(aClass.getXmiId())) {
 			ClassProperties deletedClassProperties = new ClassProperties(aClass, classParentPackage, null, null);
 			Properties properties = deletedClassProperties.getProperties();
 
-			theClass = new CompareItem(properties, aClass.getName(), "", aClass.getKey(),
+			theClass = new CompareItem(properties, aClass.getName(), "", aClass.getGUID(),
 					Status.BaselineOnly.toString());
 
 			/** Process the Class's attributes... */
@@ -304,19 +346,19 @@ class GUIDBasedDiffReportGeneratorImpl implements DiffReportGenerator {
 			theClass.getCompareItem().add(parseLinks(aClass, classParentPackage, null, null));
 		} else {
 			// Retrieve the baselineClass in order to process class properties...
-			ClassType baselineClass = (preProcessor.getBaselineClassesGUIDs().containsKey(aClass.getKey())
-					? preProcessor.getBaselineClassesGUIDs().get(aClass.getKey())
+			ClassType baselineClass = (preProcessor.getBaselineClassesXmiIds().containsKey(aClass.getXmiId())
+					? preProcessor.getBaselineClassesXmiIds().get(aClass.getXmiId())
 					: null);
 
 			PackageType baselineParentPackage = (baselineClass != null
-					? preProcessor.getBaselinePackagesGUIDs().get(baselineClass.getKey())
+					? preProcessor.getBaselinePackagesXmiIds().get(baselineClass.getXmiId())
 					: null);
 
 			ClassProperties classProperties = new ClassProperties(baselineClass, baselineParentPackage, aClass,
 					classParentPackage);
 			Properties properties = classProperties.getProperties();
 
-			theClass = new CompareItem(properties, aClass.getName(), "Class", aClass.getKey(),
+			theClass = new CompareItem(properties, aClass.getName(), "Class", aClass.getGUID(),
 					classProperties.getStatus().toString());
 
 			Set<AttributeType> sortedAttributeTypes = new TreeSet<AttributeType>(
@@ -387,7 +429,7 @@ class GUIDBasedDiffReportGeneratorImpl implements DiffReportGenerator {
 
 					/** We loop through all target attributes... */
 					for (AttributeType targetAttribute : aClass.getAttributes()) {
-						AttributeType baselineAttribute = baselineClass.getAttributeByGUID(targetAttribute.getKey());
+						AttributeType baselineAttribute = baselineClass.getAttributeByGUID(targetAttribute.getGUID());
 						sortedCompareItems
 								.add(new AttributeCompareItem(parseAttribute(baselineAttribute, targetAttribute)));
 					}
@@ -396,7 +438,7 @@ class GUIDBasedDiffReportGeneratorImpl implements DiffReportGenerator {
 					for (AttributeType baselineAttribute : baselineClass.getAttributes()) {
 						// If null then the attribute was deleted and doesn't appear in the target
 						// class...
-						if (aClass.getAttributeByGUID(baselineAttribute.getKey()) == null) {
+						if (aClass.getAttributeByGUID(baselineAttribute.getGUID()) == null) {
 							sortedCompareItems.add(new AttributeCompareItem(parseAttribute(baselineAttribute, null)));
 						}
 					}
@@ -418,12 +460,166 @@ class GUIDBasedDiffReportGeneratorImpl implements DiffReportGenerator {
 		return theClass;
 	}
 
+	private CompareItem parseDiagram(Diagram aDiagram, PackageType diagramParentPackage) {
+		CompareItem theDiagram = null;
+
+		// Very first thing we do is to first determine if the diagram passed in is a
+		// deleted diagram...
+		if (preProcessor.getBaselineDeletedDiagramsXmiIds().containsKey(aDiagram.getXmiId())) {
+			DiagramProperties deletedDiagramProperties = new DiagramProperties(aDiagram, diagramParentPackage, null,
+					null);
+			Properties properties = deletedDiagramProperties.getProperties();
+
+			theDiagram = new CompareItem(properties, aDiagram.getName(), "", aDiagram.getGUID(),
+					Status.BaselineOnly.toString());
+		} else {
+			// We next determine if the diagram is a brand new one (i.e. doesn't exist in
+			// the baseline)...
+			if (preProcessor.getTargetNewDiagramsXmiIds().containsKey(aDiagram.getXmiId())) {
+				DiagramProperties newDiagramProperties = new DiagramProperties(null, null, aDiagram,
+						diagramParentPackage);
+				Properties properties = newDiagramProperties.getProperties();
+
+				theDiagram = new CompareItem(properties, aDiagram.getName(), "Diagram", aDiagram.getGUID(),
+						Status.ModelOnly.toString());
+			} else {
+				Diagram baselineDiagram = (preProcessor.getBaselineDiagramsXmiIds().containsKey(aDiagram.getXmiId())
+						? preProcessor.getBaselineDiagramsXmiIds().get(aDiagram.getXmiId())
+						: null);
+
+				PackageType baselineParentPackage = (baselineDiagram != null
+						? preProcessor.getBaselinePackagesXmiIds().get(baselineDiagram.getXmiId())
+						: null);
+
+				Diagram targetDiagram = (preProcessor.getTargetDiagramsXmiIds().containsKey(aDiagram.getXmiId())
+						? preProcessor.getTargetDiagramsXmiIds().get(aDiagram.getXmiId())
+						: null);
+
+				PackageType targetParentPackage = (targetDiagram != null
+						? preProcessor.getTargetPackagesXmiIds().get(targetDiagram.getXmiId())
+						: null);
+
+				DiagramProperties diagramProperties = new DiagramProperties(baselineDiagram, baselineParentPackage,
+						targetDiagram, targetParentPackage);
+				Properties properties = diagramProperties.getProperties();
+
+				Status diagramStatus;
+
+				if (preProcessor.getBaselineMovedDiagramsXmiIds().containsKey(aDiagram.getXmiId())
+						|| preProcessor.getTargetMovedDiagramsXmiIds().containsKey(aDiagram.getXmiId())) {
+					diagramStatus = Status.Moved;
+				} else if ((baselineDiagram.getDiagramElement() != null && targetDiagram.getDiagramElement() != null)
+						&& baselineDiagram.getDiagramElement().getDiagramElements().size() != targetDiagram
+								.getDiagramElement().getDiagramElements().size()) {
+					// If they are not the same size we can simply declare as "changed" and skip
+					// the additional processing that appears in the else...
+					diagramStatus = Status.Changed;
+				} else {
+					diagramStatus = Status.Identical;
+
+					Comparator<DiagramElement> comparator = new Comparator<DiagramElement>() {
+						public int compare(DiagramElement item1, DiagramElement item2) {
+							if (item1 == item2) {
+								return 0;
+							}
+							if (item1 == null) {
+								return -1;
+							}
+							if (item2 == null) {
+								return 1;
+							}
+
+							String item1Seqno = item1.getSeqno();
+							String item2Seqno = item2.getSeqno();
+
+							String item1Subject = item1.getSubject();
+							String item2Subject = item2.getSubject();
+
+							if (item1Seqno == null && item2Seqno == null) {
+								if (item1Subject == null && item2Subject == null) {
+									return 0;
+								}
+								if (item1Subject == null) {
+									return -1;
+								}
+								if (item2Subject == null) {
+									return 1;
+								}
+								return item1Subject.compareTo(item2Subject);
+							} else {
+								if (item1Seqno == null) {
+									return -1;
+								}
+								if (item2Seqno == null) {
+									return 1;
+								}
+								if ((item1Seqno.equals(item2Seqno))) {
+									if (item1Subject == null && item2Subject == null) {
+										return 0;
+									}
+									if (item1Subject == null) {
+										return -1;
+									}
+									if (item2Subject == null) {
+										return 1;
+									}
+									return item1Subject.compareTo(item2Subject);
+								}
+								return item1Seqno.compareTo(item2Seqno);
+							}
+						}
+					};
+
+					DiagramElementType baselineDiagramElementType = baselineDiagram.getDiagramElement();
+					DiagramElementType targetDiagramElementType = targetDiagram.getDiagramElement();
+
+					if ((baselineDiagramElementType != null && targetDiagramElementType != null)
+							&& (baselineDiagramElementType.getDiagramElements().size() == targetDiagramElementType
+									.getDiagramElements().size())) {
+
+						List<DiagramElement> baselineDiagramElements = baselineDiagramElementType.getDiagramElements();
+						baselineDiagramElements.sort(comparator);
+
+						List<DiagramElement> targetDiagramElements = targetDiagramElementType.getDiagramElements();
+						targetDiagramElements.sort(comparator);
+
+						for (int index = 0; index < baselineDiagramElements.size(); index++) {
+							DiagramElement baselineDiagramElement = baselineDiagramElements.get(index);
+							DiagramElement targetDiagramElement = targetDiagramElements.get(index);
+
+							if (!((baselineDiagramElement.getSeqno() == null && targetDiagramElement.getSeqno() == null)
+									|| ((baselineDiagramElement.getSeqno() != null)
+											&& (targetDiagramElement.getSeqno() != null) && baselineDiagramElement
+													.getSeqno().equals(targetDiagramElement.getSeqno())))
+									|| //
+									!baselineDiagramElement.getGeometry().equals(targetDiagramElement.getGeometry()) || //
+									!baselineDiagramElement.getStyle().equals(targetDiagramElement.getStyle()) || //
+									!baselineDiagramElement.getSubject().equals(targetDiagramElement.getSubject())) {
+								diagramStatus = Status.Changed;
+								break; // Break out of the for loop as we know the diagram has changed...
+							}
+
+						}
+					} else if ((baselineDiagramElementType == null && targetDiagramElementType != null)
+							|| (baselineDiagramElementType != null && targetDiagramElementType == null)) {
+						diagramStatus = Status.Changed;
+					}
+				}
+
+				theDiagram = new CompareItem(properties, targetDiagram.getName(), "Diagram", targetDiagram.getGUID(),
+						diagramStatus.toString());
+			}
+		}
+
+		return theDiagram;
+	}
+
 	private CompareItem parseAttribute(AttributeType baselineAttribute, AttributeType targetAttribute) {
 
 		CompareItem theAttribute;
 
-		AttributeProperties propsProcessor = new AttributeProperties(baselineAttribute, targetAttribute);
-		Properties properties = propsProcessor.getProperties();
+		AttributeProperties attributeProperties = new AttributeProperties(baselineAttribute, targetAttribute);
+		Properties properties = attributeProperties.getProperties();
 
 		// It is assumed that both attributes will never be both null...
 		if (baselineAttribute == null) {
@@ -440,7 +636,7 @@ class GUIDBasedDiffReportGeneratorImpl implements DiffReportGenerator {
 		} else {
 			// Both attributes exist...
 			theAttribute = new CompareItem(properties, new ArrayList<CompareItem>(), targetAttribute.getName(),
-					"Attribute", targetAttribute.getTheValue("ea_guid"), Status.Changed.toString());
+					"Attribute", targetAttribute.getTheValue("ea_guid"), attributeProperties.getStatus().toString());
 		}
 
 		return theAttribute;
@@ -451,25 +647,24 @@ class GUIDBasedDiffReportGeneratorImpl implements DiffReportGenerator {
 
 		// NOTE: The status of the "Links" CompareItem is ALWAYS 'Identical'...
 		CompareItem links = new CompareItem(null, "Links", "Links",
-				(targetClass != null ? targetClass.getKey() : baselineClass.getKey()) + "Links",
+				(targetClass != null ? targetClass.getGUID() : baselineClass.getGUID()) + "Links",
 				Status.Identical.toString());
 
 		if (baselineClass == null) {
 			// Only model class exists...
 
-			for (GeneralizationType targetGeneralization : targetParentPackage
-					.getGeneralizations(targetClass.getXmiId())) {
+			for (GeneralizationType targetGeneralization : preProcessor.getAllTargetGeneralizations(targetClass.getXmiId())) {
 
 				GeneralizationProperties propsProcessor = new GeneralizationProperties(null, targetGeneralization);
 
 				CompareItem generalizationCompareItem = new CompareItem(propsProcessor.getProperties(),
-						"Generalization", "", targetGeneralization.getKey(), propsProcessor.getStatus().toString());
+						"Generalization", "", targetGeneralization.getGUID(), propsProcessor.getStatus().toString());
 
 				/** Source end... */
 				CompareItem sourceCompareItem = new CompareItem(
 						propsProcessor.getSourcePropsProcessor().getProperties(),
 						"Source: (" + propsProcessor.getSourcePropsProcessor().getRoleName() + ")", "Src",
-						"Src-" + targetGeneralization.getKey(),
+						"Src-" + targetGeneralization.getGUID(),
 						propsProcessor.getSourcePropsProcessor().getStatus().toString());
 
 				generalizationCompareItem.getCompareItem().add(sourceCompareItem);
@@ -478,7 +673,7 @@ class GUIDBasedDiffReportGeneratorImpl implements DiffReportGenerator {
 				CompareItem destinationCompareItem = new CompareItem(
 						propsProcessor.getDestinationPropsProcessor().getProperties(),
 						"Target: (" + propsProcessor.getDestinationPropsProcessor().getRoleName() + ")", "Dst",
-						"Dst-" + targetGeneralization.getKey(),
+						"Dst-" + targetGeneralization.getGUID(),
 						propsProcessor.getDestinationPropsProcessor().getStatus().toString());
 
 				generalizationCompareItem.getCompareItem().add(destinationCompareItem);
@@ -487,12 +682,12 @@ class GUIDBasedDiffReportGeneratorImpl implements DiffReportGenerator {
 				links.getCompareItem().add(generalizationCompareItem);
 			}
 
-			for (AssociationType targetAssociation : targetParentPackage.getAssociations(targetClass.getXmiId())) {
+			for (AssociationType targetAssociation : preProcessor.getAllTargetAssociations(targetClass.getXmiId())) {
 
 				AssociationProperties propsProcessor = new AssociationProperties(null, targetAssociation);
 
 				CompareItem associationCompareItem = new CompareItem(propsProcessor.getProperties(), "Association", "",
-						targetAssociation.getKey(), propsProcessor.getStatus().toString());
+						targetAssociation.getGUID(), propsProcessor.getStatus().toString());
 
 				/**
 				 * Create 'Src' end of the association...
@@ -526,19 +721,19 @@ class GUIDBasedDiffReportGeneratorImpl implements DiffReportGenerator {
 		} else if (targetClass == null) {
 			// Only baseline class exists...so we know the class has been deleted.
 
-			for (GeneralizationType baselineGeneralization : baselineParentPackage
-					.getGeneralizations(baselineClass.getKey())) {
+			for (GeneralizationType baselineGeneralization : preProcessor
+					.getAllBaselineGeneralizations(baselineClass.getXmiId())) {
 
 				GeneralizationProperties propsProcessor = new GeneralizationProperties(null, baselineGeneralization);
 
 				CompareItem generalizationCompareItem = new CompareItem(propsProcessor.getProperties(),
-						"Generalization", "", baselineGeneralization.getKey(), propsProcessor.getStatus().toString());
+						"Generalization", "", baselineGeneralization.getGUID(), propsProcessor.getStatus().toString());
 
 				/** Source end... */
 				CompareItem sourceCompareItem = new CompareItem(
 						propsProcessor.getSourcePropsProcessor().getProperties(),
 						"Source: (" + propsProcessor.getSourcePropsProcessor().getRoleName() + ")", "Src",
-						"Src-" + baselineGeneralization.getKey(),
+						"Src-" + baselineGeneralization.getGUID(),
 						propsProcessor.getSourcePropsProcessor().getStatus().toString());
 
 				generalizationCompareItem.getCompareItem().add(sourceCompareItem);
@@ -547,7 +742,7 @@ class GUIDBasedDiffReportGeneratorImpl implements DiffReportGenerator {
 				CompareItem destinationCompareItem = new CompareItem(
 						propsProcessor.getDestinationPropsProcessor().getProperties(),
 						"Target: (" + propsProcessor.getDestinationPropsProcessor().getRoleName() + ")", "Dst",
-						"Dst-" + baselineGeneralization.getKey(),
+						"Dst-" + baselineGeneralization.getGUID(),
 						propsProcessor.getDestinationPropsProcessor().getStatus().toString());
 
 				generalizationCompareItem.getCompareItem().add(destinationCompareItem);
@@ -556,13 +751,12 @@ class GUIDBasedDiffReportGeneratorImpl implements DiffReportGenerator {
 				links.getCompareItem().add(generalizationCompareItem);
 			}
 
-			for (AssociationType baselineAssociation : baselineParentPackage
-					.getAssociations(baselineClass.getXmiId())) {
+			for (AssociationType baselineAssociation : preProcessor.getAllBaselineAssociations(baselineClass.getXmiId())) {
 
 				AssociationProperties propsProcessor = new AssociationProperties(baselineAssociation, null);
 
 				CompareItem associationCompareItem = new CompareItem(propsProcessor.getProperties(), "Association", "",
-						baselineAssociation.getKey(), propsProcessor.getStatus().toString());
+						baselineAssociation.getGUID(), propsProcessor.getStatus().toString());
 
 				/**
 				 * Create 'Src' end of the association...
@@ -597,157 +791,153 @@ class GUIDBasedDiffReportGeneratorImpl implements DiffReportGenerator {
 			// Both classes exist...
 			// NOTE: For "root" classes there is NO parent package. So ensure it is != null
 
-			if (targetParentPackage != null) {
-				for (GeneralizationType targetGeneralization : targetParentPackage
-						.getGeneralizations(targetClass.getXmiId())) {
+			for (GeneralizationType targetGeneralization : preProcessor.getAllTargetGeneralizations(targetClass.getXmiId())) {
 
-					GeneralizationType baselineGeneralization = (preProcessor.getBaselineGeneralizationsGUIDs()
-							.containsKey(targetGeneralization.getKey())
-									? preProcessor.getBaselineGeneralizationsGUIDs().get(targetGeneralization.getKey())
-									: null);
+				GeneralizationType baselineGeneralization = (preProcessor.getBaselineGeneralizationsXmiIds()
+						.containsKey(targetGeneralization.getXmiId())
+								? preProcessor.getBaselineGeneralizationsXmiIds().get(targetGeneralization.getXmiId())
+								: null);
 
-					GeneralizationProperties propsProcessor = new GeneralizationProperties(baselineGeneralization,
-							targetGeneralization);
+				GeneralizationProperties propsProcessor = new GeneralizationProperties(baselineGeneralization,
+						targetGeneralization);
 
-					CompareItem generalizationCompareItem = new CompareItem(propsProcessor.getProperties(),
-							"Generalization", "", targetGeneralization.getKey(), propsProcessor.getStatus().toString());
+				CompareItem generalizationCompareItem = new CompareItem(propsProcessor.getProperties(),
+						"Generalization", "", targetGeneralization.getGUID(), propsProcessor.getStatus().toString());
+
+				CompareItem sourceCompareItem = new CompareItem(
+						propsProcessor.getSourcePropsProcessor().getProperties(),
+						"Source: (" + propsProcessor.getSourcePropsProcessor().getRoleName() + ")", "Src",
+						"Src-" + targetGeneralization.getGUID(),
+						propsProcessor.getSourcePropsProcessor().getStatus().toString());
+
+				generalizationCompareItem.getCompareItem().add(sourceCompareItem);
+
+				CompareItem destinationCompareItem = new CompareItem(
+						propsProcessor.getDestinationPropsProcessor().getProperties(),
+						"Target: (" + propsProcessor.getDestinationPropsProcessor().getRoleName() + ")", "Dst",
+						"Dst-" + targetGeneralization.getGUID(),
+						propsProcessor.getDestinationPropsProcessor().getStatus().toString());
+
+				generalizationCompareItem.getCompareItem().add(destinationCompareItem);
+
+				links.getCompareItem().add(generalizationCompareItem);
+			}
+
+			/**
+			 * We ensure that we don't forget about generalizations that are ONLY in the
+			 * baseline (i.e. have been deleted):
+			 */
+			for (String generalizationXmiId : preProcessor.getBaselineDeletedGeneralizationsXmiIds().keySet()) {
+				GeneralizationType deletedBaselineGeneralization = preProcessor
+						.getBaselineDeletedGeneralizationsXmiIds().get(generalizationXmiId);
+
+				// If the below condition is true then we have a deleted generalization.
+				if (deletedBaselineGeneralization.getSubtype().equals(baselineClass.getXmiId())
+						|| deletedBaselineGeneralization.getSupertype().equals(baselineClass.getXmiId())) {
+
+					GeneralizationProperties propsProcessor = new GeneralizationProperties(
+							deletedBaselineGeneralization, null);
+
+					CompareItem deletedGeneralizationCompareItem = new CompareItem(propsProcessor.getProperties(),
+							"Generalization", "", deletedBaselineGeneralization.getGUID(),
+							propsProcessor.getStatus().toString());
 
 					CompareItem sourceCompareItem = new CompareItem(
 							propsProcessor.getSourcePropsProcessor().getProperties(),
 							"Source: (" + propsProcessor.getSourcePropsProcessor().getRoleName() + ")", "Src",
-							"Src-" + targetGeneralization.getKey(),
+							"Src-" + deletedBaselineGeneralization.getGUID(),
 							propsProcessor.getSourcePropsProcessor().getStatus().toString());
 
-					generalizationCompareItem.getCompareItem().add(sourceCompareItem);
+					deletedGeneralizationCompareItem.getCompareItem().add(sourceCompareItem);
 
 					CompareItem destinationCompareItem = new CompareItem(
 							propsProcessor.getDestinationPropsProcessor().getProperties(),
 							"Target: (" + propsProcessor.getDestinationPropsProcessor().getRoleName() + ")", "Dst",
-							"Dst-" + targetGeneralization.getKey(),
+							"Dst-" + deletedBaselineGeneralization.getGUID(),
 							propsProcessor.getDestinationPropsProcessor().getStatus().toString());
 
-					generalizationCompareItem.getCompareItem().add(destinationCompareItem);
+					deletedGeneralizationCompareItem.getCompareItem().add(destinationCompareItem);
 
-					links.getCompareItem().add(generalizationCompareItem);
+					links.getCompareItem().add(deletedGeneralizationCompareItem);
 				}
+			}
 
-				/**
-				 * We ensure that we don't forget about generalizations that are ONLY in the
-				 * baseline (i.e. have been deleted):
-				 */
-				for (String generalizationXmiId : preProcessor.getBaselineDeletedGeneralizationsGUIDs().keySet()) {
-					GeneralizationType deletedBaselineGeneralization = preProcessor
-							.getBaselineDeletedGeneralizationsGUIDs().get(generalizationXmiId);
+			for (AssociationType targetAssociation : preProcessor.getAllTargetAssociations(targetClass.getXmiId())) {
+				AssociationType baselineAssociation = (preProcessor.getBaselineAssociationsXmiIds()
+						.containsKey(targetAssociation.getXmiId())
+								? preProcessor.getBaselineAssociationsXmiIds().get(targetAssociation.getXmiId())
+								: null);
 
-					// If the below condition is true then we have a deleted generalization.
-					if (deletedBaselineGeneralization.getSubtype().equals(baselineClass.getXmiId())
-							|| deletedBaselineGeneralization.getSupertype().equals(baselineClass.getXmiId())) {
+				AssociationProperties propsProcessor = new AssociationProperties(baselineAssociation,
+						targetAssociation);
+				//
+				CompareItem associationCompareItem = new CompareItem(propsProcessor.getProperties(), "Association", "",
+						targetAssociation.getGUID(), propsProcessor.getStatus().toString());
 
-						GeneralizationProperties propsProcessor = new GeneralizationProperties(
-								deletedBaselineGeneralization, null);
+				String sourceGUID = generateSourceGUID(targetClass, targetAssociation,
+						propsProcessor.getTargetSourceAssociationEnd());
+				//
+				CompareItem sourceEndCompareItem = new CompareItem(
+						propsProcessor.getSourcePropsProcessor().getProperties(),
+						"Source: (" + targetAssociation.getSourceAssociationEnd().getName() + ")", "Src", sourceGUID,
+						propsProcessor.getSourcePropsProcessor().getStatus().toString());
 
-						CompareItem deletedGeneralizationCompareItem = new CompareItem(propsProcessor.getProperties(),
-								"Generalization", "", deletedBaselineGeneralization.getKey(),
-								propsProcessor.getStatus().toString());
+				String destinationGUID = generateDestinationGUID(targetClass, targetAssociation,
+						propsProcessor.getTargetDestinationAssociationEnd());
+				//
+				CompareItem destinationEndCompareItem = new CompareItem(
+						propsProcessor.getDestinationPropsProcessor().getProperties(),
+						"Target: (" + targetAssociation.getDestinationAssociationEnd().getName() + ")", "Dst",
+						destinationGUID, propsProcessor.getDestinationPropsProcessor().getStatus().toString());
 
-						CompareItem sourceCompareItem = new CompareItem(
-								propsProcessor.getSourcePropsProcessor().getProperties(),
-								"Source: (" + propsProcessor.getSourcePropsProcessor().getRoleName() + ")", "Src",
-								"Src-" + deletedBaselineGeneralization.getKey(),
-								propsProcessor.getSourcePropsProcessor().getStatus().toString());
+				associationCompareItem.getCompareItem().add(sourceEndCompareItem);
+				associationCompareItem.getCompareItem().add(destinationEndCompareItem);
 
-						deletedGeneralizationCompareItem.getCompareItem().add(sourceCompareItem);
+				links.getCompareItem().add(associationCompareItem);
+			}
 
-						CompareItem destinationCompareItem = new CompareItem(
-								propsProcessor.getDestinationPropsProcessor().getProperties(),
-								"Target: (" + propsProcessor.getDestinationPropsProcessor().getRoleName() + ")", "Dst",
-								"Dst-" + deletedBaselineGeneralization.getKey(),
-								propsProcessor.getDestinationPropsProcessor().getStatus().toString());
+			/**
+			 * We ensure that we don't forget about associations that are ONLY in the
+			 * baseline (i.e. have been deleted):
+			 */
+			for (String associationXmiId : preProcessor.getBaselineDeletedAssociationsXmiIds().keySet()) {
+				AssociationType deletedBaselineAssociation = preProcessor.getBaselineDeletedAssociationsXmiIds()
+						.get(associationXmiId);
 
-						deletedGeneralizationCompareItem.getCompareItem().add(destinationCompareItem);
+				// If the below condition is true then we have a deleted associations.
+				if (deletedBaselineAssociation.getSourceAssociationEnd().getType().equals(baselineClass.getXmiId())
+						|| deletedBaselineAssociation.getDestinationAssociationEnd().getType()
+								.equals(baselineClass.getXmiId())) {
 
-						links.getCompareItem().add(deletedGeneralizationCompareItem);
-					}
-				}
-
-				for (AssociationType targetAssociation : targetParentPackage.getAssociations(targetClass.getXmiId())) {
-					AssociationType baselineAssociation = (preProcessor.getBaselineAssociationsGUIDs()
-							.containsKey(targetAssociation.getKey())
-									? preProcessor.getBaselineAssociationsGUIDs().get(targetAssociation.getKey())
-									: null);
-
-					AssociationProperties propsProcessor = new AssociationProperties(baselineAssociation,
-							targetAssociation);
+					AssociationProperties propsProcessor = new AssociationProperties(deletedBaselineAssociation, null);
 					//
 					CompareItem associationCompareItem = new CompareItem(propsProcessor.getProperties(), "Association",
-							"", targetAssociation.getKey(), propsProcessor.getStatus().toString());
+							"", deletedBaselineAssociation.getGUID(), propsProcessor.getStatus().toString());
 
-					String sourceGUID = generateSourceGUID(targetClass, targetAssociation,
-							propsProcessor.getTargetSourceAssociationEnd());
+					String sourceGUID = generateSourceGUID(baselineClass, deletedBaselineAssociation,
+							propsProcessor.getBaselineSourceAssociationEnd());
 					//
 					CompareItem sourceEndCompareItem = new CompareItem(
 							propsProcessor.getSourcePropsProcessor().getProperties(),
-							"Source: (" + targetAssociation.getSourceAssociationEnd().getName() + ")", "Src",
+							"Source: (" + deletedBaselineAssociation.getSourceAssociationEnd().getName() + ")", "Src",
 							sourceGUID, propsProcessor.getSourcePropsProcessor().getStatus().toString());
 
-					String destinationGUID = generateDestinationGUID(targetClass, targetAssociation,
-							propsProcessor.getTargetDestinationAssociationEnd());
+					String destinationGUID = generateDestinationGUID(baselineClass, deletedBaselineAssociation,
+							propsProcessor.getBaselineDestinationAssociationEnd());
 					//
 					CompareItem destinationEndCompareItem = new CompareItem(
 							propsProcessor.getDestinationPropsProcessor().getProperties(),
-							"Target: (" + targetAssociation.getDestinationAssociationEnd().getName() + ")", "Dst",
-							destinationGUID, propsProcessor.getDestinationPropsProcessor().getStatus().toString());
+							"Target: (" + deletedBaselineAssociation.getDestinationAssociationEnd().getName() + ")",
+							"Dst", destinationGUID,
+							propsProcessor.getDestinationPropsProcessor().getStatus().toString());
 
 					associationCompareItem.getCompareItem().add(sourceEndCompareItem);
 					associationCompareItem.getCompareItem().add(destinationEndCompareItem);
 
 					links.getCompareItem().add(associationCompareItem);
 				}
-
-				/**
-				 * We ensure that we don't forget about associations that are ONLY in the
-				 * baseline (i.e. have been deleted):
-				 */
-				for (String associationXmiId : preProcessor.getBaselineDeletedAssociationsGUIDs().keySet()) {
-					AssociationType deletedBaselineAssociation = preProcessor.getBaselineDeletedAssociationsGUIDs()
-							.get(associationXmiId);
-
-					// If the below condition is true then we have a deleted associations.
-					if (deletedBaselineAssociation.getSourceAssociationEnd().getType().equals(baselineClass.getXmiId())
-							|| deletedBaselineAssociation.getDestinationAssociationEnd().getType()
-									.equals(baselineClass.getXmiId())) {
-
-						AssociationProperties propsProcessor = new AssociationProperties(deletedBaselineAssociation,
-								null);
-						//
-						CompareItem associationCompareItem = new CompareItem(propsProcessor.getProperties(),
-								"Association", "", deletedBaselineAssociation.getKey(),
-								propsProcessor.getStatus().toString());
-
-						String sourceGUID = generateSourceGUID(baselineClass, deletedBaselineAssociation,
-								propsProcessor.getBaselineSourceAssociationEnd());
-						//
-						CompareItem sourceEndCompareItem = new CompareItem(
-								propsProcessor.getSourcePropsProcessor().getProperties(),
-								"Source: (" + deletedBaselineAssociation.getSourceAssociationEnd().getName() + ")",
-								"Src", sourceGUID, propsProcessor.getSourcePropsProcessor().getStatus().toString());
-
-						String destinationGUID = generateDestinationGUID(baselineClass, deletedBaselineAssociation,
-								propsProcessor.getBaselineDestinationAssociationEnd());
-						//
-						CompareItem destinationEndCompareItem = new CompareItem(
-								propsProcessor.getDestinationPropsProcessor().getProperties(),
-								"Target: (" + deletedBaselineAssociation.getDestinationAssociationEnd().getName() + ")",
-								"Dst", destinationGUID,
-								propsProcessor.getDestinationPropsProcessor().getStatus().toString());
-
-						associationCompareItem.getCompareItem().add(sourceEndCompareItem);
-						associationCompareItem.getCompareItem().add(destinationEndCompareItem);
-
-						links.getCompareItem().add(associationCompareItem);
-					}
-				}
 			}
+
 		}
 
 		return links;
@@ -762,10 +952,10 @@ class GUIDBasedDiffReportGeneratorImpl implements DiffReportGenerator {
 	 * @param sourceAssocationEnd
 	 * @return
 	 */
-	private String generateSourceGUID(ClassType sourceClass, KeyIdentifier sourceLink,
+	private String generateSourceGUID(ClassType sourceClass, GUIDIdentifier sourceLink,
 			AssociationEndType sourceAssocationEnd) {
-		return "Src-" + sourceClass.getKey() + "Links" + DiffUtils.convertXmiIdToEAGUID(sourceAssocationEnd.getType())
-				+ sourceLink.getKey();
+		return "Src-" + sourceClass.getGUID() + "Links" + DiffUtils.convertXmiIdToEAGUID(sourceAssocationEnd.getType())
+				+ sourceLink.getGUID();
 	}
 
 	/**
@@ -777,10 +967,10 @@ class GUIDBasedDiffReportGeneratorImpl implements DiffReportGenerator {
 	 * @param destinationAssocationEnd
 	 * @return
 	 */
-	private String generateDestinationGUID(ClassType destinationClass, KeyIdentifier destinationLink,
+	private String generateDestinationGUID(ClassType destinationClass, GUIDIdentifier destinationLink,
 			AssociationEndType destinationAssocationEnd) {
-		return "Dst-" + destinationClass.getKey() + "Links"
-				+ DiffUtils.convertXmiIdToEAGUID(destinationAssocationEnd.getType()) + destinationLink.getKey();
+		return "Dst-" + destinationClass.getGUID() + "Links"
+				+ DiffUtils.convertXmiIdToEAGUID(destinationAssocationEnd.getType()) + destinationLink.getGUID();
 	}
 
 }

@@ -14,7 +14,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
-import org.cimug.compare.uml1_3.ifaces.KeyIdentifier;
+import org.cimug.compare.uml1_3.ifaces.GUIDIdentifier;
 import org.cimug.compare.uml1_3.ifaces.NamedType;
 import org.cimug.compare.uml1_3.ifaces.PackageContainer;
 
@@ -45,7 +45,7 @@ import org.cimug.compare.uml1_3.ifaces.PackageContainer;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "ModelType", propOrder = { "namespaceOwnedElement" })
 @XmlRootElement(name = "Model")
-public class Model implements PackageContainer, NamedType, KeyIdentifier {
+public class Model implements PackageContainer, NamedType, GUIDIdentifier {
 
 	@XmlElement(name = "Namespace.ownedElement", required = true)
 	protected NamespaceOwnedElementType namespaceOwnedElement;
@@ -129,7 +129,7 @@ public class Model implements PackageContainer, NamedType, KeyIdentifier {
 	}
 
 	@Override
-	public String getKey() {
+	public String getGUID() {
 		return getXmiId();
 	}
 

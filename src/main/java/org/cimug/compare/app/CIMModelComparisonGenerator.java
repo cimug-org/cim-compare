@@ -77,14 +77,14 @@ public class CIMModelComparisonGenerator {
 			 * has a value associated with it and which must be processed accordingly...
 			 */
 			for (String arg : args) {
-				if (arg.startsWith("--")) {
-					String param = arg.replaceFirst("--", "");
+				if (arg.startsWith("--") || arg.startsWith("-")) {
+					String param = (arg.startsWith("--") ? arg.replaceFirst("--", "") : arg.replaceFirst("-", ""));
 					String value = null;
 
 					if (arg.contains("=")) {
 						param = param.substring(0, param.indexOf("="));
 						value = arg.substring(arg.indexOf("=") + 1);
-					} 
+					}
 
 					switch (param.toLowerCase())
 						{
@@ -125,8 +125,14 @@ public class CIMModelComparisonGenerator {
 
 	private static File[] parseFileArguments(String[] args) {
 
-		if (((args.length == 1) && ("--help".equals(args[0].toLowerCase()) || "--h".equals(args[0].toLowerCase()))) || //
-				(args.length < 1 || ((args.length > 3) && !args[args.length - 1].startsWith("--")))) {
+		if (((args.length == 1) && //
+				("--help".equals(args[0].toLowerCase()) || //
+						"-help".equals(args[0].toLowerCase()) || //
+						"--h".equals(args[0].toLowerCase()) || //
+						"-h".equals(args[0].toLowerCase())))
+				|| //
+				(args.length < 1 || ((args.length > 3)
+						&& (!args[args.length - 1].startsWith("--") && !args[args.length - 1].startsWith("-"))))) {
 			printUsage();
 			System.exit(1);
 		}
@@ -137,7 +143,7 @@ public class CIMModelComparisonGenerator {
 		List<File> fileArgs = new LinkedList<File>();
 
 		for (String arg : args) {
-			if (!arg.startsWith("--")) {
+			if (!arg.startsWith("--") && !arg.startsWith("-")) {
 				fileArgs.add(new File(arg));
 			}
 		}
@@ -312,7 +318,8 @@ public class CIMModelComparisonGenerator {
 		System.err.println("   Examples: ");
 		System.err.println(
 				"          java -jar cim-compare.jar \"C:\\CIM XMI exports\\CIM15v33.xmi\" \"C:\\CIM XMI exports\\CIM16v26a.xmi\" \"C:\\Comparison Reports\\\"");
-		System.err.println("          java -jar cim-compare.jar CIM15v33.xmi CIM16v26a.xmi \"C:\\Comparison Reports\\\"");
+		System.err
+				.println("          java -jar cim-compare.jar CIM15v33.xmi CIM16v26a.xmi \"C:\\Comparison Reports\\\"");
 		System.err.println(
 				"          java -jar cim-compare.jar CIM15v33.xmi CIM16v26a.xmi \"C:\\Comparison Reports\\CIM15v33_CIM16v26a_ComparisonReport.html\"");
 		System.err.println(

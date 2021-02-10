@@ -4,7 +4,7 @@
 Minor release of the **cim-compare** project.  This release includes:
 
 - By default **cim-compare** generates comparison reports that include packages, classes, diagrams, attributes, etc. that are "Identical" between baseline and target models. Such packages and classes are included as they are useful for reference purposes within reports. A new **--minimum** command line option has been introduced in this release.  When specified **cim-compare** will exclude all "Identical" references and report only the packages, classes, class attributes, associations, generalizations, and UML diagrams that have had actual changes. This feature is useful when it is necessary to perform detailed analysis of only the most concise set of changes between models.
-- A key enhancement in this release is support for UML diagrams comparisons in comparison reports. Refer to the "Enterprise Architect XMI Export Procedures" section of **cim-compare**'s README.md file.  
+- A key enhancement in this release is support for UML diagrams comparisons in comparison reports. Refer to the "Enterprise Architect XMI Export Procedures" section of **cim-compare**'s README.md file for further information.  
 
 ### Release 1.0.1 [31-Jan-2021]
 Patch release of the **cim-compare** project.  This release includes:

@@ -1,5 +1,18 @@
 ## cim-compare Release Log
 
+### Release 1.1.0 [09-Feb-2021]
+Minor release of the **cim-compare** project.  This release supports:
+
+- By default **cim-compare** generates comparison reports that include references to packages, classes, diagrams, etc. that are "Identical" between baseline and target models. The contents of these packages and classes are not generated but they are included as they are useful for reference as part of reports. A new --minimum command line option has been introduced in this release.  When specified **cim-compare** will exclude all such references and report only the packages, classes, attributes within classes, associations, generalizations, and UML diagrams that have had actual changes. This feature is useful when it is desirable to display only the core set of changes between models to streamline analysis of the models.
+- A key enhancement in this release is support for UML diagrams comparisons in comparison reports. Refer to the "Enterprise Architect XMI Export Procedures" section of **cim-compare**'s README.md file.  
+
+### Release 1.0.1 [31-Jan-2021]
+Minor release of the **cim-compare** project.  This release supports:
+
+- Better command line XMI export version validation and end-user error output. **cim-compare** will now provide more detail on what specifically was invalid for a baseline or target XMI input file that was not exported by an Enterprise Architect exporter currently support by **cim-compare**. For example the "Unisys/Rose Format" option must not be checked for an XMI export within Enterprise Architect. This is detected and reported to the end-user with graceful termination of execution.
+- Fixed numerous defects reported around the Links section of the comparison reports.
+- Additional improvements to the HTML output generated so that changes are more clearly communicated.
+
 ### Release 1.0.0 [17-Apr-2020]
 Initial release of the **cim-compare** project.  This release supports:
 
@@ -8,10 +21,3 @@ Initial release of the **cim-compare** project.  This release supports:
 - Generation of standalone HTML comparison reports viewable in most standard browsers (e.g. Chrome, Firefox, Edge, etc.)
 - Given the size of comparison reports the initial release includes the ability to auto-locate and expand on a specific CIM class via a search by class name.
 - Model changes represented using color-oriented visualization within reports.
-
-### Release 1.0.1 [31-Jan-2021]
-Minor release of the **cim-compare** project.  This release supports:
-
-- Better command line XMI export version validation and end-user error output. **cim-compare** will now provide more detail on what specifically was invalid for a baseline or target XMI input file that was not exported by an Enterprise Architect exporter currently support by **cim-compare**. For example the "Unisys/Rose Format" option must not be checked for an XMI export within Enterprise Architect. This is detected and reported to the end-user with graceful termination of execution.
-- Fixed numerous defects reported around the Links section of the comparison reports.
-- Additional improvements to the HTML output generated so that changes are more clearly communicated.

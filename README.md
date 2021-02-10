@@ -96,7 +96,7 @@ Note that in command line examples that follow whenever a directory or file path
 
 ### Option \#2: EA Model Comparison Logs as Input
 
-The second option is by specifying an **EA model comparison log** file as input on the command line. In order to perform this option it is first required that a comparison XML log file be generated from within Enterprise Architect.  Refer to the [EA Comparison Log Procedures](media/EA_COMPARE_PROCEDURES.md) for detailed information on generating XML Compare Logs from within Enterprise Architect. It is important to note that EA does not support comparisons of UML diagrams and therefore diagrams are not supported as part of reports generated using Option \#2.
+The second option is by specifying an **EA model comparison log** file as input on the command line. In order to perform this option it is first required that a comparison XML log file be generated from within Enterprise Architect.  Refer to the [EA Comparison Log Procedures](EA_COMPARE_PROCEDURES.md) for detailed information on generating XML Compare Logs from within Enterprise Architect. It is important to note that EA does not support comparisons of UML diagrams and therefore diagrams are not supported as part of reports generated using Option \#2.
 
 This particular usage takes the following form:
 

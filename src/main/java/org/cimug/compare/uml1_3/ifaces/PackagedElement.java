@@ -18,6 +18,13 @@ public interface PackagedElement extends ModelElementTaggedValueContainer {
 		}
 		return null;
 	}
+	
+	default String getParentPackageXmiId() {
+		if ((getModelElementTaggedValue() != null) && (getModelElementTaggedValue().getTaggedValue(getParentPackageGUIDTagName()) != null)) {
+			return getModelElementTaggedValue().getTaggedValue(getParentPackageGUIDTagName()).getTheValue();
+		}
+		return null;
+	}
 
 	default String getParentPackageName() {
 		if ((getModelElementTaggedValue() != null) && (getModelElementTaggedValue().getTaggedValue(getParentPackageNameTagName()) != null)) {

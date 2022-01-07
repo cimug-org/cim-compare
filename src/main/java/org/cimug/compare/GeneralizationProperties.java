@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.cimug.compare.app.PreProcessor;
 import org.cimug.compare.logs.Properties;
 import org.cimug.compare.logs.Property;
 import org.cimug.compare.uml1_3.GeneralizationType;
@@ -38,14 +39,15 @@ public class GeneralizationProperties {
 
 	private Properties properties;
 
-	public GeneralizationProperties(GeneralizationType baselineGeneralization,
+	public GeneralizationProperties(PreProcessor preProcessor, GeneralizationType baselineGeneralization,
 			GeneralizationType targetGeneralization) {
 		this.baselineGeneralization = baselineGeneralization;
 		this.targetGeneralization = targetGeneralization;
 		//
-		this.sourcePropsProcessor = new SourceGeneralizationEndProperties(baselineGeneralization, targetGeneralization);
-		this.destinationPropsProcessor = new DestinationGeneralizationEndProperties(baselineGeneralization,
+		this.sourcePropsProcessor = new SourceGeneralizationEndProperties(preProcessor, baselineGeneralization,
 				targetGeneralization);
+		this.destinationPropsProcessor = new DestinationGeneralizationEndProperties(preProcessor,
+				baselineGeneralization, targetGeneralization);
 		//
 		if (this.baselineGeneralization != null) {
 			ModelElementTaggedValue baselineElement = this.baselineGeneralization.getModelElementTaggedValue();

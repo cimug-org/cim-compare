@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.cimug.compare.app.PreProcessor;
 import org.cimug.compare.logs.Properties;
 import org.cimug.compare.logs.Property;
 import org.cimug.compare.uml1_3.GeneralizationType;
@@ -17,8 +18,13 @@ import org.cimug.compare.uml1_3.TaggedValueType;
 
 public abstract class AbstractGeneralizationEndProperties {
 
+	private static final String DEPRECATED = "«deprecated»";
+
 	private Set<String> tagNames = new HashSet<String>();
 	protected Map<String, String> tagNamesMap = new HashMap<String, String>();
+
+	protected boolean baselineDeprecated;
+	protected boolean targetDeprecated;
 
 	private GeneralizationType baselineGeneralization;
 	private GeneralizationType targetGeneralization;
@@ -28,10 +34,12 @@ public abstract class AbstractGeneralizationEndProperties {
 
 	private Properties properties;
 
-	public AbstractGeneralizationEndProperties(GeneralizationType baselineGeneralization,
+	public AbstractGeneralizationEndProperties(PreProcessor preProcessor, GeneralizationType baselineGeneralization,
 			GeneralizationType targetGeneralization) {
 		//
 		initializeTagNamesMap();
+		//
+		initializeDeprecated(preProcessor, baselineGeneralization, targetGeneralization);
 		//
 		this.baselineGeneralization = baselineGeneralization;
 		this.targetGeneralization = targetGeneralization;
@@ -57,6 +65,9 @@ public abstract class AbstractGeneralizationEndProperties {
 		processDiffs(baselineGeneralization, targetGeneralization);
 	}
 
+	protected abstract void initializeDeprecated(PreProcessor preProcessor, GeneralizationType baselineGeneralization,
+			GeneralizationType targetGeneralization);
+
 	protected abstract void initializeTagNamesMap();
 
 	protected abstract String getEndName();
@@ -81,8 +92,20 @@ public abstract class AbstractGeneralizationEndProperties {
 
 		for (String name : tagNamesMap.keySet()) {
 			if (tagNames.contains(name)) {
-				properties.getProperty().add(new Property(tagNamesMap.get(name), getValue(name, baselineTaggedValues),
-						getValue(name, targetTaggedValues), getStatus(name)));
+				String baselineValue = getValue(name, baselineTaggedValues);
+				String targetValue = getValue(name, targetTaggedValues);
+
+				if (getEndName().equals(name)) {
+					if (this.baselineDeprecated) {
+						baselineValue = DEPRECATED + " " + baselineValue;
+					}
+
+					if (this.targetDeprecated) {
+						targetValue = DEPRECATED + " " + targetValue;
+					}
+				}
+				properties.getProperty()
+						.add(new Property(tagNamesMap.get(name), baselineValue, targetValue, getStatus(name)));
 			} else {
 				properties.getProperty()
 						.add(new Property(tagNamesMap.get(name), null, null,
@@ -156,13 +179,14 @@ public abstract class AbstractGeneralizationEndProperties {
 	}
 
 	public String getRoleName() {
-		if (this.baselineTaggedValues == null)
-			return getValue(getEndName(), targetTaggedValues);
+		if (this.baselineTaggedValues == null) {
+			return (this.targetDeprecated ? DEPRECATED + " " : "") + getValue(getEndName(), targetTaggedValues);
+		}
 
-		if (this.targetTaggedValues == null)
-			return getValue(getEndName(), baselineTaggedValues);
-
-		return getValue(getEndName(), targetTaggedValues);
+		if (this.targetTaggedValues == null) {
+			return (this.baselineDeprecated ? DEPRECATED + " " : "") + getValue(getEndName(), baselineTaggedValues);
+		}
+		return (this.targetDeprecated ? DEPRECATED + " " : "") + getValue(getEndName(), targetTaggedValues);
 	}
 
 	private String getStatus(String baselineValue, String targetValue) {

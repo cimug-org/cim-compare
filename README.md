@@ -36,7 +36,7 @@ The procedure to perform an export of EA baseline and target models as **XMI 1.1
       <img src="media/Publish_Other_Formats.png">
    </p>
 
-3. The dialog box shown next will be presented to allow selection of the specific settings to use for export.  Select the **“UML 1.3 (XMI 1.1)”** XML export type.  This is the only export format supported for **cim-compare** comparison reports. It is important that the "Unisys/Rose Format" option **not** be checked. Finally, the inclusion of UML diagrams in the comparison report can optionally be selected at this time. This is done by additionally checking the "Export Diagrams" and "Generate Diagram Images" check boxes along with the selection of JPG as the format to export the images in. Note that when including UML diagrams as part of the export EA will automatically create a directory called "Images" and export all JPG files into that directory.
+3. The dialog box shown next will be presented to allow selection of the specific settings to use for export.  Select the **“UML 1.3 (XMI 1.1)”** XML export type.  This is the only export format supported for **cim-compare** comparison reports. It is important that the "Unisys/Rose Format" option **not** be checked. Finally, the inclusion of UML diagrams in the comparison report can optionally be selected at this time. This is done by additionally checking the "Export Diagrams" and "Generate Diagram Images" check boxes along with the selection of an image type (e.g. JPG, GIF, PNG, etc.) to export the diagrams in. Note that when including UML diagrams as part of the export EA will automatically create a directory called "Images" and export all image files into that directory. Note that when exporting an image type other than JPG the **--image-type** command line option described in the "Command Line Usage" section must be used.
 
    <p align="left">
       <img src="media/Publish_Model_Package_Export_Settings.png">
@@ -75,6 +75,8 @@ java -jar cim-compare.jar <baseline-model-xmi-file> <target-model-xmi-file> [<ou
 
 **[--package=\<iec-package-name\>] (Optional):** The root package within the models from which to start the comparison report from. Appearing at the end of the command-line after file and directory specifications, when specified the package must exist in both the baseline and target models (e.g. --package=IEC61970, --package=IEC61968, --package=IEC62325, --package=TC57CIM, etc.) and be specified with two leading dashes (--). Note that when no IEC package name is specified that the report is generated from the root package in the models.
 
+**[--image-type=\<image-files-extension\>] (Optional):** The type of diagrams in the generated comparison report (e.g. jpg, gif, png, bmp, etc.). When specified, this value must correspond to the file extension of the diagram images exported from Sparx EA. If not specified the 'jpg' file extension is used by default.
+
 **[--minimal] (Optional):** When specified **cim-compare** will exclude all "Identical" packages, classes, attributes, links, diagrams, etc. from the generated report. This is useful when it is necessary to perform detailed analysis of only the most concise set of changes between models.
 
 Note that in command line examples that follow whenever a directory or file path contains spaces it is specified within quotes.
@@ -84,6 +86,7 @@ Note that in command line examples that follow whenever a directory or file path
 | java -jar **cim-compare.jar** "C:\\XMI exports\\15v33.xmi" "C:\\XMI exports\\CIM16v26a.xmi" "C:\\" |
 | java -jar **cim-compare.jar** "C:\\XMI exports\\15v33.xmi" "C:\\XMI exports\\CIM16v26a.xmi" --package=IEC61970 --minimal |
 | java -jar **cim-compare.jar** CIM15v33.xmi CIM16v26a.xmi C:\\ --minimal  |
+| java -jar **cim-compare.jar** CIM15v33.xmi CIM16v26a.xmi C:\\ --minimal --image-type=gif |
 | java -jar **cim-compare.jar** CIM15v33.xmi CIM16v26a.xmi C:\\CIM15v33_CIM16v26a_ComparisonReport.html |
 | java -jar **cim-compare.jar** CIM15v33.xmi CIM16v26a.xmi CIM15v33_CIM16v26a_ComparisonReport.html --minimal |
 | java -jar **cim-compare.jar** CIM15v33.xmi CIM16v26a.xmi CIM15v33_CIM16v26a_ComparisonReport.html --package=IEC62325 |
@@ -106,6 +109,8 @@ java -jar cim-compare.jar <comparison-results-xml-file> [<output-directory-or-ht
 
 **[--package=\<iec-package-name\>] (Optional):** The root package to compare and generate the comparison report on. Appearing at the end of the command-line after file and directory specifications, the package must exist in both the baseline and target models (e.g. --package=IEC61970, --package=IEC61968, --package=IEC62325, --package=TC57CIM, etc.) and be specified with two leading dashes (--). Note that when no IEC package name is specified that the report is generated from the root package in the models.
 
+**[--image-type=\<image-files-extension\>] (Optional):** The type of diagrams in the generated comparison report (e.g. jpg, gif, png, bmp, etc.). When specified, this value must correspond to the file extension of the diagram images exported from Sparx EA. If not specified the 'jpg' file extension is used by default.
+
 **[--minimal] (Optional):** When specified **cim-compare** will exclude all "Identical" packages, classes, attributes, links, diagrams, etc. from the generated report. This is useful when it is necessary to perform detailed analysis of only the most concise set of changes between models.
 
 Again, in the command line examples that follow directory or file path containing spaces are specified within quotes.
@@ -119,6 +124,7 @@ Again, in the command line examples that follow directory or file path containin
 | java -jar **cim-compare.jar** CIM15v33_CIM16v26a_EA_Comparison_Report.xml|
 | java -jar **cim-compare.jar** CIM15v33_CIM16v26a_EA_Comparison_Report.xml --package=IEC61970|
 | java -jar **cim-compare.jar** CIM15v33_CIM16v26a_EA_Comparison_Report.xml --package=IEC61970 --minimal|
+| java -jar **cim-compare.jar** CIM15v33_CIM16v26a_EA_Comparison_Report.xml --package=IEC61970 --minimal --image-type=png|
 
 ## Java Technical Requirements
 
@@ -143,9 +149,9 @@ java <span style="color:red">-mx2048m</span> -jar **cim-compare.jar** iec61970ci
 
 ## Latest Release
 
--   1.1.0  
+-   1.2.0  
 
-    -   The latest release is available at [cim-compare-1.1.0](https://github.com/CIMug-org/cim-compare/releases/tag/1.1.0).
+    -   The latest release is available at [cim-compare-1.2.0](https://github.com/CIMug-org/cim-compare/releases/tag/1.2.0).
     -   Information on features and fixes for the release can be found [here](https://cimug-org.github.io/cim-compare/).
 
 ## License

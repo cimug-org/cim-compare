@@ -1,20 +1,28 @@
-<?xml version="1.0" encoding="ISO-8859-1"?>
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" version="1.0">
-    <xsl:output method="html" />
+    <!-- NOTE:  the encoding attribute in this output directive may be removed once tested and it is shown to be incorrect -->
+    <xsl:output indent="yes" method="html" encoding="UTF-8" />
 
+    <xsl:param name="uppercase">ABCDEFGHIJKLMNOPQRSTUVWXYZ</xsl:param>
+    <xsl:param name="lowercase">abcdefghijklmnopqrstuvwxyz</xsl:param>
+    
     <!-- Receives an IEC package if one is specified on the command line.  Will be used to filter out and ONLY generate a report for just the specified package. -->
     <xsl:param name="package" />
     <!-- Receives the 'minimal' command line option if one is specified.  -->
     <xsl:param name="minimal" />
-
+        <!-- Receives the 'image-type' command line option if one is specified.  -->
+    <xsl:param name="image-type" />
+    
+    <!-- A constant used to represent the '«deprecated»' stereotype which will appear as a prefix to class names in the CompareLog XML file -->
+    <xsl:param name="deprecated">«deprecated»</xsl:param>
+    
     <!-- We introduced the 'non-minimal' variable as it is logically cleaner when used in the condition statements in this XSLT.
          From an end-user perspective, the 'minimal' command line option makes more sense from that perspective.  Thus the pivot 
          here of the logic. -->
     <xsl:variable name="non-minimal">
         <xsl:choose>
-            <!--  We test for existence of the $minimal parameter. If it doesn't exist we drop through and we set the value
-                  for the $non-minimal variable to 'true' meaning that we do want to include all classes/packages that are 
-                  identical. If it does exist we proceed to check if the value is 'true' and set $non-minimal accordingly.  -->
+            <!--  We test for existence of the $minimal parameter. If it doesn't exist we drop through and we set the value  
+                  for the $non-minimal variable to 'true' meaning that by default we want to include all classes/packages that
+                  are identical. If it does exist we proceed to check if the value is 'true' and set $non-minimal accordingly.  -->
             <xsl:when test="$minimal">
                 <xsl:choose>
                     <xsl:when test="$minimal = 'true'">
@@ -105,37 +113,37 @@
 
     <xsl:variable name="baseline-version-61970">     
         <xsl:if test="//CompareItem[@type='Class' and @name='IEC61970CIMVersion']/CompareItem[@name='version']/Properties/Property[@name='Default']/@baseline">
-            <xsl:value-of select="//CompareItem[@type='Class' and @name='IEC61970CIMVersion']/CompareItem[@name='version']/Properties/Property[@name='Default']/@baseline"/>
-        </xsl:if>
+            <xsl:value-of select="substring-after(//CompareItem[@type='Class' and @name='IEC61970CIMVersion']/CompareItem[@name='version']/Properties/Property[@name='Default']/@baseline, 'IEC61970')"/>
+       </xsl:if>
     </xsl:variable>
     
     <xsl:variable name="target-version-61970">     
         <xsl:if test="//CompareItem[@type='Class' and @name='IEC61970CIMVersion']/CompareItem[@name='version']/Properties/Property[@name='Default']/@model">
-            <xsl:value-of select="//CompareItem[@type='Class' and @name='IEC61970CIMVersion']/CompareItem[@name='version']/Properties/Property[@name='Default']/@model"/>
+            <xsl:value-of select="substring-after(//CompareItem[@type='Class' and @name='IEC61970CIMVersion']/CompareItem[@name='version']/Properties/Property[@name='Default']/@model, 'IEC61970')"/>
         </xsl:if>
     </xsl:variable>
     
     <xsl:variable name="baseline-version-61968">     
         <xsl:if test="//CompareItem[@type='Class' and @name='IEC61968CIMVersion']/CompareItem[@name='version']/Properties/Property[@name='Default']/@baseline">
-            <xsl:value-of select="//CompareItem[@type='Class' and @name='IEC61968CIMVersion']/CompareItem[@name='version']/Properties/Property[@name='Default']/@baseline"/>
+            <xsl:value-of select="substring-after(//CompareItem[@type='Class' and @name='IEC61968CIMVersion']/CompareItem[@name='version']/Properties/Property[@name='Default']/@baseline, 'IEC61968')"/>
         </xsl:if>
     </xsl:variable>
     
     <xsl:variable name="target-version-61968">     
         <xsl:if test="//CompareItem[@type='Class' and @name='IEC61968CIMVersion']/CompareItem[@name='version']/Properties/Property[@name='Default']/@model">
-            <xsl:value-of select="//CompareItem[@type='Class' and @name='IEC61968CIMVersion']/CompareItem[@name='version']/Properties/Property[@name='Default']/@model"/>
+            <xsl:value-of select="substring-after(//CompareItem[@type='Class' and @name='IEC61968CIMVersion']/CompareItem[@name='version']/Properties/Property[@name='Default']/@model, 'IEC61968')"/>
         </xsl:if>
     </xsl:variable>
     
     <xsl:variable name="baseline-version-62325">     
         <xsl:if test="//CompareItem[@type='Class' and @name='IEC62325CIMVersion']/CompareItem[@name='version']/Properties/Property[@name='Default']/@baseline">
-            <xsl:value-of select="//CompareItem[@type='Class' and @name='IEC62325CIMVersion']/CompareItem[@name='version']/Properties/Property[@name='Default']/@baseline"/>
+            <xsl:value-of select="substring-after(//CompareItem[@type='Class' and @name='IEC62325CIMVersion']/CompareItem[@name='version']/Properties/Property[@name='Default']/@baseline, 'IEC62325')"/>
         </xsl:if>
     </xsl:variable>
     
     <xsl:variable name="target-version-62325">     
         <xsl:if test="//CompareItem[@type='Class' and @name='IEC62325CIMVersion']/CompareItem[@name='version']/Properties/Property[@name='Default']/@model">
-            <xsl:value-of select="//CompareItem[@type='Class' and @name='IEC62325CIMVersion']/CompareItem[@name='version']/Properties/Property[@name='Default']/@model"/>
+            <xsl:value-of select="substring-after(//CompareItem[@type='Class' and @name='IEC62325CIMVersion']/CompareItem[@name='version']/Properties/Property[@name='Default']/@model, 'IEC62325')"/>
         </xsl:if>
     </xsl:variable>
     
@@ -187,10 +195,18 @@
         </xsl:choose>
     </xsl:variable>
 
+    <!--
+    <xsl:variable name="baseline-model" select="$baseline-version"/>
+    <xsl:variable name="target-model" select="$target-version"/>  
+    -->   
+    <xsl:variable name="baseline-model" select="'Baseline Model'"/>
+    <xsl:variable name="target-model" select="'Target Model'"/>  
+
+
     <xsl:template match="/">
         <html>
             <head>
-                <title>CIM Model Version Comparison</title>
+                <title>CIM Model Comparison Report</title>
 
                 <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.0/css/all.css" integrity="sha384-lZN37f5QGtY3VHgisS14W3ExzMWZxybE1SJSEsQp9S+oqd12jhcu+A56Ebc1zFSJ" crossorigin="anonymous" />
 
@@ -314,7 +330,28 @@
                     /* ================================================ */
                     /* END::SEARCH NAVBAR */
                     /* ================================================ */
-                      
+  
+                    /* ================================================ */
+                    /* START::DIAGRAMS */
+                    /* ================================================ */
+                    
+                    img {
+                        max-width: 100%;
+                        max-height: 100%;
+                        display: block; /* remove extra space below image */
+                    }  
+                    
+                    .diagram-box {
+                        width: 100%;   
+                        height: 100%;    
+                        display: block; 
+                        align-items: center;
+                    }                   
+                    
+                    /* ================================================ */
+                    /* END::DIAGRAMS */
+                    /* ================================================ */                    
+                                        
                     /* ================================================ */
                     /* START::TABLES */
                     /* ================================================ */
@@ -491,7 +528,7 @@
                       text-align: left;
                       border: 1px;
                       border-radius: 4px;
-                      border-style: dashed;
+                      border-style: solid;
                       border-color: darkgray;
                       padding: 10px 10px;
                     
@@ -515,10 +552,10 @@
                     
                     /* ATTRIBUTE Tooltip text */
                     .attribute-tooltip .attribute-tooltiptext {
-                      bottom: -30px;
+                      top: 10px;
                       left: 125%;
                       visibility: hidden;
-                      width: 350px;
+                      width: 400px;
                       max-width: 650px;
                       font-size: 12px;
                       font-weight: normal;
@@ -527,7 +564,7 @@
                       text-align: left;
                       border: 1px;
                       border-radius: 4px;
-                      border-style: dashed;
+                      border-style: solid;
                       border-color: darkgray;
                       padding: 5px 5px;
                     
@@ -596,6 +633,11 @@
                         background-color: #F5B7B1; color: black; 
                     }
                     
+                    /* identical */
+                    p.identical { 
+                        background-color: #EBDEF0; color: black; 
+                    }
+                    
                     /* moved is YELLOW */
                     p.moved { 
                         background-color: #F9E79F; color: black; 
@@ -616,6 +658,11 @@
                         background-color: #F5B7B1; 
                     }
                     
+                    /* identical is GREEN */
+                    tr.identical { 
+                        background-color: #EBDEF0; color: black; 
+                    }
+                    
                     /* moved is YELLOW */
                     tr.moved { 
                         background-color: #F9E79F; 
@@ -629,11 +676,59 @@
                     /* ================================================ */
                     /* END::MISC */
                     /* ================================================ */
+                    
+                    .highlighted {
+                        background-color: #39ff14;
+                    }
+                    
                 </style>
 
             </head>
             <body>
     	    	<script><xsl:text disable-output-escaping="yes"><![CDATA[
+                
+                    // 
+                    // The following JS funtion is borrowed from the following stack overflow post:
+                    // https://stackoverflow.com/questions/38037163/how-to-highlight-the-difference-of-two-texts-with-css/38037538
+                    //
+                    
+                    highlightChanges = function(str, compareStr){
+                        var strlength = str.length > compareStr.length ? compareStr.length : str.length;
+                        var allStr = document.createElement("span");
+                        var hl = null;
+                        var nohl = null;
+                        for(i = 0; i < strlength ; i++){
+                            if(str.charAt(i) != compareStr.charAt(i)){
+                                if(nohl != null){
+                                    allStr.appendChild(nohl);
+                                    nohl = null;
+                                }
+                                if(hl != null) hl.innerHTML += str.charAt(i);
+                                else{
+                                    hl = document.createElement("span");
+                                    hl.classList.add("highlighted");
+                                    hl.innerHTML = str.charAt(i);
+                                }
+                            } else {
+                                if(hl != null){
+                                    allStr.appendChild(hl);
+                                    hl = null;
+                                }
+                                if(nohl != null) nohl.innerHTML += str.charAt(i);
+                                else{
+                                    nohl = document.createElement("span");
+                                    nohl.innerHTML = str.charAt(i);
+                                }
+                            }
+                            if(hl != null){
+                                allStr.appendChild(hl);
+                            } else if (nohl != null){
+                                allStr.appendChild(nohl);
+                            }
+                        }
+                        return allStr;
+                    }
+
                     function executeSearch() {
                         var searchLink = document.getElementById('search-link');
                         var searchClassField = document.getElementById('search-class-field');
@@ -728,7 +823,7 @@
                 <p>
                   <div class="topnav">
                     <div class="title-container">
-                        <span style="font-size:1rem;font-weight:bold">Comparison Report of Changes Between CIM model <xsl:value-of select="$baseline-version"/> (baseline) and <xsl:value-of select="$target-version"/></span>
+                        <span style="font-size:1rem;font-weight:bold">CIM Model Comparison Report:&#160;&#160;&#160;<xsl:value-of select="$baseline-version"/> (baseline)&#160;&#160;<i class="fas fa-arrow-right" style="font-size:.8rem;font-weight:bold;text-align:center"/>&#160;&#160;<xsl:value-of select="$target-version"/> (target)</span>
                     </div>
                     <div class="button-container"><button type="button" onClick="return toggleHeaders(false);"><i class="fas fa-compress-arrows-alt"></i></button></div>
                     <div class="button-container"><button type="button" onClick="return toggleHeaders(true);"><i class="fas fa-expand-arrows-alt"></i></button></div>
@@ -802,8 +897,8 @@
             <div class="wrap-collapsible">
                 <input id="collapsible-{@guid}" packageNameId="{@guid}" parentCollapsibleId="{ancestor::CompareItem[1]/@guid}" onClick="return togglePackageHeaderIcon(this);" class="toggle" type="checkbox" />
                 <label for="collapsible-{@guid}" class="lbl-toggle" style="background-color:{$color}">
-                    <i id="package-icon-{@guid}" class="fas fa-folder" style="font-size:20px;color:white;text-shadow:2px 2px 4px #000000;"/>&#160;<xsl:value-of select='@name' />
-                    <div class="tooltip"><i class="fas fa-info-circle" style="text-align:left;font-size:14px;color:white;text-shadow:1px 1px 2px #000000;"/><span class="tooltiptext"><xsl:value-of select="$notes"/></span></div>
+                    <i id="package-icon-{@guid}" class="fas fa-folder" style="font-size:20px;color:white;text-shadow:2px 2px 4px #000000;"/>&#160;<a class="class-link" href="#"><xsl:value-of select="@name"/></a>
+                    <div class="tooltip" style="text-align:right;"><i class="fas fa-info-circle" style="text-align:left;font-size:14px;color:white;text-shadow:1px 1px 2px #000000;"/><span class="tooltiptext"><xsl:value-of select="$notes"/></span></div>
                     <div class="lbl-home-icon"><a href="#"><i class="fas fa-home" style="font-size:20px;color:white;text-shadow:2px 2px 4px #000000;"/></a></div>
                 </label>
                 <div class="collapsible-content">
@@ -847,6 +942,9 @@
                         </xsl:choose>
                         <xsl:choose>
                             <xsl:when test="(count(CompareItem[@type='Diagram']) > 0) or (count(CompareItem[@type='' and ./Properties/Property[@name='DiagramType']]) > 0)">
+                                <!-- This first test for identical diagrams may look 'odd' but it should be noted that Diagrams are never marked as having a status
+                                     of 'Identical' (due that positioning may change which we have decided we will not consider a 'material change' to the diagram). 
+                                     Therefore if @status='Changed' and all properties have a @status='Identical' then it is considered Identical. -->
                                 <xsl:if test="($non-minimal = 'true') and count(CompareItem[@type='Diagram' and @status='Identical']) > 0">
                                     <h2>Identical Diagrams:</h2>
                                     <!-- The XPATH expression for this select for "Identical Diagrams" ensures that ONLY diagrams with absolutely no changes are included.  
@@ -920,6 +1018,7 @@
         <p>
         <div id="{@guid}" class="wrap-collapsible">
             <input id="collapsible-{@guid}" name="{@name}" classNameId="{@guid}" parentCollapsibleId="{ancestor::CompareItem[1]/@guid}" class="toggle" type="checkbox" />
+
             <label for="collapsible-{@guid}" class="lbl-toggle"  style="background-color:{$color}">
                 <i class="fas fa-cog" style="font-size:18px;color:white;text-shadow:2px 2px 4px #000000;"/>&#160;<a class="class-link" href="#{@guid}"><xsl:value-of select="@name"/></a>
                 <div class="tooltip" style="text-align:right;"><i class="fas fa-info-circle" style="text-align:left;font-size:14px;color:white;text-shadow:1px 1px 2px #000000;"/><span class="tooltiptext"><xsl:value-of select="$notes"/></span></div>
@@ -932,18 +1031,18 @@
                         <xsl:if test="count(Properties/Property[not(@status='Identical')]) > 0">
                             <p>
                                 <h3><p style="font-size: 1.1rem"><i class="fas fa-cubes" />&#160;Metadata:</p></h3>
-                                <xsl:apply-templates select="Properties" />
+                                <xsl:apply-templates select="Properties" mode="standard"/>
                             </p>
                         </xsl:if>
-                        <xsl:if test="(count(CompareItem[@type='Attribute']/Properties/Property[not(@status='Identical')]) + count(CompareItem[@type='' and @status='Baseline only' and not(./CompareItem)]/Properties/Property[not(@status='Identical')])) > 0">
+                        <xsl:if test="($non-minimal = 'true' and (count(CompareItem[@type='Attribute']/Properties/Property) + count(CompareItem[@type='' and @status='Baseline only' and not(./CompareItem)]/Properties/Property)) > 0) or (count(CompareItem[@type='Attribute']/Properties/Property[not(@status='Identical')]) + count(CompareItem[@type='' and @status='Baseline only' and not(./CompareItem)]/Properties/Property[not(@status='Identical')])) > 0">
                             <p>
                                <h3><p style="font-size:1.1rem"><i class="fas fa-bars" />&#160;Attributes:</p></h3>
                                <div>
                                     <p>
                                         <table id="attributes">
                                             <tr>
-                                                <th style="width:50%" colspan="5"><p><xsl:value-of select="$baseline-version"/></p></th>
-                                                <th style="width:50%" colspan="5"><p><xsl:value-of select="$target-version"/></p></th>
+                                                <th style="width:50%" colspan="5"><p><xsl:value-of select="$baseline-model"/></p></th>
+                                                <th style="width:50%" colspan="5"><p><xsl:value-of select="$target-model"/></p></th>
                                             </tr>
                                             <xsl:apply-templates select="CompareItem[@type='Attribute']"/>
                                             <xsl:apply-templates select="CompareItem[@type='' and @status='Baseline only']"/>
@@ -1013,60 +1112,56 @@
                 <div class="lbl-home-icon"><a href="#"><i class="fas fa-home" style="font-size:20px;color:white;text-shadow:2px 2px 4px #000000;"/></a></div>
             </label>
             <div class="collapsible-content">
-            <xsl:choose>
-                <xsl:when test="not(@status='Identical')">
-                    <div class="content-inner">
-                        <xsl:if test="(count(Properties/Property[not(@status='Identical')]) > 0)">
-                            <p>
-                                <h3><p style="font-size: 1.1rem"><i class="fas fa-cubes" />&#160;Metadata:</p></h3>
-                                <xsl:apply-templates select="Properties" />
-                            </p>
-                        </xsl:if>
+                <div class="content-inner">
+                    <xsl:if test="($non-minimal = 'true' and count(Properties/Property[@status='']) > 0) or count(Properties/Property[not(@status='Identical')]) > 0">
                         <p>
-                           <h3><p style="font-size:1.1rem"><i class="far fa-file-image" />&#160;Diagram:</p></h3>
-                           	<div class="group"> 
-                                <p>
-                                <table id="diagrams">
-                                        <tr>
-                                            <th style="width:50%" colspan="5"><p><xsl:value-of select="$baseline-version"/></p></th>
-                                            <th style="width:50%" colspan="5"><p><xsl:value-of select="$target-version"/></p></th>
-                                        </tr>
-                                        <tr>
-                                            <td colspan="5">
-                                                <xsl:choose>
-                                                    <xsl:when test="not(@status='Model only')">
-                                                        <p><img src="Images-baseline/{$eaid}.jpg" alt="{$name} Diagram" /></p>
-                                                    </xsl:when>
-                                                    <xsl:otherwise>
-                                                        <p style="color:red;weight:bold;text-align:center">Diagram '<xsl:value-of select='@name'/>' did not previously exist in the model.</p>
-                                                    </xsl:otherwise>
-                                                </xsl:choose>
-                                            </td>
-                                            <td colspan="5">
-                                                <xsl:choose>
-                                                    <xsl:when test="not(@status='Baseline only')">
-                                                        <p><img src="Images-target/{$eaid}.jpg" alt="{$name} Diagram" /></p>
-                                                    </xsl:when>
-                                                    <xsl:otherwise>
-                                                        <p style="color:red;weight:bold;text-align:center">Diagram '<xsl:value-of select='@name'/>' was removed from the model.</p>
-                                                    </xsl:otherwise>
-                                                </xsl:choose>
-                                            </td>
-                                        </tr>
-                                </table>
-                            	</p>
-                            </div>
-                       </p>
-                    </div>
-                </xsl:when>
-                <xsl:otherwise>
-                    <div class="content-inner">
-                        <p>
-                            <h3><p style="font-size: 1.1rem">No changes occurred to the metadata or layout of this diagram.</p></h3>
+                            <h3><p style="font-size: 1.1rem"><i class="fas fa-cubes" />&#160;Metadata:</p></h3>
+                            <xsl:apply-templates select="Properties" mode="standard"/>
                         </p>
-                    </div>
-                </xsl:otherwise>
-            </xsl:choose>
+                    </xsl:if>
+                    <p>
+                       <h3><p style="font-size:1.1rem"><i class="far fa-file-image" />&#160;Diagram:</p></h3>
+                       	<div class="group"> 
+                            <p>
+                            <xsl:if test="@status='Identical'">
+                                <h3><p style="text-align:center;font-size: 1.1rem">Diagram '<xsl:value-of select='@name'/>' has no material changes made to it.</p></h3>
+                            </xsl:if>
+                            <table id="diagrams" style="width:100%">
+                                    <tr>
+                                        <th style="width:50%"><p><xsl:value-of select="$baseline-model"/></p></th>
+                                        <th style="width:50%"><p><xsl:value-of select="$target-model"/></p></th>
+                                    </tr>
+                                    <tr>
+                                        <td style="width:50%">
+                                            <xsl:choose>
+                                                <xsl:when test="not(@status='Model only')">
+                                                    <div class="diagram-box">
+                                                        <p><img src="Images-baseline/{$eaid}.{$image-type}" alt="{$name} Diagram" /></p>
+                                                    </div>
+                                                </xsl:when>
+                                                <xsl:otherwise>
+                                                    <p style="color:red;weight:bold;text-align:center">Diagram '<xsl:value-of select='@name'/>' does not exist in the model.</p>
+                                                </xsl:otherwise>
+                                            </xsl:choose>
+                                        </td>
+                                        <td style="width:50%">
+                                            <xsl:choose>
+                                                <xsl:when test="not(@status='Baseline only')">
+                                                	 <div class="diagram-box">
+                                                        <p><img src="Images-target/{$eaid}.{$image-type}" alt="{$name} Diagram" /></p>
+                                                    </div>
+                                                </xsl:when>
+                                                <xsl:otherwise>
+                                                    <p style="color:red;weight:bold;text-align:center">Diagram '<xsl:value-of select='@name'/>' was removed from the model.</p>
+                                                </xsl:otherwise>
+                                            </xsl:choose>
+                                        </td>
+                                    </tr>
+                            </table>
+                        	</p>
+                        </div>
+                   </p>
+                </div>
             </div>
         </div>
         </p>
@@ -1089,126 +1184,363 @@
         <xsl:if test="CompareItem[@type='Src'] or CompareItem[@type='Dst']">
         <p>
             <div class="group">
-            	<xsl:variable name="src-name-and-role">
+                 <xsl:variable name="baseline-only">
                     <xsl:choose>
-                        <xsl:when test="CompareItem[@type='Src']/@name='Source'">
-                            <xsl:text><xsl:value-of select="CompareItem[@type='Src']/@name"/> (Role Name Unspecified)</xsl:text>
+                        <xsl:when test="@status = 'Baseline only'">
+                            <xsl:text>true</xsl:text>
                         </xsl:when>
                         <xsl:otherwise>
-                            <xsl:value-of select="CompareItem[@type='Src']/@name"/>
+                            <xsl:text>false</xsl:text>
                         </xsl:otherwise>
                     </xsl:choose>
                 </xsl:variable>
-                <xsl:variable name="dst-name-and-role">
+                <xsl:variable name="model-only">
                     <xsl:choose>
-                        <xsl:when test="CompareItem[@type='Dst']/@name='Source'">
-                            <xsl:text><xsl:value-of select="CompareItem[@type='Dst']/@name"/> (Role Name Unspecified)</xsl:text>
+                        <xsl:when test="@status = 'Model only'">
+                            <xsl:text>true</xsl:text>
                         </xsl:when>
                         <xsl:otherwise>
-                            <xsl:value-of select="CompareItem[@type='Dst']/@name"/>
+                            <xsl:text>false</xsl:text>
                         </xsl:otherwise>
                     </xsl:choose>
                 </xsl:variable>
-                <xsl:variable name="src-name">
-                	<xsl:choose>
-                        <xsl:when test="CompareItem[@type='Src']/Properties/Property[@name='End']/@status='Baseline only'">
-                            <xsl:value-of select="CompareItem[@type='Src']/Properties/Property[@name='End']/@baseline"/>
+                <!-- The 'End' property contains the specific name of the Class.  Can be used to determine if an end of an association was moved from one class to another -->
+                <xsl:variable name="baseline-src-end">
+                    <xsl:choose>
+                        <xsl:when test="not($model-only = 'true')">
+                            <xsl:text><xsl:value-of select="CompareItem[@type='Src']/Properties/Property[@name='End']/@baseline"/></xsl:text>
                         </xsl:when>
                         <xsl:otherwise>
-                            <xsl:value-of select="CompareItem[@type='Src']/Properties/Property[@name='End']/@model"/>
+                            <xsl:text></xsl:text>
                         </xsl:otherwise>
                     </xsl:choose>
                 </xsl:variable>
-                <xsl:variable name="dst-name">
-                	<xsl:choose>
-                        <xsl:when test="CompareItem[@type='Dst']/Properties/Property[@name='End']/@status='Baseline only'">
-                            <xsl:value-of select="CompareItem[@type='Dst']/Properties/Property[@name='End']/@baseline"/>
+                <xsl:variable name="baseline-dst-end">
+                    <xsl:choose>
+                        <xsl:when test="not($model-only = 'true')">
+                            <xsl:text><xsl:value-of select="CompareItem[@type='Dst']/Properties/Property[@name='End']/@baseline"/></xsl:text>
                         </xsl:when>
                         <xsl:otherwise>
-                            <xsl:value-of select="CompareItem[@type='Dst']/Properties/Property[@name='End']/@model"/>
+                            <xsl:text></xsl:text>
                         </xsl:otherwise>
                     </xsl:choose>
                 </xsl:variable>
-                <xsl:variable name="src-guid">
-                	<xsl:choose>
-                        <xsl:when test="CompareItem[@type='Src']">
-                        	<xsl:call-template name="link-class-guid">
-                               <xsl:with-param name="name" select="$src-name"/>
+                <xsl:variable name="target-src-end">
+                    <xsl:choose>
+                        <xsl:when test="not($baseline-only = 'true')">
+                            <xsl:text><xsl:value-of select="CompareItem[@type='Src']/Properties/Property[@name='End']/@model"/></xsl:text>
+                        </xsl:when>
+                        <xsl:otherwise>
+                            <xsl:text></xsl:text>
+                        </xsl:otherwise>
+                    </xsl:choose>
+                </xsl:variable>
+                <xsl:variable name="target-dst-end">
+                    <xsl:choose>
+                        <xsl:when test="not($baseline-only = 'true')">
+                            <xsl:text><xsl:value-of select="CompareItem[@type='Dst']/Properties/Property[@name='End']/@model"/></xsl:text>
+                        </xsl:when>
+                        <xsl:otherwise>
+                            <xsl:text></xsl:text>
+                        </xsl:otherwise>
+                    </xsl:choose>
+                </xsl:variable>   
+                <!-- The 'Role' property contains the specific name of the Role End.  Can be used to determine if the name has changed for the  -->
+                <!-- role of an association. Note that Generalizations do not have a 'Role' so instead we utilize the Class name as the role. -->
+               <xsl:variable name="baseline-src-role">
+                    <xsl:choose>
+                        <xsl:when test="not($model-only = 'true')">
+                            <xsl:choose>
+                                <xsl:when test="@name = 'Generalization'">
+                                    <xsl:text><xsl:value-of select="CompareItem[@type='Src']/Properties/Property[@name='End']/@baseline"/></xsl:text>
+                                </xsl:when>
+                                <xsl:otherwise>
+                                    <xsl:choose>
+                                        <xsl:when test="CompareItem[@type='Src']/Properties/Property[@name='Role']/@baseline != ''">
+                                            <xsl:text><xsl:value-of select="CompareItem[@type='Src']/Properties/Property[@name='Role']/@baseline"/></xsl:text>
+                                        </xsl:when>
+                                        <xsl:otherwise>
+                                            <xsl:text>Role Unspecified</xsl:text>
+                                        </xsl:otherwise>
+                                    </xsl:choose>
+                                </xsl:otherwise>
+                            </xsl:choose>
+                        </xsl:when>
+                        <xsl:otherwise>
+                            <xsl:text>Role Unspecified</xsl:text>
+                        </xsl:otherwise>
+                    </xsl:choose>
+                </xsl:variable>
+                <xsl:variable name="baseline-dst-role">
+                    <xsl:choose>
+                        <xsl:when test="not($model-only = 'true')">
+                            <xsl:choose>
+                                <xsl:when test="@name = 'Generalization'">
+                                    <xsl:text><xsl:value-of select="CompareItem[@type='Dst']/Properties/Property[@name='End']/@baseline"/></xsl:text>
+                                </xsl:when>
+                                <xsl:otherwise>
+                                    <xsl:choose>
+                                        <xsl:when test="CompareItem[@type='Dst']/Properties/Property[@name='Role']/@baseline != ''">
+                                            <xsl:text><xsl:value-of select="CompareItem[@type='Dst']/Properties/Property[@name='Role']/@baseline"/></xsl:text>
+                                        </xsl:when>
+                                        <xsl:otherwise>
+                                            <xsl:text>Role Unspecified</xsl:text>
+                                        </xsl:otherwise>
+                                    </xsl:choose>
+                                </xsl:otherwise>
+                            </xsl:choose>
+                        </xsl:when>
+                        <xsl:otherwise>
+                            <xsl:text>Role Unspecified</xsl:text>
+                        </xsl:otherwise>
+                    </xsl:choose>
+                </xsl:variable>
+                <xsl:variable name="target-src-role">
+                    <xsl:choose>
+                        <xsl:when test="not($baseline-only = 'true')">
+                            <xsl:choose>
+                                <xsl:when test="@name = 'Generalization'">
+                                    <xsl:text><xsl:value-of select="CompareItem[@type='Src']/Properties/Property[@name='End']/@model"/></xsl:text>
+                                </xsl:when>
+                                <xsl:otherwise>
+                                    <xsl:choose>
+                                        <xsl:when test="CompareItem[@type='Src']/Properties/Property[@name='Role']/@model != ''">
+                                            <xsl:text><xsl:value-of select="CompareItem[@type='Src']/Properties/Property[@name='Role']/@model"/></xsl:text>
+                                        </xsl:when>
+                                        <xsl:otherwise>
+                                            <xsl:text>Role Unspecified</xsl:text>
+                                        </xsl:otherwise>
+                                    </xsl:choose>
+                                </xsl:otherwise>
+                            </xsl:choose>
+                        </xsl:when>
+                        <xsl:otherwise>
+                            <xsl:text>Role Unspecified</xsl:text>
+                        </xsl:otherwise>
+                    </xsl:choose>
+                </xsl:variable>
+                <xsl:variable name="target-dst-role">
+                    <xsl:choose>
+                        <xsl:when test="not($baseline-only = 'true')">
+                            <xsl:choose>
+                                <xsl:when test="@name = 'Generalization'">
+                                    <xsl:text><xsl:value-of select="CompareItem[@type='Dst']/Properties/Property[@name='End']/@model"/></xsl:text>
+                                </xsl:when>
+                                <xsl:otherwise>
+                                    <xsl:choose>
+                                        <xsl:when test="CompareItem[@type='Dst']/Properties/Property[@name='Role']/@model != ''">
+                                            <xsl:text><xsl:value-of select="CompareItem[@type='Dst']/Properties/Property[@name='Role']/@model"/></xsl:text>
+                                        </xsl:when>
+                                        <xsl:otherwise>
+                                            <xsl:text>Role Unspecified</xsl:text>
+                                        </xsl:otherwise>
+                                    </xsl:choose>
+                                </xsl:otherwise>
+                            </xsl:choose>
+                        </xsl:when>
+                        <xsl:otherwise>
+                            <xsl:text>Role Unspecified</xsl:text>
+                        </xsl:otherwise>
+                    </xsl:choose>
+                </xsl:variable>      
+                <!-- Determine the unique GUID based on each specific name of the Class. -->
+                <xsl:variable name="baseline-src-end-guid">
+                    <xsl:choose>
+                        <xsl:when test="not($baseline-src-end = '')">
+                            <xsl:call-template name="link-class-guid">
+                               <xsl:with-param name="name" select="$baseline-src-end"/>
                            </xsl:call-template>
                         </xsl:when>
                         <xsl:otherwise>
-                        	<xsl:text></xsl:text>
+                            <xsl:text></xsl:text>
                         </xsl:otherwise>
                     </xsl:choose>
                 </xsl:variable>
-                <xsl:variable name="dst-guid">
-                	<xsl:choose>
-                        <xsl:when test="CompareItem[@type='Dst']">
-                        	<xsl:call-template name="link-class-guid">
-                               <xsl:with-param name="name" select="$dst-name"/>
-                            </xsl:call-template>
-                        </xsl:when>
-                        <xsl:otherwise>
-                        	<xsl:text></xsl:text>
-                        </xsl:otherwise>
-                    </xsl:choose>
-                </xsl:variable>
-                <xsl:variable name="src-cardinality">
+                <xsl:variable name="baseline-dst-end-guid">
                     <xsl:choose>
-                        <xsl:when test="CompareItem[@type='Src']/Properties/Property[@name='Cardinality']/@status='Baseline only'">
-                            <xsl:value-of select="CompareItem[@type='Src']/Properties/Property[@name='Cardinality']/@baseline"/>
+                        <xsl:when test="not($baseline-dst-end = '')">
+                            <xsl:call-template name="link-class-guid">
+                               <xsl:with-param name="name" select="$baseline-dst-end"/>
+                           </xsl:call-template>
                         </xsl:when>
                         <xsl:otherwise>
-                            <xsl:value-of select="CompareItem[@type='Src']/Properties/Property[@name='Cardinality']/@model"/>
+                            <xsl:text></xsl:text>
                         </xsl:otherwise>
                     </xsl:choose>
                 </xsl:variable>
-                <xsl:variable name="dst-cardinality">
+                <xsl:variable name="target-src-end-guid">
                     <xsl:choose>
-                        <xsl:when test="CompareItem[@type='Dst']/Properties/Property[@name='Cardinality']/@status='Baseline only'">
-                            <xsl:value-of select="CompareItem[@type='Dst']/Properties/Property[@name='Cardinality']/@baseline"/>
+                        <xsl:when test="not($target-src-end = '')">
+                            <xsl:call-template name="link-class-guid">
+                               <xsl:with-param name="name" select="$target-src-end"/>
+                           </xsl:call-template>
                         </xsl:when>
                         <xsl:otherwise>
-                            <xsl:value-of select="CompareItem[@type='Dst']/Properties/Property[@name='Cardinality']/@model"/>
+                            <xsl:text></xsl:text>
                         </xsl:otherwise>
                     </xsl:choose>
                 </xsl:variable>
+                <xsl:variable name="target-dst-end-guid">
+                    <xsl:choose>
+                        <xsl:when test="not($target-dst-end = '')">
+                            <xsl:call-template name="link-class-guid">
+                               <xsl:with-param name="name" select="$target-dst-end"/>
+                           </xsl:call-template>
+                        </xsl:when>
+                        <xsl:otherwise>
+                            <xsl:text></xsl:text>
+                        </xsl:otherwise>
+                    </xsl:choose>
+                </xsl:variable>   
+                <!-- Determine the cardinality for each end (both in the baseline as well as the target models). -->
+                <xsl:variable name="baseline-src-end-cardinality">
+                    <xsl:choose>
+                        <xsl:when test="not($model-only = 'true')">
+                            <xsl:text><xsl:value-of select="CompareItem[@type='Src']/Properties/Property[@name='Cardinality']/@baseline"/></xsl:text>
+                        </xsl:when>
+                        <xsl:otherwise>
+                            <xsl:text></xsl:text>
+                        </xsl:otherwise>
+                    </xsl:choose>
+                </xsl:variable>
+                <xsl:variable name="baseline-dst-end-cardinality">
+                    <xsl:choose>
+                        <xsl:when test="not($model-only = 'true')">
+                            <xsl:text><xsl:value-of select="CompareItem[@type='Dst']/Properties/Property[@name='Cardinality']/@baseline"/></xsl:text>
+                        </xsl:when>
+                        <xsl:otherwise>
+                            <xsl:text></xsl:text>
+                        </xsl:otherwise>
+                    </xsl:choose>
+                </xsl:variable>
+                <xsl:variable name="target-src-end-cardinality">
+                    <xsl:choose>
+                        <xsl:when test="not($baseline-only = 'true')">
+                            <xsl:text><xsl:value-of select="CompareItem[@type='Src']/Properties/Property[@name='Cardinality']/@model"/></xsl:text>
+                        </xsl:when>
+                        <xsl:otherwise>
+                            <xsl:text></xsl:text>
+                        </xsl:otherwise>
+                    </xsl:choose>
+                </xsl:variable>
+                <xsl:variable name="target-dst-end-cardinality">
+                    <xsl:choose>
+                        <xsl:when test="not($baseline-only = 'true')">
+                            <xsl:text><xsl:value-of select="CompareItem[@type='Dst']/Properties/Property[@name='Cardinality']/@model"/></xsl:text>
+                        </xsl:when>
+                        <xsl:otherwise>
+                            <xsl:text></xsl:text>
+                        </xsl:otherwise>
+                    </xsl:choose>
+                </xsl:variable>   
+                     
                 <h3><p style="font-size: 1.1rem"><xsl:value-of select="@name"/>:</p></h3>
                 <xsl:choose>
                     <xsl:when test="not(@status='Baseline only')">
-                        <p>
-                        <table>
-                           <tr>
-                               <td style="font-size:.9rem;font-weight:bold"><p><xsl:value-of select="$src-name-and-role"/>&#160;&#160;[<xsl:value-of select="$src-cardinality"/>]</p></td>
-                               <td style="font-size:.9rem;font-weight:bold"><p>&#160;&#160;&#160;<i class="fas fa-arrow-right" style="text-align:center"/>&#160;&#160;&#160;</p></td>
-                               <td style="font-size:.9rem;font-weight:bold"><p><xsl:value-of select="$dst-name-and-role"/>&#160;&#160;[<xsl:value-of select="$dst-cardinality"/>]</p></td>
-                           </tr>
-                           <tr>
-                               <td style="font-size:.9rem;font-weight:bold"><p><i class="fas fa-link" style="font-size:.8rem"/>&#160;<a href="#{$src-guid}" onClick="autoExpand('{$src-guid}');"><xsl:value-of select="$src-name"/></a></p></td>
-                               <td style="font-size:.9rem;font-weight:bold"><p>&#160;</p></td>
-                               <td style="font-size:.9rem;font-weight:bold"><p><i class="fas fa-link" style="font-size:.8rem"/>&#160;<a href="#{$dst-guid}" onClick="autoExpand('{$dst-guid}');"><xsl:value-of select="$dst-name"/></a></p></td>
-                           </tr>
-                       </table>
-                       </p>
-    	               <xsl:if test="count(Properties/Property[not(@status='Identical')]) > 0">
+    	               <xsl:if test="($non-minimal = 'true' and count(Properties/Property) > 0) or count(Properties/Property[not(@status='Identical')]) > 0">
                             <p>
-                                <br/>
                                 <h3><p style="font-size: 1.1rem"><i class="fas fa-cubes" />&#160;Metadata:</p></h3>
-                                <xsl:apply-templates select="Properties"/>
+                                <xsl:apply-templates select="Properties" mode="standard"/>
                             </p>
     	               </xsl:if> 
-                       <p>
-                       <br></br>
+                        <p>
+                        <br/><br/>
                        <table style="width:100%">
                            <tr>
-    	                       <th style="width:49%;white-space:nowrap"><p style="font-size:1.1rem;font-weight:bold;text-align:left"><xsl:value-of select="$src-name-and-role"/></p></th>
+    	                       <th style="width:49%;white-space:nowrap"><p style="font-size:1.1rem;font-weight:bold;text-align:center"><xsl:value-of select="$baseline-model"/></p></th>
                                <th style="width:2%;white-space:nowrap"><p>&#160;</p></th>
-                               <th style="width:49%;white-space:nowrap"><p style="font-size:1.1rem;font-weight:bold;text-align:left"><xsl:value-of select="$dst-name-and-role"/></p></th>
+                               <th style="width:49%;white-space:nowrap"><p style="font-size:1.1rem;font-weight:bold;text-align:center"><xsl:value-of select="$target-model"/></p></th>
+                           </tr>
+                           <tr>
+                           	    <td><p>
+                                <div>
+                                <xsl:choose>
+                                        <xsl:when test="$baseline-only = 'true'">
+                                            <table align="center">
+                                               <tr>
+                                                   <td style="font-size:.9rem;font-weight:bold"><p>&#160;&#160;&#160;&#160;&#160;&#160;<span style="font-weight:bold;font-size:1rem;color:red"><xsl:value-of select="translate(@name, $lowercase, $uppercase)"/> REMOVED FROM MODEL</span></p></td>
+                                               </tr>
+                                           </table>
+                                        </xsl:when>
+                                        <xsl:when test="$model-only = 'true'">
+                                            <table align="center">
+                                               <tr>
+                                                   <td style="font-size:.9rem;font-weight:bold"><p>&#160;&#160;&#160;&#160;&#160;&#160;<span style="font-weight:bold;font-size:1rem;color:red"><xsl:value-of select="translate(@name, $lowercase, $uppercase)"/> DOES NOT EXIST</span></p></td>
+                                               </tr>
+                                           </table>
+                                        </xsl:when>
+                                        <xsl:otherwise>
+                                            <table align="center">
+                                               <tr>
+                                                   <td style="font-size:.9rem;font-weight:bold"><p>Source: (<xsl:value-of select="$baseline-src-role"/>)&#160;&#160;[<xsl:value-of select="$baseline-src-end-cardinality"/>]</p></td>
+                                                   <td style="font-size:.9rem;font-weight:bold"><p>&#160;&#160;&#160;<i class="fas fa-arrow-right" style="text-align:center"/>&#160;&#160;&#160;</p></td>
+                                                   <td style="font-size:.9rem;font-weight:bold"><p>Target: (<xsl:value-of select="$baseline-dst-role"/>)&#160;&#160;[<xsl:value-of select="$baseline-dst-end-cardinality"/>]</p></td>
+                                               </tr>
+                                               <tr>
+                                                   <td style="font-size:.9rem;font-weight:bold"><p><i class="fas fa-link" style="font-size:.8rem"/>&#160;<a href="#{$baseline-src-end-guid}" onClick="autoExpand('{$baseline-src-end-guid}');"><xsl:value-of select="$baseline-src-end"/></a></p></td>
+                                                   <td style="font-size:.9rem;font-weight:bold"><p>&#160;</p></td>
+                                                   <td style="font-size:.9rem;font-weight:bold"><p><i class="fas fa-link" style="font-size:.8rem"/>&#160;<a href="#{$baseline-dst-end-guid}" onClick="autoExpand('{$baseline-dst-end-guid}');"><xsl:value-of select="$baseline-dst-end"/></a></p></td>
+                                               </tr>
+                                           </table>
+                                        </xsl:otherwise>
+                                    </xsl:choose>
+                                </div>
+                             	</p></td>
+    	                    <td><p><i class="fas fa-arrow-right" style="text-align:center;font-size:2.5rem"/></p></td>
+                            <td><p>
+                                <div>
+                                <table align="center">
+                                   <tr>
+                                       <td style="font-size:.9rem;font-weight:bold"><p>Source: (<xsl:value-of select="$target-src-role"/>)&#160;&#160;[<xsl:value-of select="$target-src-end-cardinality"/>]</p></td>
+                                       <td style="font-size:.9rem;font-weight:bold"><p>&#160;&#160;&#160;<i class="fas fa-arrow-right" style="text-align:center"/>&#160;&#160;&#160;</p></td>
+                                       <td style="font-size:.9rem;font-weight:bold"><p>Target: (<xsl:value-of select="$target-dst-role"/>)&#160;&#160;[<xsl:value-of select="$target-dst-end-cardinality"/>]</p></td>
+                                   </tr>
+                                   <tr>
+                                       <td style="font-size:.9rem;font-weight:bold"><p><i class="fas fa-link" style="font-size:.8rem"/>&#160;<a href="#{$target-src-end-guid}" onClick="autoExpand('{$target-src-end-guid}');"><xsl:value-of select="$target-src-end"/></a></p></td>
+                                       <td style="font-size:.9rem;font-weight:bold"><p>&#160;</p></td>
+                                       <td style="font-size:.9rem;font-weight:bold"><p><i class="fas fa-link" style="font-size:.8rem"/>&#160;<a href="#{$target-dst-end-guid}" onClick="autoExpand('{$target-dst-end-guid}');"><xsl:value-of select="$target-dst-end"/></a></p></td>
+                                   </tr>
+                               </table>
+                                </div>
+                           	</p></td>
+    	                   </tr>
+                       </table>
+                       </p>
+                       <p>
+                       <br/><br/>
+                       <table style="width:100%">
+                           <tr>
+    	                       <th align="center" style="width:49%;white-space:nowrap"><p style="font-size:1.1rem;font-weight:bold;text-align:center">Source Role End Changes</p></th>
+                               <th align="center" style="width:2%;white-space:nowrap"><p>&#160;</p></th>
+                               <th align="center" style="width:49%;white-space:nowrap"><p style="font-size:1.1rem;font-weight:bold;text-align:center">Target Role End Changes</p></th>
                            </tr>
                            <tr>
                             <xsl:choose>
                                 <xsl:when test="CompareItem[(@type='Src') and count(./Properties/Property[not(@status='Identical')]) > 0]">
-                                    <td><p><xsl:apply-templates select="child::CompareItem[@type='Src']"/></p></td>
+                                    <td><p>
+                                    <xsl:apply-templates select="child::CompareItem[@type='Src']" mode="role-end-properties">
+                                        <xsl:with-param name="baseline-title">
+                                            <xsl:choose>
+                                                <xsl:when test="contains($baseline-src-role, 'Role Unspecified')">
+                                                    <xsl:value-of select="$baseline-model" />
+                                                </xsl:when>
+                                                <xsl:otherwise>
+                                                    <xsl:value-of select="concat($baseline-model, ' - Source (', $baseline-src-role, ')')" />
+                                                </xsl:otherwise>
+                                            </xsl:choose>
+                                        </xsl:with-param>
+                                        <xsl:with-param name="target-title">
+                                            <xsl:choose>
+                                                <xsl:when test="contains($target-src-role, 'Role Unspecified')">
+                                                    <xsl:value-of select="$target-model" />
+                                                </xsl:when>
+                                                <xsl:otherwise>
+                                                    <xsl:value-of select="concat($target-model, ' - Source (', $target-src-role, ')')" />
+                                                </xsl:otherwise>
+                                            </xsl:choose>
+                                        </xsl:with-param>
+                                    </xsl:apply-templates>
+                                    </p></td>
                                 </xsl:when>
                                 <xsl:otherwise>
                                     <td><p>
@@ -1216,8 +1548,8 @@
                                         <table id="properties">
                                             <tr>
                                                 <th style="background-color:lightgray;width:10%"><p>&#160;</p></th>
-                                                <th style="text-align:left;font-weight:bold;background-color:lightgray;width:45%"><p><xsl:value-of select="$baseline-version"/></p></th>
-                                                <th style="text-align:left;font-weight:bold;background-color:lightgray;width:45%"><p><xsl:value-of select="$target-version"/></p></th>
+                                                <th style="text-align:left;font-weight:bold;background-color:lightgray;width:45%"><p><xsl:value-of select="concat($baseline-model, ' - Source (', $baseline-src-role, ')')"/></p></th>
+                                                <th style="text-align:left;font-weight:bold;background-color:lightgray;width:45%"><p><xsl:value-of select="concat($target-model, ' - Source (', $target-src-role, ')')"/></p></th>
                                             </tr>
                                             <tr valign="top">
                                                 <th colspan="3"><p style="color:red;weight:bold;text-align:center">No changes to metadata on the source side.</p></th>
@@ -1227,10 +1559,33 @@
                                     </p></td>
                                 </xsl:otherwise>
                             </xsl:choose>
-    	                    <td><p><i class="fas fa-arrow-right" style="text-align:center;font-size:2.5rem"/></p></td>
+    	                    <td><p>&#160;</p></td>
                             <xsl:choose>
                                 <xsl:when test="CompareItem[(@type='Dst') and count(./Properties/Property[not(@status='Identical')]) > 0]">
-                                    <td><p><xsl:apply-templates select="child::CompareItem[@type='Dst']"/></p></td>
+                                    <td><p>
+                                    <xsl:apply-templates select="child::CompareItem[@type='Dst']" mode="role-end-properties">
+                                        <xsl:with-param name="baseline-title">
+                                            <xsl:choose>
+                                                <xsl:when test="contains($baseline-dst-role, 'Role Unspecified')">
+                                                    <xsl:value-of select="$baseline-model" />
+                                                </xsl:when>
+                                                <xsl:otherwise>
+                                                    <xsl:value-of select="concat($baseline-model, ' - Source (', $baseline-dst-role, ')')" />
+                                                </xsl:otherwise>
+                                            </xsl:choose>
+                                        </xsl:with-param>
+                                        <xsl:with-param name="target-title">
+                                            <xsl:choose>
+                                                <xsl:when test="contains($target-dst-role, 'Role Unspecified')">
+                                                    <xsl:value-of select="$target-model" />
+                                                </xsl:when>
+                                                <xsl:otherwise>
+                                                    <xsl:value-of select="concat($target-model, ' - Source (', $target-dst-role, ')')" />
+                                                </xsl:otherwise>
+                                            </xsl:choose>
+                                        </xsl:with-param>
+                                    </xsl:apply-templates>
+                                    </p></td>
                                 </xsl:when>
                                 <xsl:otherwise>
                                     <td><p>
@@ -1238,8 +1593,8 @@
                                         <table id="properties">
                                             <tr>
                                                 <th style="background-color:lightgray;width:10%"><p>&#160;</p></th>
-                                                <th style="text-align:left;font-weight:bold;background-color:lightgray;width:45%"><p><xsl:value-of select="$baseline-version"/></p></th>
-                                                <th style="text-align:left;font-weight:bold;background-color:lightgray;width:45%"><p><xsl:value-of select="$target-version"/></p></th>
+                                                <th style="text-align:left;font-weight:bold;background-color:lightgray;width:45%"><p><xsl:value-of select="concat($baseline-model, ' - Source (', $baseline-dst-role, ')')"/></p></th>
+                                                <th style="text-align:left;font-weight:bold;background-color:lightgray;width:45%"><p><xsl:value-of select="concat($target-model, ' - Source (', $target-dst-role, ')')"/></p></th>
                                             </tr>
                                             <tr valign="top">
                                                 <th colspan="3"><p style="color:red;weight:bold;text-align:center">No changes to metadata on the target side.</p></th>
@@ -1257,15 +1612,15 @@
                         <p>
                     	<table>
                            <tr>
-                               <td style="font-size:.9rem;font-weight:bold"><p><xsl:value-of select="$src-name-and-role"/>&#160;&#160;[<xsl:value-of select="$src-cardinality"/>]</p></td>
+                               <td style="font-size:.9rem;font-weight:bold"><p>Source: (<xsl:value-of select="$baseline-src-role"/>)&#160;&#160;[<xsl:value-of select="$baseline-src-end-cardinality"/>]</p></td>
                                <td style="font-size:.9rem;font-weight:bold"><p>&#160;&#160;&#160;<i class="fas fa-arrow-right" style="text-align:center"/>&#160;&#160;&#160;</p></td>
-                               <td style="font-size:.9rem;font-weight:bold"><p><xsl:value-of select="$dst-name-and-role"/>&#160;&#160;[<xsl:value-of select="$dst-cardinality"/>]</p></td>
+                               <td style="font-size:.9rem;font-weight:bold"><p>Target: (<xsl:value-of select="$baseline-dst-role"/>)&#160;&#160;[<xsl:value-of select="$baseline-dst-end-cardinality"/>]</p></td>
                                <td style="font-size:.9rem;font-weight:bold"><p>&#160;&#160;&#160;&#160;&#160;&#160;<span style="font-weight:bold;font-size:1rem;color:red">REMOVED FROM MODEL</span></p></td>
                            </tr>
                            <tr>
-                               <td style="font-size:.9rem;font-weight:bold"><p><i class="fas fa-link" style="font-size:.8rem"/>&#160;<a href="#{$src-guid}" onClick="autoExpand('{$src-guid}');"><xsl:value-of select="$src-name"/></a></p></td>
+                               <td style="font-size:.9rem;font-weight:bold"><p><i class="fas fa-link" style="font-size:.8rem"/>&#160;<a href="#{$baseline-src-end-guid}" onClick="autoExpand('{$baseline-src-end-guid}');"><xsl:value-of select="$baseline-src-end"/></a></p></td>
                                <td style="font-size:.9rem;font-weight:bold"><p>&#160;</p></td>
-                               <td style="font-size:.9rem;font-weight:bold"><p><i class="fas fa-link" style="font-size:.8rem"/>&#160;<a href="#{$dst-guid}" onClick="autoExpand('{$dst-guid}');"><xsl:value-of select="$dst-name"/></a></p></td>
+                               <td style="font-size:.9rem;font-weight:bold"><p><i class="fas fa-link" style="font-size:.8rem"/>&#160;<a href="#{$baseline-dst-end-guid}" onClick="autoExpand('{$baseline-dst-end-guid}');"><xsl:value-of select="$baseline-dst-end"/></a></p></td>
                                <td style="font-size:.9rem;font-weight:bold"><p>&#160;</p></td>
                            </tr>
                        </table>
@@ -1280,22 +1635,86 @@
     <xsl:template match="CompareItem[(@type='Src' or @type='Dst') and ./Properties/Property[not(@status='Identical')]]"> 
         <div>
             <xsl:if test="count(Properties/Property[not(@status='Identical')]) > 0">
-                <xsl:apply-templates select="Properties"/>
+                <xsl:apply-templates select="Properties" mode="standard"/>
             </xsl:if> 
         </div>
     </xsl:template>
 
-     <xsl:template match="Properties[./Property[not(@status='Identical')]]">
+     <xsl:template match="Properties[./Property[not(@status='')]]">
+        <!--  Default is to do nothing -->
+     </xsl:template>
+
+     <xsl:template match="Properties[./Property[not(@status='')]]" mode="role-end-properties">
+        <!-- generates the properties of a Package if any have changed -->
+        <xsl:param name="baseline-title"/>
+        <xsl:param name="target-title"/>
+        <table id="properties">
+            <tr>
+                <th style="background-color:lightgray;width:10%"><p>&#160;</p></th>
+                <th style="text-align:left;font-weight:bold;background-color:lightgray;width:45%"><p><xsl:value-of select="$baseline-title"/></p></th>
+                <th style="text-align:left;font-weight:bold;background-color:lightgray;width:45%"><p><xsl:value-of select="$target-title"/></p></th>
+            </tr>
+            <xsl:for-each select="Property[not(@status='')]">
+                <xsl:variable name="color"><xsl:call-template name="color"/></xsl:variable>   
+                <xsl:choose>
+                    <xsl:when test="($non-minimal = 'true') and @status='Identical'">
+                        <tr valign="top">
+                            <th class="identical" style="background-color:{$color}"><p class="identical" style="font-weight:bold"><xsl:value-of select="@name"/></p></th>
+                            <td><p><xsl:value-of select="@baseline"/></p></td>
+                            <td><p><xsl:value-of select="@model"/></p></td>
+                        </tr>
+                    </xsl:when>
+                    <xsl:when test="@status='Baseline only'">
+                        <tr valign="top">
+                            <th class="baseline-only" style="background-color:{$color}"><p class="baseline-only" style="font-weight:bold"><xsl:value-of select="@name"/></p></th>
+                            <td><p><xsl:value-of select="@baseline"/></p></td>
+                            <td><p>&#160;</p></td>
+                        </tr>
+                    </xsl:when>
+                    <xsl:when test="@status='Model only'">
+                        <tr valign="top">
+                            <th class="model-only" style="background-color:{$color}"><p class="model-only" style="font-weight:bold"><xsl:value-of select="@name"/></p></th>
+                            <td><p>&#160;</p></td>
+                            <td><p><xsl:value-of select="@model"/></p></td>
+                        </tr>
+                    </xsl:when>
+                    <xsl:when test="@status='Moved'">
+                        <tr valign="top">
+                            <th class="move" style="background-color:{$color}"><p class="moved" style="font-weight:bold"><xsl:value-of select="@name"/></p></th>
+                            <td><p><xsl:value-of select="@baseline"/></p></td>
+                            <td><p><xsl:value-of select="@model"/></p></td>
+                        </tr>
+                    </xsl:when>
+                    <xsl:when test="@status='Changed'">
+                        <tr valign="top">
+                            <th class="changed" style="background-color:{$color}"><p class="changed" style="font-weight:bold"><xsl:value-of select="@name"/></p></th>
+                            <td><p><xsl:value-of select="@baseline"/></p></td>
+                            <td><p><xsl:value-of select="@model"/></p></td>
+                        </tr>
+                    </xsl:when>
+                </xsl:choose>
+            </xsl:for-each>
+        </table>
+    </xsl:template>
+    
+     <xsl:template match="Properties[./Property[not(@status='')]]" mode="standard">
         <!-- generates the properties of a Package if any have changed -->
         <table id="properties">
             <tr>
                 <th style="background-color:lightgray;width:10%"><p>&#160;</p></th>
-                <th style="text-align:left;font-weight:bold;background-color:lightgray;width:45%"><p><xsl:value-of select="$baseline-version"/></p></th>
-                <th style="text-align:left;font-weight:bold;background-color:lightgray;width:45%"><p><xsl:value-of select="$target-version"/></p></th>
+                <th style="text-align:left;font-weight:bold;background-color:lightgray;width:45%"><p><xsl:value-of select="$baseline-model"/></p></th>
+                <th style="text-align:left;font-weight:bold;background-color:lightgray;width:45%"><p><xsl:value-of select="$target-model"/></p></th>
             </tr>
-        	<xsl:for-each select="Property[not(@status='Identical')]">
+        	<xsl:for-each select="Property[not(@status='')]">
                 <xsl:variable name="color"><xsl:call-template name="color"/></xsl:variable>   
                 <xsl:choose>
+                    <xsl:when test="($non-minimal = 'true') and @status='Identical'">
+                        <tr valign="top">
+                            <th class="identical" style="background-color:{$color}"><p class="identical" style="font-weight:bold"><xsl:value-of select="@name"/></p></th>
+                            <td><p><xsl:value-of select="@baseline"/></p></td>
+                            <td><p><xsl:value-of select="@model"/></p></td>
+                        </tr>
+                    </xsl:when>
                     <xsl:when test="@status='Baseline only'">
                         <tr valign="top">
                             <th class="baseline-only" style="background-color:{$color}"><p class="baseline-only" style="font-weight:bold"><xsl:value-of select="@name"/></p></th>
@@ -1332,9 +1751,47 @@
     <xsl:template match="CompareItem[@type='Attribute']|CompareItem[@type='' and not(./Properties/Property[@name='DiagramType']) and not(./Properties/Property['Type']/@baseline='Class' or ./Properties/Property['Type']/@baseline='Package') and not(./CompareItem)]"> 
         <xsl:variable name="color"><xsl:call-template name="color"/></xsl:variable>   
         <xsl:choose>    
-            <xsl:when test="count(Properties/Property[not(@status='Identical')]) > 0">
+            <xsl:when test="($non-minimal = 'true' and count(Properties/Property) > 0) or count(Properties/Property[not(@status='Identical')]) > 0">
                 <tr valign="top">
                    <xsl:choose>
+                       <xsl:when test="($non-minimal = 'true') and @status='Identical'">
+                           <xsl:variable name="baseline-guid">
+                                <xsl:choose>
+                                    <xsl:when test="Properties/Property[@name='Type']/@baseline">
+                                        <xsl:call-template name="link-class-guid">
+                                            <xsl:with-param name="name" select="Properties/Property[@name='Type']/@baseline" />
+                                        </xsl:call-template>
+                                    </xsl:when>
+                                    <xsl:otherwise>
+                                        <xsl:text></xsl:text>
+                                    </xsl:otherwise>
+                                </xsl:choose>
+                           </xsl:variable>
+                           <td style="background-color:{$color};white-space:nowrap"><p id="{Properties/Property[@name='Name']/@baseline}"><xsl:value-of select="Properties/Property[@name='Name']/@baseline"/></p></td>
+                           <td style="background-color:{$color};white-space:nowrap"><div class="attribute-tooltip"><i class="fas fa-info-circle" style="text-align:left;font-size:12px;color:white;text-shadow:1px 1px 2px #000000;"/><span class="attribute-tooltiptext" style="font-size:16px;font-weight:bold;"><i class="fas fa-cubes" />&#160;Attribute '<xsl:value-of select="Properties/Property[@name='Name']/@baseline"/>' Metadata:<br/><xsl:apply-templates select="Properties" mode="standard"/></span></div></td>
+                           <td><p><xsl:value-of select="Properties/Property[@name='LowerBound']/@baseline"/>..<xsl:value-of select="Properties/Property[@name='UpperBound']/@baseline"/></p></td>
+                           <td><p><a href="#{$baseline-guid}" onClick="autoExpand('{$baseline-guid}');"><xsl:value-of select="Properties/Property[@name='Type']/@baseline"/></a></p></td>
+                           <td><p><xsl:value-of select="Properties/Property[@name='Notes']/@baseline"/></p></td>
+                           
+                           <xsl:variable name="model-guid">
+                                <xsl:choose>
+                                    <xsl:when test="Properties/Property[@name='Type']/@model">
+                                        <xsl:call-template name="link-class-guid">
+                                            <xsl:with-param name="name" select="Properties/Property[@name='Type']/@model" />
+                                        </xsl:call-template>
+                                    </xsl:when>
+                                    <xsl:otherwise>
+                                        <xsl:text></xsl:text>
+                                    </xsl:otherwise>
+                                </xsl:choose>
+                           </xsl:variable>
+                           <td style="background-color:{$color};white-space:nowrap"><p id="{Properties/Property[@name='Name']/@model}"><xsl:value-of select="Properties/Property[@name='Name']/@model"/></p></td>
+                           <td style="background-color:{$color};white-space:nowrap"><div class="attribute-tooltip"><i class="fas fa-info-circle" style="text-align:left;font-size:12px;color:white;text-shadow:1px 1px 2px #000000;"/><span class="attribute-tooltiptext" style="font-size:16px;font-weight:bold;"><i class="fas fa-cubes" />&#160;Attribute '<xsl:value-of select="Properties/Property[@name='Name']/@model"/>' Metadata:<br/><xsl:apply-templates select="Properties" mode="standard"/></span></div></td>
+                           <td><p><xsl:value-of select="Properties/Property[@name='LowerBound']/@model"/>..<xsl:value-of select="Properties/Property[@name='UpperBound']/@model"/></p></td>
+                           <td><p><a href="#{$model-guid}" onClick="autoExpand('{$model-guid}');"><xsl:value-of select="Properties/Property[@name='Type']/@model"/></a></p></td>
+                           <td><p><xsl:value-of select="Properties/Property[@name='Notes']/@model"/></p></td>                     
+
+                       </xsl:when>
                        <xsl:when test="@status='Baseline only'">
                            <xsl:variable name="guid">
                                 <xsl:choose>
@@ -1348,8 +1805,8 @@
                                     </xsl:otherwise>
                                 </xsl:choose>
                            </xsl:variable>
-                           <td style="background-color:{$color}"><p id="{Properties/Property[@name='Name']/@baseline}"><xsl:value-of select="Properties/Property[@name='Name']/@baseline"/></p></td>
-                           <td style="background-color: {$color}"><p>&#160;</p></td>
+                           <td style="background-color:{$color};white-space:nowrap"><p id="{Properties/Property[@name='Name']/@baseline}"><xsl:value-of select="Properties/Property[@name='Name']/@baseline"/></p></td>
+                           <td style="background-color:{$color};white-space:nowrap"><div class="attribute-tooltip"><i class="fas fa-info-circle" style="text-align:left;font-size:12px;color:white;text-shadow:1px 1px 2px #000000;"/><span class="attribute-tooltiptext" style="font-size:16px;font-weight:bold;"><i class="fas fa-cubes" />&#160;Attribute '<xsl:value-of select="Properties/Property[@name='Name']/@baseline"/>' Metadata:<br/><xsl:apply-templates select="Properties" mode="standard"/></span></div></td>
                            <td><p><xsl:value-of select="Properties/Property[@name='LowerBound']/@baseline"/>..<xsl:value-of select="Properties/Property[@name='UpperBound']/@baseline"/></p></td>
                            <td><p><a href="#{$guid}" onClick="autoExpand('{$guid}');"><xsl:value-of select="Properties/Property[@name='Type']/@baseline"/></a></p></td>
                            <td><p><xsl:value-of select="Properties/Property[@name='Notes']/@baseline"/></p></td>
@@ -1357,7 +1814,7 @@
                            <td colspan="5"><p style="color:red;weight:bold;">ATTRIBUTE REMOVED FROM MODEL</p></td>
                        </xsl:when>
                        <xsl:when test="@status='Model only'">
-                           <td colspan="5"><p style="color:red;weight:bold;">ATTRIBUTE DID NOT PREVIOUSLY EXIST</p></td>
+                           <td colspan="5"><p style="color:red;weight:bold;">ATTRIBUTE DOES NOT EXIST</p></td>
                           
                        	   <xsl:variable name="guid">
                                 <xsl:choose>
@@ -1371,8 +1828,8 @@
                                     </xsl:otherwise>
                                 </xsl:choose>
                            </xsl:variable>
-                           <td style="background-color:{$color}"><p id="{Properties/Property[@name='Name']/@model}"><xsl:value-of select="Properties/Property[@name='Name']/@model"/></p></td>
-                           <td style="background-color: {$color}"><div class="attribute-tooltip"><i class="fas fa-info-circle" style="text-align:left;font-size:12px;color:white;text-shadow:1px 1px 2px #000000;"/><span class="attribute-tooltiptext" style="font-size:16px;font-weight:bold;"><i class="fas fa-cubes" />&#160;Attribute '<xsl:value-of select="Properties/Property[@name='Name']/@model"/>' Metadata:<br></br><xsl:apply-templates select="Properties"/></span></div></td>
+                           <td style="background-color:{$color};white-space:nowrap"><p id="{Properties/Property[@name='Name']/@model}"><xsl:value-of select="Properties/Property[@name='Name']/@model"/></p></td>
+                           <td style="background-color:{$color};white-space:nowrap"><div class="attribute-tooltip"><i class="fas fa-info-circle" style="text-align:left;font-size:12px;color:white;text-shadow:1px 1px 2px #000000;"/><span class="attribute-tooltiptext" style="font-size:16px;font-weight:bold;"><i class="fas fa-cubes" />&#160;Attribute '<xsl:value-of select="Properties/Property[@name='Name']/@model"/>' Metadata:<br/><xsl:apply-templates select="Properties" mode="standard"/></span></div></td>
                            <td><p><xsl:value-of select="Properties/Property[@name='LowerBound']/@model"/>..<xsl:value-of select="Properties/Property[@name='UpperBound']/@model"/></p></td>
                            <td><p><a href="#{$guid}" onClick="autoExpand('{$guid}');"><xsl:value-of select="Properties/Property[@name='Type']/@model"/></a></p></td>
                            <td><p><xsl:value-of select="Properties/Property[@name='Notes']/@model"/></p></td>
@@ -1390,8 +1847,8 @@
                                     </xsl:otherwise>
                                 </xsl:choose>
                            </xsl:variable>
-                           <td style="background-color:{$color}"><p id="{Properties/Property[@name='Name']/@baseline}"><xsl:value-of select="Properties/Property[@name='Name']/@baseline"/></p></td>
-                           <td style="background-color: {$color}"><div class="attribute-tooltip"><i class="fas fa-info-circle" style="text-align:left;font-size:12px;color:white;text-shadow:1px 1px 2px #000000;"/><span class="attribute-tooltiptext" style="font-size:16px;font-weight:bold;"><i class="fas fa-cubes" />&#160;Attribute '<xsl:value-of select="Properties/Property[@name='Name']/@baseline"/>' Metadata:<br></br><xsl:apply-templates select="Properties"/></span></div></td>
+                           <td style="background-color:{$color};white-space:nowrap"><p id="{Properties/Property[@name='Name']/@baseline}"><xsl:value-of select="Properties/Property[@name='Name']/@baseline"/></p></td>
+                           <td style="background-color:{$color};white-space:nowrap"><div class="attribute-tooltip"><i class="fas fa-info-circle" style="text-align:left;font-size:12px;color:white;text-shadow:1px 1px 2px #000000;"/><span class="attribute-tooltiptext" style="font-size:16px;font-weight:bold;"><i class="fas fa-cubes" />&#160;Attribute '<xsl:value-of select="Properties/Property[@name='Name']/@baseline"/>' Metadata:<br/><xsl:apply-templates select="Properties" mode="standard"/></span></div></td>
                            <td><p><xsl:value-of select="Properties/Property[@name='LowerBound']/@baseline"/>..<xsl:value-of select="Properties/Property[@name='UpperBound']/@baseline"/></p></td>
                            <td><p><a href="#{$baseline-guid}" onClick="autoExpand('{$baseline-guid}');"><xsl:value-of select="Properties/Property[@name='Type']/@baseline"/></a></p></td>
                            <td><p><xsl:value-of select="Properties/Property[@name='Notes']/@baseline"/></p></td>
@@ -1408,8 +1865,8 @@
                                     </xsl:otherwise>
                                 </xsl:choose>
                            </xsl:variable>
-                           <td style="background-color: {$color}"><p id="{Properties/Property[@name='Name']/@model}"><xsl:value-of select="Properties/Property[@name='Name']/@model"/></p></td>
-                           <td style="background-color: {$color}"><p>&#160;</p></td>
+                           <td style="background-color:{$color};white-space:nowrap"><p id="{Properties/Property[@name='Name']/@model}"><xsl:value-of select="Properties/Property[@name='Name']/@model"/></p></td>
+                           <td style="background-color:{$color};white-space:nowrap"><div class="attribute-tooltip"><i class="fas fa-info-circle" style="text-align:left;font-size:12px;color:white;text-shadow:1px 1px 2px #000000;"/><span class="attribute-tooltiptext" style="font-size:16px;font-weight:bold;"><i class="fas fa-cubes" />&#160;Attribute '<xsl:value-of select="Properties/Property[@name='Name']/@model"/>' Metadata:<br/><xsl:apply-templates select="Properties" mode="standard"/></span></div></td>
                            <td><p><xsl:value-of select="Properties/Property[@name='LowerBound']/@model"/>..<xsl:value-of select="Properties/Property[@name='UpperBound']/@model"/></p></td>
                            <td><p><a href="#{$model-guid}" onClick="autoExpand('{$model-guid}');"><xsl:value-of select="Properties/Property[@name='Type']/@model"/></a></p></td>
                            <td><p><xsl:value-of select="Properties/Property[@name='Notes']/@model"/></p></td>                     
@@ -1478,7 +1935,16 @@
 	<xsl:template name="link-class-guid">
 	   <!-- The 'name' param corresponds to the 'name' attribute in a CompareItem element and indicates the class name to look for in the formatted string... -->
 	   <xsl:param name="name"/>
-	   <xsl:variable name="string-element" select="concat('|', $name, ':')"/>
+       <xsl:variable name="string-element">
+            <xsl:choose>
+                <xsl:when test="starts-with($name, $deprecated)">
+                    <xsl:value-of select="concat('|', substring-after($name, concat($deprecated, ' ')), ':')"/>
+                </xsl:when>
+                <xsl:otherwise>
+                    <xsl:value-of select="concat('|', $name, ':')"/>
+                </xsl:otherwise>
+            </xsl:choose>
+       </xsl:variable>
 	   <xsl:choose>
 	       <xsl:when test="string-length(substring-after($all-classes, $string-element)) > 0">
 	           <xsl:value-of select="substring-before(substring-after($all-classes, $string-element), ':')"/>

@@ -9,10 +9,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.cimug.compare.app.PreProcessor;
 import org.cimug.compare.logs.Properties;
 import org.cimug.compare.logs.Property;
 import org.cimug.compare.uml1_3.AssociationEndType;
 import org.cimug.compare.uml1_3.AssociationType;
+import org.cimug.compare.uml1_3.ClassType;
 import org.cimug.compare.uml1_3.ModelElementTaggedValue;
 import org.cimug.compare.uml1_3.TaggedValueType;
 
@@ -36,15 +38,17 @@ public class AssociationProperties {
 	private AssociationEndType baselineDestinationAssociationEnd;
 	private AssociationEndType targetDestinationAssociationEnd;
 
-	private SourceAssociationEndProperties sourcePropsProcessor;
-	private DestinationAssociationEndProperties destinationPropsProcessor;
+	private SourceAssociationEndProperties sourceAssociationEndPropsProcessor;
+	private DestinationAssociationEndProperties destinationAssociationEndPropsProcessor;
 
 	private List<TaggedValueType> baselineTaggedValues;
 	private List<TaggedValueType> targetTaggedValues;
 
 	private Properties properties;
 
-	public AssociationProperties(AssociationType baselineAssociation, AssociationType targetAssociation) {
+	public AssociationProperties(PreProcessor preProcessor, ClassType baselineClass, AssociationType baselineAssociation, ClassType targetClass,
+			AssociationType targetAssociation) {
+		//
 		this.baselineAssociation = baselineAssociation;
 		this.targetAssociation = targetAssociation;
 		//
@@ -60,10 +64,23 @@ public class AssociationProperties {
 				? targetAssociation.getDestinationAssociationEnd()
 				: null);
 
-		this.sourcePropsProcessor = new SourceAssociationEndProperties(baselineSourceAssociationEnd,
-				baselineAssociation, targetSourceAssociationEnd, targetAssociation);
-		this.destinationPropsProcessor = new DestinationAssociationEndProperties(baselineDestinationAssociationEnd,
-				baselineAssociation, targetDestinationAssociationEnd, targetAssociation);
+		this.sourceAssociationEndPropsProcessor = new SourceAssociationEndProperties( //
+				preProcessor, //
+				baselineClass, //
+				baselineSourceAssociationEnd, //
+				baselineAssociation, //
+				targetClass, //
+				targetSourceAssociationEnd, //
+				targetAssociation);
+		//
+		this.destinationAssociationEndPropsProcessor = new DestinationAssociationEndProperties( //
+				preProcessor, //
+				baselineClass, //
+				baselineDestinationAssociationEnd, //
+				baselineAssociation, //
+				targetClass, //
+				targetDestinationAssociationEnd, //
+				targetAssociation);
 		//
 		if (this.baselineAssociation != null) {
 			ModelElementTaggedValue baselineElement = this.baselineAssociation.getModelElementTaggedValue();
@@ -105,11 +122,11 @@ public class AssociationProperties {
 	}
 
 	public SourceAssociationEndProperties getSourcePropsProcessor() {
-		return sourcePropsProcessor;
+		return sourceAssociationEndPropsProcessor;
 	}
 
 	public DestinationAssociationEndProperties getDestinationPropsProcessor() {
-		return destinationPropsProcessor;
+		return destinationAssociationEndPropsProcessor;
 	}
 
 	protected void processDiffs(AssociationType baselineAssociation, AssociationType targetAssociation) {
@@ -218,9 +235,12 @@ public class AssociationProperties {
 	}
 
 	public Status getStatus() {
-		if (this.baselineTaggedValues == null)
+		/**
+		 * Status' for Associations must be handled slightly differently.  
+		 */
+		if (this.baselineAssociation == null)
 			return Status.ModelOnly;
-		if (this.targetTaggedValues == null)
+		if (this.targetAssociation == null)
 			return Status.BaselineOnly;
 		for (Property property : properties.getProperty()) {
 			if (!Status.Identical.toString().equals(property.getStatus())) {

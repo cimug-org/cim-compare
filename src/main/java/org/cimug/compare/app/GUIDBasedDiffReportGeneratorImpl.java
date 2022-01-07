@@ -29,6 +29,7 @@ import org.cimug.compare.logs.ComparePackage;
 import org.cimug.compare.logs.CompareResults;
 import org.cimug.compare.logs.EACompareLog;
 import org.cimug.compare.logs.Properties;
+import org.cimug.compare.logs.Property;
 import org.cimug.compare.uml1_3.AssociationEndType;
 import org.cimug.compare.uml1_3.AssociationType;
 import org.cimug.compare.uml1_3.AttributeType;
@@ -104,6 +105,13 @@ class GUIDBasedDiffReportGeneratorImpl implements DiffReportGenerator {
 				return false;
 			return true;
 		}
+
+		@Override
+		public String toString() {
+			return "AttributeCompareItem [compareItem=" + (compareItem != null ? compareItem.getName() : "") + "]";
+		}
+		
+		
 
 	}
 
@@ -463,6 +471,10 @@ class GUIDBasedDiffReportGeneratorImpl implements DiffReportGenerator {
 	private CompareItem parseDiagram(Diagram aDiagram, PackageType diagramParentPackage) {
 		CompareItem theDiagram = null;
 
+		if (aDiagram.getName().equals("ClassesWithStatus") || aDiagram.getName().equals("InfClassesWithStatus")) {
+			System.out.println();
+		}
+		
 		// Very first thing we do is to first determine if the diagram passed in is a
 		// deleted diagram...
 		if (preProcessor.getBaselineDeletedDiagramsXmiIds().containsKey(aDiagram.getXmiId())) {
@@ -598,11 +610,19 @@ class GUIDBasedDiffReportGeneratorImpl implements DiffReportGenerator {
 								diagramStatus = Status.Changed;
 								break; // Break out of the for loop as we know the diagram has changed...
 							}
-
 						}
 					} else if ((baselineDiagramElementType == null && targetDiagramElementType != null)
 							|| (baselineDiagramElementType != null && targetDiagramElementType == null)) {
 						diagramStatus = Status.Changed;
+					}
+					
+					if (Status.Identical.equals(diagramStatus)) {
+						for (Property prop : properties.getProperty()) {
+							if (!Status.Identical.toString().equals(prop.getStatus())) {
+								diagramStatus = Status.Changed;
+								break;
+							}
+						}
 					}
 				}
 
@@ -653,9 +673,29 @@ class GUIDBasedDiffReportGeneratorImpl implements DiffReportGenerator {
 		if (baselineClass == null) {
 			// Only model class exists...
 
-			for (GeneralizationType targetGeneralization : preProcessor.getAllTargetGeneralizations(targetClass.getXmiId())) {
+			for (GeneralizationType targetGeneralization : preProcessor
+					.getAllTargetGeneralizations(targetClass.getXmiId())) {
 
-				GeneralizationProperties propsProcessor = new GeneralizationProperties(null, targetGeneralization);
+				//
+				// There exists the edge case where a generalization exists in both the
+				// baseline and target models but in the target model an end of the
+				// generalization is moved from one class to another. In that case the
+				// generalization is NOT a "Model only" (i.e. new) generalization but
+				// rather is an existing generalization which required that we obtain the
+				// baseline generalization and class for processing...
+				//
+				String targetXmiId = targetGeneralization.getXmiId();
+				GeneralizationType baselineGeneralization = null;
+
+				if (preProcessor.getBaselineGeneralizationsXmiIds().containsKey(targetXmiId) || //
+						preProcessor.getBaselineDeletedGeneralizationsXmiIds().containsKey(targetXmiId)) {
+					baselineGeneralization = (preProcessor.getBaselineGeneralizationsXmiIds().containsKey(targetXmiId)
+							? preProcessor.getBaselineGeneralizationsXmiIds().get(targetXmiId)
+							: preProcessor.getBaselineDeletedGeneralizationsXmiIds().get(targetXmiId));
+				}
+
+				GeneralizationProperties propsProcessor = new GeneralizationProperties(preProcessor,
+						baselineGeneralization, targetGeneralization);
 
 				CompareItem generalizationCompareItem = new CompareItem(propsProcessor.getProperties(),
 						"Generalization", "", targetGeneralization.getGUID(), propsProcessor.getStatus().toString());
@@ -684,7 +724,8 @@ class GUIDBasedDiffReportGeneratorImpl implements DiffReportGenerator {
 
 			for (AssociationType targetAssociation : preProcessor.getAllTargetAssociations(targetClass.getXmiId())) {
 
-				AssociationProperties propsProcessor = new AssociationProperties(null, targetAssociation);
+				AssociationProperties propsProcessor = new AssociationProperties(preProcessor, null, null, targetClass,
+						targetAssociation);
 
 				CompareItem associationCompareItem = new CompareItem(propsProcessor.getProperties(), "Association", "",
 						targetAssociation.getGUID(), propsProcessor.getStatus().toString());
@@ -696,8 +737,9 @@ class GUIDBasedDiffReportGeneratorImpl implements DiffReportGenerator {
 						propsProcessor.getTargetSourceAssociationEnd());
 
 				CompareItem sourceEndCompareItem = new CompareItem(
-						propsProcessor.getSourcePropsProcessor().getProperties(),
-						"Source: (" + targetAssociation.getSourceAssociationEnd().getName() + ")", "Src", sourceGUID,
+						propsProcessor.getSourcePropsProcessor().getProperties(), //
+						(targetAssociation.getSourceAssociationEnd().getName() != null ? "Source: (" + targetAssociation.getSourceAssociationEnd().getName() + ")" : "Source"), //
+						"Src", sourceGUID,
 						propsProcessor.getSourcePropsProcessor().getStatus().toString());
 
 				associationCompareItem.getCompareItem().add(sourceEndCompareItem);
@@ -709,8 +751,9 @@ class GUIDBasedDiffReportGeneratorImpl implements DiffReportGenerator {
 						propsProcessor.getTargetDestinationAssociationEnd());
 
 				CompareItem destinationEndCompareItem = new CompareItem(
-						propsProcessor.getDestinationPropsProcessor().getProperties(),
-						"Target: (" + targetAssociation.getDestinationAssociationEnd().getName() + ")", "Dst",
+						propsProcessor.getDestinationPropsProcessor().getProperties(), //
+						(targetAssociation.getDestinationAssociationEnd().getName() != null ? "Target: (" + targetAssociation.getDestinationAssociationEnd().getName() + ")" : "Target"), //
+						"Dst",
 						destinationGUID, propsProcessor.getDestinationPropsProcessor().getStatus().toString());
 
 				associationCompareItem.getCompareItem().add(destinationEndCompareItem);
@@ -724,7 +767,27 @@ class GUIDBasedDiffReportGeneratorImpl implements DiffReportGenerator {
 			for (GeneralizationType baselineGeneralization : preProcessor
 					.getAllBaselineGeneralizations(baselineClass.getXmiId())) {
 
-				GeneralizationProperties propsProcessor = new GeneralizationProperties(null, baselineGeneralization);
+				//
+				// There exists the edge case where a generalization exists in both the
+				// baseline and target models but in the target model an end of the
+				// generalization is moved from one class to another. In that case the
+				// generalization is NOT a "Model only" (i.e. new) generalization but
+				// rather is an existing generalization which required that we obtain the
+				// baseline generalization and class for processing...
+				//
+				String baselineXmiId = baselineGeneralization.getXmiId();
+
+				GeneralizationType targetGeneralization = null;
+
+				if (preProcessor.getTargetGeneralizationsXmiIds().containsKey(baselineXmiId) || //
+						preProcessor.getTargetNewGeneralizationsXmiIds().containsKey(baselineXmiId)) {
+					targetGeneralization = (preProcessor.getTargetGeneralizationsXmiIds().containsKey(baselineXmiId)
+							? preProcessor.getTargetGeneralizationsXmiIds().get(baselineXmiId)
+							: preProcessor.getTargetNewGeneralizationsXmiIds().get(baselineXmiId));
+				}
+
+				GeneralizationProperties propsProcessor = new GeneralizationProperties(preProcessor,
+						baselineGeneralization, targetGeneralization);
 
 				CompareItem generalizationCompareItem = new CompareItem(propsProcessor.getProperties(),
 						"Generalization", "", baselineGeneralization.getGUID(), propsProcessor.getStatus().toString());
@@ -751,9 +814,11 @@ class GUIDBasedDiffReportGeneratorImpl implements DiffReportGenerator {
 				links.getCompareItem().add(generalizationCompareItem);
 			}
 
-			for (AssociationType baselineAssociation : preProcessor.getAllBaselineAssociations(baselineClass.getXmiId())) {
+			for (AssociationType baselineAssociation : preProcessor
+					.getAllBaselineAssociations(baselineClass.getXmiId())) {
 
-				AssociationProperties propsProcessor = new AssociationProperties(baselineAssociation, null);
+				AssociationProperties propsProcessor = new AssociationProperties(preProcessor, baselineClass,
+						baselineAssociation, null, null);
 
 				CompareItem associationCompareItem = new CompareItem(propsProcessor.getProperties(), "Association", "",
 						baselineAssociation.getGUID(), propsProcessor.getStatus().toString());
@@ -765,8 +830,10 @@ class GUIDBasedDiffReportGeneratorImpl implements DiffReportGenerator {
 						propsProcessor.getBaselineSourceAssociationEnd());
 
 				CompareItem sourceEndCompareItem = new CompareItem(
-						propsProcessor.getSourcePropsProcessor().getProperties(),
-						"Source: (" + baselineAssociation.getSourceAssociationEnd().getName() + ")", "Src", sourceGUID,
+						propsProcessor.getSourcePropsProcessor().getProperties(), //
+						(baselineAssociation.getSourceAssociationEnd().getName() != null ? "Source: (" + baselineAssociation.getSourceAssociationEnd().getName() + ")" : "Source"), //
+						"Src", //
+						sourceGUID,
 						propsProcessor.getSourcePropsProcessor().getStatus().toString());
 
 				associationCompareItem.getCompareItem().add(sourceEndCompareItem);
@@ -778,8 +845,9 @@ class GUIDBasedDiffReportGeneratorImpl implements DiffReportGenerator {
 						propsProcessor.getBaselineDestinationAssociationEnd());
 
 				CompareItem destinationEndCompareItem = new CompareItem(
-						propsProcessor.getDestinationPropsProcessor().getProperties(),
-						"Target: (" + baselineAssociation.getDestinationAssociationEnd().getName() + ")", "Dst",
+						propsProcessor.getDestinationPropsProcessor().getProperties(), //
+						(baselineAssociation.getDestinationAssociationEnd().getName() != null ? "Target: (" + baselineAssociation.getDestinationAssociationEnd().getName() + ")" : "Target"), //
+						"Dst",//
 						destinationGUID, propsProcessor.getDestinationPropsProcessor().getStatus().toString());
 
 				associationCompareItem.getCompareItem().add(destinationEndCompareItem);
@@ -791,15 +859,16 @@ class GUIDBasedDiffReportGeneratorImpl implements DiffReportGenerator {
 			// Both classes exist...
 			// NOTE: For "root" classes there is NO parent package. So ensure it is != null
 
-			for (GeneralizationType targetGeneralization : preProcessor.getAllTargetGeneralizations(targetClass.getXmiId())) {
+			for (GeneralizationType targetGeneralization : preProcessor
+					.getAllTargetGeneralizations(targetClass.getXmiId())) {
 
 				GeneralizationType baselineGeneralization = (preProcessor.getBaselineGeneralizationsXmiIds()
 						.containsKey(targetGeneralization.getXmiId())
 								? preProcessor.getBaselineGeneralizationsXmiIds().get(targetGeneralization.getXmiId())
 								: null);
 
-				GeneralizationProperties propsProcessor = new GeneralizationProperties(baselineGeneralization,
-						targetGeneralization);
+				GeneralizationProperties propsProcessor = new GeneralizationProperties(preProcessor,
+						baselineGeneralization, targetGeneralization);
 
 				CompareItem generalizationCompareItem = new CompareItem(propsProcessor.getProperties(),
 						"Generalization", "", targetGeneralization.getGUID(), propsProcessor.getStatus().toString());
@@ -835,7 +904,7 @@ class GUIDBasedDiffReportGeneratorImpl implements DiffReportGenerator {
 				if (deletedBaselineGeneralization.getSubtype().equals(baselineClass.getXmiId())
 						|| deletedBaselineGeneralization.getSupertype().equals(baselineClass.getXmiId())) {
 
-					GeneralizationProperties propsProcessor = new GeneralizationProperties(
+					GeneralizationProperties propsProcessor = new GeneralizationProperties(preProcessor,
 							deletedBaselineGeneralization, null);
 
 					CompareItem deletedGeneralizationCompareItem = new CompareItem(propsProcessor.getProperties(),
@@ -863,13 +932,14 @@ class GUIDBasedDiffReportGeneratorImpl implements DiffReportGenerator {
 			}
 
 			for (AssociationType targetAssociation : preProcessor.getAllTargetAssociations(targetClass.getXmiId())) {
+
 				AssociationType baselineAssociation = (preProcessor.getBaselineAssociationsXmiIds()
 						.containsKey(targetAssociation.getXmiId())
 								? preProcessor.getBaselineAssociationsXmiIds().get(targetAssociation.getXmiId())
 								: null);
 
-				AssociationProperties propsProcessor = new AssociationProperties(baselineAssociation,
-						targetAssociation);
+				AssociationProperties propsProcessor = new AssociationProperties(preProcessor, baselineClass,
+						baselineAssociation, targetClass, targetAssociation);
 				//
 				CompareItem associationCompareItem = new CompareItem(propsProcessor.getProperties(), "Association", "",
 						targetAssociation.getGUID(), propsProcessor.getStatus().toString());
@@ -878,22 +948,30 @@ class GUIDBasedDiffReportGeneratorImpl implements DiffReportGenerator {
 						propsProcessor.getTargetSourceAssociationEnd());
 				//
 				CompareItem sourceEndCompareItem = new CompareItem(
-						propsProcessor.getSourcePropsProcessor().getProperties(),
-						"Source: (" + targetAssociation.getSourceAssociationEnd().getName() + ")", "Src", sourceGUID,
+						propsProcessor.getSourcePropsProcessor().getProperties(), //
+						(targetAssociation.getSourceAssociationEnd().getName() != null ? "Source: (" + targetAssociation.getSourceAssociationEnd().getName() + ")" : "Source"), //
+						"Src", //
+						sourceGUID,
 						propsProcessor.getSourcePropsProcessor().getStatus().toString());
 
 				String destinationGUID = generateDestinationGUID(targetClass, targetAssociation,
 						propsProcessor.getTargetDestinationAssociationEnd());
 				//
 				CompareItem destinationEndCompareItem = new CompareItem(
-						propsProcessor.getDestinationPropsProcessor().getProperties(),
-						"Target: (" + targetAssociation.getDestinationAssociationEnd().getName() + ")", "Dst",
+						propsProcessor.getDestinationPropsProcessor().getProperties(),//
+						(targetAssociation.getDestinationAssociationEnd().getName() != null ? "Target: (" + targetAssociation.getDestinationAssociationEnd().getName() + ")" : "Target"), //
+						"Dst", //
 						destinationGUID, propsProcessor.getDestinationPropsProcessor().getStatus().toString());
 
 				associationCompareItem.getCompareItem().add(sourceEndCompareItem);
 				associationCompareItem.getCompareItem().add(destinationEndCompareItem);
 
 				links.getCompareItem().add(associationCompareItem);
+				
+				// We ensure we handle all associations that have been "moved"...
+				if (baselineAssociation != null
+						&& preProcessor.getTargetMovedAssociationsXmiIds().containsKey(targetAssociation.getXmiId())) {
+				}
 			}
 
 			/**
@@ -909,7 +987,8 @@ class GUIDBasedDiffReportGeneratorImpl implements DiffReportGenerator {
 						|| deletedBaselineAssociation.getDestinationAssociationEnd().getType()
 								.equals(baselineClass.getXmiId())) {
 
-					AssociationProperties propsProcessor = new AssociationProperties(deletedBaselineAssociation, null);
+					AssociationProperties propsProcessor = new AssociationProperties(preProcessor, baselineClass,
+							deletedBaselineAssociation, null, null);
 					//
 					CompareItem associationCompareItem = new CompareItem(propsProcessor.getProperties(), "Association",
 							"", deletedBaselineAssociation.getGUID(), propsProcessor.getStatus().toString());
@@ -918,17 +997,19 @@ class GUIDBasedDiffReportGeneratorImpl implements DiffReportGenerator {
 							propsProcessor.getBaselineSourceAssociationEnd());
 					//
 					CompareItem sourceEndCompareItem = new CompareItem(
-							propsProcessor.getSourcePropsProcessor().getProperties(),
-							"Source: (" + deletedBaselineAssociation.getSourceAssociationEnd().getName() + ")", "Src",
+							propsProcessor.getSourcePropsProcessor().getProperties(), //
+							(deletedBaselineAssociation.getSourceAssociationEnd().getName() != null ? "Source: (" + deletedBaselineAssociation.getSourceAssociationEnd().getName() + ")" : "Source"), //
+							"Src", //
 							sourceGUID, propsProcessor.getSourcePropsProcessor().getStatus().toString());
 
 					String destinationGUID = generateDestinationGUID(baselineClass, deletedBaselineAssociation,
 							propsProcessor.getBaselineDestinationAssociationEnd());
 					//
 					CompareItem destinationEndCompareItem = new CompareItem(
-							propsProcessor.getDestinationPropsProcessor().getProperties(),
-							"Target: (" + deletedBaselineAssociation.getDestinationAssociationEnd().getName() + ")",
-							"Dst", destinationGUID,
+							propsProcessor.getDestinationPropsProcessor().getProperties(), //
+							(deletedBaselineAssociation.getDestinationAssociationEnd().getName() != null ? "Target: (" + deletedBaselineAssociation.getDestinationAssociationEnd().getName() + ")" : "Target"), //
+							"Dst", //
+							destinationGUID,
 							propsProcessor.getDestinationPropsProcessor().getStatus().toString());
 
 					associationCompareItem.getCompareItem().add(sourceEndCompareItem);
@@ -941,6 +1022,7 @@ class GUIDBasedDiffReportGeneratorImpl implements DiffReportGenerator {
 		}
 
 		return links;
+
 	}
 
 	/**

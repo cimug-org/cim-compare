@@ -84,9 +84,6 @@ public class ClassProperties {
 		properties.getProperty().add(new Property("Persistence", null, null, (this.baselineTaggedValues == null
 				? Status.ModelOnly.toString()
 				: (this.targetTaggedValues == null ? Status.BaselineOnly.toString() : Status.Identical.toString()))));
-		properties.getProperty().add(new Property("Stereotype", null, null, (this.baselineTaggedValues == null
-				? Status.ModelOnly.toString()
-				: (this.targetTaggedValues == null ? Status.BaselineOnly.toString() : Status.Identical.toString()))));
 		properties.getProperty().add(new Property("Classifier", null, null, (this.baselineTaggedValues == null
 				? Status.ModelOnly.toString()
 				: (this.targetTaggedValues == null ? Status.BaselineOnly.toString() : Status.Identical.toString()))));

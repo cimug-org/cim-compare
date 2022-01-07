@@ -15,7 +15,8 @@ import org.cimug.compare.uml1_3.ModelElementStereotypeType;
 import org.cimug.compare.uml1_3.ModelElementTaggedValue;
 import org.cimug.compare.uml1_3.TaggedValueType;
 
-public interface ContentsContainer extends ContentContainer, ModelElementTaggedValueContainer {
+public interface ContentsContainer
+		extends ContentContainer, ModelElementStereotypeContainer, ModelElementTaggedValueContainer {
 
 	default ModelElementStereotypeType getModelElementStereotype() {
 		for (Serializable item : getContent()) {

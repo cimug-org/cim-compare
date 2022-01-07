@@ -27,11 +27,6 @@ public class DiagramProperties {
 		TAG_NAME_MAP.put("created_date", "CreatedDate");
 		TAG_NAME_MAP.put("modified_date", "ModifiedDate");
 		TAG_NAME_MAP.put("package", "Package");
-		TAG_NAME_MAP.put("swimlanes", "SwimLanes");
-		TAG_NAME_MAP.put("matrixitems", "MatrixItems");
-		TAG_NAME_MAP.put("ea_localid", "EALocalID");
-		TAG_NAME_MAP.put("EAStyle", "EAStyle");
-		TAG_NAME_MAP.put("styleex", "StyleEx");
 	}
 
 	private Diagram baselineDiagram;

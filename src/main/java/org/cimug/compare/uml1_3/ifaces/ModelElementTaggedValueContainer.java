@@ -13,4 +13,5 @@ public interface ModelElementTaggedValueContainer {
 	default String getTheValue(String tagName) {
 		return (getTaggedValue(tagName) != null ? getTaggedValue(tagName).getTheValue() : null);
 	}
+	
 }

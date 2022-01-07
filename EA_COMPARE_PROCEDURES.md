@@ -3,7 +3,7 @@ Procedures for Creating Model Comparisons XML Logs in Enterprise Architect
 
 EA can be used to perform a comparison between two models and the result
 exported as an "XML Comparison Log". In turn, the log can be passed as
-input to **cim-compare** to generate a final HTML comparison report.
+input to **cim-compare** to generate a final HTML comparison report as described in Option #2: "EA Model Comparison Logs as Input" in the README file.'
 
 The term “target” is used to describe some current (or later) version of the CIM
 that is to be the target of the comparison. The term “baseline” is used to

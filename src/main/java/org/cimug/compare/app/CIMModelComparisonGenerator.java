@@ -1,9 +1,14 @@
 package org.cimug.compare.app;
 
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStreamWriter;
+import java.io.Writer;
+import java.nio.charset.StandardCharsets;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -25,6 +30,7 @@ public class CIMModelComparisonGenerator {
 
 	private static final String PARAM_PACKAGE = "package";
 	private static final String PARAM_MINIMAL = "minimal";
+	private static final String PARAM_IMAGE_TYPE = "image-type";
 	private static final String ANSI = "windows-1252";
 	private static final String UTF8 = "UTF-8";
 
@@ -51,7 +57,7 @@ public class CIMModelComparisonGenerator {
 			try {
 				builder = factory.newDocumentBuilder();
 				is = new InputSource(new FileInputStream(datafile));
-				is.setEncoding(ANSI);
+				is.setEncoding(UTF8);
 				document = builder.parse(is);
 			} catch (Exception e) {
 				try {
@@ -60,7 +66,7 @@ public class CIMModelComparisonGenerator {
 				} catch (Exception e2) {
 					builder = factory.newDocumentBuilder();
 					is = new InputSource(new FileInputStream(datafile));
-					is.setEncoding(UTF8);
+					is.setEncoding(ANSI);
 					document = builder.parse(is);
 				}
 			}
@@ -70,11 +76,14 @@ public class CIMModelComparisonGenerator {
 			StreamSource stylesource = new StreamSource(stylesheet);
 			Transformer transformer = f.newTransformer(stylesource);
 
+			/** We set the default image type. May be overridden if one is explicitly specified on the command line */
+			transformer.setParameter(PARAM_IMAGE_TYPE, "jpg");
+			
 			/**
 			 * Set all XSLT parameters received on the command line. These are passed in as
 			 * various command line options with a leading "--". If the command line option
 			 * includes an equals sign ("=") in it then we know that it is an option that
-			 * has a value associated with it and which must be processed accordingly...
+			 * has a value associated with it and which must be processed accordingly.
 			 */
 			for (String arg : args) {
 				if (arg.startsWith("--") || arg.startsWith("-")) {
@@ -91,13 +100,18 @@ public class CIMModelComparisonGenerator {
 						case PARAM_MINIMAL:
 							value = "true"; // defaults to true
 							break;
+						case PARAM_IMAGE_TYPE:
+							if ((value == null) || ("".equals(value))) {
+								exitOnInvalidParameter(arg);
+							}
+							break;
 						case PARAM_PACKAGE:
+							if ((value == null) || ("".equals(value))) {
+								exitOnInvalidParameter(arg);
+							}
 							break;
 						default:
-							System.err.print("Invalid command line option specified: " + arg);
-							System.err.println();
-							printUsage();
-							System.exit(1);
+							exitOnInvalidParameter(arg);
 							break;
 						}
 
@@ -109,7 +123,9 @@ public class CIMModelComparisonGenerator {
 
 			StreamResult result = null;
 			if (outputfile != null) {
-				result = new StreamResult(outputfile);
+				FileOutputStream fos = new FileOutputStream(outputfile);
+		        Writer writer = new BufferedWriter(new OutputStreamWriter(fos, StandardCharsets.UTF_8));
+				result = new StreamResult(writer);
 			} else {
 				result = new StreamResult(System.out);
 			}
@@ -121,6 +137,16 @@ public class CIMModelComparisonGenerator {
 		} catch (SAXException | TransformerException | ParserConfigurationException | IOException e) {
 			e.printStackTrace();
 		}
+	}
+
+	/**
+	 * @param option The command line option that was invalid.
+	 */
+	private static void exitOnInvalidParameter(String option) {
+		System.err.print("Invalid command line option specified: " + option);
+		System.err.println();
+		printUsage();
+		System.exit(1);
 	}
 
 	private static File[] parseFileArguments(String[] args) {

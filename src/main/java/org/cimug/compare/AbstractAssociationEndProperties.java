@@ -9,28 +9,44 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.cimug.compare.app.PreProcessor;
 import org.cimug.compare.logs.Properties;
 import org.cimug.compare.logs.Property;
 import org.cimug.compare.uml1_3.AssociationEndType;
 import org.cimug.compare.uml1_3.AssociationType;
+import org.cimug.compare.uml1_3.ClassType;
 import org.cimug.compare.uml1_3.ModelElementTaggedValue;
 import org.cimug.compare.uml1_3.TaggedValueType;
 
 public abstract class AbstractAssociationEndProperties {
 
-	protected Set<String> tagNames = new HashSet<String>();
-	protected Map<String, String> tagNamesMap = new HashMap<String, String>();
+	private static final String DEPRECATED = "«deprecated»";
 
-	protected List<TaggedValueType> baselineTaggedValues;
-	protected List<TaggedValueType> targetTaggedValues;
+	private Set<String> tagNames = new HashSet<String>();
+	private Map<String, String> tagNamesMap = new HashMap<String, String>();
 
-	protected Properties properties = new Properties(new ArrayList<Property>());
+	protected boolean baselineDeprecated;
+	protected boolean targetDeprecated;
 
-	public AbstractAssociationEndProperties(AssociationEndType baseline, AssociationType baselineParent,
-			AssociationEndType target, AssociationType targetParent) {
+	private ClassType baselineClass;
+	private ClassType targetClass;
+
+	private List<TaggedValueType> baselineTaggedValues;
+	private List<TaggedValueType> targetTaggedValues;
+
+	private Properties properties = new Properties(new ArrayList<Property>());
+
+	public AbstractAssociationEndProperties(PreProcessor preProcessor, ClassType baselineClass, AssociationEndType baseline,
+			AssociationType baselineParent, ClassType targetClass, AssociationEndType target,
+			AssociationType targetParent) {
 		super();
 		//
+		this.baselineClass = baselineClass;
+		this.targetClass = targetClass;
+		//
 		initializeTagNamesMap();
+		//
+		initializeDeprecated(preProcessor, baselineParent, targetParent);
 		//
 		if (baseline != null) {
 			ModelElementTaggedValue baselineElement = baseline.getModelElementTaggedValue();
@@ -75,16 +91,34 @@ public abstract class AbstractAssociationEndProperties {
 		processDiffs(baseline, baselineParent, target, targetParent);
 	}
 
-	protected abstract void initializeTagNamesMap();
+	protected abstract void initializeDeprecated(PreProcessor preProcessor, AssociationType baselineAssociation,
+			AssociationType targetAssociation);
+	
+	protected abstract String getEndName();
+
+	protected void initializeTagNamesMap() {
+		tagNamesMap.put(getEndName(), "End");
+		tagNamesMap.put("stereotype", "Stereotype");
+		tagNamesMap.put("description", "RoleNote");
+		tagNamesMap.put("containment", "Containment");
+	}
 
 	protected void processDiffs(AssociationEndType baselineAssociationEnd, AssociationType baselineParent,
 			AssociationEndType targetAssociationEnd, AssociationType targetParent) {
 		Properties properties = new Properties(new ArrayList<Property>());
 
-		properties.getProperty().add(new Property("Alias", null, null, (this.baselineTaggedValues == null ? Status.ModelOnly.toString() : (this.targetTaggedValues == null ? Status.BaselineOnly.toString() : Status.Identical.toString()))));
-		properties.getProperty().add(new Property("Constraint", null, null, (this.baselineTaggedValues == null ? Status.ModelOnly.toString() : (this.targetTaggedValues == null ? Status.BaselineOnly.toString() : Status.Identical.toString()))));
-		properties.getProperty().add(new Property("roleType", null, null, (this.baselineTaggedValues == null ? Status.ModelOnly.toString() : (this.targetTaggedValues == null ? Status.BaselineOnly.toString() : Status.Identical.toString()))));
-		properties.getProperty().add(new Property("Qualifier", null, null, (this.baselineTaggedValues == null ? Status.ModelOnly.toString() : (this.targetTaggedValues == null ? Status.BaselineOnly.toString() : Status.Identical.toString()))));
+		properties.getProperty().add(new Property("Alias", null, null, (this.baselineTaggedValues == null
+				? Status.ModelOnly.toString()
+				: (this.targetTaggedValues == null ? Status.BaselineOnly.toString() : Status.Identical.toString()))));
+		properties.getProperty().add(new Property("Constraint", null, null, (this.baselineTaggedValues == null
+				? Status.ModelOnly.toString()
+				: (this.targetTaggedValues == null ? Status.BaselineOnly.toString() : Status.Identical.toString()))));
+		properties.getProperty().add(new Property("roleType", null, null, (this.baselineTaggedValues == null
+				? Status.ModelOnly.toString()
+				: (this.targetTaggedValues == null ? Status.BaselineOnly.toString() : Status.Identical.toString()))));
+		properties.getProperty().add(new Property("Qualifier", null, null, (this.baselineTaggedValues == null
+				? Status.ModelOnly.toString()
+				: (this.targetTaggedValues == null ? Status.BaselineOnly.toString() : Status.Identical.toString()))));
 
 		if (baselineAssociationEnd != null && targetAssociationEnd != null) {
 			// Changed or Identical
@@ -220,11 +254,27 @@ public abstract class AbstractAssociationEndProperties {
 
 		for (String name : tagNamesMap.keySet()) {
 			if (tagNames.contains(name)) {
-				properties.getProperty().add(new Property(tagNamesMap.get(name), getValue(name, baselineTaggedValues),
-						getValue(name, targetTaggedValues), getStatus(name)));
+
+				String baselineValue = getValue(name, baselineTaggedValues);
+				String targetValue = getValue(name, targetTaggedValues);
+
+				if (getEndName().equals(name)) {
+					if (this.baselineDeprecated) {
+						baselineValue = DEPRECATED + " " + baselineValue;
+					}
+
+					if (this.targetDeprecated) {
+						targetValue = DEPRECATED + " " + targetValue;
+					}
+				}
+				properties.getProperty()
+						.add(new Property(tagNamesMap.get(name), baselineValue, targetValue, getStatus(name)));
 			} else {
 				properties.getProperty()
-						.add(new Property(tagNamesMap.get(name), null, null, (this.baselineTaggedValues == null ? Status.ModelOnly.toString() : (this.targetTaggedValues == null ? Status.BaselineOnly.toString() : Status.Identical.toString()))));
+						.add(new Property(tagNamesMap.get(name), null, null,
+								(this.baselineTaggedValues == null ? Status.ModelOnly.toString()
+										: (this.targetTaggedValues == null ? Status.BaselineOnly.toString()
+												: Status.Identical.toString()))));
 			}
 		}
 
@@ -279,7 +329,7 @@ public abstract class AbstractAssociationEndProperties {
 			return Status.Identical;
 		}
 	}
-	
+
 	protected String getStatus(String name) {
 		Status status = Status.Changed; // Assume a status of 'Changed' until it is determined otherwise...
 		if (baselineTaggedValues != null && targetTaggedValues == null) {

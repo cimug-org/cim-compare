@@ -14,6 +14,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 
 import org.cimug.compare.uml1_3.ifaces.GUIDIdentifier;
+import org.cimug.compare.uml1_3.ifaces.ModelElementStereotypeContainer;
 import org.cimug.compare.uml1_3.ifaces.ModelElementTaggedValueContainer;
 import org.cimug.compare.uml1_3.ifaces.NamedType;
 
@@ -50,7 +51,7 @@ import org.cimug.compare.uml1_3.ifaces.NamedType;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "AttributeType", propOrder = { "attributeInitialValue", "structuralFeatureType",
 		"modelElementStereotype", "modelElementTaggedValue" })
-public class AttributeType implements ModelElementTaggedValueContainer, NamedType, GUIDIdentifier {
+public class AttributeType implements ModelElementStereotypeContainer, ModelElementTaggedValueContainer, NamedType, GUIDIdentifier {
 
 	@XmlElement(name = "Attribute.initialValue", required = true)
 	protected AttributeInitialValueType attributeInitialValue;

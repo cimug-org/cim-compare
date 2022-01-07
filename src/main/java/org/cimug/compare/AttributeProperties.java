@@ -17,6 +17,11 @@ import org.cimug.compare.uml1_3.TaggedValueType;
 
 public class AttributeProperties {
 
+	private static final String DEPRECATED = "«deprecated»";
+	
+	protected boolean baselineDeprecated;
+	protected boolean targetDeprecated;
+	
 	private static final String IS_LITERAL = "IsLiteral=";
 	private Set<String> tagNames = new HashSet<String>();
 
@@ -58,6 +63,9 @@ public class AttributeProperties {
 		this.targetAttribute = targetAttribute;
 		//
 		if (this.baselineAttribute != null) {
+			
+			this.baselineDeprecated = (this.baselineAttribute.isDeprecated());
+			
 			ModelElementTaggedValue baselineElement = this.baselineAttribute.getModelElementTaggedValue();
 			if (baselineElement != null) {
 				this.baselineTaggedValues = baselineElement.getTaggedValues();
@@ -66,6 +74,9 @@ public class AttributeProperties {
 		}
 		//
 		if (this.targetAttribute != null) {
+			
+			this.targetDeprecated = (this.targetAttribute.isDeprecated());
+			
 			ModelElementTaggedValue targetElement = this.targetAttribute.getModelElementTaggedValue();
 			if (targetElement != null) {
 				this.targetTaggedValues = targetElement.getTaggedValues();
@@ -88,16 +99,16 @@ public class AttributeProperties {
 		properties.getProperty().add(new Property("Container", null, null, (this.baselineTaggedValues == null
 				? Status.ModelOnly.toString()
 				: (this.targetTaggedValues == null ? Status.BaselineOnly.toString() : Status.Identical.toString()))));
-		properties.getProperty().add(new Property("Type", null, null, (this.baselineTaggedValues == null
-				? Status.ModelOnly.toString()
-				: (this.targetTaggedValues == null ? Status.BaselineOnly.toString() : Status.Identical.toString()))));
 
 		if (baselineAttribute != null && targetAttribute != null) {
 			// Changed or Identical
+			String baselineAttributeName = (this.baselineAttribute.isDeprecated() ? DEPRECATED + " " : "") + this.baselineAttribute.getName();
+			String targetAttributeName = (this.targetAttribute.isDeprecated() ? DEPRECATED + " " : "") + this.targetAttribute.getName();
+			
 			properties.getProperty().add(new Property("Name", //
-					(baselineAttribute.getName() != null ? baselineAttribute.getName() : null), //
-					(targetAttribute.getName() != null ? targetAttribute.getName() : null), //
-					getStatus(baselineAttribute.getName(), targetAttribute.getName()) //
+					(baselineAttributeName != null ? baselineAttributeName : null), //
+					(targetAttributeName != null ? targetAttributeName : null), //
+					getStatus(baselineAttributeName, targetAttributeName) //
 			));
 			properties.getProperty().add(new Property("Scope", //
 					(baselineAttribute.getVisibility() != null ? baselineAttribute.getVisibility() : null), //
@@ -195,10 +206,12 @@ public class AttributeProperties {
 			));
 		} else if (baselineAttribute != null) {
 			// Baseline only
+			String baselineAttributeName = (this.baselineAttribute.isDeprecated() ? DEPRECATED + " " : "") + this.baselineAttribute.getName();
+			
 			properties.getProperty().add(new Property("Name", //
-					(baselineAttribute.getName() != null ? baselineAttribute.getName() : null), //
+					(baselineAttributeName != null ? baselineAttributeName : null), //
 					null, // null model
-					getStatus(baselineAttribute.getName(), null) //
+					getStatus(baselineAttributeName, null) //
 			));
 			properties.getProperty().add(new Property("Scope", //
 					(baselineAttribute.getVisibility() != null ? baselineAttribute.getVisibility() : null), //
@@ -264,10 +277,12 @@ public class AttributeProperties {
 			));
 		} else {
 			// Model only
+			String targetAttributeName = (this.targetAttribute.isDeprecated() ? DEPRECATED + " " : "") + this.targetAttribute.getName();
+
 			properties.getProperty().add(new Property("Name", //
 					null, // null baseline
-					(targetAttribute.getName() != null ? targetAttribute.getName() : null), //
-					getStatus(null, targetAttribute.getName()) //
+					(targetAttributeName != null ? targetAttributeName : null), //
+					getStatus(null, targetAttributeName) //
 			));
 			properties.getProperty().add(new Property("Scope", //
 					null, // null baseline
@@ -417,9 +432,9 @@ public class AttributeProperties {
 
 	private String getStatus(String name) {
 		Status status = Status.Changed; // Assume a status of 'Changed' until it is determined otherwise...
-		if (baselineTaggedValues != null && targetTaggedValues == null) {
+		if (targetAttribute == null) {
 			status = Status.BaselineOnly;
-		} else if (baselineTaggedValues == null && targetTaggedValues != null) {
+		} else if (baselineAttribute == null) {
 			status = Status.ModelOnly;
 		} else {
 			String baselineValue = getValue(name, baselineTaggedValues);
@@ -432,11 +447,13 @@ public class AttributeProperties {
 
 	private String getStatus(String baselineValue, String targetValue) {
 		Status status = Status.Changed; // Assume a status of 'Changed' until it is determined otherwise...
-		if (baselineValue != null && targetValue == null) {
+		if (targetAttribute == null) {
 			status = Status.BaselineOnly;
-		} else if (baselineValue == null && targetValue != null) {
+		} else if (baselineAttribute == null) {
 			status = Status.ModelOnly;
-		} else if ((baselineValue == null && targetValue == null) || baselineValue.equals(targetValue)) {
+		} else if ((baselineValue != null && targetValue != null) && (baselineValue.equals(targetValue))) {
+			status = Status.Identical;
+		} else if (baselineValue == null && targetValue == null) {
 			status = Status.Identical;
 		}
 		return status.toString();

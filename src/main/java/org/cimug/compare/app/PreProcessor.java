@@ -15,7 +15,7 @@ import org.cimug.compare.uml1_3.NamespaceOwnedElementType;
 import org.cimug.compare.uml1_3.PackageType;
 import org.cimug.compare.xmi1_1.XMIContentType;
 
-class PreProcessor {
+public class PreProcessor {
 
 	/** Maps to support XmiId-based processing */
 	private Map<String, PackageType> baselinePackagesXmiIds = new HashMap<String, PackageType>();
@@ -403,8 +403,8 @@ class PreProcessor {
 				GeneralizationType baselineGeneralization = baselineGeneralizationsXmiIds.get(xmiId);
 				GeneralizationType targetGeneralization = targetGeneralizationsXmiIds.get(xmiId);
 
-				// If either the subtype or supertype have changed we know that the
-				// generalization was moved...
+				// If either the subtype or supertype have changed we know that at least 
+				// one of the ends of the generalization was moved to a different class...
 				if (!baselineGeneralization.getSubtype().equals(targetGeneralization.getSubtype())
 						|| !baselineGeneralization.getSupertype().equals(targetGeneralization.getSupertype())) {
 					baselineMovedGeneralizationsXmiIds.put(baselineGeneralization.getXmiId(), baselineGeneralization);
@@ -437,12 +437,11 @@ class PreProcessor {
 				AssociationType baselineAssociation = baselineAssociationsXmiIds.get(xmiId);
 				AssociationType targetAssociation = targetAssociationsXmiIds.get(xmiId);
 
-				// If either the subtype or supertype have changed we know that the
-				// generalization was moved...
+				// If either the source or destination have changed we know that the
+				// association was moved...
 				if (!baselineAssociation.getSourceAssociationEnd().getType()
-						.equals(targetAssociation.getSourceAssociationEnd().getType())
-						|| !baselineAssociation.getDestinationAssociationEnd().getType()
-								.equals(targetAssociation.getDestinationAssociationEnd().getType())) {
+						.equals(targetAssociation.getSourceAssociationEnd().getType()) 
+						|| !baselineAssociation.getDestinationAssociationEnd().getType().equals(targetAssociation.getDestinationAssociationEnd().getType())) {
 					baselineMovedAssociationsXmiIds.put(baselineAssociation.getXmiId(), baselineAssociation);
 					targetMovedAssociationsXmiIds.put(targetAssociation.getXmiId(), targetAssociation);
 				}
@@ -551,6 +550,10 @@ class PreProcessor {
 		}
 	}
 
+	public Map<String, GeneralizationType> getTargetGeneralizationsXmiIds() {
+		return targetGeneralizationsXmiIds;
+	}
+
 	public Map<String, GeneralizationType> getBaselineGeneralizationsXmiIds() {
 		return baselineGeneralizationsXmiIds;
 	}
@@ -583,6 +586,22 @@ class PreProcessor {
 		return baselineMovedClassesXmiIds;
 	}
 
+	public Map<String, GeneralizationType> getBaselineDeletedGeneralizationsXmiIds() {
+		return baselineDeletedGeneralizationsXmiIds;
+	}
+
+	public Map<String, AssociationType> getBaselineDeletedAssociationsXmiIds() {
+		return baselineDeletedAssociationsXmiIds;
+	}
+
+	public Map<String, GeneralizationType> getBaselineMovedGeneralizationsXmiIds() {
+		return baselineMovedGeneralizationsXmiIds;
+	}
+	
+	public Map<String, AssociationType> getBaselineMovedAssociationsXmiIds() {
+		return baselineMovedAssociationsXmiIds;
+	}
+
 	public Map<String, PackageType> getTargetPackagesXmiIds() {
 		return targetPackagesXmiIds;
 	}
@@ -607,12 +626,16 @@ class PreProcessor {
 		return targetMovedClassesXmiIds;
 	}
 
-	public Map<String, GeneralizationType> getBaselineDeletedGeneralizationsXmiIds() {
-		return baselineDeletedGeneralizationsXmiIds;
+	public Map<String, GeneralizationType> getTargetNewGeneralizationsXmiIds() {
+		return targetNewGeneralizationsXmiIds;
 	}
 
-	public Map<String, AssociationType> getBaselineDeletedAssociationsXmiIds() {
-		return baselineDeletedAssociationsXmiIds;
+	public Map<String, GeneralizationType> getTargetMovedGeneralizationsXmiIds() {
+		return targetMovedGeneralizationsXmiIds;
+	}
+	
+	public Map<String, AssociationType> getTargetMovedAssociationsXmiIds() {
+		return targetMovedAssociationsXmiIds;
 	}
 
 	/**

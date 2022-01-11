@@ -1,5 +1,16 @@
 ## cim-compare Release Log
 
+### Release 1.2.0 [10-Jan-2022]
+Minor release of the **cim-compare** project.  This release includes:
+
+- Support for Enterprise Architect .eap files as direct input into report generation. This eliminates the intermediate step of manually exporting baseline and destination XMI files from EA in order to generate reports.
+- New **--export-diagrams**, **--include-diagrams** and **--image-type** command line options. When **--export-diagrams** is specified **cim-compare** will export diagrams along with the XMI as part of processing the .eap files. Consult the README file for details on the usage of these new options.
+- A new **--zip** command line option. When specified the generated report is packaged into a single ZIP archive. This was added to simplify distribution of reports when diagrams are included.
+- Diagram images displayed as part of comparison reports are now auto-sized to better scale relative to the size of the browser window.
+- Introduced support for indicating when Classes and Attributes have been 'deprecated' in the model the 'deprecated' stereotype. The indicators are now carried through and indicated where applicable.
+- Based on end user feedback the 'Links' section of the comparison report has been reworked to better communicate changes to Associations, Generalizations, etc.
+- Numerous other minor bug fixes and CIM comparison report format and layout updates.
+
 ### Release 1.1.0 [09-Feb-2021]
 Minor release of the **cim-compare** project.  This release includes:
 

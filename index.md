@@ -7,7 +7,7 @@ Minor release of the **cim-compare** project.  This release includes:
 - New **--export-diagrams**, **--include-diagrams** and **--image-type** command line options. When **--export-diagrams** is specified **cim-compare** will export diagrams along with the XMI as part of processing the .eap files. Consult the README file for details on the usage of these new options.
 - A new **--zip** command line option. When specified the generated report is packaged into a single ZIP archive. This was added to simplify distribution of reports when diagrams are included.
 - Diagram images displayed as part of comparison reports are now auto-sized to better scale relative to the size of the browser window.
-- Introduced support for indicating when Classes and Attributes have been 'deprecated' in the model the 'deprecated' stereotype. The indicators are now carried through and indicated where applicable.
+- Introduced support for indicating when classes and attributes have been deprecated in the model using the **&lt;&lt;deprecated&gt;&gt;** stereotype. The **&lt;&lt;deprecated&gt;&gt;** tag is now displayed whereever relevant in the report to indicate classes and attributes that have this stereotype.
 - Based on end user feedback the 'Links' section of the comparison report has been reworked to better communicate changes to Associations, Generalizations, etc.
 - Numerous other minor bug fixes and CIM comparison report format and layout updates.
 

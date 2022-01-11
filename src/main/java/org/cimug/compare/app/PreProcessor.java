@@ -114,6 +114,7 @@ public class PreProcessor {
 		double diagramsPercentage = 1.0 - ((double) diagramXmiIdsInBoth.size()
 				/ (double) (baselineDiagramsXmiIds.size() + targetDiagramsXmiIds.size()));
 
+		/*
 		System.out.println();
 		System.out.println("====================== STATISTICAL OVERVIEW ======================");
 		System.out.println(
@@ -160,6 +161,7 @@ public class PreProcessor {
 		System.out.println("   Percentage of diagram XmiIds common to both models:     "
 				+ String.format("%.2f", (diagramsPercentage * 100.0)) + " %");
 		System.out.println("==================================================================");
+		*/
 	}
 
 	private void initialize( //

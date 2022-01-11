@@ -14,7 +14,7 @@ class DiffXMLGenerator {
 	public static void main(String[] args) {
 		if (args.length != 3) {
 			System.err.println("Usage: java " + DiffXMLGenerator.class.getSimpleName()
-					+ " <baseline-model-xmi-file> <target-model-xmi-file> <output-comparision-xml-file>");
+					+ " <baseline-model-file> <target-model-file> <output-comparison-file>");
 			System.err.println();
 			System.exit(1);
 		}
@@ -60,7 +60,7 @@ class DiffXMLGenerator {
 		if (!baselineExporterVersion.equals("2.5") || !targetExporterVersion.equals("2.5")) {
 
 			System.err.println(
-					"Currently only \"UML 1.3 (XMI 1.1)\" XMI exports (with \"Unisys/Rose Format\" unchecked) are supported for cim-compare comparision reports.");
+					"Currently only \"UML 1.3 (XMI 1.1)\" XMI exports (with \"Unisys/Rose Format\" unchecked) are supported for cim-compare comparison reports.");
 
 			if (!baselineExporterVersion.equals("2.5")) {
 				if (baselineExporterVersion.equals("4.1RR")) {

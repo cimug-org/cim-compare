@@ -27,29 +27,29 @@ The **cim-compare** utility has three possible command-line options to produce c
 
 ### Option \#1: Enterprise Architect .EAP Baseline and Destination Models as Inputs
 
-The preferred usage is to directly specify two Enterprise Architect .eap model files representing the "baseline" and “destination” models. Utilizing .eap files directly eliminates the need to manually perform exports of the XMI and diagram image files from within EA as described later in the "Enterprise Architect XMI Export Procedures" section of this README.
+The preferred usage is to provide two Enterprise Architect .eap files for the "baseline" and "destination" input files.  Using .eap files eliminates the need for manually XMI and diagram exports from EA (refer to "Enterprise Architect XMI Export Procedures").
 
 The command-line usage for this option takes the following form:
 
 ```
-java -jar cim-compare-1.2.0.jar <baseline-model-eap-file> <destination-model-eap-file> [<output-directory-or-html-file>] [--package=<iec-package-name>] [--minimal] [--include-diagrams] [--image-type=<image-files-extension>] [--zip]
+java -jar cim-compare-1.2.0.jar <baseline-model-eap-file> <destination-model-eap-file> [<output-directory-or-html-file>] [--package=<iec-package-name>] [--minimal] [--export-diagrams] [--image-type=<image-file-extension>] [--zip]
 ```
 
 *Parameter Details*:
 
-**\<baseline-model-eap-file\>** (**Required**): An Enterprise Architect .eap baseline model file. When not specified as an absolute file path the location of the file is assumed to be the directory the utility is being executed from.
+**\<baseline-model-eap-file\>** (**Required**): An Enterprise Architect baseline .eap model file. When not specified as an absolute file path the location is assumed to be the directory **cim-compare** is being executed from.
 
-**\<destination-model-eap-file\>** (**Required**): An Enterprise Architect .eap destination model file. When not specified as an absolute file path the location of the file is assumed to be the directory the utility is being executed from.
+**\<destination-model-eap-file\>** (**Required**): An Enterprise Architect destination .eap model file. When not specified as an absolute file path the location is assumed to be the directory **cim-compare** is being executed from.
 
-**[\<output-directory-or-html-file\>] (Optional)**: An output directory or an output HTML file. In the case where a directory is specified for this parameter if it does not exist it will be created. The same is true for the parent directory of an HTML file if it does not exist. When an HTML file is provided it may be specified as an absolute file path or as simply the name of the HTML file to be generated. If this command line option is not specified then **cim-compare** will generate an HTML file whose name is derived from the two input files.
+**[\<output-directory-or-html-file\>] (Optional)**: An output directory or an output HTML file. In the case where a directory is specified but does not exist it will be created. The same is true for the parent directory of a specified HTML file if it does not exist. When an HTML file is provided it may be specified as an absolute file path or as the simple name of an HTML file to be generated. If this command line option is not specified then **cim-compare** will generate an HTML file whose name is derived from the two input files.
 
 **[--package=\<iec-package-name\>] (Optional):** The root package within the models from which to start the comparison report from. Appearing at the end of the command-line after file and directory specifications, when specified the package must exist in both the baseline and destination models (e.g. --package=IEC61970, --package=IEC61968, --package=IEC62325, --package=TC57CIM, etc.) and be specified with two leading dashes (--). Note that when no IEC package name is specified that the report is generated from the root package in the models.
 
 **[--minimal] (Optional):** When specified **cim-compare** will exclude all "Identical" packages, classes, attributes, links, diagrams, etc. from the generated report. This is useful when it is necessary to perform detailed analysis of only the most concise set of changes between models.
 
-**[--export-diagrams] (Optional):** When specified **cim-compare** indicates that diagram images should be exported from EA along with the XMI export file of the model. Note that the type of images to export may optionally be specified using the --image-type option and will default to JPG when not specified.
+**[--export-diagrams] (Optional):** Indicates that diagram images should also be exported from EA along with the XMI exports. The type of images to be exported should also be provided using the --image-type option. When not specified the image type will default to JPG.
 
-**[--image-type=\<image-files-extension\>] (Optional):** The type of diagrams to be exported from EA and included in the generated comparison report (i.e. JPG, GIF, PNG, BMP, or EMF). This option is optionally used  when --export-diagrams also appears on the command line.
+**[--image-type=\<image-file-extension\>] (Optional):** The type of diagrams to be exported from EA (i.e. JPG, GIF, PNG, BMP, or EMF). This can be skipped for JPG images as JPG is used as the default value when the option is not specified. always be used along with --export-diagrams also appears on the command line.
 
 **[--zip] (Optional):** When specified **cim-compare** will package up the generated report and any associated diagrams into a single ZIP archive. It is most often utilized for packaging the report when diagram images are included and can help simplify distribution.
 
@@ -57,24 +57,32 @@ Note that in command line examples that follow whenever a directory or file path
 
 | **Command Line Examples:**                                                                               |
 |----------------------------------------------------------------------------------------------------------|
-| java -jar **cim-compare-1.2.0.jar** "C:\\exports\\15v33.xmi" "C:\\exports\\CIM16v26a.xmi" "C:\\" |
-| java -jar **cim-compare-1.2.0.jar** "C:\\exports\\15v33.xmi" "C:\\exports\\CIM16v26a.xmi" --package=IEC61970 --minimal |
+| java -jar **cim-compare-1.2.0.jar** "C:\\exports\\15v33.eap" "C:\\exports\\CIM16v26a.eap" "C:\\" |
+| java -jar **cim-compare-1.2.0.jar** "C:\\exports\\15v33.eap" "C:\\exports\\CIM16v26a.eap" --package=IEC61970 --minimal |
 | java -jar **cim-compare-1.2.0.jar** CIM15v33.eap CIM16v26a.eap C:\\ --minimal  |
 | java -jar **cim-compare-1.2.0.jar** CIM15v33.eap CIM16v26a.eap C:\\ --minimal --export-diagrams --zip |
 | java -jar **cim-compare-1.2.0.jar** CIM15v33.eap CIM16v26a.eap C:\\CIM15v33_CIM16v26a_ComparisonReport.html |
 | java -jar **cim-compare-1.2.0.jar** CIM15v33.eapx CIM16v26a.eapx CIM15v33_CIM16v26a_ComparisonReport.html --minimal |
 | java -jar **cim-compare-1.2.0.jar** CIM15v33.eap CIM16v26a.eap --package=IEC62325 --minimal --export-diagrams --image-type=GIF --zip |
 
+##### IMPORTANT:
+```
+To utilize cim-compare to process Enterprise Architect models (.eap files) the following steps
+are also required depending on the version of Java being used. Note that on a 64-bit machine it is
+recommended to use 64-bit Java. The DLL files referenced are those shipped with EA and located in
+the Sparx install directory at:  <Windows program files>/Sparx Systems/EA/Java API
 
-###### IMPORTANT:  
+64-bit Java:
+Copy the file SSJavaCOM64.dll located in the EA installation folder to:
 
-To utilize **cim-compare** to process Enterprise Architect models (.eap files) the following steps are also required depending on the version of Java being used. Note that on a 64-bit machine it is recommended to use 64-bit Java. The DLL files referenced are those shipped with EA and located in the Sparx install directory at:  &lt;Windows program files&gt;/Sparx Systems/EA/Java API
+  <Windows folder>/System32 (on a 64-bit machine).
 
-*64-bit Java*:
-Copy the file **SSJavaCOM64.dll** located in the EA installation folder to &lt;Windows folder&gt;/System32 (on a 64-bit machine).
+32-bit Java:
+Copy the file SSJavaCom.dll located in the EA installation folder to:
 
-*32-bit Java*:
-Copy the file **SSJavaCom.dll** located in the EA installation folder to &lt;Windows folder&gt;/System32 (on a 32-bit machine) or to &lt;Windows folder&gt;/SysWOW64 (on a 64-bit machine).
+  <Windows folder>/System32 (on a 32-bit machine) or to <Windows folder>/SysWOW64 (on a 64-bit machine).
+
+```
 
 
 ### Option \#2: XMI Baseline and Destination Models as Inputs
@@ -82,7 +90,7 @@ Copy the file **SSJavaCom.dll** located in the EA installation folder to &lt;Win
 The second usage is to directly specify two XMI 1.1 compliant files representing the "baseline" and “destination” models exported as described later in "Enterprise Architect XMI Export Procedures". In this scenario the command-line usage takes the following form:
 
 ```
-java -jar cim-compare-1.2.0.jar <baseline-model-xmi-file> <destination-model-xmi-file> [<output-directory-or-html-file>] [--package=<iec-package-name>] [--image-type=<image-files-extension>] [--minimal] [--zip]
+java -jar cim-compare-1.2.0.jar <baseline-model-xmi-file> <destination-model-xmi-file> [<output-directory-or-html-file>] [--package=<iec-package-name>] [--image-type=<image-file-extension>] [--minimal] [--zip]
 ```
 
 *Parameter Details*:
@@ -91,7 +99,7 @@ java -jar cim-compare-1.2.0.jar <baseline-model-xmi-file> <destination-model-xmi
 
 **\<destination-model-xmi-file\>** (**Required**): An XMI 1.1 compliant destination model file exported from EA. When not specified as an absolute file path the location of the file is assumed to be the directory the utility is being executed from.
 
-**[\<output-directory-or-html-file\>] (Optional)**: An output directory or an output HTML file. In the case where a directory is specified for this parameter it must exist or execution will terminate with an appropriate error. When an HTML file is provided it may be specified as an absolute file path or as simply the name of the HTML file to be generated. If not specified then the application will generate an HTML file whose name is derived from the two input files.
+**[\<output-directory-or-html-file\>] (Optional)**: An output directory or an output HTML file. In the case where a directory is specified but does not exist it will be created. The same is true for the parent directory of a specified HTML file if it does not exist. When an HTML file is provided it may be specified as an absolute file path or as the simple name of an HTML file to be generated. If this command line option is not specified then **cim-compare** will generate an HTML file whose name is derived from the two input files.
 
 **[--package=\<iec-package-name\>] (Optional):** The root package within the models from which to start the comparison report from. Appearing at the end of the command-line after file and directory specifications, when specified the package must exist in both the baseline and destination models (e.g. --package=IEC61970, --package=IEC61968, --package=IEC62325, --package=TC57CIM, etc.) and be specified with two leading dashes (--). Note that when no IEC package name is specified that the report is generated from the root package in the models.
 
@@ -101,7 +109,7 @@ java -jar cim-compare-1.2.0.jar <baseline-model-xmi-file> <destination-model-xmi
 
 >IMPORTANT: this command line option does not automatically export diagrams as performed in usage Option \#1.  Rather the expectation is that they be exported as part of manual exports of XMI baseline and destination models from EA and that images are hosted in folders named &lt;output directory&gt;/Image-baseline and &lt;output directory&gt;/Image-destination respectively. This must be done prior to running **cim-compare**. Refer to the "Enterprise Architect XMI Export Procedures" in this README for further details.
 
-**[--image-type=\<image-files-extension\>] (Optional / Conditionally Required):** Indicates the type of images (i.e. JPG, GIF, PNG, BMP, or EMF) referenced in the report. Conditionally required when the --include-diagrams option is used and the diagram are not JPG image files. When not specified the default image type of JPG is used. Note this option is only relevant when paired with --include-diagrams.
+**[--image-type=\<image-file-extension\>] (Optional / Conditionally Required):** Indicates the type of images (i.e. JPG, GIF, PNG, BMP, or EMF) referenced in the report. Conditionally required when the --include-diagrams option is used and the diagram are not JPG image files. When not specified the default image type of JPG is used. Note this option is only relevant when paired with --include-diagrams.
 
 **[--zip] (Optional):** When specified **cim-compare** will package up the generated report and any associated diagrams into a single ZIP archive. It is most often utilized for packaging the report when diagram images are included and can help simplify distribution.
 
@@ -124,14 +132,14 @@ The third option is by specifying an **EA model comparison log** file as input o
 This particular usage takes the following form:
 
 ```
-java -jar cim-compare-1.2.0.jar <comparison-results-xml-file> [<output-directory-or-html-file>] [--package=<iec-package-name>] [--include-diagrams] [--image-type=<image-files-extension>] [--minimal] [--zip]
+java -jar cim-compare-1.2.0.jar <comparison-results-xml-file> [<output-directory-or-html-file>] [--package=<iec-package-name>] [--include-diagrams] [--image-type=<image-file-extension>] [--minimal] [--zip]
 ```
 
 *Parameter Details*:
 
 **\<comparison-results-xml-file\> (Required):** The model comparison file. When not specified as an absolute file path the location of the file is assumed to be the directory the utility is being executed in.
 
-**[\<output-directory-or-html-file\>] (Optional):** An output directory or an output HTML file. In the case where a directory is specified for this parameter it must exist or execution will terminate with an appropriate error. When an HTML file is provided it may be specified as an absolute file path or as simply the name of the HTML file to be generated. If not specified then the application will generate an HTML file whose name is derived from the two input files.
+**[\<output-directory-or-html-file\>] (Optional)**: An output directory or an output HTML file. In the case where a directory is specified but does not exist it will be created. The same is true for the parent directory of a specified HTML file if it does not exist. When an HTML file is provided it may be specified as an absolute file path or as the simple name of an HTML file to be generated. If this command line option is not specified then **cim-compare** will generate an HTML file whose name is derived from the two input files.
 
 **[--package=\<iec-package-name\>] (Optional):** The root package to compare and generate the comparison report on. Appearing at the end of the command-line after file and directory specifications, the package must exist in both the baseline and destination models (e.g. --package=IEC61970, --package=IEC61968, --package=IEC62325, --package=TC57CIM, etc.) and be specified with two leading dashes (--). Note that when no IEC package name is specified that the report is generated from the root package in the models.
 
@@ -141,7 +149,7 @@ java -jar cim-compare-1.2.0.jar <comparison-results-xml-file> [<output-directory
 
 >IMPORTANT: this command line option does not automatically export diagrams as performed in usage Option \#1.  Rather the expectation is that they be exported as part of manual exports of XMI baseline and destination models from EA and that images are hosted in folders named &lt;output directory&gt;/Image-baseline and &lt;output directory&gt;/Image-destination respectively. This must be done prior to running **cim-compare**. Refer to the "Enterprise Architect XMI Export Procedures" in this README for further details.
 
-**[--image-type=\<image-files-extension\>] (Optional / Conditionally Required):** Indicates the type of images (i.e. JPG, GIF, PNG, BMP, or EMF) referenced in the report. Conditionally required when the --include-diagrams option is used and the diagram are not JPG image files. When not specified the default image type of JPG is used. Note this option is only relevant when paired with --include-diagrams.      
+**[--image-type=\<image-file-extension\>] (Optional / Conditionally Required):** Indicates the type of images (i.e. JPG, GIF, PNG, BMP, or EMF) referenced in the report. Conditionally required when the --include-diagrams option is used and the diagram are not JPG image files. When not specified the default image type of JPG is used. Note this option is only relevant when paired with --include-diagrams.      
 
 **[--zip] (Optional):** When specified **cim-compare** will package up the generated report and any associated diagrams into a single ZIP archive. It is most often utilized for packaging the report when diagram images are included and can help simplify distribution.
 

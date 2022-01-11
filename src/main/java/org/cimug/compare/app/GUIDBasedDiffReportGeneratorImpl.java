@@ -470,10 +470,6 @@ class GUIDBasedDiffReportGeneratorImpl implements DiffReportGenerator {
 
 	private CompareItem parseDiagram(Diagram aDiagram, PackageType diagramParentPackage) {
 		CompareItem theDiagram = null;
-
-		if (aDiagram.getName().equals("ClassesWithStatus") || aDiagram.getName().equals("InfClassesWithStatus")) {
-			System.out.println();
-		}
 		
 		// Very first thing we do is to first determine if the diagram passed in is a
 		// deleted diagram...

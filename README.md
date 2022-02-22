@@ -27,7 +27,7 @@ The **cim-compare** utility has three possible command-line options to produce c
 
 ### Option \#1: Enterprise Architect .EAP Baseline and Destination Models as Inputs
 
-The preferred usage is to provide two Enterprise Architect .eap files for the "baseline" and "destination" input files.  Using .eap files eliminates the need for manually XMI and diagram exports from EA (refer to "Enterprise Architect XMI Export Procedures").
+The preferred usage is to provide two Enterprise Architect .eap files for the "baseline" and "destination" input files.  Using .eap files eliminates the need to manually export XMI and diagrams from EA (refer to "Enterprise Architect XMI Export Procedures").
 
 The command-line usage for this option takes the following form:
 
@@ -49,7 +49,7 @@ java -jar cim-compare-1.2.0.jar <baseline-model-eap-file> <destination-model-eap
 
 **[--export-diagrams] (Optional):** Indicates that diagram images should also be exported from EA along with the XMI exports. The type of images to be exported should also be provided using the --image-type option. When not specified the image type will default to JPG.
 
-**[--image-type=\<image-file-extension\>] (Optional):** The type of diagrams to be exported from EA (i.e. JPG, GIF, PNG, BMP, or EMF). This can be skipped for JPG images as JPG is used as the default value when the option is not specified. always be used along with --export-diagrams also appears on the command line.
+**[--image-type=\<image-file-extension\>] (Optional):** The type of diagrams to be exported from EA (i.e. JPG, GIF, PNG, BMP, or EMF). This can be skipped for JPG images as JPG is used as the default value when the option is not specified. This command line option is only used when --export-diagrams also appears on the command line.
 
 **[--zip] (Optional):** When specified **cim-compare** will package up the generated report and any associated diagrams into a single ZIP archive. It is most often utilized for packaging the report when diagram images are included and can help simplify distribution.
 

@@ -132,7 +132,7 @@ The third option is by specifying an **EA model comparison log** file as input o
 This particular usage takes the following form:
 
 ```
-java -jar cim-compare-1.2.0.jar <comparison-results-xml-file> [<output-directory-or-html-file>] [--package=<iec-package-name>] [--include-diagrams] [--image-type=<image-file-extension>] [--minimal] [--zip]
+java -jar cim-compare-1.2.0.jar <comparison-results-xml-file> [<output-directory-or-html-file>] [--package=<iec-package-name>] [--minimal] [--zip]
 ```
 
 *Parameter Details*:
@@ -145,13 +145,7 @@ java -jar cim-compare-1.2.0.jar <comparison-results-xml-file> [<output-directory
 
 **[--minimal] (Optional):** When specified **cim-compare** will exclude all "Identical" packages, classes, attributes, links, diagrams, etc. from the generated report. This is useful when it is necessary to perform detailed analysis of only the most concise set of changes between models.
 
-**[--include-diagrams] (Optional):** When specified **cim-compare** indicates that diagram images should be included in the generated comparison report. Note that if the types of diagrams to be included are not JPG files then the --image-type option must also be used in tandem. When this option does not appear on the command line no diagrams will be included in the report.
-
->IMPORTANT: this command line option does not automatically export diagrams as performed in usage Option \#1.  Rather the expectation is that they be exported as part of manual exports of XMI baseline and destination models from EA and that images are hosted in folders named &lt;output directory&gt;/Image-baseline and &lt;output directory&gt;/Image-destination respectively. This must be done prior to running **cim-compare**. Refer to the "Enterprise Architect XMI Export Procedures" in this README for further details.
-
-**[--image-type=\<image-file-extension\>] (Optional / Conditionally Required):** Indicates the type of images (i.e. JPG, GIF, PNG, BMP, or EMF) referenced in the report. Conditionally required when the --include-diagrams option is used and the diagram are not JPG image files. When not specified the default image type of JPG is used. Note this option is only relevant when paired with --include-diagrams.      
-
-**[--zip] (Optional):** When specified **cim-compare** will package up the generated report and any associated diagrams into a single ZIP archive. It is most often utilized for packaging the report when diagram images are included and can help simplify distribution.
+**[--zip] (Optional):** When specified **cim-compare** will package up the generated report into a single ZIP archive. Note that since this option \#3 does not support diagram comparisons only the report itself will be included in the archive.
 
 Again, in the command line examples that follow directory or file path containing spaces are specified within quotes.
 
@@ -164,7 +158,7 @@ Again, in the command line examples that follow directory or file path containin
 | java -jar **cim-compare-1.2.0.jar** CIM15v33_CIM16v26a_EA_Comparison_Report.xml |
 | java -jar **cim-compare-1.2.0.jar** CIM15v33_CIM16v26a_EA_Comparison_Report.xml --package=IEC61970 |
 | java -jar **cim-compare-1.2.0.jar** CIM15v33_CIM16v26a_EA_Comparison_Report.xml --package=IEC61970 --minimal |
-| java -jar **cim-compare-1.2.0.jar** CIM15v33_CIM16v26a_EA_Comparison_Report.xml --package=IEC61970 --minimal --include-diagrams --image-type=PNG --zip |
+| java -jar **cim-compare-1.2.0.jar** CIM15v33_CIM16v26a_EA_Comparison_Report.xml --package=IEC61970 --minimal --zip |
 
 
 

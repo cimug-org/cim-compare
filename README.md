@@ -32,7 +32,7 @@ The preferred usage is to provide two Enterprise Architect .eap files for the "b
 The command-line usage for this option takes the following form:
 
 ```
-java -jar cim-compare-1.2.0.jar <baseline-model-eap-file> <destination-model-eap-file> [<output-directory-or-html-file>] [--package=<iec-package-name>] [--minimal] [--export-diagrams] [--image-type=<image-file-extension>] [--zip]
+java -jar cim-compare-1.2.0.jar <baseline-model-eap-file> <destination-model-eap-file> [<output-directory-or-html-file>] [--package=<iec-package-name>] [--minimal] [--include-diagrams] [--image-type=<image-file-extension>] [--zip]
 ```
 
 *Parameter Details*:
@@ -47,9 +47,9 @@ java -jar cim-compare-1.2.0.jar <baseline-model-eap-file> <destination-model-eap
 
 **[--minimal] (Optional):** When specified **cim-compare** will exclude all "Identical" packages, classes, attributes, links, diagrams, etc. from the generated report. This is useful when it is necessary to perform detailed analysis of only the most concise set of changes between models.
 
-**[--export-diagrams] (Optional):** Indicates that diagram images should also be exported from EA along with the XMI exports. The type of images to be exported should also be provided using the --image-type option. When not specified the image type will default to JPG.
+**[--include-diagrams] (Optional):** Indicates that diagram images should also be exported from EA along with the XMI exports. The type of images to be exported should also be provided using the --image-type option. When not specified the image type will default to JPG.
 
-**[--image-type=\<image-file-extension\>] (Optional):** The type of diagrams to be exported from EA (i.e. JPG, GIF, PNG, BMP, or EMF). This can be skipped for JPG images as JPG is used as the default value when the option is not specified. This command line option is only used when --export-diagrams also appears on the command line.
+**[--image-type=\<image-file-extension\>] (Optional):** The type of diagrams to be exported from EA (i.e. JPG, GIF, PNG, BMP, or EMF). This can be skipped for JPG images as JPG is used as the default value when the option is not specified. This command line option is only used when --include-diagrams also appears on the command line.
 
 **[--zip] (Optional):** When specified **cim-compare** will package up the generated report and any associated diagrams into a single ZIP archive. It is most often utilized for packaging the report when diagram images are included and can help simplify distribution.
 
@@ -60,10 +60,10 @@ Note that in the command line examples that follow whenever a directory or file 
 | java -jar **cim-compare-1.2.0.jar** "C:\\exports\\15v33.eap" "C:\\exports\\CIM16v26a.eap" "C:\\" |
 | java -jar **cim-compare-1.2.0.jar** "C:\\exports\\15v33.eap" "C:\\exports\\CIM16v26a.eap" --package=IEC61970 --minimal |
 | java -jar **cim-compare-1.2.0.jar** CIM15v33.eap CIM16v26a.eap C:\\ --minimal  |
-| java -jar **cim-compare-1.2.0.jar** CIM15v33.eap CIM16v26a.eap C:\\ --minimal --export-diagrams --zip |
+| java -jar **cim-compare-1.2.0.jar** CIM15v33.eap CIM16v26a.eap C:\\ --minimal --include-diagrams --zip |
 | java -jar **cim-compare-1.2.0.jar** CIM15v33.eap CIM16v26a.eap C:\\CIM15v33_CIM16v26a_ComparisonReport.html |
 | java -jar **cim-compare-1.2.0.jar** CIM15v33.eapx CIM16v26a.eapx CIM15v33_CIM16v26a_ComparisonReport.html --minimal |
-| java -jar **cim-compare-1.2.0.jar** CIM15v33.eap CIM16v26a.eap --package=IEC62325 --minimal --export-diagrams --image-type=GIF --zip |
+| java -jar **cim-compare-1.2.0.jar** CIM15v33.eap CIM16v26a.eap --package=IEC62325 --minimal --include-diagrams --image-type=GIF --zip |
 
 ##### IMPORTANT:
 ```
@@ -120,7 +120,7 @@ Note that in the command line examples that follow whenever a directory or file 
 | java -jar **cim-compare-1.2.0.jar** "C:\\XMI exports\\15v33.xmi" "C:\\XMI exports\\CIM16v26a.xmi" "C:\\" |
 | java -jar **cim-compare-1.2.0.jar** "C:\\XMI exports\\15v33.xmi" "C:\\XMI exports\\CIM16v26a.xmi" --package=IEC61970 --minimal |
 | java -jar **cim-compare-1.2.0.jar** CIM15v33.xmi CIM16v26a.xmi C:\\ --minimal  |
-| java -jar **cim-compare-1.2.0.jar** CIM15v33.xmi CIM16v26a.xmi C:\\ --minimal --include diagrams --image-type=gif --zip |
+| java -jar **cim-compare-1.2.0.jar** CIM15v33.xmi CIM16v26a.xmi C:\\ --minimal --include-diagrams --image-type=gif --zip |
 | java -jar **cim-compare-1.2.0.jar** CIM15v33.xmi CIM16v26a.xmi C:\\CIM15v33_CIM16v26a_ComparisonReport.html |
 | java -jar **cim-compare-1.2.0.jar** CIM15v33.xmi CIM16v26a.xmi CIM15v33_CIM16v26a_ComparisonReport.html --minimal |
 | java -jar **cim-compare-1.2.0.jar** CIM15v33.xmi CIM16v26a.xmi CIM15v33_CIM16v26a_ComparisonReport.html --package=IEC62325 --include-diagrams --image-type=JPG --zip |

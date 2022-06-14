@@ -1214,7 +1214,7 @@
                 <xsl:variable name="baseline-src-end">
                     <xsl:choose>
                         <xsl:when test="not($model-only = 'true')">
-                            <xsl:text><xsl:value-of select="CompareItem[@type='Src']/Properties/Property[@name='End']/@baseline"/></xsl:text>
+                            <xsl:value-of select="CompareItem[@type='Src']/Properties/Property[@name='End']/@baseline"/>
                         </xsl:when>
                         <xsl:otherwise>
                             <xsl:text></xsl:text>
@@ -1224,7 +1224,7 @@
                 <xsl:variable name="baseline-dst-end">
                     <xsl:choose>
                         <xsl:when test="not($model-only = 'true')">
-                            <xsl:text><xsl:value-of select="CompareItem[@type='Dst']/Properties/Property[@name='End']/@baseline"/></xsl:text>
+                            <xsl:value-of select="CompareItem[@type='Dst']/Properties/Property[@name='End']/@baseline"/>
                         </xsl:when>
                         <xsl:otherwise>
                             <xsl:text></xsl:text>
@@ -1234,7 +1234,7 @@
                 <xsl:variable name="target-src-end">
                     <xsl:choose>
                         <xsl:when test="not($baseline-only = 'true')">
-                            <xsl:text><xsl:value-of select="CompareItem[@type='Src']/Properties/Property[@name='End']/@model"/></xsl:text>
+                            <xsl:value-of select="CompareItem[@type='Src']/Properties/Property[@name='End']/@model"/>
                         </xsl:when>
                         <xsl:otherwise>
                             <xsl:text></xsl:text>
@@ -1244,7 +1244,7 @@
                 <xsl:variable name="target-dst-end">
                     <xsl:choose>
                         <xsl:when test="not($baseline-only = 'true')">
-                            <xsl:text><xsl:value-of select="CompareItem[@type='Dst']/Properties/Property[@name='End']/@model"/></xsl:text>
+                            <xsl:value-of select="CompareItem[@type='Dst']/Properties/Property[@name='End']/@model"/>
                         </xsl:when>
                         <xsl:otherwise>
                             <xsl:text></xsl:text>
@@ -1258,12 +1258,12 @@
                         <xsl:when test="not($model-only = 'true')">
                             <xsl:choose>
                                 <xsl:when test="@name = 'Generalization'">
-                                    <xsl:text><xsl:value-of select="CompareItem[@type='Src']/Properties/Property[@name='End']/@baseline"/></xsl:text>
+                                    <xsl:value-of select="CompareItem[@type='Src']/Properties/Property[@name='End']/@baseline"/>
                                 </xsl:when>
                                 <xsl:otherwise>
                                     <xsl:choose>
                                         <xsl:when test="CompareItem[@type='Src']/Properties/Property[@name='Role']/@baseline != ''">
-                                            <xsl:text><xsl:value-of select="CompareItem[@type='Src']/Properties/Property[@name='Role']/@baseline"/></xsl:text>
+                                            <xsl:value-of select="CompareItem[@type='Src']/Properties/Property[@name='Role']/@baseline"/>
                                         </xsl:when>
                                         <xsl:otherwise>
                                             <xsl:text>Role Unspecified</xsl:text>
@@ -1282,12 +1282,12 @@
                         <xsl:when test="not($model-only = 'true')">
                             <xsl:choose>
                                 <xsl:when test="@name = 'Generalization'">
-                                    <xsl:text><xsl:value-of select="CompareItem[@type='Dst']/Properties/Property[@name='End']/@baseline"/></xsl:text>
+                                    <xsl:value-of select="CompareItem[@type='Dst']/Properties/Property[@name='End']/@baseline"/>
                                 </xsl:when>
                                 <xsl:otherwise>
                                     <xsl:choose>
                                         <xsl:when test="CompareItem[@type='Dst']/Properties/Property[@name='Role']/@baseline != ''">
-                                            <xsl:text><xsl:value-of select="CompareItem[@type='Dst']/Properties/Property[@name='Role']/@baseline"/></xsl:text>
+                                            <xsl:value-of select="CompareItem[@type='Dst']/Properties/Property[@name='Role']/@baseline"/>
                                         </xsl:when>
                                         <xsl:otherwise>
                                             <xsl:text>Role Unspecified</xsl:text>
@@ -1306,12 +1306,12 @@
                         <xsl:when test="not($baseline-only = 'true')">
                             <xsl:choose>
                                 <xsl:when test="@name = 'Generalization'">
-                                    <xsl:text><xsl:value-of select="CompareItem[@type='Src']/Properties/Property[@name='End']/@model"/></xsl:text>
+                                    <xsl:value-of select="CompareItem[@type='Src']/Properties/Property[@name='End']/@model"/>
                                 </xsl:when>
                                 <xsl:otherwise>
                                     <xsl:choose>
                                         <xsl:when test="CompareItem[@type='Src']/Properties/Property[@name='Role']/@model != ''">
-                                            <xsl:text><xsl:value-of select="CompareItem[@type='Src']/Properties/Property[@name='Role']/@model"/></xsl:text>
+                                            <xsl:value-of select="CompareItem[@type='Src']/Properties/Property[@name='Role']/@model"/>
                                         </xsl:when>
                                         <xsl:otherwise>
                                             <xsl:text>Role Unspecified</xsl:text>
@@ -1330,12 +1330,12 @@
                         <xsl:when test="not($baseline-only = 'true')">
                             <xsl:choose>
                                 <xsl:when test="@name = 'Generalization'">
-                                    <xsl:text><xsl:value-of select="CompareItem[@type='Dst']/Properties/Property[@name='End']/@model"/></xsl:text>
+                                    <xsl:value-of select="CompareItem[@type='Dst']/Properties/Property[@name='End']/@model"/>
                                 </xsl:when>
                                 <xsl:otherwise>
                                     <xsl:choose>
                                         <xsl:when test="CompareItem[@type='Dst']/Properties/Property[@name='Role']/@model != ''">
-                                            <xsl:text><xsl:value-of select="CompareItem[@type='Dst']/Properties/Property[@name='Role']/@model"/></xsl:text>
+                                            <xsl:value-of select="CompareItem[@type='Dst']/Properties/Property[@name='Role']/@model"/>
                                         </xsl:when>
                                         <xsl:otherwise>
                                             <xsl:text>Role Unspecified</xsl:text>
@@ -1402,7 +1402,7 @@
                 <xsl:variable name="baseline-src-end-cardinality">
                     <xsl:choose>
                         <xsl:when test="not($model-only = 'true')">
-                            <xsl:text><xsl:value-of select="CompareItem[@type='Src']/Properties/Property[@name='Cardinality']/@baseline"/></xsl:text>
+                            <xsl:value-of select="CompareItem[@type='Src']/Properties/Property[@name='Cardinality']/@baseline"/>
                         </xsl:when>
                         <xsl:otherwise>
                             <xsl:text></xsl:text>
@@ -1412,7 +1412,7 @@
                 <xsl:variable name="baseline-dst-end-cardinality">
                     <xsl:choose>
                         <xsl:when test="not($model-only = 'true')">
-                            <xsl:text><xsl:value-of select="CompareItem[@type='Dst']/Properties/Property[@name='Cardinality']/@baseline"/></xsl:text>
+                            <xsl:value-of select="CompareItem[@type='Dst']/Properties/Property[@name='Cardinality']/@baseline"/>
                         </xsl:when>
                         <xsl:otherwise>
                             <xsl:text></xsl:text>
@@ -1422,7 +1422,7 @@
                 <xsl:variable name="target-src-end-cardinality">
                     <xsl:choose>
                         <xsl:when test="not($baseline-only = 'true')">
-                            <xsl:text><xsl:value-of select="CompareItem[@type='Src']/Properties/Property[@name='Cardinality']/@model"/></xsl:text>
+                            <xsl:value-of select="CompareItem[@type='Src']/Properties/Property[@name='Cardinality']/@model"/>
                         </xsl:when>
                         <xsl:otherwise>
                             <xsl:text></xsl:text>
@@ -1432,7 +1432,7 @@
                 <xsl:variable name="target-dst-end-cardinality">
                     <xsl:choose>
                         <xsl:when test="not($baseline-only = 'true')">
-                            <xsl:text><xsl:value-of select="CompareItem[@type='Dst']/Properties/Property[@name='Cardinality']/@model"/></xsl:text>
+                            <xsl:value-of select="CompareItem[@type='Dst']/Properties/Property[@name='Cardinality']/@model"/>
                         </xsl:when>
                         <xsl:otherwise>
                             <xsl:text></xsl:text>

@@ -294,6 +294,15 @@ class GUIDBasedDiffReportGeneratorImpl implements DiffReportGenerator {
 			}
 
 			for (Diagram targetChildDiagram : preProcessor.getBaselineDiagramsXmiIds().values()) {
+				if (aPackage.getXmiId().equals(targetChildDiagram.getOwner()) && //
+						!preProcessor.getBaselineDeletedDiagramsXmiIds().containsKey(targetChildDiagram.getXmiId()) && //
+						!preProcessor.getTargetMovedDiagramsXmiIds().containsKey(targetChildDiagram.getXmiId())) {
+					thePackage.getCompareItem().add(parseDiagram(targetChildDiagram, aPackage));
+				}
+			}
+			
+			/** We need a second for loop to ensure we include any diagrams that may have been moved to this package **/
+			for (Diagram targetChildDiagram : preProcessor.getTargetMovedDiagramsXmiIds().values()) {
 				if (aPackage.getXmiId().equals(targetChildDiagram.getOwner()) && !preProcessor
 						.getBaselineDeletedDiagramsXmiIds().containsKey(targetChildDiagram.getXmiId())) {
 					thePackage.getCompareItem().add(parseDiagram(targetChildDiagram, aPackage));
@@ -496,15 +505,15 @@ class GUIDBasedDiffReportGeneratorImpl implements DiffReportGenerator {
 						: null);
 
 				PackageType baselineParentPackage = (baselineDiagram != null
-						? preProcessor.getBaselinePackagesXmiIds().get(baselineDiagram.getXmiId())
+						? preProcessor.getAllBaselinePackagesXmiIds().get(baselineDiagram.getOwner())
 						: null);
 
 				Diagram targetDiagram = (preProcessor.getTargetDiagramsXmiIds().containsKey(aDiagram.getXmiId())
 						? preProcessor.getTargetDiagramsXmiIds().get(aDiagram.getXmiId())
 						: null);
-
+				
 				PackageType targetParentPackage = (targetDiagram != null
-						? preProcessor.getTargetPackagesXmiIds().get(targetDiagram.getXmiId())
+						? preProcessor.getAllTargetPackagesXmiIds().get(targetDiagram.getOwner())
 						: null);
 
 				DiagramProperties diagramProperties = new DiagramProperties(baselineDiagram, baselineParentPackage,

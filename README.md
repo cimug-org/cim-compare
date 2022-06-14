@@ -16,7 +16,7 @@ Reports use colors to visually indicate changes to packages, classes, attributes
 
 ![](media/Color_Representations.png)
 
-As illustrated next, UML diagrams that have been added, removed or modified can also be included in comparison reports. To include diagrams refer to the XMI Export Procedures further down.
+As illustrated next, UML diagrams that have been added, removed or modified can also be included in comparison reports. To include diagrams refer to the command line procedures described further down.
 
 ![](media/UML_Comparison.png)
 
@@ -32,7 +32,7 @@ The preferred usage is to provide two Enterprise Architect .eap files for the "b
 The command-line usage for this option takes the following form:
 
 ```
-java -jar cim-compare-1.2.0.jar <baseline-model-eap-file> <destination-model-eap-file> [<output-directory-or-html-file>] [--package=<iec-package-name>] [--minimal] [--include-diagrams] [--image-type=<image-file-extension>] [--zip]
+java -jar cim-compare-1.2.1.jar <baseline-model-eap-file> <destination-model-eap-file> [<output-directory-or-html-file>] [--package=<package-name>] [--minimal] [--include-diagrams] [--image-type=<image-file-extension>] [--zip]
 ```
 
 *Parameter Details*:
@@ -43,7 +43,7 @@ java -jar cim-compare-1.2.0.jar <baseline-model-eap-file> <destination-model-eap
 
 **[\<output-directory-or-html-file\>] (Optional)**: An output directory or an output HTML file. In the case where a directory is specified but does not exist it will be created. The same is true for the parent directory of a specified HTML file if it does not exist. When an HTML file is provided it may be specified as an absolute file path or as the simple name of an HTML file to be generated. If this command line option is not specified then **cim-compare** will generate an HTML file whose name is derived from the two input files.
 
-**[--package=\<iec-package-name\>] (Optional):** The root package within the models from which to start the comparison report from. Appearing at the end of the command-line after file and directory specifications, when specified the package must exist in both the baseline and destination models (e.g. --package=IEC61970, --package=IEC61968, --package=IEC62325, --package=TC57CIM, etc.) and be specified with two leading dashes (--). Note that when no IEC package name is specified that the report is generated from the root package in the models.
+**[--package=\<package-name\>] (Optional):** The root package within the models from which to start the comparison report from. Appearing at the end of the command-line after file and directory specifications, when specified the package must exist in both the baseline and destination models (e.g. --package=IEC61970, --package=IEC61968, --package=IEC62325, --package=TC57CIM, etc.) and be specified with two leading dashes (--). Note that when no IEC package name is specified that the report is generated from the root package in the models.
 
 **[--minimal] (Optional):** When specified **cim-compare** will exclude all "Identical" packages, classes, attributes, links, diagrams, etc. from the generated report. This is useful when it is necessary to perform detailed analysis of only the most concise set of changes between models.
 
@@ -57,13 +57,13 @@ Note that in the command line examples that follow whenever a directory or file 
 
 | **Command Line Examples:**                                                                               |
 |----------------------------------------------------------------------------------------------------------|
-| java -jar **cim-compare-1.2.0.jar** "C:\\exports\\15v33.eap" "C:\\exports\\CIM16v26a.eap" "C:\\" |
-| java -jar **cim-compare-1.2.0.jar** "C:\\exports\\15v33.eap" "C:\\exports\\CIM16v26a.eap" --package=IEC61970 --minimal |
-| java -jar **cim-compare-1.2.0.jar** CIM15v33.eap CIM16v26a.eap C:\\ --minimal  |
-| java -jar **cim-compare-1.2.0.jar** CIM15v33.eap CIM16v26a.eap C:\\ --minimal --include-diagrams --zip |
-| java -jar **cim-compare-1.2.0.jar** CIM15v33.eap CIM16v26a.eap C:\\CIM15v33_CIM16v26a_ComparisonReport.html |
-| java -jar **cim-compare-1.2.0.jar** CIM15v33.eapx CIM16v26a.eapx CIM15v33_CIM16v26a_ComparisonReport.html --minimal |
-| java -jar **cim-compare-1.2.0.jar** CIM15v33.eap CIM16v26a.eap --package=IEC62325 --minimal --include-diagrams --image-type=GIF --zip |
+| java -jar **cim-compare-1.2.1.jar** "C:\\exports\\15v33.eap" "C:\\exports\\CIM16v26a.eap" "C:\\" |
+| java -jar **cim-compare-1.2.1.jar** "C:\\exports\\15v33.eap" "C:\\exports\\CIM16v26a.eap" --package=IEC61970 --minimal |
+| java -jar **cim-compare-1.2.1.jar** CIM15v33.eap CIM16v26a.eap C:\\ --minimal  |
+| java -jar **cim-compare-1.2.1.jar** CIM15v33.eap CIM16v26a.eap C:\\ --minimal --include-diagrams --zip |
+| java -jar **cim-compare-1.2.1.jar** CIM15v33.eap CIM16v26a.eap C:\\CIM15v33_CIM16v26a_ComparisonReport.html |
+| java -jar **cim-compare-1.2.1.jar** CIM15v33.eapx CIM16v26a.eapx CIM15v33_CIM16v26a_ComparisonReport.html --minimal |
+| java -jar **cim-compare-1.2.1.jar** CIM15v33.eap CIM16v26a.eap --package=IEC62325 --minimal --include-diagrams --image-type=GIF --zip |
 
 ##### IMPORTANT:
 ```
@@ -90,7 +90,7 @@ Copy the file SSJavaCom.dll located in the EA installation folder to:
 The second usage is to directly specify two XMI 1.1 compliant files representing the "baseline" and “destination” models exported as described later in "Enterprise Architect XMI Export Procedures". In this scenario the command-line usage takes the following form:
 
 ```
-java -jar cim-compare-1.2.0.jar <baseline-model-xmi-file> <destination-model-xmi-file> [<output-directory-or-html-file>] [--package=<iec-package-name>] [--image-type=<image-file-extension>] [--minimal] [--zip]
+java -jar cim-compare-1.2.1.jar <baseline-model-xmi-file> <destination-model-xmi-file> [<output-directory-or-html-file>] [--package=<package-name>] [--minimal] [--include-diagrams] [--image-type=<image-file-extension>] [--zip]
 ```
 
 *Parameter Details*:
@@ -101,15 +101,15 @@ java -jar cim-compare-1.2.0.jar <baseline-model-xmi-file> <destination-model-xmi
 
 **[\<output-directory-or-html-file\>] (Optional)**: An output directory or an output HTML file. In the case where a directory is specified but does not exist it will be created. The same is true for the parent directory of a specified HTML file if it does not exist. When an HTML file is provided it may be specified as an absolute file path or as the simple name of an HTML file to be generated. If this command line option is not specified then **cim-compare** will generate an HTML file whose name is derived from the two input files.
 
-**[--package=\<iec-package-name\>] (Optional):** The root package within the models from which to start the comparison report from. Appearing at the end of the command-line after file and directory specifications, when specified the package must exist in both the baseline and destination models (e.g. --package=IEC61970, --package=IEC61968, --package=IEC62325, --package=TC57CIM, etc.) and be specified with two leading dashes (--). Note that when no IEC package name is specified that the report is generated from the root package in the models.
+**[--package=\<package-name\>] (Optional):** The root package within the models from which to start the comparison report from. Appearing at the end of the command-line after file and directory specifications, when specified the package must exist in both the baseline and destination models (e.g. --package=IEC61970, --package=IEC61968, --package=IEC62325, --package=TC57CIM, etc.) and be specified with two leading dashes (--). Note that when no IEC package name is specified that the report is generated from the root package in the models.
 
-**[--minimal] (Optional):** When specified **cim-compare** will exclude all "Identical" packages, classes, attributes, links, diagrams, etc. from the generated report. This is useful when it is necessary to perform detailed analysis of only the most concise set of changes between models.
+**[--minimal] (Optional):** When specified **cim-compare** will exclude all "identical" packages, classes, attributes, links, diagrams, etc. from the generated report. This is useful when it is necessary to perform detailed analysis of only the most concise set of changes between models.
 
 **[--include-diagrams] (Optional):** When specified **cim-compare** indicates that diagram images should be included in the generated comparison report. Note that if the types of diagrams to be included are not JPG files then the --image-type option must also be used in tandem. When this option does not appear on the command line no diagrams will be included in the report.
 
 >IMPORTANT: this command line option does not automatically export diagrams as performed in usage Option \#1.  Rather the expectation is that they be exported as part of manual exports of XMI baseline and destination models from EA and that images are hosted in folders named &lt;output directory&gt;/Image-baseline and &lt;output directory&gt;/Image-destination respectively. This must be done prior to running **cim-compare**. Refer to the "Enterprise Architect XMI Export Procedures" in this README for further details.
 
-**[--image-type=\<image-file-extension\>] (Optional / Conditionally Required):** Indicates the type of images (i.e. JPG, GIF, PNG, BMP, or EMF) referenced in the report. Conditionally required when the --include-diagrams option is used and the diagram are not JPG image files. When not specified the default image type of JPG is used. Note this option is only relevant when paired with --include-diagrams.
+**[--image-type=\<image-file-extension\>] (Optional / Conditionally Required):** Indicates the type of images (i.e. JPG, GIF, PNG, BMP, or EMF) referenced in the report. Conditionally required when the --include-diagrams option is used and the diagram are not JPG image files. When not specified the default image type of JPG is used. This command line option is only relevant when --include-diagrams also appears on the command line.
 
 **[--zip] (Optional):** When specified **cim-compare** will package up the generated report and any associated diagrams into a single ZIP archive. It is most often utilized for packaging the report when diagram images are included and can help simplify distribution.
 
@@ -117,13 +117,13 @@ Note that in the command line examples that follow whenever a directory or file 
 
 | **Command Line Examples:**                                                                               |
 |----------------------------------------------------------------------------------------------------------|
-| java -jar **cim-compare-1.2.0.jar** "C:\\XMI exports\\15v33.xmi" "C:\\XMI exports\\CIM16v26a.xmi" "C:\\" |
-| java -jar **cim-compare-1.2.0.jar** "C:\\XMI exports\\15v33.xmi" "C:\\XMI exports\\CIM16v26a.xmi" --package=IEC61970 --minimal |
-| java -jar **cim-compare-1.2.0.jar** CIM15v33.xmi CIM16v26a.xmi C:\\ --minimal  |
-| java -jar **cim-compare-1.2.0.jar** CIM15v33.xmi CIM16v26a.xmi C:\\ --minimal --include-diagrams --image-type=gif --zip |
-| java -jar **cim-compare-1.2.0.jar** CIM15v33.xmi CIM16v26a.xmi C:\\CIM15v33_CIM16v26a_ComparisonReport.html |
-| java -jar **cim-compare-1.2.0.jar** CIM15v33.xmi CIM16v26a.xmi CIM15v33_CIM16v26a_ComparisonReport.html --minimal |
-| java -jar **cim-compare-1.2.0.jar** CIM15v33.xmi CIM16v26a.xmi CIM15v33_CIM16v26a_ComparisonReport.html --package=IEC62325 --include-diagrams --image-type=JPG --zip |
+| java -jar **cim-compare-1.2.1.jar** "C:\\XMI exports\\15v33.xmi" "C:\\XMI exports\\CIM16v26a.xmi" "C:\\" |
+| java -jar **cim-compare-1.2.1.jar** "C:\\XMI exports\\15v33.xmi" "C:\\XMI exports\\CIM16v26a.xmi" --package=IEC61970 --minimal |
+| java -jar **cim-compare-1.2.1.jar** CIM15v33.xmi CIM16v26a.xmi C:\\ --minimal  |
+| java -jar **cim-compare-1.2.1.jar** CIM15v33.xmi CIM16v26a.xmi C:\\ --minimal --include-diagrams --image-type=gif --zip |
+| java -jar **cim-compare-1.2.1.jar** CIM15v33.xmi CIM16v26a.xmi C:\\CIM15v33_CIM16v26a_ComparisonReport.html |
+| java -jar **cim-compare-1.2.1.jar** CIM15v33.xmi CIM16v26a.xmi CIM15v33_CIM16v26a_ComparisonReport.html --minimal |
+| java -jar **cim-compare-1.2.1.jar** CIM15v33.xmi CIM16v26a.xmi CIM15v33_CIM16v26a_ComparisonReport.html --package=IEC62325 --include-diagrams --image-type=JPG --zip |
 
 ### Option \#3: EA Model Comparison Logs as Input
 
@@ -132,7 +132,7 @@ The third option is by specifying an **EA model comparison log** file as input o
 This particular usage takes the following form:
 
 ```
-java -jar cim-compare-1.2.0.jar <comparison-results-xml-file> [<output-directory-or-html-file>] [--package=<iec-package-name>] [--minimal] [--zip]
+java -jar cim-compare-1.2.1.jar <comparison-results-xml-file> [<output-directory-or-html-file>] [--package=<package-name>] [--minimal] [--zip]
 ```
 
 *Parameter Details*:
@@ -141,7 +141,7 @@ java -jar cim-compare-1.2.0.jar <comparison-results-xml-file> [<output-directory
 
 **[\<output-directory-or-html-file\>] (Optional)**: An output directory or an output HTML file. In the case where a directory is specified but does not exist it will be created. The same is true for the parent directory of a specified HTML file if it does not exist. When an HTML file is provided it may be specified as an absolute file path or as the simple name of an HTML file to be generated. If this command line option is not specified then **cim-compare** will generate an HTML file whose name is derived from the two input files.
 
-**[--package=\<iec-package-name\>] (Optional):** The root package to compare and generate the comparison report on. Appearing at the end of the command-line after file and directory specifications, the package must exist in both the baseline and destination models (e.g. --package=IEC61970, --package=IEC61968, --package=IEC62325, --package=TC57CIM, etc.) and be specified with two leading dashes (--). Note that when no IEC package name is specified that the report is generated from the root package in the models.
+**[--package=\<package-name\>] (Optional):** The root package to compare and generate the comparison report on. Appearing at the end of the command-line after file and directory specifications, the package must exist in both the baseline and destination models (e.g. --package=IEC61970, --package=IEC61968, --package=IEC62325, --package=TC57CIM, etc.) and be specified with two leading dashes (--). Note that when no IEC package name is specified that the report is generated from the root package in the models.
 
 **[--minimal] (Optional):** When specified **cim-compare** will exclude all "Identical" packages, classes, attributes, links, diagrams, etc. from the generated report. This is useful when it is necessary to perform detailed analysis of only the most concise set of changes between models.
 
@@ -151,14 +151,14 @@ Again, in the command line examples that follow directory or file path containin
 
 | **Command Line Examples:**                                                                                |
 |-----------------------------------------------------------------------------------------------------------|
-| java -jar **cim-compare-1.2.0.jar** "C:\\CIM XMI Exports\\CIM15v33_CIM16v26a_EA_Comparison_Report.xml" "C:\\Reports" |
-| java -jar **cim-compare-1.2.0.jar** CIM15v33_CIM16v26a_EA_Comparison_Report.xml "C:\\Comparison Reports" --minimal |
-| java -jar **cim-compare-1.2.0.jar** CIM15v33_CIM16v26a_EA_Comparison_Report.xml "C:\\Comparison Reports" --package=IEC61968 --include-diagrams |
-| java -jar **cim-compare-1.2.0.jar** CIM15v33_CIM16v26a_EA_Comparison_Report.xml ComparisonReport_CIM15v33_CIM16v26a.html |
-| java -jar **cim-compare-1.2.0.jar** CIM15v33_CIM16v26a_EA_Comparison_Report.xml |
-| java -jar **cim-compare-1.2.0.jar** CIM15v33_CIM16v26a_EA_Comparison_Report.xml --package=IEC61970 |
-| java -jar **cim-compare-1.2.0.jar** CIM15v33_CIM16v26a_EA_Comparison_Report.xml --package=IEC61970 --minimal |
-| java -jar **cim-compare-1.2.0.jar** CIM15v33_CIM16v26a_EA_Comparison_Report.xml --package=IEC61970 --minimal --zip |
+| java -jar **cim-compare-1.2.1.jar** "C:\\CIM XMI Exports\\CIM15v33_CIM16v26a_EA_Comparison_Report.xml" "C:\\Reports" |
+| java -jar **cim-compare-1.2.1.jar** CIM15v33_CIM16v26a_EA_Comparison_Report.xml "C:\\Comparison Reports" --minimal |
+| java -jar **cim-compare-1.2.1.jar** CIM15v33_CIM16v26a_EA_Comparison_Report.xml "C:\\Comparison Reports" --package=IEC61968 --include-diagrams |
+| java -jar **cim-compare-1.2.1.jar** CIM15v33_CIM16v26a_EA_Comparison_Report.xml ComparisonReport_CIM15v33_CIM16v26a.html |
+| java -jar **cim-compare-1.2.1.jar** CIM15v33_CIM16v26a_EA_Comparison_Report.xml |
+| java -jar **cim-compare-1.2.1.jar** CIM15v33_CIM16v26a_EA_Comparison_Report.xml --package=IEC61970 |
+| java -jar **cim-compare-1.2.1.jar** CIM15v33_CIM16v26a_EA_Comparison_Report.xml --package=IEC61970 --minimal |
+| java -jar **cim-compare-1.2.1.jar** CIM15v33_CIM16v26a_EA_Comparison_Report.xml --package=IEC61970 --minimal --zip |
 
 
 
@@ -209,19 +209,19 @@ Given the large file sizes consumed and produced by the utility, **OutOfMemory**
     overhead, in practice the limit can be much lower. On most modern 32-bit
     Windows systems the maximum heap size will range from 1.4G to 1.6G.
 
-java <span style="color:red">-mx1024m</span> -jar **cim-compare-1.2.0.jar** iec61970cim16v26a.xmi iec61970cim17v16.xmi D:\\reports
+java <span style="color:red">-mx1024m</span> -jar **cim-compare-1.2.1.jar** iec61970cim16v26a.xmi iec61970cim17v16.xmi D:\\reports
 
 > For 64 bit JREs it is recommended that the maximum heap size be increased to at least 2G (i.e. 2048m) if available. It has been observed that 2G is usually sufficient to handle the largest CIM files one might encounter.
 
-java <span style="color:red">-mx2048m</span> -jar **cim-compare-1.2.0.jar** iec61970cim16v26a.xmi iec61970cim17v16.xmi D:\\reports
+java <span style="color:red">-mx2048m</span> -jar **cim-compare-1.2.1.jar** iec61970cim16v26a.xmi iec61970cim17v16.xmi D:\\reports
 
 
 ## Latest Release
 
--   1.2.0  
+-   1.2.1  
 
-    -   The latest release is available at [cim-compare-1.2.0](https://github.com/CIMug-org/cim-compare/releases/tag/1.2.0).
-    -   Information on features and fixes for the release can be found [here](https://cimug-org.github.io/cim-compare/).
+    -   The latest release is available at [cim-compare-1.2.1](https://github.com/CIMug-org/cim-compare/releases/tag/1.2.1).
+    -   Information on features and/or fixes for the release can be found [here](https://cimug-org.github.io/cim-compare/).
 
 ## License
 

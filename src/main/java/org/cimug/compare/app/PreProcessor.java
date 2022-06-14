@@ -575,6 +575,28 @@ public class PreProcessor {
 	public Map<String, PackageType> getBaselineMovedPackagesXmiIds() {
 		return baselineMovedPackagesXmiIds;
 	}
+	
+	/**
+	 * Convenience method that simply aggregates all added, deleted, and moved packages.
+	 * This is needed in certain scenarios. 
+	 */
+	public Map<String, PackageType> getAllBaselinePackagesXmiIds() {
+		Map<String, PackageType> allPackages = new HashMap<String, PackageType>();
+		
+		baselinePackagesXmiIds.forEach((key, value) -> {
+			allPackages.put(key, value);
+		});
+		
+		baselineDeletedPackagesXmiIds.forEach((key, value) -> {
+			allPackages.put(key, value);
+		});
+		
+		baselineMovedPackagesXmiIds.forEach((key, value) -> {
+			allPackages.put(key, value);
+		});
+		
+		return allPackages;
+	}
 
 	public Map<String, ClassType> getBaselineClassesXmiIds() {
 		return baselineClassesXmiIds;
@@ -614,6 +636,28 @@ public class PreProcessor {
 
 	public Map<String, PackageType> getTargetMovedPackagesXmiIds() {
 		return targetMovedPackagesXmiIds;
+	}
+	
+	/**
+	 * Convenience method that simply aggregates all added, deleted, and moved packages.
+	 * This is needed in certain scenarios. 
+	 */
+	public Map<String, PackageType> getAllTargetPackagesXmiIds() {
+		Map<String, PackageType> allPackages = new HashMap<String, PackageType>();
+		
+		targetPackagesXmiIds.forEach((key, value) -> {
+			allPackages.put(key, value);
+		});
+		
+		targetNewPackagesXmiIds.forEach((key, value) -> {
+			allPackages.put(key, value);
+		});
+		
+		targetMovedPackagesXmiIds.forEach((key, value) -> {
+			allPackages.put(key, value);
+		});
+		
+		return allPackages;
 	}
 
 	public Map<String, ClassType> getTargetClassesXmiIds() {

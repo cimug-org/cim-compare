@@ -28,23 +28,22 @@ public class AttributeProperties {
 	private static final Map<String, String> TAG_NAME_MAP = new HashMap<String, String>();
 
 	{
+		/**
+		 * We have intentionally commenting out the "position", "precision", "derived", and "length" 
+		 * attributes as we do not want these attributes flagged as Changed due to a changed.
+		 */
 		TAG_NAME_MAP.put("duplicates", "AllowDuplicates");
 		TAG_NAME_MAP.put("collection", "Collection");
 		TAG_NAME_MAP.put("containment", "Containment");
 		TAG_NAME_MAP.put("styleex", "IsLiteral");
 		TAG_NAME_MAP.put("ordered", "IsOrdered");
 		TAG_NAME_MAP.put("description", "Notes");
-		TAG_NAME_MAP.put("length", "Length");
+		//TAG_NAME_MAP.put("length", "Length");
 		TAG_NAME_MAP.put("lowerBound", "LowerBound");
 		TAG_NAME_MAP.put("upperBound", "UpperBound");
-		/**
-		 * We are intentionally commenting out the "position" for the attribute as we do
-		 * not want an attribute flagged as Change due to a change in position. Do not
-		 * remove this comment or the code below...
-		 */
 		// TAG_NAME_MAP.put("position", "Position");
 		// TAG_NAME_MAP.put("derived", "IsDerived");
-		TAG_NAME_MAP.put("precision", "Precision");
+		//TAG_NAME_MAP.put("precision", "Precision");
 		TAG_NAME_MAP.put("scale", "Scale");
 		TAG_NAME_MAP.put("static", "Static");
 		TAG_NAME_MAP.put("type", "Type");

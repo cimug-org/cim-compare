@@ -60,10 +60,11 @@ public class DiagramProperties {
 			}
 		}
 
-		processDiffs(baselineDiagram, targetDiagram);
+		processDiffs(baselineDiagram, baselineParentPackage, targetDiagram, targetParentPackage);
 	}
 
-	protected void processDiffs(Diagram baselineDiagram, Diagram targetDiagram) {
+	protected void processDiffs(Diagram baselineDiagram, PackageType baselineParentPackage, Diagram targetDiagram,
+			PackageType targetParentPackage) {
 		Properties properties = new Properties(new ArrayList<Property>());
 
 		if (baselineDiagram != null && targetDiagram != null) {
@@ -78,6 +79,15 @@ public class DiagramProperties {
 					(targetDiagram.getDiagramType() != null ? targetDiagram.getDiagramType() : null), //
 					getStatus(baselineDiagram.getDiagramType(), targetDiagram.getDiagramType()) //
 			));
+			
+			String baselineParentPackageName = (baselineParentPackage != null ? baselineParentPackage.getName() : null);
+			String targetParentPackageName = (targetParentPackage != null ? targetParentPackage.getName() : null);
+			
+			properties.getProperty().add(new Property("ParentPackage", //
+					baselineParentPackageName, //
+					targetParentPackageName, //
+					getStatus(baselineParentPackageName, targetParentPackageName) //
+			));
 		} else if (baselineDiagram != null) {
 			// Baseline only
 			properties.getProperty().add(new Property("Name", //
@@ -91,6 +101,14 @@ public class DiagramProperties {
 							null, // null model
 							getStatus(baselineDiagram.getDiagramType(), null) //
 			));
+			
+			String baselineParentPackageName = (baselineParentPackage != null ? baselineParentPackage.getName() : null);
+			
+			properties.getProperty().add(new Property("ParentPackage", //
+					baselineParentPackageName, //
+					null, //
+					getStatus(baselineParentPackageName, null) //
+			));
 		} else {
 			// Model only
 			properties.getProperty().add(new Property("Name", //
@@ -102,6 +120,14 @@ public class DiagramProperties {
 					null, // null baseline
 					(targetDiagram.getDiagramType() != null ? targetDiagram.getDiagramType() : null), //
 					getStatus(null, targetDiagram.getDiagramType()) //
+			));
+			
+			String targetParentPackageName = (targetParentPackage != null ? targetParentPackage.getName() : null);
+			
+			properties.getProperty().add(new Property("ParentPackage", //
+					null, //
+					targetParentPackageName, //
+					getStatus(null, targetParentPackageName) //
 			));
 		}
 

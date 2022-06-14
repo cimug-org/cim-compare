@@ -39,7 +39,6 @@ public class CIMModelComparisonGenerator {
 
 	private static final String PARAM_PACKAGE = "package";
 	private static final String PARAM_MINIMAL = "minimal";
-	private static final String PARAM_EXPORT_DIAGRAMS = "export-diagrams";
 	private static final String PARAM_INCLUDE_DIAGRAMS = "include-diagrams";
 	private static final String PARAM_ZIP = "zip";
 	private static final String PARAM_IMAGE_TYPE = "image-type";
@@ -140,8 +139,7 @@ public class CIMModelComparisonGenerator {
 				transformer.setParameter(PARAM_IMAGE_TYPE, DiagramImage.JPG.name());
 			}
 
-			transformer.setParameter(PARAM_EXPORT_DIAGRAMS,
-					Boolean.toString(options.containsKey(PARAM_EXPORT_DIAGRAMS)));
+			transformer.setParameter(PARAM_INCLUDE_DIAGRAMS, options.containsKey(PARAM_INCLUDE_DIAGRAMS));
 
 			DOMSource source = new DOMSource(document);
 
@@ -195,8 +193,6 @@ public class CIMModelComparisonGenerator {
 			System.exit(1);
 		}
 
-		boolean isEAP = (args[0].toLowerCase().endsWith(EAP) || args[0].toLowerCase().endsWith(EAPX));
-
 		Map<String, String> options = new HashMap<String, String>();
 
 		for (String arg : args) {
@@ -213,7 +209,6 @@ public class CIMModelComparisonGenerator {
 					{
 					case PARAM_MINIMAL:
 					case PARAM_INCLUDE_DIAGRAMS:
-					case PARAM_EXPORT_DIAGRAMS:
 					case PARAM_ZIP:
 						value = Boolean.TRUE.toString(); // All three must have to a default value of "true"...
 						break;
@@ -256,16 +251,6 @@ public class CIMModelComparisonGenerator {
 			}
 		}
 
-		if (!isEAP && options.containsKey(PARAM_EXPORT_DIAGRAMS)) {
-			System.err.print(
-					"The --" + PARAM_EXPORT_DIAGRAMS + " is only valid for EAP baseline and destination input files.");
-			exitOnInvalidParameter(PARAM_EXPORT_DIAGRAMS);
-		} else if (isEAP && options.containsKey(PARAM_INCLUDE_DIAGRAMS)) {
-			System.err.print(
-					"The --" + PARAM_INCLUDE_DIAGRAMS + " is not a valid command line option for EAP baseline and destination files.");
-			exitOnInvalidParameter(PARAM_EXPORT_DIAGRAMS);
-		}
-		
 		if (!options.containsKey(PARAM_IMAGE_TYPE)) {
 			/**
 			 * When processing .EAP files and exporting diagrams we ensure that a default
@@ -435,7 +420,7 @@ public class CIMModelComparisonGenerator {
 			if (arguments[0].getName().toLowerCase().endsWith(EAP)
 					|| arguments[0].getName().toLowerCase().endsWith(EAPX)) {
 
-				DiagramXML diagramXML = (options.containsKey(PARAM_EXPORT_DIAGRAMS) ? DiagramXML.EXPORT_WITHOUT_IMAGES
+				DiagramXML diagramXML = (options.containsKey(PARAM_INCLUDE_DIAGRAMS) ? DiagramXML.EXPORT_WITHOUT_IMAGES
 						: DiagramXML.NO_EXPORT);
 
 				DiagramImage diagramImage = (options.containsKey(PARAM_IMAGE_TYPE)
@@ -647,11 +632,11 @@ public class CIMModelComparisonGenerator {
 
 			zipFile(comparisonHTMLFile, comparisonHTMLFile.getName(), zipOut);
 
-			if ((options.containsKey(PARAM_EXPORT_DIAGRAMS) || options.containsKey(PARAM_INCLUDE_DIAGRAMS)) && baselineImagesDir.exists()) {
+			if (options.containsKey(PARAM_INCLUDE_DIAGRAMS) && baselineImagesDir.exists()) {
 				zipFile(baselineImagesDir, baselineImagesDir.getName(), zipOut);
 			}
 
-			if ((options.containsKey(PARAM_EXPORT_DIAGRAMS) || options.containsKey(PARAM_INCLUDE_DIAGRAMS)) && destinationImagesDir.exists()) {
+			if (options.containsKey(PARAM_INCLUDE_DIAGRAMS) && destinationImagesDir.exists()) {
 				zipFile(destinationImagesDir, destinationImagesDir.getName(), zipOut);
 			}
 

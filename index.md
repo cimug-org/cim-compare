@@ -1,5 +1,11 @@
 ## cim-compare Release Log
 
+### Release 1.2.1 [14-Jun-2022]
+Patch release of the **cim-compare** project.  This release includes:
+
+-  The **--export-diagrams** command line option has been removed and is no longer supported when using .eap project files as input.  The existing **--include-diagrams** option introduced in release 1.2.0 is now applicable to both option #1 and #2 command line approaches. This was done to simplify command line usage and eliminate questions and confusion reported by end users.  Consult the README.md file for details on the official command line usage for this release.
+- Diagrams that were moved to different packages between the baseline and destination models did not properly appear within the package in the target model they were moved to.  This has been corrected in this release.
+
 ### Release 1.2.0 [10-Jan-2022]
 Minor release of the **cim-compare** project.  This release includes:
 

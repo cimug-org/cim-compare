@@ -602,7 +602,7 @@ public class CIMModelComparisonGenerator {
 				return aPackage;
 			} else {
 				Package result = findPackage(packageName, aPackage.GetPackages());
-				if (result.GetName().equals(packageName)) {
+				if (result != null && result.GetName().equals(packageName)) {
 					return result;
 				}
 			}

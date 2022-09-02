@@ -53,7 +53,7 @@ java -jar cim-compare-1.2.1.jar <baseline-model-eap-file> <destination-model-eap
 
 **[--zip] (Optional):** When specified **cim-compare** will package up the generated report and any associated diagrams into a single ZIP archive. It is most often utilized for packaging the report when diagram images are included and can help simplify distribution.
 
-Note that in the command line examples that follow whenever a directory or file path contains spaces it is specified within quotes.
+Note that in the following command line examples whenever a directory or file path contains spaces it is specified within quotes.
 
 | **Command Line Examples:**                                                                               |
 |----------------------------------------------------------------------------------------------------------|
@@ -113,7 +113,7 @@ java -jar cim-compare-1.2.1.jar <baseline-model-xmi-file> <destination-model-xmi
 
 **[--zip] (Optional):** When specified **cim-compare** will package up the generated report and any associated diagrams into a single ZIP archive. It is most often utilized for packaging the report when diagram images are included and can help simplify distribution.
 
-Note that in the command line examples that follow whenever a directory or file path contains spaces it is specified within quotes.
+Note that in the following command line examples whenever a directory or file path contains spaces it is specified within quotes.
 
 | **Command Line Examples:**                                                                               |
 |----------------------------------------------------------------------------------------------------------|
@@ -147,7 +147,7 @@ java -jar cim-compare-1.2.1.jar <comparison-results-xml-file> [<output-directory
 
 **[--zip] (Optional):** When specified **cim-compare** will package up the generated report into a single ZIP archive. Note that since this option \#3 does not support diagram comparisons only the report itself will be included in the archive.
 
-Again, in the command line examples that follow directory or file path containing spaces are specified within quotes.
+Again, in the following command line examples, directory or file paths containing spaces are specified within quotes.
 
 | **Command Line Examples:**                                                                                |
 |-----------------------------------------------------------------------------------------------------------|
@@ -218,9 +218,9 @@ java <span style="color:red">-mx2048m</span> -jar **cim-compare-1.2.1.jar** iec6
 
 ## Latest Release
 
--   1.2.1  
+-   1.2.2  
 
-    -   The latest release is available at [cim-compare-1.2.1](https://github.com/CIMug-org/cim-compare/releases/tag/1.2.1).
+    -   The latest release is available at [cim-compare-1.2.2](https://github.com/CIMug-org/cim-compare/releases/tag/1.2.2).
     -   Information on features and/or fixes for the release can be found [here](https://cimug-org.github.io/cim-compare/).
 
 ## License

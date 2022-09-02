@@ -1,9 +1,9 @@
 ## cim-compare Release Log
 
-### Release 1.2.1 [12-Aug-2022]
+### Release 1.2.2 [12-Aug-2022]
 Patch release of the **cim-compare** project.  This release includes:
 
--  Fix for a NullPointerException that occurs on specific packages using the --package command line parameter
+-  Fix for a NullPointerException that occurs on specific packages when using the --package command line parameter.
 
 ### Release 1.2.1 [14-Jun-2022]
 Patch release of the **cim-compare** project.  This release includes:

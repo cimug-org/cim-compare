@@ -1,6 +1,6 @@
 # cim-compare
 
->   Command line tool for generating CIM model comparison reports.
+Command line tool for generating CIM model comparison reports.
 
 ## CIM Model Comparison Report Utility
 

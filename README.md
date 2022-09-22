@@ -32,7 +32,7 @@ The preferred usage is to provide two Enterprise Architect .eap files for the "b
 The command-line usage for this option takes the following form:
 
 ```
-java -jar cim-compare-1.2.1.jar <baseline-model-eap-file> <destination-model-eap-file> [<output-directory-or-html-file>] [--package=<package-name>] [--minimal] [--include-diagrams] [--image-type=<image-file-extension>] [--zip]
+java -jar cim-compare-1.2.2.jar <baseline-model-eap-file> <destination-model-eap-file> [<output-directory-or-html-file>] [--package=<package-name>] [--minimal] [--include-diagrams] [--image-type=<image-file-extension>] [--zip]
 ```
 
 *Parameter Details*:
@@ -57,13 +57,13 @@ Note that in the following command line examples whenever a directory or file pa
 
 | **Command Line Examples:**                                                                               |
 |----------------------------------------------------------------------------------------------------------|
-| java -jar **cim-compare-1.2.1.jar** "C:\\exports\\15v33.eap" "C:\\exports\\CIM16v26a.eap" "C:\\" |
-| java -jar **cim-compare-1.2.1.jar** "C:\\exports\\15v33.eap" "C:\\exports\\CIM16v26a.eap" --package=IEC61970 --minimal |
-| java -jar **cim-compare-1.2.1.jar** CIM15v33.eap CIM16v26a.eap C:\\ --minimal  |
-| java -jar **cim-compare-1.2.1.jar** CIM15v33.eap CIM16v26a.eap C:\\ --minimal --include-diagrams --zip |
-| java -jar **cim-compare-1.2.1.jar** CIM15v33.eap CIM16v26a.eap C:\\CIM15v33_CIM16v26a_ComparisonReport.html |
-| java -jar **cim-compare-1.2.1.jar** CIM15v33.eapx CIM16v26a.eapx CIM15v33_CIM16v26a_ComparisonReport.html --minimal |
-| java -jar **cim-compare-1.2.1.jar** CIM15v33.eap CIM16v26a.eap --package=IEC62325 --minimal --include-diagrams --image-type=GIF --zip |
+| java -jar **cim-compare-1.2.2.jar** "C:\\exports\\15v33.eap" "C:\\exports\\CIM16v26a.eap" "C:\\" |
+| java -jar **cim-compare-1.2.2.jar** "C:\\exports\\15v33.eap" "C:\\exports\\CIM16v26a.eap" --package=IEC61970 --minimal |
+| java -jar **cim-compare-1.2.2.jar** CIM15v33.eap CIM16v26a.eap C:\\ --minimal  |
+| java -jar **cim-compare-1.2.2.jar** CIM15v33.eap CIM16v26a.eap C:\\ --minimal --include-diagrams --zip |
+| java -jar **cim-compare-1.2.2.jar** CIM15v33.eap CIM16v26a.eap C:\\CIM15v33_CIM16v26a_ComparisonReport.html |
+| java -jar **cim-compare-1.2.2.jar** CIM15v33.eapx CIM16v26a.eapx CIM15v33_CIM16v26a_ComparisonReport.html --minimal |
+| java -jar **cim-compare-1.2.2.jar** CIM15v33.eap CIM16v26a.eap --package=IEC62325 --minimal --include-diagrams --image-type=GIF --zip |
 
 ##### IMPORTANT:
 ```
@@ -90,7 +90,7 @@ Copy the file SSJavaCom.dll located in the EA installation folder to:
 The second usage is to directly specify two XMI 1.1 compliant files representing the "baseline" and “destination” models exported as described later in "Enterprise Architect XMI Export Procedures". In this scenario the command-line usage takes the following form:
 
 ```
-java -jar cim-compare-1.2.1.jar <baseline-model-xmi-file> <destination-model-xmi-file> [<output-directory-or-html-file>] [--package=<package-name>] [--minimal] [--include-diagrams] [--image-type=<image-file-extension>] [--zip]
+java -jar cim-compare-1.2.2.jar <baseline-model-xmi-file> <destination-model-xmi-file> [<output-directory-or-html-file>] [--package=<package-name>] [--minimal] [--include-diagrams] [--image-type=<image-file-extension>] [--zip]
 ```
 
 *Parameter Details*:

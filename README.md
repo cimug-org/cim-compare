@@ -117,13 +117,13 @@ Note that in the following command line examples whenever a directory or file pa
 
 | **Command Line Examples:**                                                                               |
 |----------------------------------------------------------------------------------------------------------|
-| java -jar **cim-compare-1.2.1.jar** "C:\\XMI exports\\15v33.xmi" "C:\\XMI exports\\CIM16v26a.xmi" "C:\\" |
-| java -jar **cim-compare-1.2.1.jar** "C:\\XMI exports\\15v33.xmi" "C:\\XMI exports\\CIM16v26a.xmi" --package=IEC61970 --minimal |
-| java -jar **cim-compare-1.2.1.jar** CIM15v33.xmi CIM16v26a.xmi C:\\ --minimal  |
-| java -jar **cim-compare-1.2.1.jar** CIM15v33.xmi CIM16v26a.xmi C:\\ --minimal --include-diagrams --image-type=gif --zip |
-| java -jar **cim-compare-1.2.1.jar** CIM15v33.xmi CIM16v26a.xmi C:\\CIM15v33_CIM16v26a_ComparisonReport.html |
-| java -jar **cim-compare-1.2.1.jar** CIM15v33.xmi CIM16v26a.xmi CIM15v33_CIM16v26a_ComparisonReport.html --minimal |
-| java -jar **cim-compare-1.2.1.jar** CIM15v33.xmi CIM16v26a.xmi CIM15v33_CIM16v26a_ComparisonReport.html --package=IEC62325 --include-diagrams --image-type=JPG --zip |
+| java -jar **cim-compare-1.2.2.jar** "C:\\XMI exports\\15v33.xmi" "C:\\XMI exports\\CIM16v26a.xmi" "C:\\" |
+| java -jar **cim-compare-1.2.2.jar** "C:\\XMI exports\\15v33.xmi" "C:\\XMI exports\\CIM16v26a.xmi" --package=IEC61970 --minimal |
+| java -jar **cim-compare-1.2.2.jar** CIM15v33.xmi CIM16v26a.xmi C:\\ --minimal  |
+| java -jar **cim-compare-1.2.2.jar** CIM15v33.xmi CIM16v26a.xmi C:\\ --minimal --include-diagrams --image-type=gif --zip |
+| java -jar **cim-compare-1.2.2.jar** CIM15v33.xmi CIM16v26a.xmi C:\\CIM15v33_CIM16v26a_ComparisonReport.html |
+| java -jar **cim-compare-1.2.2.jar** CIM15v33.xmi CIM16v26a.xmi CIM15v33_CIM16v26a_ComparisonReport.html --minimal |
+| java -jar **cim-compare-1.2.2.jar** CIM15v33.xmi CIM16v26a.xmi CIM15v33_CIM16v26a_ComparisonReport.html --package=IEC62325 --include-diagrams --image-type=JPG --zip |
 
 ### Option \#3: EA Model Comparison Logs as Input
 
@@ -132,7 +132,7 @@ The third option is by specifying an **EA model comparison log** file as input o
 This particular usage takes the following form:
 
 ```
-java -jar cim-compare-1.2.1.jar <comparison-results-xml-file> [<output-directory-or-html-file>] [--package=<package-name>] [--minimal] [--zip]
+java -jar cim-compare-1.2.2.jar <comparison-results-xml-file> [<output-directory-or-html-file>] [--package=<package-name>] [--minimal] [--zip]
 ```
 
 *Parameter Details*:
@@ -151,14 +151,14 @@ Again, in the following command line examples, directory or file paths containin
 
 | **Command Line Examples:**                                                                                |
 |-----------------------------------------------------------------------------------------------------------|
-| java -jar **cim-compare-1.2.1.jar** "C:\\CIM XMI Exports\\CIM15v33_CIM16v26a_EA_Comparison_Report.xml" "C:\\Reports" |
-| java -jar **cim-compare-1.2.1.jar** CIM15v33_CIM16v26a_EA_Comparison_Report.xml "C:\\Comparison Reports" --minimal |
-| java -jar **cim-compare-1.2.1.jar** CIM15v33_CIM16v26a_EA_Comparison_Report.xml "C:\\Comparison Reports" --package=IEC61968 --include-diagrams |
-| java -jar **cim-compare-1.2.1.jar** CIM15v33_CIM16v26a_EA_Comparison_Report.xml ComparisonReport_CIM15v33_CIM16v26a.html |
-| java -jar **cim-compare-1.2.1.jar** CIM15v33_CIM16v26a_EA_Comparison_Report.xml |
-| java -jar **cim-compare-1.2.1.jar** CIM15v33_CIM16v26a_EA_Comparison_Report.xml --package=IEC61970 |
-| java -jar **cim-compare-1.2.1.jar** CIM15v33_CIM16v26a_EA_Comparison_Report.xml --package=IEC61970 --minimal |
-| java -jar **cim-compare-1.2.1.jar** CIM15v33_CIM16v26a_EA_Comparison_Report.xml --package=IEC61970 --minimal --zip |
+| java -jar **cim-compare-1.2.2.jar** "C:\\CIM XMI Exports\\CIM15v33_CIM16v26a_EA_Comparison_Report.xml" "C:\\Reports" |
+| java -jar **cim-compare-1.2.2.jar** CIM15v33_CIM16v26a_EA_Comparison_Report.xml "C:\\Comparison Reports" --minimal |
+| java -jar **cim-compare-1.2.2.jar** CIM15v33_CIM16v26a_EA_Comparison_Report.xml "C:\\Comparison Reports" --package=IEC61968 --include-diagrams |
+| java -jar **cim-compare-1.2.2.jar** CIM15v33_CIM16v26a_EA_Comparison_Report.xml ComparisonReport_CIM15v33_CIM16v26a.html |
+| java -jar **cim-compare-1.2.2.jar** CIM15v33_CIM16v26a_EA_Comparison_Report.xml |
+| java -jar **cim-compare-1.2.2.jar** CIM15v33_CIM16v26a_EA_Comparison_Report.xml --package=IEC61970 |
+| java -jar **cim-compare-1.2.2.jar** CIM15v33_CIM16v26a_EA_Comparison_Report.xml --package=IEC61970 --minimal |
+| java -jar **cim-compare-1.2.2.jar** CIM15v33_CIM16v26a_EA_Comparison_Report.xml --package=IEC61970 --minimal --zip |
 
 
 
@@ -209,11 +209,11 @@ Given the large file sizes consumed and produced by the utility, **OutOfMemory**
     overhead, in practice the limit can be much lower. On most modern 32-bit
     Windows systems the maximum heap size will range from 1.4G to 1.6G.
 
-java <span style="color:red">-mx1024m</span> -jar **cim-compare-1.2.1.jar** iec61970cim16v26a.xmi iec61970cim17v16.xmi D:\\reports
+java <span style="color:red">-mx1024m</span> -jar **cim-compare-1.2.2.jar** iec61970cim16v26a.xmi iec61970cim17v16.xmi D:\\reports
 
 > For 64 bit JREs it is recommended that the maximum heap size be increased to at least 2G (i.e. 2048m) if available. It has been observed that 2G is usually sufficient to handle the largest CIM files one might encounter.
 
-java <span style="color:red">-mx2048m</span> -jar **cim-compare-1.2.1.jar** iec61970cim16v26a.xmi iec61970cim17v16.xmi D:\\reports
+java <span style="color:red">-mx2048m</span> -jar **cim-compare-1.2.2.jar** iec61970cim16v26a.xmi iec61970cim17v16.xmi D:\\reports
 
 
 ## Latest Release

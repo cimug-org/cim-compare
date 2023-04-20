@@ -5,5 +5,5 @@ logo: /assets/img/logo.png
 # show_downloads: ["true" or "false" to indicate whether to provide a download URL]
 show_downloads: true
 # google_analytics: [Your Google Analytics tracking ID]
-cim-compare_windows_zip_url: https://github.com/CIMug-org/cim-compare/releases/download/1.2.2/cim-compare-1.2.2.zip
-cim-compare_releases_url: https://github.com/CIMug-org/cim-compare/releases
+cim-compare_windows_zip_url: https://github.com/cimug-org/cim-compare/releases/download/1.2.2/cim-compare-1.2.2.zip
+cim-compare_releases_url: https://github.com/cimug-org/cim-compare/releases

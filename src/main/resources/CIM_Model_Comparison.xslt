@@ -113,40 +113,82 @@
         <xsl:text>|</xsl:text>
     </xsl:variable>
 
-    <xsl:variable name="baseline-version-61970">     
-        <xsl:if test="//CompareItem[@type='Class' and @name='IEC61970CIMVersion']/CompareItem[@name='version']/Properties/Property[@name='Default']/@baseline">
-            <xsl:value-of select="substring-after(//CompareItem[@type='Class' and @name='IEC61970CIMVersion']/CompareItem[@name='version']/Properties/Property[@name='Default']/@baseline, 'IEC61970')"/>
-       </xsl:if>
+    <xsl:variable name="baseline-version-61970"> 
+		<xsl:choose>
+            <xsl:when test="//CompareItem[@type='Class' and @name='IEC61970CIMVersion']/CompareItem[@name='version']/Properties/Property[@name='Default']/@baseline">
+            	<xsl:value-of select="//CompareItem[@type='Class' and @name='IEC61970CIMVersion']/CompareItem[@name='version']/Properties/Property[@name='Default']/@baseline"/>
+            </xsl:when>
+            <xsl:when test="//CompareItem[@type='Class' and @name='GridCIMVersion']/CompareItem[@name='version']/Properties/Property[@name='Default']/@baseline">
+                <xsl:value-of select="//CompareItem[@type='Class' and @name='GridCIMVersion']/CompareItem[@name='version']/Properties/Property[@name='Default']/@baseline"/>
+            </xsl:when>
+            <xsl:otherwise><xsl:text>Unspecified</xsl:text></xsl:otherwise>
+        </xsl:choose>
     </xsl:variable>
     
-    <xsl:variable name="destination-version-61970">     
-        <xsl:if test="//CompareItem[@type='Class' and @name='IEC61970CIMVersion']/CompareItem[@name='version']/Properties/Property[@name='Default']/@model">
-            <xsl:value-of select="substring-after(//CompareItem[@type='Class' and @name='IEC61970CIMVersion']/CompareItem[@name='version']/Properties/Property[@name='Default']/@model, 'IEC61970')"/>
-        </xsl:if>
+    <xsl:variable name="destination-version-61970">   
+		<xsl:choose>
+            <xsl:when test="//CompareItem[@type='Class' and @name='IEC61970CIMVersion']/CompareItem[@name='version']/Properties/Property[@name='Default']/@model">
+            	<xsl:value-of select="//CompareItem[@type='Class' and @name='IEC61970CIMVersion']/CompareItem[@name='version']/Properties/Property[@name='Default']/@model"/>
+            </xsl:when>
+            <xsl:when test="//CompareItem[@type='Class' and @name='GridCIMVersion']/CompareItem[@name='version']/Properties/Property[@name='Default']/@model">
+                <xsl:value-of select="//CompareItem[@type='Class' and @name='GridCIMVersion']/CompareItem[@name='version']/Properties/Property[@name='Default']/@model"/>
+            </xsl:when>
+            <xsl:otherwise><xsl:text>Unspecified</xsl:text></xsl:otherwise>
+        </xsl:choose>
     </xsl:variable>
     
-    <xsl:variable name="baseline-version-61968">     
-        <xsl:if test="//CompareItem[@type='Class' and @name='IEC61968CIMVersion']/CompareItem[@name='version']/Properties/Property[@name='Default']/@baseline">
-            <xsl:value-of select="substring-after(//CompareItem[@type='Class' and @name='IEC61968CIMVersion']/CompareItem[@name='version']/Properties/Property[@name='Default']/@baseline, 'IEC61968')"/>
-        </xsl:if>
+    <xsl:variable name="baseline-version-61968">
+		<xsl:choose>
+            <xsl:when test="//CompareItem[@type='Class' and @name='IEC61968CIMVersion']/CompareItem[@name='version']/Properties/Property[@name='Default']/@baseline">
+            	<xsl:value-of select="//CompareItem[@type='Class' and @name='IEC61968CIMVersion']/CompareItem[@name='version']/Properties/Property[@name='Default']/@baseline"/>
+            </xsl:when>
+            <xsl:when test="//CompareItem[@type='Class' and @name='SupportCIMVersion']/CompareItem[@name='version']/Properties/Property[@name='Default']/@baseline">
+                <xsl:value-of select="//CompareItem[@type='Class' and @name='SupportCIMVersion']/CompareItem[@name='version']/Properties/Property[@name='Default']/@baseline"/>
+            </xsl:when>
+            <xsl:when test="//CompareItem[@type='Class' and @name='EnterpriseCIMVersion']/CompareItem[@name='version']/Properties/Property[@name='Default']/@baseline">
+                <xsl:value-of select="//CompareItem[@type='Class' and @name='EnterpriseCIMVersion']/CompareItem[@name='version']/Properties/Property[@name='Default']/@baseline"/>
+            </xsl:when>
+            <xsl:otherwise><xsl:text>Unspecified</xsl:text></xsl:otherwise>
+        </xsl:choose>     
     </xsl:variable>
     
-    <xsl:variable name="destination-version-61968">     
-        <xsl:if test="//CompareItem[@type='Class' and @name='IEC61968CIMVersion']/CompareItem[@name='version']/Properties/Property[@name='Default']/@model">
-            <xsl:value-of select="substring-after(//CompareItem[@type='Class' and @name='IEC61968CIMVersion']/CompareItem[@name='version']/Properties/Property[@name='Default']/@model, 'IEC61968')"/>
-        </xsl:if>
+    <xsl:variable name="destination-version-61968">    
+		<xsl:choose>
+            <xsl:when test="//CompareItem[@type='Class' and @name='IEC61968CIMVersion']/CompareItem[@name='version']/Properties/Property[@name='Default']/@model">
+            	<xsl:value-of select="//CompareItem[@type='Class' and @name='IEC61968CIMVersion']/CompareItem[@name='version']/Properties/Property[@name='Default']/@model"/>
+            </xsl:when>
+            <xsl:when test="//CompareItem[@type='Class' and @name='SupportCIMVersion']/CompareItem[@name='version']/Properties/Property[@name='Default']/@model">
+                <xsl:value-of select="//CompareItem[@type='Class' and @name='SupportCIMVersion']/CompareItem[@name='version']/Properties/Property[@name='Default']/@model"/>
+            </xsl:when>
+            <xsl:when test="//CompareItem[@type='Class' and @name='EnterpriseCIMVersion']/CompareItem[@name='version']/Properties/Property[@name='Default']/@model">
+                <xsl:value-of select="//CompareItem[@type='Class' and @name='EnterpriseCIMVersion']/CompareItem[@name='version']/Properties/Property[@name='Default']/@model"/>
+            </xsl:when>
+            <xsl:otherwise><xsl:text>Unspecified</xsl:text></xsl:otherwise>
+        </xsl:choose> 
     </xsl:variable>
     
     <xsl:variable name="baseline-version-62325">     
-        <xsl:if test="//CompareItem[@type='Class' and @name='IEC62325CIMVersion']/CompareItem[@name='version']/Properties/Property[@name='Default']/@baseline">
-            <xsl:value-of select="substring-after(//CompareItem[@type='Class' and @name='IEC62325CIMVersion']/CompareItem[@name='version']/Properties/Property[@name='Default']/@baseline, 'IEC62325')"/>
-        </xsl:if>
+		<xsl:choose>
+            <xsl:when test="//CompareItem[@type='Class' and @name='IEC62325CIMVersion']/CompareItem[@name='version']/Properties/Property[@name='Default']/@baseline">
+            	<xsl:value-of select="//CompareItem[@type='Class' and @name='IEC62325CIMVersion']/CompareItem[@name='version']/Properties/Property[@name='Default']/@baseline"/>
+            </xsl:when>
+            <xsl:when test="//CompareItem[@type='Class' and @name='MarketCIMVersion']/CompareItem[@name='version']/Properties/Property[@name='Default']/@baseline">
+                <xsl:value-of select="//CompareItem[@type='Class' and @name='MarketCIMVersion']/CompareItem[@name='version']/Properties/Property[@name='Default']/@baseline"/>
+            </xsl:when>
+            <xsl:otherwise><xsl:text>Unspecified</xsl:text></xsl:otherwise>
+        </xsl:choose> 
     </xsl:variable>
     
-    <xsl:variable name="destination-version-62325">     
-        <xsl:if test="//CompareItem[@type='Class' and @name='IEC62325CIMVersion']/CompareItem[@name='version']/Properties/Property[@name='Default']/@model">
-            <xsl:value-of select="substring-after(//CompareItem[@type='Class' and @name='IEC62325CIMVersion']/CompareItem[@name='version']/Properties/Property[@name='Default']/@model, 'IEC62325')"/>
-        </xsl:if>
+    <xsl:variable name="destination-version-62325">    
+		<xsl:choose>
+            <xsl:when test="//CompareItem[@type='Class' and @name='IEC62325CIMVersion']/CompareItem[@name='version']/Properties/Property[@name='Default']/@model">
+            	<xsl:value-of select="//CompareItem[@type='Class' and @name='IEC62325CIMVersion']/CompareItem[@name='version']/Properties/Property[@name='Default']/@model"/>
+            </xsl:when>
+            <xsl:when test="//CompareItem[@type='Class' and @name='MarketCIMVersion']/CompareItem[@name='version']/Properties/Property[@name='Default']/@model">
+                <xsl:value-of select="//CompareItem[@type='Class' and @name='MarketCIMVersion']/CompareItem[@name='version']/Properties/Property[@name='Default']/@model"/>
+            </xsl:when>
+            <xsl:otherwise><xsl:text>Unspecified</xsl:text></xsl:otherwise>
+        </xsl:choose> 
     </xsl:variable>
     
     <xsl:variable name="baseline-version">	   

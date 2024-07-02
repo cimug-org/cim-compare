@@ -7,14 +7,15 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.JAXBIntrospector;
 import javax.xml.bind.Unmarshaller;
 
+import org.cimug.compare.app.CIMModelComparisonGenerator.DiagramImage;
 import org.cimug.compare.xmi1_1.XMI;
 
 class DiffXMLGenerator {
 
 	public static void main(String[] args) {
-		if (args.length != 3) {
+		if (args.length >= 3 && args.length <= 4) {
 			System.err.println("Usage: java " + DiffXMLGenerator.class.getSimpleName()
-					+ " <baseline-model-file> <target-model-file> <output-comparison-file>");
+					+ " <baseline-model-file> <target-model-file> <output-comparison-file> [<images-type>]");
 			System.err.println();
 			System.exit(1);
 		}
@@ -22,6 +23,11 @@ class DiffXMLGenerator {
 		File baselineXmiFile = new File(args[0]);
 		File targetXmiFile = new File(args[1]);
 		File outputFile = new File(args[2]);
+		
+		DiagramImage imageType = null;
+		if (args.length == 4) {
+			imageType = DiagramImage.valueOf(args[3]);
+		}
 
 		try {
 			XMI baselineXmi = loadCimModel(baselineXmiFile);
@@ -30,7 +36,7 @@ class DiffXMLGenerator {
 			validateExporterVersion(baselineXmiFile, targetXmiFile, baselineXmi, targetXmi);
 
 			DiffReportGenerator generator = new GUIDBasedDiffReportGeneratorImpl(baselineXmi.getXMIContent(),
-					targetXmi.getXMIContent(), outputFile);
+					targetXmi.getXMIContent(), outputFile, imageType);
 
 			generator.processDiffReport();
 		} catch (Exception e) {

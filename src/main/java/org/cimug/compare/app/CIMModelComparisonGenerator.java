@@ -69,16 +69,22 @@ public class CIMModelComparisonGenerator {
 	}
 
 	static enum DiagramImage {
-		NONE(-1), EMF(0), BMP(1), GIF(2), PNG(3), JPG(4);
+		NONE(-1, null), EMF(0, "emf"), BMP(1, "bmp"), GIF(2, "gif"), PNG(3, "png"), JPG(4, "jpg");
 
 		private final int code;
+		private final String ext;
 
-		DiagramImage(int code) {
+		DiagramImage(int code, String ext) {
 			this.code = code;
+			this.ext = ext;
 		}
 
 		public int code() {
 			return code;
+		}
+		
+		public String ext() {
+			return ext;
 		}
 	}
 
@@ -127,7 +133,6 @@ public class CIMModelComparisonGenerator {
 			 * has a value associated with it and which must be processed accordingly.
 			 */
 			for (String paramName : options.keySet()) {
-
 				transformer.setParameter(paramName, options.get(paramName));
 			}
 
@@ -529,7 +534,7 @@ public class CIMModelComparisonGenerator {
 			}
 
 			DiffXMLGenerator.main(
-					new String[] { baselineXmiFile, destinationXmiFile, modelComparisonXMLFile.getAbsolutePath() });
+					new String[] { baselineXmiFile, destinationXmiFile, modelComparisonXMLFile.getAbsolutePath(), (options.containsKey(PARAM_IMAGE_TYPE) ? options.get(PARAM_IMAGE_TYPE) : DiagramImage.JPG.toString())});
 
 			System.out.println("\nCompare Log XML report generated:  \n" + modelComparisonXMLFile.getAbsolutePath());
 		} else {

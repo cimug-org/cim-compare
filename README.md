@@ -220,7 +220,7 @@ java <span style="color:red">-mx2048m</span> -jar **cim-compare-1.2.2.jar** iec6
 
 -   1.2.2  
 
-    -   The latest release is available at [cim-compare-1.2.2](https://github.com/CIMug-org/cim-compare/releases/tag/1.2.2).
+    -   The latest release is available at [cim-compare-1.2.2](https://github.com/cimug-org/cim-compare/releases/tag/1.2.2).
     -   Information on features and/or fixes for the release can be found [here](https://cimug-org.github.io/cim-compare/).
 
 ## License

@@ -1,5 +1,8 @@
 # cim-compare
 
+![image](readme-icons/image-header-1.png)  
+\[[GitHub Repo](https://github.com/cimug-org/cim-compare)\]
+      
 Command line tool for generating CIM model comparison reports.
 
 ## CIM Model Comparison Report Utility

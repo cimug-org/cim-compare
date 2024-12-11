@@ -49,7 +49,7 @@ java -jar cim-compare-1.3.0.jar <baseline-model-file> <destination-model-file> [
 
 **[\<output-directory-or-html-file\>] (Optional)**: An output directory or an output HTML file. In the case where a directory is specified but does not exist it will be created. The same is true for the parent directory of a specified HTML file if it does not exist. When an HTML file is provided it may be specified as an absolute file path or as the simple name of an HTML file to be generated. If this command line option is not specified then **cim-compare** will generate an HTML file whose name is derived from the two input files.
 
-**[--package=\<package-name\>] (Optional):** The root package within the models from which to start the comparison report from. Appearing at the end of the command-line after file and directory specifications, when specified the package must exist in both the baseline and destination models (e.g. --package=IEC61970, --package=IEC61968, --package=IEC62325, --package=TC57CIM, etc.) and be specified with two leading dashes (--). Note that when no IEC package name is specified that the report is generated from the root package in the models.
+**[--package=\<package-name\>] (Optional):** The root package within the models from which to start the comparison report from. Appearing at the end of the command-line after file and directory specifications, when specified the package must exist in both the baseline and destination models (e.g. --package=IEC61970, --package=Grid, --package=IEC61968, --package=IEC62325, --package=CIM, etc.) and be specified with two leading dashes (--). Note that when **no** IEC package name is specified that the report is generated from the root package in the models.
 
 **[--minimal] (Optional):** When specified **cim-compare** will exclude all "Identical" packages, classes, attributes, links, diagrams, etc. from the generated report. This is useful when it is necessary to perform detailed analysis of only the most concise set of changes between models.
 
@@ -59,7 +59,7 @@ java -jar cim-compare-1.3.0.jar <baseline-model-file> <destination-model-file> [
 
 **[--zip] (Optional):** When specified **cim-compare** will package up the generated report and any associated diagrams into a single ZIP archive. It is most often utilized for packaging the report when diagram images are included and can help simplify distribution.
 
-**[--cleanup] (Optional):** When specified **cim-compare** will delete all artifacts and directories created during report generation except for the `*.zip` archive. This command line option is only relevant when --zip also appears on the command line.
+**[--cleanup] (Optional):** When specified **cim-compare** will delete all artifacts and directories created during report generation except for the ZIP archive. This command line option is only relevant when --zip also appears on the command line.
 
 Notice that in the following command line examples where a directory or file path contains spaces it is specified within quotes.
 
@@ -105,13 +105,13 @@ NOTE:  the above command line examples illustrate the use of specific distributi
 >
 > 64-bit Java:
 > 
->Copy the file SSJavaCOM64.dll located in the above EA installation folder to:
+> Copy the file SSJavaCOM64.dll located in the above EA installation folder to:
 > 
 >  `<Windows folder>\System32` (on a 64-bit machine)
 > 
 > 32-bit Java:
 > 
->Copy the file SSJavaCom.dll located in the EA installation folder to:
+> Copy the file SSJavaCom.dll located in the EA installation folder to:
 > 
 >  `<Windows folder>\System32 (on a 32-bit machine) or to <Windows folder>\SysWOW64` (on a 64-bit machine)
 > 
@@ -134,19 +134,19 @@ java -jar cim-compare-1.3.0.jar <baseline-model-xmi-file> <destination-model-xmi
 
 **[\<output-directory-or-html-file\>] (Optional)**: An output directory or an output HTML file. In the case where a directory is specified but does not exist it will be created. The same is true for the parent directory of a specified HTML file if it does not exist. When an HTML file is provided it may be specified as an absolute file path or as the simple name of an HTML file to be generated. If this command line option is not specified then **cim-compare** will generate an HTML file whose name is derived from the two input files.
 
-**[--package=\<package-name\>] (Optional):** The root package within the models from which to start the comparison report from. Appearing at the end of the command-line after file and directory specifications, when specified the package must exist in both the baseline and destination models (e.g. --package=IEC61970, --package=IEC61968, --package=IEC62325, --package=TC57CIM, etc.) and be specified with two leading dashes (--). Note that when no IEC package name is specified that the report is generated from the root package in the models.
+**[--package=\<package-name\>] (Optional):** The root package within the models from which to start the comparison report from. Appearing at the end of the command-line after file and directory specifications, when specified the package must exist in both the baseline and destination models (e.g. --package=IEC61970, --package=Grid, --package=IEC61968, --package=IEC62325, --package=CIM, etc.) and be specified with two leading dashes (--). Note that when **no** IEC package name is specified that the report is generated from the root package in the models.
 
 **[--minimal] (Optional):** When specified **cim-compare** will exclude all "identical" packages, classes, attributes, links, diagrams, etc. from the generated report. This is useful when it is necessary to perform detailed analysis of only the most concise set of changes between models.
 
 **[--include-diagrams] (Optional):** When specified **cim-compare** indicates that diagram images should be included in the generated comparison report. Note that if the types of diagrams to be included are not JPG files then the --image-type option must also be used in tandem. When this option does not appear on the command line no diagrams will be included in the report.
 
->IMPORTANT: this command line option does not automatically export diagrams as performed in usage Option \#1.  Rather the expectation is that they be exported as part of manual exports of XMI baseline and destination models from EA and that images are hosted in folders named &lt;output directory&gt;/Image-baseline and &lt;output directory&gt;/Image-destination respectively. This must be done prior to running **cim-compare**. Refer to the "Enterprise Architect XMI Export Procedures" in this README for further details.
+> IMPORTANT: this command line option does not automatically export diagrams as performed in usage Option \#1.  Rather the expectation is that they be exported as part of manual exports of XMI baseline and destination models from EA and that images are hosted in folders named &lt;output directory&gt;/Image-baseline and &lt;output directory&gt;/Image-destination respectively. This must be done prior to running **cim-compare**. Refer to the "Enterprise Architect XMI Export Procedures" in this README for further details.
 
 **[--image-type=\<image-file-extension\>] (Optional / Conditionally Required):** Indicates the type of images (i.e. JPG, GIF, PNG, BMP, or EMF) referenced in the report. Conditionally required when the --include-diagrams option is used and the diagram are not JPG image files. When not specified the default image type of JPG is used. This command line option is only relevant when --include-diagrams also appears on the command line.
 
 **[--zip] (Optional):** When specified **cim-compare** will package up the generated report and any associated diagrams into a single ZIP archive. It is most often utilized for packaging the report when diagram images are included and can help simplify distribution.
 
-**[--cleanup] (Optional):** When specified **cim-compare** will delete all artifacts and directories created during report generation except for the `*.zip` archive. This command line option is only relevant when --zip also appears on the command line.
+**[--cleanup] (Optional):** When specified **cim-compare** will delete all artifacts and directories created during report generation except for the ZIP archive. This command line option is only relevant when --zip also appears on the command line.
 
 Note that in the following command line examples whenever a directory or file path contains spaces it is specified within quotes.
 
@@ -176,13 +176,13 @@ java -jar cim-compare-1.3.0.jar <comparison-results-xml-file> [<output-directory
 
 **[\<output-directory-or-html-file\>] (Optional)**: An output directory or an output HTML file. In the case where a directory is specified but does not exist it will be created. The same is true for the parent directory of a specified HTML file if it does not exist. When an HTML file is provided it may be specified as an absolute file path or as the simple name of an HTML file to be generated. If this command line option is not specified then **cim-compare** will generate an HTML file whose name is derived from the two input files.
 
-**[--package=\<package-name\>] (Optional):** The root package to compare and generate the comparison report on. Appearing at the end of the command-line after file and directory specifications, the package must exist in both the baseline and destination models (e.g. --package=IEC61970, --package=IEC61968, --package=IEC62325, --package=TC57CIM, etc.) and be specified with two leading dashes (--). Note that when no IEC package name is specified that the report is generated from the root package in the models.
+**[--package=\<package-name\>] (Optional):** The root package to compare and generate the comparison report on. Appearing at the end of the command-line after file and directory specifications, the package must exist in both the baseline and destination models (e.g. --package=IEC61970, --package=Grid, --package=IEC61968, --package=IEC62325, --package=CIM, etc.) and be specified with two leading dashes (--). Note that when **no** IEC package name is specified that the report is generated from the root package in the models.
 
 **[--minimal] (Optional):** When specified **cim-compare** will exclude all "Identical" packages, classes, attributes, links, diagrams, etc. from the generated report. This is useful when it is necessary to perform detailed analysis of only the most concise set of changes between models.
 
 **[--zip] (Optional):** When specified **cim-compare** will package up the generated report into a single ZIP archive. Note that since this option \#3 does not support diagram comparisons only the report itself will be included in the archive.
 
-**[--cleanup] (Optional):** When specified **cim-compare** will delete all artifacts and directories created during report generation except for the `*.zip` archive. This command line option is only relevant when --zip also appears on the command line.
+**[--cleanup] (Optional):** When specified **cim-compare** will delete all artifacts and directories created during report generation except for the ZIP archive. This command line option is only relevant when --zip also appears on the command line.
 
 Again, in the following command line examples, directory or file paths containing spaces are specified within quotes.
 

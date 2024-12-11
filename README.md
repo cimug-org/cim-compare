@@ -23,19 +23,22 @@ As illustrated next, UML diagrams that have been added, removed or modified can 
 
 ![](media/UML_Comparison.png)
 
+Finally, for easier identification of changes to class and attribute descriptions, diffs are now visualized as shown in the next screenshot.
+
+![](media/Text_Diff_Visualization.png)
 
 ## Command Line Usage
 
 The **cim-compare** utility has three possible command-line options to produce comparison reports as described next.
 
-### Option \#1: Enterprise Architect .EAP Baseline and Destination Models as Inputs
+### Option \#1: Enterprise Architect .EAP or .QEA Baseline and Destination Project Files as Inputs
 
-The preferred usage is to provide two Enterprise Architect .eap files for the "baseline" and "destination" input files.  Using .eap files eliminates the need to manually export XMI and diagrams from EA (refer to "Enterprise Architect XMI Export Procedures").
+The preferred usage is to provide two Enterprise Architect `*.eap` or `*.qea` files for the "baseline" and "destination" input files.  Using these file types eliminates the need to manually export XMI and diagrams from EA as described later in the "Enterprise Architect XMI Export Procedures" section. When using these file types as inputs on the command line both "baseline" and "destination" files must be either 32-bit (i.e. `*.eap`) or 64-bit (i.e. `*.qea`) files. Note that the processing of 64-bit `*.qea` files is more performant.
 
 The command-line usage for this option takes the following form:
 
 ```
-java -jar cim-compare-1.2.2.jar <baseline-model-eap-file> <destination-model-eap-file> [<output-directory-or-html-file>] [--package=<package-name>] [--minimal] [--include-diagrams] [--image-type=<image-file-extension>] [--zip]
+java -jar cim-compare-1.3.0.jar <baseline-model-eap-file> <destination-model-eap-file> [<output-directory-or-html-file>] [--package=<package-name>] [--minimal] [--include-diagrams] [--image-type=<image-file-extension>] [--zip]
 ```
 
 *Parameter Details*:
@@ -56,44 +59,69 @@ java -jar cim-compare-1.2.2.jar <baseline-model-eap-file> <destination-model-eap
 
 **[--zip] (Optional):** When specified **cim-compare** will package up the generated report and any associated diagrams into a single ZIP archive. It is most often utilized for packaging the report when diagram images are included and can help simplify distribution.
 
+**[--cleanup] (Optional):** When specified **cim-compare** will delete all artifacts and directories created during report generation except for the `*.zip` archive. This command line option is only relevant when --zip also appears on the command line.
+
 Note that in the following command line examples whenever a directory or file path contains spaces it is specified within quotes.
 
 | **Command Line Examples:**                                                                               |
 |----------------------------------------------------------------------------------------------------------|
-| java -jar **cim-compare-1.2.2.jar** "C:\\exports\\15v33.eap" "C:\\exports\\CIM16v26a.eap" "C:\\" |
-| java -jar **cim-compare-1.2.2.jar** "C:\\exports\\15v33.eap" "C:\\exports\\CIM16v26a.eap" --package=IEC61970 --minimal |
-| java -jar **cim-compare-1.2.2.jar** CIM15v33.eap CIM16v26a.eap C:\\ --minimal  |
-| java -jar **cim-compare-1.2.2.jar** CIM15v33.eap CIM16v26a.eap C:\\ --minimal --include-diagrams --zip |
-| java -jar **cim-compare-1.2.2.jar** CIM15v33.eap CIM16v26a.eap C:\\CIM15v33_CIM16v26a_ComparisonReport.html |
-| java -jar **cim-compare-1.2.2.jar** CIM15v33.eapx CIM16v26a.eapx CIM15v33_CIM16v26a_ComparisonReport.html --minimal |
-| java -jar **cim-compare-1.2.2.jar** CIM15v33.eap CIM16v26a.eap --package=IEC62325 --minimal --include-diagrams --image-type=GIF --zip |
+| java -jar **cim-compare-1.3.0.jar** "C:\\exports\\15v33.eap" "C:\\exports\\CIM16v26a.eap" "C:\\" |
+| java -jar **cim-compare-1.3.0.jar** "C:\\exports\\15v33.qea" "C:\\exports\\CIM16v26a.qea" "C:\\" |
+| java -jar **cim-compare-1.3.0.jar** "C:\\exports\\15v33.eap" "C:\\exports\\CIM16v26a.eap" --package=IEC61970 --minimal |
+| java -jar **cim-compare-1.3.0.jar** CIM15v33.eap CIM16v26a.eap C:\\ --minimal  |
+| java -jar **cim-compare-1.3.0.jar** CIM15v33.eap CIM16v26a.eap C:\\ --minimal --include-diagrams --zip |
+| java -jar **cim-compare-1.3.0.jar** CIM15v33.eap CIM16v26a.eap C:\\CIM15v33_CIM16v26a_ComparisonReport.html |
+| java -jar **cim-compare-1.3.0.jar** CIM15v33.eapx CIM16v26a.eapx CIM15v33_CIM16v26a_ComparisonReport.html --minimal |
+| java -jar **cim-compare-1.3.0.jar** CIM15v33.eap CIM16v26a.eap --package=IEC62325 --minimal --include-diagrams --image-type=GIF --zip --cleanup |
+| java -jar **cim-compare-1.3.0.jar** CIM15v33.qea CIM16v26a.qea --package=Grid --minimal --include-diagrams --image-type=GIF --zip --cleanup |
 
-##### IMPORTANT:
-```
-To utilize cim-compare to process Enterprise Architect models (.eap files) the following steps
-are also required depending on the version of Java being used. Note that on a 64-bit machine it is
-recommended to use 64-bit Java. The DLL files referenced are those shipped with EA and located in
-the Sparx install directory at:  <Windows program files>/Sparx Systems/EA/Java API
+#### IMPORTANT:
 
-64-bit Java:
-Copy the file SSJavaCOM64.dll located in the EA installation folder to:
-
-  <Windows folder>/System32 (on a 64-bit machine).
-
-32-bit Java:
-Copy the file SSJavaCom.dll located in the EA installation folder to:
-
-  <Windows folder>/System32 (on a 32-bit machine) or to <Windows folder>/SysWOW64 (on a 64-bit machine).
-
-```
-
+> This **cim-compare** feature for processing Enterprise Architect `*.eap` or `*.qea` files directly requires EA's COM automation API. Consequently, if you plan to use it you are required to have a licensed version of Sparx Enterprise Architect (EA) installed for the COM automation API to work. The EA API and the `eaapi.jar` file act as interfaces to the Enterprise Architect application. The following explains why:
+> 
+> 1. Dependency on the Sparx Enterprise Architect Application:
+>    - The EA COM API and `eaapi.jar` rely on the backend functionality of the Enterprise Architect software. They act as a bridge to interact with > the models, diagrams, and repositories managed by EA.
+>    - Without the Enterprise Architect application installed, there is no core functionality or data source for the API to connect to.
+> 2. Enterprise Architect COM Object:
+>    - The `SSJavaCOM64.dll` is a COM interface wrapper that requires Enterprise Architect's COM objects to function. These COM objects are installed as part of the Enterprise Architect installation process.
+> 3. Licensing Requirements:
+>    - Sparx Enterprise Architect is a licensed product, and the API requires a valid license to access its features. Without a licensed installation of Enterprise Architect, the API calls will fail or be severely limited.
+> 4. Runtime Dependency:
+>    - When using the COM automation interface, **cim-compare** initializes and communicates with an EA process. The underlying API calls interact with the installed Enterprise Architect software to perform operations like exporting `.xmi` files from an `.eap` or `.qea` file.
+>    
+> Recommendations:
+>  - Ensure you have Enterprise Architect (64-bit version if you are using `SSJavaCOM64.dll`) installed on the system where the application will run.
+>  - Verify that the version of `eaapi.jar` and `SSJavaCOM64.dll` matches the installed version of Enterprise Architect. Note, that they will ,match if you use those that ship within the Sparx install directory (detailed below).
+>  - Beginning with the 1.3.0 release of **cim-compare**, distinct JAR files corresponding to the respective release of Sparx EA are now included in the distribution (e.g. `cim-compare-1.3.0-ea15.jar` or `cim-compare-1.3.0-ea16.jar`). Be sure to use the ea15 JAR for 32-bit `.eap` files and ea16 or ea17 JAR files for 64-bit `.qea` files.
+>  - If you need to distribute your application to systems where Enterprise Architect is not installed, you would need to work with Sparx Systems to explore licensing options or runtime distributions (if available).
+>    
+>  The following steps are required before running cim-compare for the first time or when upgrading your systems to a newer release of Sparx EA (e.g. from EA 15.x to 16.x or EA 16.x to 17.x). The DLLs referenced are those shipped with EA and located in your Sparx install directory at:  
+> 
+>  `<Windows 32-bit program files>\Sparx Systems\EAxx\Java API  (e.g. "C:\Program Files (x86)\Sparx Systems\EA15\Java API")`
+> 
+>  `<Windows 64-bit program files>\Sparx Systems\EAxx\Java API  (e.g. "C:\Program Files\Sparx Systems\EA16\Java API")`
+>
+> 64-bit Java:
+> 
+>Copy the file SSJavaCOM64.dll located in the above EA installation folder to:
+> 
+>  `<Windows folder>\System32` (on a 64-bit machine)
+> 
+> 32-bit Java:
+> 
+>Copy the file SSJavaCom.dll located in the EA installation folder to:
+> 
+>  `<Windows folder>\System32 (on a 32-bit machine) or to <Windows folder>\SysWOW64` (on a 64-bit machine)
+> 
+> Note that on a 64-bit machine for 64-bit Sparx EA you must use a 64-bit Java JRE/JDK when running **cim-compare** from the command line. 
+>
 
 ### Option \#2: XMI Baseline and Destination Models as Inputs
 
 The second usage is to directly specify two XMI 1.1 compliant files representing the "baseline" and “destination” models exported as described later in "Enterprise Architect XMI Export Procedures". In this scenario the command-line usage takes the following form:
 
 ```
-java -jar cim-compare-1.2.2.jar <baseline-model-xmi-file> <destination-model-xmi-file> [<output-directory-or-html-file>] [--package=<package-name>] [--minimal] [--include-diagrams] [--image-type=<image-file-extension>] [--zip]
+java -jar cim-compare-1.3.0.jar <baseline-model-xmi-file> <destination-model-xmi-file> [<output-directory-or-html-file>] [--package=<package-name>] [--minimal] [--include-diagrams] [--image-type=<image-file-extension>] [--zip]
 ```
 
 *Parameter Details*:
@@ -116,17 +144,19 @@ java -jar cim-compare-1.2.2.jar <baseline-model-xmi-file> <destination-model-xmi
 
 **[--zip] (Optional):** When specified **cim-compare** will package up the generated report and any associated diagrams into a single ZIP archive. It is most often utilized for packaging the report when diagram images are included and can help simplify distribution.
 
+**[--cleanup] (Optional):** When specified **cim-compare** will delete all artifacts and directories created during report generation except for the `*.zip` archive. This command line option is only relevant when --zip also appears on the command line.
+
 Note that in the following command line examples whenever a directory or file path contains spaces it is specified within quotes.
 
 | **Command Line Examples:**                                                                               |
 |----------------------------------------------------------------------------------------------------------|
-| java -jar **cim-compare-1.2.2.jar** "C:\\XMI exports\\15v33.xmi" "C:\\XMI exports\\CIM16v26a.xmi" "C:\\" |
-| java -jar **cim-compare-1.2.2.jar** "C:\\XMI exports\\15v33.xmi" "C:\\XMI exports\\CIM16v26a.xmi" --package=IEC61970 --minimal |
-| java -jar **cim-compare-1.2.2.jar** CIM15v33.xmi CIM16v26a.xmi C:\\ --minimal  |
-| java -jar **cim-compare-1.2.2.jar** CIM15v33.xmi CIM16v26a.xmi C:\\ --minimal --include-diagrams --image-type=gif --zip |
-| java -jar **cim-compare-1.2.2.jar** CIM15v33.xmi CIM16v26a.xmi C:\\CIM15v33_CIM16v26a_ComparisonReport.html |
-| java -jar **cim-compare-1.2.2.jar** CIM15v33.xmi CIM16v26a.xmi CIM15v33_CIM16v26a_ComparisonReport.html --minimal |
-| java -jar **cim-compare-1.2.2.jar** CIM15v33.xmi CIM16v26a.xmi CIM15v33_CIM16v26a_ComparisonReport.html --package=IEC62325 --include-diagrams --image-type=JPG --zip |
+| java -jar **cim-compare-1.3.0.jar** "C:\\XMI exports\\15v33.xmi" "C:\\XMI exports\\CIM16v26a.xmi" "C:\\" |
+| java -jar **cim-compare-1.3.0.jar** "C:\\XMI exports\\15v33.xmi" "C:\\XMI exports\\CIM16v26a.xmi" --package=IEC61970 --minimal |
+| java -jar **cim-compare-1.3.0.jar** CIM15v33.xmi CIM16v26a.xmi C:\\ --minimal  |
+| java -jar **cim-compare-1.3.0.jar** CIM15v33.xmi CIM16v26a.xmi C:\\ --minimal --include-diagrams --image-type=gif --zip --cleanup |
+| java -jar **cim-compare-1.3.0.jar** CIM15v33.xmi CIM16v26a.xmi C:\\CIM15v33_CIM16v26a_ComparisonReport.html |
+| java -jar **cim-compare-1.3.0.jar** CIM15v33.xmi CIM16v26a.xmi CIM15v33_CIM16v26a_ComparisonReport.html --minimal |
+| java -jar **cim-compare-1.3.0.jar** CIM15v33.xmi CIM16v26a.xmi CIM15v33_CIM16v26a_ComparisonReport.html --package=IEC62325 --include-diagrams --image-type=JPG --zip |
 
 ### Option \#3: EA Model Comparison Logs as Input
 
@@ -135,7 +165,7 @@ The third option is by specifying an **EA model comparison log** file as input o
 This particular usage takes the following form:
 
 ```
-java -jar cim-compare-1.2.2.jar <comparison-results-xml-file> [<output-directory-or-html-file>] [--package=<package-name>] [--minimal] [--zip]
+java -jar cim-compare-1.3.0.jar <comparison-results-xml-file> [<output-directory-or-html-file>] [--package=<package-name>] [--minimal] [--zip]
 ```
 
 *Parameter Details*:
@@ -150,18 +180,20 @@ java -jar cim-compare-1.2.2.jar <comparison-results-xml-file> [<output-directory
 
 **[--zip] (Optional):** When specified **cim-compare** will package up the generated report into a single ZIP archive. Note that since this option \#3 does not support diagram comparisons only the report itself will be included in the archive.
 
+**[--cleanup] (Optional):** When specified **cim-compare** will delete all artifacts and directories created during report generation except for the `*.zip` archive. This command line option is only relevant when --zip also appears on the command line.
+
 Again, in the following command line examples, directory or file paths containing spaces are specified within quotes.
 
 | **Command Line Examples:**                                                                                |
 |-----------------------------------------------------------------------------------------------------------|
-| java -jar **cim-compare-1.2.2.jar** "C:\\CIM XMI Exports\\CIM15v33_CIM16v26a_EA_Comparison_Report.xml" "C:\\Reports" |
-| java -jar **cim-compare-1.2.2.jar** CIM15v33_CIM16v26a_EA_Comparison_Report.xml "C:\\Comparison Reports" --minimal |
-| java -jar **cim-compare-1.2.2.jar** CIM15v33_CIM16v26a_EA_Comparison_Report.xml "C:\\Comparison Reports" --package=IEC61968 --include-diagrams |
-| java -jar **cim-compare-1.2.2.jar** CIM15v33_CIM16v26a_EA_Comparison_Report.xml ComparisonReport_CIM15v33_CIM16v26a.html |
-| java -jar **cim-compare-1.2.2.jar** CIM15v33_CIM16v26a_EA_Comparison_Report.xml |
-| java -jar **cim-compare-1.2.2.jar** CIM15v33_CIM16v26a_EA_Comparison_Report.xml --package=IEC61970 |
-| java -jar **cim-compare-1.2.2.jar** CIM15v33_CIM16v26a_EA_Comparison_Report.xml --package=IEC61970 --minimal |
-| java -jar **cim-compare-1.2.2.jar** CIM15v33_CIM16v26a_EA_Comparison_Report.xml --package=IEC61970 --minimal --zip |
+| java -jar **cim-compare-1.3.0.jar** "C:\\CIM XMI Exports\\CIM15v33_CIM16v26a_EA_Comparison_Report.xml" "C:\\Reports" |
+| java -jar **cim-compare-1.3.0.jar** CIM15v33_CIM16v26a_EA_Comparison_Report.xml "C:\\Comparison Reports" --minimal |
+| java -jar **cim-compare-1.3.0.jar** CIM15v33_CIM16v26a_EA_Comparison_Report.xml "C:\\Comparison Reports" --package=IEC61968 --include-diagrams |
+| java -jar **cim-compare-1.3.0.jar** CIM15v33_CIM16v26a_EA_Comparison_Report.xml ComparisonReport_CIM15v33_CIM16v26a.html |
+| java -jar **cim-compare-1.3.0.jar** CIM15v33_CIM16v26a_EA_Comparison_Report.xml |
+| java -jar **cim-compare-1.3.0.jar** CIM15v33_CIM16v26a_EA_Comparison_Report.xml --package=IEC61970 |
+| java -jar **cim-compare-1.3.0.jar** CIM15v33_CIM16v26a_EA_Comparison_Report.xml --package=IEC61970 --minimal |
+| java -jar **cim-compare-1.3.0.jar** CIM15v33_CIM16v26a_EA_Comparison_Report.xml --package=IEC61970 --minimal --zip --cleanup |
 
 
 
@@ -200,31 +232,31 @@ The procedure to perform an export of EA baseline and destination models as **XM
 
 ## Java Technical Requirements
 
-**cim-compare** ships as a fully self-contained executable jar file with no external dependencies.  It has been tested and confirmed to run successfully using Java 1.8  through Java 12.
+**cim-compare** ships as a fully self-contained executable jar file with no external dependencies.
 
 Given the large file sizes consumed and produced by the utility, **OutOfMemory** exceptions occur if the default heap size is used. The following guidelines should be followed:
 
 > For a 32-bit JRE it is recommended to specify a max heap size of at least 1G
     (i.e. 1024m) resources permitting. With a 1G heap size the execution will
-    typically run a little slower. Note that the maximum theoretical heap limit
-    for a 32-bit JVM is 4G. However, due to various additional constraints such
-    as available swap, kernel address space usage, memory fragmentation, and VM
+    typically run slower. Note that the maximum theoretical heap limit for a 
+    32-bit JVM is 4G. However, due to various additional constraints such as
+    available swap, kernel address space usage, memory fragmentation, and VM
     overhead, in practice the limit can be much lower. On most modern 32-bit
     Windows systems the maximum heap size will range from 1.4G to 1.6G.
 
-java <span style="color:red">-mx1024m</span> -jar **cim-compare-1.2.2.jar** iec61970cim16v26a.xmi iec61970cim17v16.xmi D:\\reports
+java <span style="color:red">-mx1024m</span> -jar **cim-compare-1.3.0.jar** iec61970cim16v26a.xmi iec61970cim17v16.xmi D:\\reports
 
-> For 64 bit JREs it is recommended that the maximum heap size be increased to at least 2G (i.e. 2048m) if available. It has been observed that 2G is usually sufficient to handle the largest CIM files one might encounter.
+> For 64 bit JREs it is recommended that the maximum heap size be increased to at least 2G (i.e. 2048m) but more if available. It has been observed that 2G is minimally sufficient to handle larger CIM models one might encounter. In the below example 3G is being allocated.
 
-java <span style="color:red">-mx2048m</span> -jar **cim-compare-1.2.2.jar** iec61970cim16v26a.xmi iec61970cim17v16.xmi D:\\reports
+java <span style="color:red">-mx3072m</span> -jar **cim-compare-1.3.0.jar** iec61970cim16v26a.xmi iec61970cim17v16.xmi D:\\reports
 
 
 ## Latest Release
 
--   1.2.2  
+1.3.0  
 
-    -   The latest release is available at [cim-compare-1.2.2](https://github.com/CIMug-org/cim-compare/releases/tag/1.2.2).
-    -   Information on features and/or fixes for the release can be found [here](https://cimug-org.github.io/cim-compare/).
+ - The latest release is available at [cim-compare-1.3.0](https://github.com/cimug-org/cim-compare/releases) with all features and/or fixes in the release described there.
+ - Beginning with the 1.3.0 release of **cim-compare** distinct JAR files corresponding to the respective release of Sparx EA are now included in the distribution (e.g. `cim-compare-1.3.0-ea15.jar` or `cim-compare-1.3.0-ea16.jar`).
 
 ## License
 

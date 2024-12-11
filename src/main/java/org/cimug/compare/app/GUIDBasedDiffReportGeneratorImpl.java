@@ -24,6 +24,7 @@ import org.cimug.compare.GeneralizationProperties;
 import org.cimug.compare.NamedTypeComparator;
 import org.cimug.compare.PackageProperties;
 import org.cimug.compare.Status;
+import org.cimug.compare.app.CIMModelComparisonGenerator.DiagramImage;
 import org.cimug.compare.logs.CompareItem;
 import org.cimug.compare.logs.ComparePackage;
 import org.cimug.compare.logs.CompareResults;
@@ -48,13 +49,19 @@ class GUIDBasedDiffReportGeneratorImpl implements DiffReportGenerator {
 	private XMIContentType targetContentType;
 
 	private PreProcessor preProcessor;
+	private File baselineImagesDir;
+	private File destinationImagesDir;
+	private DiagramImage imageType;
 	private File outputFile;
 
 	public GUIDBasedDiffReportGeneratorImpl(XMIContentType baselineContentType, XMIContentType targetContentType,
-			File outputFile) throws JAXBException {
+			File outputFile, DiagramImage imageType) throws JAXBException {
 		this.baselineContentType = baselineContentType;
 		this.targetContentType = targetContentType;
 		this.preProcessor = new PreProcessor(baselineContentType, targetContentType);
+		this.baselineImagesDir = new File(outputFile.getParent(), "Images-baseline");
+		this.destinationImagesDir = new File(outputFile.getParent(), "Images-destination");
+		this.imageType = imageType;
 		this.outputFile = outputFile;
 	}
 
@@ -322,8 +329,7 @@ class GUIDBasedDiffReportGeneratorImpl implements DiffReportGenerator {
 			}
 
 			for (Diagram targetNewDiagram : preProcessor.getTargetNewDiagramsXmiIds().values()) {
-				// Special process for a deleted child diagrams -- i.e. we only included those
-				// child diagrams that also were deleted (and not those that have been moved)...
+				// Special process for new child diagrams.
 				//
 				// NOTE: The getOwner() method returns an xmiId thus the different conditional.
 				if (aPackage.getXmiId().equals(targetNewDiagram.getOwner())) {
@@ -480,6 +486,8 @@ class GUIDBasedDiffReportGeneratorImpl implements DiffReportGenerator {
 	private CompareItem parseDiagram(Diagram aDiagram, PackageType diagramParentPackage) {
 		CompareItem theDiagram = null;
 		
+		Status diagramStatus;
+		
 		// Very first thing we do is to first determine if the diagram passed in is a
 		// deleted diagram...
 		if (preProcessor.getBaselineDeletedDiagramsXmiIds().containsKey(aDiagram.getXmiId())) {
@@ -487,18 +495,22 @@ class GUIDBasedDiffReportGeneratorImpl implements DiffReportGenerator {
 					null);
 			Properties properties = deletedDiagramProperties.getProperties();
 
+			diagramStatus = Status.BaselineOnly;
+			
 			theDiagram = new CompareItem(properties, aDiagram.getName(), "", aDiagram.getGUID(),
-					Status.BaselineOnly.toString());
+					diagramStatus.toString());
 		} else {
-			// We next determine if the diagram is a brand new one (i.e. doesn't exist in
+			// Otherwise we determine if the diagram is a brand new one (i.e. doesn't exist in
 			// the baseline)...
 			if (preProcessor.getTargetNewDiagramsXmiIds().containsKey(aDiagram.getXmiId())) {
 				DiagramProperties newDiagramProperties = new DiagramProperties(null, null, aDiagram,
 						diagramParentPackage);
 				Properties properties = newDiagramProperties.getProperties();
 
+				diagramStatus = Status.ModelOnly;
+				
 				theDiagram = new CompareItem(properties, aDiagram.getName(), "Diagram", aDiagram.getGUID(),
-						Status.ModelOnly.toString());
+						diagramStatus.toString());
 			} else {
 				Diagram baselineDiagram = (preProcessor.getBaselineDiagramsXmiIds().containsKey(aDiagram.getXmiId())
 						? preProcessor.getBaselineDiagramsXmiIds().get(aDiagram.getXmiId())
@@ -519,8 +531,6 @@ class GUIDBasedDiffReportGeneratorImpl implements DiffReportGenerator {
 				DiagramProperties diagramProperties = new DiagramProperties(baselineDiagram, baselineParentPackage,
 						targetDiagram, targetParentPackage);
 				Properties properties = diagramProperties.getProperties();
-
-				Status diagramStatus;
 
 				if (preProcessor.getBaselineMovedDiagramsXmiIds().containsKey(aDiagram.getXmiId())
 						|| preProcessor.getTargetMovedDiagramsXmiIds().containsKey(aDiagram.getXmiId())) {
@@ -633,6 +643,17 @@ class GUIDBasedDiffReportGeneratorImpl implements DiffReportGenerator {
 
 				theDiagram = new CompareItem(properties, targetDiagram.getName(), "Diagram", targetDiagram.getGUID(),
 						diagramStatus.toString());
+				
+				if (Status.Identical.equals(diagramStatus)) {
+					File baselineImageFile = new File(this.baselineImagesDir, targetDiagram.getXmiId()+ "." + imageType.ext());
+					if (baselineImageFile.delete()) {
+						System.out.println("Image file deleted: " + baselineImageFile.getAbsolutePath());
+					};
+					File destinationImageFile = new File(this.destinationImagesDir, targetDiagram.getXmiId()+ "." + imageType.ext());
+					if (destinationImageFile.delete()) {
+						System.out.println("Image file deleted: " + destinationImageFile.getAbsolutePath());
+					}
+				} 
 			}
 		}
 

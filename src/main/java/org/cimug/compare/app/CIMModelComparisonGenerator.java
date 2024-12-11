@@ -9,10 +9,13 @@ import java.io.InputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
@@ -41,16 +44,17 @@ public class CIMModelComparisonGenerator {
 	private static final String PARAM_MINIMAL = "minimal";
 	private static final String PARAM_INCLUDE_DIAGRAMS = "include-diagrams";
 	private static final String PARAM_ZIP = "zip";
+	private static final String PARAM_CLEANUP = "cleanup";
 	private static final String PARAM_IMAGE_TYPE = "image-type";
 	private static final String ANSI = "windows-1252";
 	private static final String UTF8 = "UTF-8";
 
 	private static final String XML = ".xml";
 	private static final String XMI = ".xmi";
-	private static final String EAP = ".eap";
-	private static final String EAPX = ".eapx";
 	private static final String HTM = ".htm";
 	private static final String HTML = ".html";
+	private static final Set<String> EA_PROJECT_EXT = new HashSet<String>(Arrays.asList(".eap", ".eapx", "qea", ".qeax", ".feap"));
+	private static final Set<String> HTML_EXT = new HashSet<String>(Arrays.asList(".htm", ".html"));
 	private static final String ZIP = ".zip";
 	private static final String CIM_MODEL_COMPARISON_XSLT = "CIM_Model_Comparison.xslt";
 
@@ -69,21 +73,35 @@ public class CIMModelComparisonGenerator {
 	}
 
 	static enum DiagramImage {
-		NONE(-1), EMF(0), BMP(1), GIF(2), PNG(3), JPG(4);
+		NONE(-1, null), EMF(0, "emf"), BMP(1, "bmp"), GIF(2, "gif"), PNG(3, "png"), JPG(4, "jpg");
 
 		private final int code;
+		private final String ext;
 
-		DiagramImage(int code) {
+		DiagramImage(int code, String ext) {
 			this.code = code;
+			this.ext = ext;
 		}
 
 		public int code() {
 			return code;
 		}
+		
+		public String ext() {
+			return ext;
+		}
 	}
 
 	public static void main(String[] args) {
 
+        // Set system properties for XPath limits. By setting to 0 we remove
+		// the default "ceilings" which was previously causing cim-compare to 
+		// crash at runtime.
+        System.setProperty("jdk.xml.xpathExprGrpLimit", "0");
+        System.setProperty("jdk.xml.xpathExprOpLimit", "0");
+        System.setProperty("jdk.xml.xpathTotalOpLimit", "0");
+        
+		
 		Map<String, String> options = parseCommandLineOptions(args);
 
 		File[] fileArgs = parseFileArguments(args, options);
@@ -127,7 +145,6 @@ public class CIMModelComparisonGenerator {
 			 * has a value associated with it and which must be processed accordingly.
 			 */
 			for (String paramName : options.keySet()) {
-
 				transformer.setParameter(paramName, options.get(paramName));
 			}
 
@@ -136,7 +153,7 @@ public class CIMModelComparisonGenerator {
 				 * Behind the scenes we set a default image type. will be overridden if one is
 				 * explicitly specified on the command line
 				 */
-				transformer.setParameter(PARAM_IMAGE_TYPE, DiagramImage.JPG.name());
+				transformer.setParameter(PARAM_IMAGE_TYPE, DiagramImage.JPG.ext());
 			}
 
 			transformer.setParameter(PARAM_INCLUDE_DIAGRAMS, options.containsKey(PARAM_INCLUDE_DIAGRAMS));
@@ -144,15 +161,28 @@ public class CIMModelComparisonGenerator {
 			DOMSource source = new DOMSource(document);
 
 			StreamResult result = null;
-			if (comparisonHTMLFile != null) {
-				FileOutputStream fos = new FileOutputStream(comparisonHTMLFile);
-				Writer writer = new BufferedWriter(new OutputStreamWriter(fos, StandardCharsets.UTF_8));
-				result = new StreamResult(writer);
-			} else {
-				result = new StreamResult(System.out);
+			FileOutputStream fos = null;
+			Writer writer = null;
+			OutputStreamWriter osw = null;
+			try {
+				if (comparisonHTMLFile != null) {
+					fos = new FileOutputStream(comparisonHTMLFile);
+					osw = new OutputStreamWriter(fos, StandardCharsets.UTF_8);
+					writer = new BufferedWriter(osw);
+					result = new StreamResult(writer);
+				} else {
+					result = new StreamResult(System.out);
+				}
+				
+				transformer.transform(source, result);
+			} finally {
+				if (writer != null)
+					writer.close();
+				if (osw != null)
+					osw.close();
+				if (fos != null)
+					fos.close();
 			}
-
-			transformer.transform(source, result);
 
 			System.out.println(
 					"\nCIM model comparison report successfully generated:  \n" + comparisonHTMLFile.getAbsolutePath());
@@ -210,13 +240,15 @@ public class CIMModelComparisonGenerator {
 					case PARAM_MINIMAL:
 					case PARAM_INCLUDE_DIAGRAMS:
 					case PARAM_ZIP:
-						value = Boolean.TRUE.toString(); // All three must have to a default value of "true"...
+					case PARAM_CLEANUP:
+						value = Boolean.TRUE.toString(); // All four must have to a default value of "true"...
 						break;
 					case PARAM_IMAGE_TYPE:
 						if ((value != null) && (!"".equals(value))) {
 							try {
-								value = value.toUpperCase();
-								DiagramImage.valueOf(value);
+								DiagramImage.valueOf(value.toUpperCase());
+								// extensions on images must be lower case...
+								value = value.toLowerCase(); 
 							} catch (Exception e) {
 								String validValues = "";
 
@@ -257,10 +289,28 @@ public class CIMModelComparisonGenerator {
 			 * image type of 'JPG' is used if no image-type is explicitly specified on the
 			 * command line.
 			 */
-			options.put(PARAM_IMAGE_TYPE, DiagramImage.JPG.name());
+			options.put(PARAM_IMAGE_TYPE, DiagramImage.JPG.ext());
 		}
 
 		return options;
+	}
+	
+	private static boolean isProjectFile(File file) {
+		for (String ext : EA_PROJECT_EXT) {
+			if (file.getName().toLowerCase().endsWith(ext)) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	private static boolean isHTMLFile(File file) {
+		for (String ext : HTML_EXT) {
+			if (file.getName().toLowerCase().endsWith(ext)) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	private static File[] parseFileArguments(String[] args, Map<String, String> options) {
@@ -292,7 +342,7 @@ public class CIMModelComparisonGenerator {
 			// This is because when an explicit HTML file is specified (as opposed to a
 			// target output directory) the file is not assumed to exist yet...
 			isValid = isValid
-					&& (!(arg.getName().toLowerCase().endsWith(HTML) || arg.getName().toLowerCase().endsWith(HTM))
+					&& (!isHTMLFile(arg)
 							? arg.exists()
 							: true);
 		}
@@ -325,12 +375,8 @@ public class CIMModelComparisonGenerator {
 				|| //
 				(arguments.length > 2 && ((!((arguments[0].getName().toLowerCase().endsWith(XMI)
 						&& arguments[1].getName().toLowerCase().endsWith(XMI))
-						|| ((arguments[0].getName().toLowerCase().endsWith(EAP)
-								|| arguments[0].getName().toLowerCase().endsWith(EAPX))
-								&& (arguments[1].getName().toLowerCase().endsWith(EAP)
-										|| arguments[1].getName().toLowerCase().endsWith(EAPX))))) //
-						|| (!arguments[2].isDirectory() && !arguments[2].getName().toLowerCase().endsWith(HTML)
-								&& !arguments[2].getName().toLowerCase().endsWith(HTM))))) {
+						|| (isProjectFile(arguments[0]) && isProjectFile(arguments[1])))) //
+						|| (!arguments[2].isDirectory() && !isHTMLFile(arguments[2]))))) {
 			System.err.print("ERROR:  Invalid command line usage. ");
 			if (arguments.length == 1) {
 				System.err.print(
@@ -413,18 +459,17 @@ public class CIMModelComparisonGenerator {
 
 			/**
 			 * We've determined above the modelComparisonXMLFile & targetOutputHTMLFiles and
-			 * now transition to testing if the input files are .EAP files which require the
+			 * now transition to testing if the input files are EA Project files which require the
 			 * additional step of first exporting the baseline and target XMI files before
 			 * executing a call to the DiffXMLGenerator.
 			 */
-			if (arguments[0].getName().toLowerCase().endsWith(EAP)
-					|| arguments[0].getName().toLowerCase().endsWith(EAPX)) {
+			if (isProjectFile(arguments[0])) {
 
 				DiagramXML diagramXML = (options.containsKey(PARAM_INCLUDE_DIAGRAMS) ? DiagramXML.EXPORT_WITHOUT_IMAGES
 						: DiagramXML.NO_EXPORT);
 
 				DiagramImage diagramImage = (options.containsKey(PARAM_IMAGE_TYPE)
-						? DiagramImage.valueOf(options.get(PARAM_IMAGE_TYPE))
+						? DiagramImage.valueOf(options.get(PARAM_IMAGE_TYPE).toUpperCase())
 						: DiagramImage.NONE);
 
 				String thePackageName = (options.containsKey(PARAM_PACKAGE) ? options.get(PARAM_PACKAGE) : null);
@@ -436,15 +481,15 @@ public class CIMModelComparisonGenerator {
 				for (int index = 0; index < 2; index++) {
 
 					Repository repository = null;
-					boolean eapFailed = false;
+					boolean eaProjectFailed = false;
 
 					try {
-						String eapFile = arguments[index].getAbsolutePath();
-						String eapFileName = arguments[index].getName().substring(0,
+						String eaProjectFile = arguments[index].getAbsolutePath();
+						String eaProjectFileName = arguments[index].getName().substring(0,
 								arguments[index].getName().lastIndexOf("."));
 
 						repository = new Repository();
-						repository.OpenFile(eapFile);
+						repository.OpenFile(eaProjectFile);
 
 						Collection<Package> packages = repository.GetModels();
 
@@ -464,7 +509,7 @@ public class CIMModelComparisonGenerator {
 							}
 						}
 
-						File xmiExportFile = new File(outputDir, eapFileName + XMI);
+						File xmiExportFile = new File(outputDir, eaProjectFileName + XMI);
 
 						if (index == 0) {
 							baselineXmiFile = xmiExportFile.getAbsolutePath();
@@ -495,7 +540,7 @@ public class CIMModelComparisonGenerator {
 						System.out.println("\n" + (index == 0 ? "Baseline" : "Destination")
 								+ " model XMI export completed successfully:  \n" + xmiExportFile.getAbsolutePath());
 					} catch (Exception e) {
-						eapFailed = true;
+						eaProjectFailed = true;
 						e.printStackTrace();
 					} finally {
 						// We must explicitly make a GC call. This is due to a limitation in EA's Java
@@ -512,9 +557,9 @@ public class CIMModelComparisonGenerator {
 						}
 
 						// If an exception occurred we want to exit processing...
-						if (eapFailed) {
+						if (eaProjectFailed) {
 							System.err.println(
-									"ERROR:  Terminating EA .eap XMI export processing due to an unexpected exception.");
+									"ERROR:  Terminating XMI export processing for EA project file [" + arguments[index].getName() + "] due to an unexpected exception.");
 							System.err.println();
 							System.exit(1);
 						}
@@ -529,7 +574,7 @@ public class CIMModelComparisonGenerator {
 			}
 
 			DiffXMLGenerator.main(
-					new String[] { baselineXmiFile, destinationXmiFile, modelComparisonXMLFile.getAbsolutePath() });
+					new String[] { baselineXmiFile, destinationXmiFile, modelComparisonXMLFile.getAbsolutePath(), (options.containsKey(PARAM_IMAGE_TYPE) ? options.get(PARAM_IMAGE_TYPE) : DiagramImage.JPG.name())});
 
 			System.out.println("\nCompare Log XML report generated:  \n" + modelComparisonXMLFile.getAbsolutePath());
 		} else {
@@ -632,12 +677,13 @@ public class CIMModelComparisonGenerator {
 
 			zipFile(comparisonHTMLFile, comparisonHTMLFile.getName(), zipOut);
 
-			if (options.containsKey(PARAM_INCLUDE_DIAGRAMS) && baselineImagesDir.exists()) {
-				zipFile(baselineImagesDir, baselineImagesDir.getName(), zipOut);
-			}
-
-			if (options.containsKey(PARAM_INCLUDE_DIAGRAMS) && destinationImagesDir.exists()) {
-				zipFile(destinationImagesDir, destinationImagesDir.getName(), zipOut);
+			if (options.containsKey(PARAM_INCLUDE_DIAGRAMS)) {
+				if (baselineImagesDir.exists()) {
+					zipFile(baselineImagesDir, baselineImagesDir.getName(), zipOut);
+				}
+				if (destinationImagesDir.exists()) {
+					zipFile(destinationImagesDir, destinationImagesDir.getName(), zipOut);
+				}
 			}
 
 			/**
@@ -651,10 +697,33 @@ public class CIMModelComparisonGenerator {
 			 */
 			zipOut.close();
 			fos.close();
+			if (options.containsKey(PARAM_CLEANUP)) {
+				deleteDirectory(baselineImagesDir);
+				deleteDirectory(destinationImagesDir);
+				baselineXmiFile.delete();
+				destinationXmiFile.delete();
+				compareLogXMLFile.delete();
+				comparisonHTMLFile.delete();
+			}
 		}
 
 		return zipFile;
 	}
+	
+	private static void deleteDirectory(File directory) {
+        if (directory.isDirectory()) {
+            // Get all files and directories in the current directory
+            File[] files = directory.listFiles();
+            if (files != null) {
+                for (File file : files) {
+                    // Recursively delete each file/directory
+                    deleteDirectory(file);
+                }
+            }
+        }
+        // Delete the current directory or file
+        directory.delete();
+    }
 
 	private static void zipFile(File fileToZip, String fileName, ZipOutputStream zipOut) throws IOException {
 		if (fileToZip.isHidden()) {
@@ -699,7 +768,7 @@ public class CIMModelComparisonGenerator {
 		System.err.println(
 				"To generate an HTML report using the results file (*.xml) of an Enterprise Architect model comparison use the command line option.");
 		System.err.println(
-				"   Usage: java -jar cim-compare.jar <comparison-results-xml-file> [<output-directory-or-html-file>] [--package=<iec-package-name>] [--minimal] [--include-diagrams] [--image-type=<image-files-extension>] [--zip]");
+				"   Usage: java -jar cim-compare.jar <comparison-results-xml-file> [<output-directory-or-html-file>] [--package=<iec-package-name>] [--minimal] [--include-diagrams] [--image-type=<image-files-extension>] [--zip] [--cleanup]");
 		System.err.println();
 		System.err.println("   Examples: ");
 		System.err.println(
@@ -717,6 +786,8 @@ public class CIMModelComparisonGenerator {
 				"          java -jar cim-compare.jar CIM15v33_CIM16v26a_EA_Comparison_Report.xml --package=IEC61970");
 		System.err.println(
 				"          java -jar cim-compare.jar CIM15v33_CIM16v26a_EA_Comparison_Report.xml --package=IEC61970 --include-diagrams --image-type=GIF --zip");
+		System.err.println(
+				"          java -jar cim-compare.jar CIM15v33_CIM16v26a_EA_Comparison_Report.xml --package=IEC61970 --include-diagrams --image-type=GIF --zip --cleanup");
 		System.err.println();
 		/**
 		 * XMI files as input...
@@ -724,7 +795,7 @@ public class CIMModelComparisonGenerator {
 		System.err.println(
 				"To generate a model comparison report directly from baseline and target models (XMI files) use the command line option.");
 		System.err.println(
-				"   Usage: java -jar cim-compare.jar <baseline-model-xmi-file> <target-model-xmi-file> [<output-directory-or-html-file>] [--package=<iec-package-name>]  [--minimal] [--include-diagrams] [--image-type=<image-files-extension>] [--zip]");
+				"   Usage: java -jar cim-compare.jar <baseline-model-xmi-file> <target-model-xmi-file> [<output-directory-or-html-file>] [--package=<iec-package-name>] [--minimal] [--include-diagrams] [--image-type=<image-files-extension>] [--zip] [--cleanup]");
 		System.err.println();
 		System.err.println("   Examples: ");
 		System.err.println(
@@ -741,6 +812,8 @@ public class CIMModelComparisonGenerator {
 				"          java -jar cim-compare.jar CIM15v33.xmi CIM16v26a.xmi CIM15v33_CIM16v26a_ComparisonReport.html --minimal");
 		System.err.println(
 				"          java -jar cim-compare.jar CIM15v33.xmi CIM16v26a.xmi --package=IEC62325 --minimal --include-diagrams --image-type=JPG --zip");
+		System.err.println(
+				"          java -jar cim-compare.jar CIM15v33.xmi CIM16v26a.xmi --package=IEC62325 --minimal --include-diagrams --image-type=JPG --zip --cleanup");
 		System.err.println();
 		/**
 		 * EAP files as input...
@@ -748,7 +821,7 @@ public class CIMModelComparisonGenerator {
 		System.err.println(
 				"To generate a model comparison report directly from Sparx Enterprise Architect baseline and target models (.eap files) use the command line option.");
 		System.err.println(
-				"   Usage: java -jar cim-compare.jar <baseline-model-eap-file> <target-model-eap-file> [<output-directory-or-html-file>] [--package=<iec-package-name>] [--minimal] [--include-diagrams] [--image-type=<image-files-extension>] [--zip]");
+				"   Usage: java -jar cim-compare.jar <baseline-model-eap-file> <target-model-eap-file> [<output-directory-or-html-file>] [--package=<iec-package-name>] [--minimal] [--include-diagrams] [--image-type=<image-files-extension>] [--zip] [--cleanup]");
 		System.err.println();
 		System.err.println("   Examples: ");
 		System.err.println(
@@ -758,13 +831,17 @@ public class CIMModelComparisonGenerator {
 		System.err.println(
 				"          java -jar cim-compare.jar CIM15v33.eap CIM16v26a.eap \"C:\\Comparison Reports\\CIM15v33_CIM16v26a_ComparisonReport.html\"");
 		System.err.println(
-				"          java -jar cim-compare.jar CIM15v33.eap CIM16v26a.eap CIM15v33_CIM16v26a_ComparisonReport.html");
+				"          java -jar cim-compare.jar CIM15v33.qea CIM16v26a.qea CIM15v33_CIM16v26a_ComparisonReport.html");
 		System.err.println(
 				"          java -jar cim-compare.jar CIM15v33.eap CIM16v26a.eap CIM15v33_CIM16v26a_ComparisonReport.html --package=IEC62325");
 		System.err.println(
 				"          java -jar cim-compare.jar CIM15v33.eapx CIM16v26a.eapx CIM15v33_CIM16v26a_ComparisonReport.html --minimal");
 		System.err.println(
 				"          java -jar cim-compare.jar CIM15v33.eap CIM16v26a.xmi --package=IEC62325 --include-diagrams --image-type=JPG --minimal");
+		System.err.println(
+				"          java -jar cim-compare.jar CIM15v33.eap CIM16v26a.xmi --package=IEC62325 --include-diagrams --image-type=JPG --minimal --zip");		
+		System.err.println(
+				"          java -jar cim-compare.jar CIM15v33.eap CIM16v26a.xmi --package=IEC62325 --include-diagrams --image-type=JPG --minimal --zip --cleanup");			
 		System.err.println();
 	}
 }

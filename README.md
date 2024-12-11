@@ -38,14 +38,14 @@ The preferred usage is to provide two Enterprise Architect `*.eap` or `*.qea` fi
 The command-line usage for this option takes the following form:
 
 ```
-java -jar cim-compare-1.3.0.jar <baseline-model-eap-file> <destination-model-eap-file> [<output-directory-or-html-file>] [--package=<package-name>] [--minimal] [--include-diagrams] [--image-type=<image-file-extension>] [--zip]
+java -jar cim-compare-1.3.0.jar <baseline-model-file> <destination-model-file> [<output-directory-or-html-file>] [--package=<package-name>] [--minimal] [--include-diagrams] [--image-type=<image-file-extension>] [--zip]
 ```
 
 *Parameter Details*:
 
-**\<baseline-model-eap-file\>** (**Required**): An Enterprise Architect baseline .eap model file. When not specified as an absolute file path the location is assumed to be the directory **cim-compare** is being executed from.
+**\<baseline-model-file\>** (**Required**): An Enterprise Architect baseline .eap or .qea model file. When not specified as an absolute file path the location is assumed to be the directory **cim-compare** is being executed from.
 
-**\<destination-model-eap-file\>** (**Required**): An Enterprise Architect destination .eap model file. When not specified as an absolute file path the location is assumed to be the directory **cim-compare** is being executed from.
+**\<destination-model-file\>** (**Required**): An Enterprise Architect destination .eap or .qea model file. When not specified as an absolute file path the location is assumed to be the directory **cim-compare** is being executed from.
 
 **[\<output-directory-or-html-file\>] (Optional)**: An output directory or an output HTML file. In the case where a directory is specified but does not exist it will be created. The same is true for the parent directory of a specified HTML file if it does not exist. When an HTML file is provided it may be specified as an absolute file path or as the simple name of an HTML file to be generated. If this command line option is not specified then **cim-compare** will generate an HTML file whose name is derived from the two input files.
 

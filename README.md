@@ -59,7 +59,7 @@ java -jar cim-compare-1.3.0.jar <baseline-model-file> <destination-model-file> [
 
 **[--zip] (Optional):** When specified **cim-compare** will package up the generated report and any associated diagrams into a single ZIP archive. It is most often utilized for packaging the report when diagram images are included and can help simplify distribution.
 
-**[--cleanup] (Optional):** When specified **cim-compare** will delete all artifacts and directories created during report generation except for the `*.zip` archive. This command line option is only relevant when --zip also appears on the command line.
+**[--cleanup] (Optional):** When specified **cim-compare** will delete all artifacts and directories created during report generation except for the ZIP archive. This command line option is only relevant when --zip also appears on the command line.
 
 Note that in the following command line examples whenever a directory or file path contains spaces it is specified within quotes.
 
@@ -144,7 +144,7 @@ java -jar cim-compare-1.3.0.jar <baseline-model-xmi-file> <destination-model-xmi
 
 **[--zip] (Optional):** When specified **cim-compare** will package up the generated report and any associated diagrams into a single ZIP archive. It is most often utilized for packaging the report when diagram images are included and can help simplify distribution.
 
-**[--cleanup] (Optional):** When specified **cim-compare** will delete all artifacts and directories created during report generation except for the `*.zip` archive. This command line option is only relevant when --zip also appears on the command line.
+**[--cleanup] (Optional):** When specified **cim-compare** will delete all artifacts and directories created during report generation except for the ZIP archive. This command line option is only relevant when --zip also appears on the command line.
 
 Note that in the following command line examples whenever a directory or file path contains spaces it is specified within quotes.
 
@@ -180,7 +180,7 @@ java -jar cim-compare-1.3.0.jar <comparison-results-xml-file> [<output-directory
 
 **[--zip] (Optional):** When specified **cim-compare** will package up the generated report into a single ZIP archive. Note that since this option \#3 does not support diagram comparisons only the report itself will be included in the archive.
 
-**[--cleanup] (Optional):** When specified **cim-compare** will delete all artifacts and directories created during report generation except for the `*.zip` archive. This command line option is only relevant when --zip also appears on the command line.
+**[--cleanup] (Optional):** When specified **cim-compare** will delete all artifacts and directories created during report generation except for the ZIP archive. This command line option is only relevant when --zip also appears on the command line.
 
 Again, in the following command line examples, directory or file paths containing spaces are specified within quotes.
 

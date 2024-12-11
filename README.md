@@ -61,19 +61,21 @@ java -jar cim-compare-1.3.0.jar <baseline-model-file> <destination-model-file> [
 
 **[--cleanup] (Optional):** When specified **cim-compare** will delete all artifacts and directories created during report generation except for the `*.zip` archive. This command line option is only relevant when --zip also appears on the command line.
 
-Note that in the following command line examples whenever a directory or file path contains spaces it is specified within quotes.
+Notice that in the following command line examples where a directory or file path contains spaces it is specified within quotes.
 
 | **Command Line Examples:**                                                                               |
 |----------------------------------------------------------------------------------------------------------|
-| java -jar **cim-compare-1.3.0.jar** "C:\\exports\\15v33.eap" "C:\\exports\\CIM16v26a.eap" "C:\\" |
-| java -jar **cim-compare-1.3.0.jar** "C:\\exports\\15v33.qea" "C:\\exports\\CIM16v26a.qea" "C:\\" |
-| java -jar **cim-compare-1.3.0.jar** "C:\\exports\\15v33.eap" "C:\\exports\\CIM16v26a.eap" --package=IEC61970 --minimal |
-| java -jar **cim-compare-1.3.0.jar** CIM15v33.eap CIM16v26a.eap C:\\ --minimal  |
-| java -jar **cim-compare-1.3.0.jar** CIM15v33.eap CIM16v26a.eap C:\\ --minimal --include-diagrams --zip |
-| java -jar **cim-compare-1.3.0.jar** CIM15v33.eap CIM16v26a.eap C:\\CIM15v33_CIM16v26a_ComparisonReport.html |
-| java -jar **cim-compare-1.3.0.jar** CIM15v33.eapx CIM16v26a.eapx CIM15v33_CIM16v26a_ComparisonReport.html --minimal |
-| java -jar **cim-compare-1.3.0.jar** CIM15v33.eap CIM16v26a.eap --package=IEC62325 --minimal --include-diagrams --image-type=GIF --zip --cleanup |
-| java -jar **cim-compare-1.3.0.jar** CIM15v33.qea CIM16v26a.qea --package=Grid --minimal --include-diagrams --image-type=GIF --zip --cleanup |
+| java -jar **cim-compare-1.3.0-ea15.jar** "C:\\exports\\15v33.eap" "C:\\exports\\CIM16v26a.eap" "C:\\" |
+| java -jar **cim-compare-1.3.0-ea16.jar** "C:\\exports\\15v33.qea" "C:\\exports\\CIM16v26a.qea" "C:\\" |
+| java -jar **cim-compare-1.3.0-ea15.jar** "C:\\exports\\15v33.eap" "C:\\exports\\CIM16v26a.eap" --package=IEC61970 --minimal |
+| java -jar **cim-compare-1.3.0-ea15.jar** CIM15v33.eap CIM16v26a.eap C:\\ --minimal  |
+| java -jar **cim-compare-1.3.0-ea15.jar** CIM15v33.eap CIM16v26a.eap C:\\ --minimal --include-diagrams --zip |
+| java -jar **cim-compare-1.3.0-ea16.jar** CIM15v33.qea CIM16v26a.qea C:\\CIM15v33_CIM16v26a_ComparisonReport.html |
+| java -jar **cim-compare-1.3.0-ea15.jar** CIM15v33.eapx CIM16v26a.eapx CIM15v33_CIM16v26a_ComparisonReport.html --minimal |
+| java -jar **cim-compare-1.3.0-ea15.jar** CIM15v33.eap CIM16v26a.eap --package=IEC62325 --minimal --include-diagrams --image-type=GIF --zip --cleanup |
+| java -jar **cim-compare-1.3.0-ea17.jar** CIM15v33.qea CIM16v26a.qea --package=Grid --minimal --include-diagrams --image-type=GIF --zip --cleanup |
+
+NOTE:  the above command line examples illustrate the use of specific distributions of the *cim-compare** `.jar` file. Theassumption is that the system where executed would have the corresponding release of Sparx EA installed.
 
 #### IMPORTANT:
 

@@ -59,8 +59,8 @@ class GUIDBasedDiffReportGeneratorImpl implements DiffReportGenerator {
 		this.baselineContentType = baselineContentType;
 		this.targetContentType = targetContentType;
 		this.preProcessor = new PreProcessor(baselineContentType, targetContentType);
-		this.baselineImagesDir = new File(outputFile, "Images-baseline");
-		this.destinationImagesDir = new File(outputFile, "Images-destination");
+		this.baselineImagesDir = new File(outputFile.getParent(), "Images-baseline");
+		this.destinationImagesDir = new File(outputFile.getParent(), "Images-destination");
 		this.imageType = imageType;
 		this.outputFile = outputFile;
 	}
@@ -645,12 +645,16 @@ class GUIDBasedDiffReportGeneratorImpl implements DiffReportGenerator {
 						diagramStatus.toString());
 				
 				if (Status.Identical.equals(diagramStatus)) {
-					new File(this.baselineImagesDir, targetDiagram.getGUID()+ "." + imageType.ext()).delete();
-					new File(this.destinationImagesDir, targetDiagram.getGUID()+ "." + imageType.ext()).delete();
+					File baselineImageFile = new File(this.baselineImagesDir, targetDiagram.getXmiId()+ "." + imageType.ext());
+					if (baselineImageFile.delete()) {
+						System.out.println("Image file deleted: " + baselineImageFile.getAbsolutePath());
+					};
+					File destinationImageFile = new File(this.destinationImagesDir, targetDiagram.getXmiId()+ "." + imageType.ext());
+					if (destinationImageFile.delete()) {
+						System.out.println("Image file deleted: " + destinationImageFile.getAbsolutePath());
+					}
 				} 
 			}
-			
-			System.out.println("Diagram status:  " + diagramStatus);
 		}
 
 		return theDiagram;

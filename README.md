@@ -79,14 +79,14 @@ Note that in the following command line examples whenever a directory or file pa
 
 > This **cim-compare** feature for processing Enterprise Architect `*.eap` or `*.qea` files directly requires EA's COM automation API. Consequently, if you plan to use it you are required to have a licensed version of Sparx Enterprise Architect (EA) installed for the COM automation API to work. The EA API and the `eaapi.jar` file act as interfaces to the Enterprise Architect application. The following explains why:
 > 
-> 1. Dependency on the Sparx Enterprise Architect Application:
+> - Dependency on the Sparx Enterprise Architect Application:
 >    - The EA COM API and `eaapi.jar` rely on the backend functionality of the Enterprise Architect software. They act as a bridge to interact with > the models, diagrams, and repositories managed by EA.
 >    - Without the Enterprise Architect application installed, there is no core functionality or data source for the API to connect to.
-> 2. Enterprise Architect COM Object:
+> - Enterprise Architect COM Object:
 >    - The `SSJavaCOM64.dll` is a COM interface wrapper that requires Enterprise Architect's COM objects to function. These COM objects are installed as part of the Enterprise Architect installation process.
-> 3. Licensing Requirements:
+> - Licensing Requirements:
 >    - Sparx Enterprise Architect is a licensed product, and the API requires a valid license to access its features. Without a licensed installation of Enterprise Architect, the API calls will fail or be severely limited.
-> 4. Runtime Dependency:
+> - Runtime Dependency:
 >    - When using the COM automation interface, **cim-compare** initializes and communicates with an EA process. The underlying API calls interact with the installed Enterprise Architect software to perform operations like exporting `.xmi` files from an `.eap` or `.qea` file.
 >    
 > Recommendations:

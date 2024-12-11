@@ -261,6 +261,17 @@
                         font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
                         /* font-family: arial, sans-serif; */
                     }
+
+                    /* styles needed when comparing notes and description changes */                    
+					.added {
+						background-color: #d4f8d4; /* Light green for added text */
+						color: green;
+					}
+					.removed {
+						background-color: #f8d4d4; /* Light red for removed text */
+						color: red;
+						text-decoration: line-through;
+					}
                     
                     /* ================================================ */
                     /* START::SEARCH NAVBAR */
@@ -729,50 +740,9 @@
 
             </head>
             <body>
+				<!-- Add the diff library -->
+			    <script src="https://cdnjs.cloudflare.com/ajax/libs/jsdiff/7.0.0/diff.min.js"></script>
     	    	<script><xsl:text disable-output-escaping="yes"><![CDATA[
-                
-                    // 
-                    // The following JS funtion is borrowed from the following stack overflow post:
-                    // https://stackoverflow.com/questions/38037163/how-to-highlight-the-difference-of-two-texts-with-css/38037538
-                    //
-                    
-                    highlightChanges = function(str, compareStr){
-                        var strlength = str.length > compareStr.length ? compareStr.length : str.length;
-                        var allStr = document.createElement("span");
-                        var hl = null;
-                        var nohl = null;
-                        for(i = 0; i < strlength ; i++){
-                            if(str.charAt(i) != compareStr.charAt(i)){
-                                if(nohl != null){
-                                    allStr.appendChild(nohl);
-                                    nohl = null;
-                                }
-                                if(hl != null) hl.innerHTML += str.charAt(i);
-                                else{
-                                    hl = document.createElement("span");
-                                    hl.classList.add("highlighted");
-                                    hl.innerHTML = str.charAt(i);
-                                }
-                            } else {
-                                if(hl != null){
-                                    allStr.appendChild(hl);
-                                    hl = null;
-                                }
-                                if(nohl != null) nohl.innerHTML += str.charAt(i);
-                                else{
-                                    nohl = document.createElement("span");
-                                    nohl.innerHTML = str.charAt(i);
-                                }
-                            }
-                            if(hl != null){
-                                allStr.appendChild(hl);
-                            } else if (nohl != null){
-                                allStr.appendChild(nohl);
-                            }
-                        }
-                        return allStr;
-                    }
-
                     function executeSearch() {
                         var searchLink = document.getElementById('search-link');
                         var searchClassField = document.getElementById('search-class-field');
@@ -862,7 +832,69 @@
                         radioButton.checked = true;
                         autoExpand(radioButton.getAttribute('parentCollapsibleId'));
                       }
-                    }]]></xsl:text>
+                    }
+                    
+                	document.addEventListener("DOMContentLoaded", () => {
+					const attributeTables = document.querySelectorAll("table#attributes");
+
+					attributeTables.forEach(attributeTable => {
+						// Find the second row in the attribute table
+						const attributeRows = attributeTable.querySelectorAll("tr");
+						if (attributeRows) {
+							attributeRows.forEach(attributeRow => {
+								// Extract cells for Baseline and Destination attribute notes
+								const baselineText = attributeRow.cells[4]?.innerText.trim();
+								const destinationText = attributeRow.cells[9]?.innerText.trim();
+							
+								if (baselineText && destinationText) {
+									const diff = Diff.diffWords(baselineText, destinationText);
+
+									// Create a highlighted diff HTML string
+									const highlightedDiff = diff.map(part => {
+										if (part.added) {
+											return `<span class="added">${part.value}</span>`;
+										} else if (part.removed) {
+											return `<span class="removed">${part.value}</span>`;
+										} else {
+											return part.value; // Unchanged text
+										}
+									}).join("");
+
+									// Update destination column with the highlighted diff
+									attributeRow.cells[9].innerHTML = highlightedDiff;
+								}
+                        	})
+						}	
+					});
+				
+					const propertiesTables = document.querySelectorAll("table#properties");
+					propertiesTables.forEach(propertiesTable => {
+						// Find the second row in the metadata table
+						const rows = propertiesTable.querySelectorAll("tr:has(th.changed)");
+					
+						rows.forEach(row => {
+							const originalText = row.cells[1]?.innerText.trim();
+							const modifiedText = row.cells[2]?.innerText.trim();
+							if (originalText && modifiedText) {
+								const diff = Diff.diffWords(originalText, modifiedText);
+
+								// Create a highlighted diff HTML string
+								const highlightedDiff = diff.map(part => {
+									if (part.added) {
+										return `<span class="added">${part.value}</span>`;
+									} else if (part.removed) {
+										return `<span class="removed">${part.value}</span>`;
+									} else {
+										return part.value; // Unchanged text
+									}
+								}).join("");
+
+								// Update destination column with the highlighted diff
+								row.cells[2].innerHTML = highlightedDiff;
+							}
+						})
+					});
+				})]]></xsl:text>
                 </script>
                 <p>
                   <div class="topnav">
@@ -1736,8 +1768,8 @@
                     <xsl:when test="@status='Changed'">
                         <tr valign="top">
                             <th class="changed" style="background-color:{$color}"><p class="changed" style="font-weight:bold"><xsl:value-of select="@name"/></p></th>
-                            <td><p><xsl:value-of select="@baseline"/></p></td>
-                            <td><p><xsl:value-of select="@model"/></p></td>
+                            <td><p id="baseline-note"><xsl:value-of select="@baseline"/></p></td>
+                            <td><p id="destination-note"><xsl:value-of select="@model"/></p></td>
                         </tr>
                     </xsl:when>
                 </xsl:choose>

@@ -13,9 +13,9 @@ import org.cimug.compare.xmi1_1.XMI;
 class DiffXMLGenerator {
 
 	public static void main(String[] args) {
-		if (args.length >= 3 && args.length <= 4) {
+		if (args.length < 3 || args.length > 4) {
 			System.err.println("Usage: java " + DiffXMLGenerator.class.getSimpleName()
-					+ " <baseline-model-file> <target-model-file> <output-comparison-file> [<images-type>]");
+					+ " <baseline-model-file> <target-model-file> <output-comparison-file> [<image-type>]");
 			System.err.println();
 			System.exit(1);
 		}
@@ -26,7 +26,7 @@ class DiffXMLGenerator {
 		
 		DiagramImage imageType = null;
 		if (args.length == 4) {
-			imageType = DiagramImage.valueOf(args[3]);
+			imageType = DiagramImage.valueOf(args[3].toUpperCase());
 		}
 
 		try {

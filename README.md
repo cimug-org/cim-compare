@@ -23,7 +23,7 @@ As illustrated next, UML diagrams that have been added, removed or modified can 
 
 ![](media/UML_Comparison.png)
 
-Finally, for easier identification of changes to class and attribute descriptions, diffs are now visualized as shown in the next screenshot.
+For ease of identification, changes to class and attribute descriptions are visualized as shown.
 
 ![](media/Text_Diff_Visualization.png)
 

@@ -75,7 +75,7 @@ Notice that in the following command line examples where a directory or file pat
 | java -jar **cim-compare-1.3.0-ea15.jar** CIM15v33.eap CIM16v26a.eap --package=IEC62325 --minimal --include-diagrams --image-type=GIF --zip --cleanup |
 | java -jar **cim-compare-1.3.0-ea17.jar** CIM15v33.qea CIM16v26a.qea --package=Grid --minimal --include-diagrams --image-type=GIF --zip --cleanup |
 
-NOTE:  the above command line examples illustrate the use of specific distributions of the *cim-compare** `.jar` file. Theassumption is that the system where executed would have the corresponding release of Sparx EA installed.
+NOTE:  the above command line examples illustrate the use of specific distributions of the `cim-compare-1.3.0-eaxx.jar` file. Theassumption is that the system where executed would have the corresponding release of Sparx EA installed.
 
 #### IMPORTANT:
 
@@ -250,7 +250,7 @@ java <span style="color:red">-mx1024m</span> -jar **cim-compare-1.3.0.jar** iec6
 
 > For 64 bit JREs it is recommended that the maximum heap size be increased to at least 2G (i.e. 2048m) but more if available. It has been observed that 2G is minimally sufficient to handle larger CIM models one might encounter. In the below example 3G is being allocated.
 
-java <span style="color:red">-mx3072m</span> -jar **cim-compare-1.3.0.jar** iec61970cim16v26a.xmi iec61970cim17v16.xmi D:\\reports
+java <span style="color:red">-mx3072m</span> -jar **cim-compare-1.3.0-ea16.jar** iec61970cim16v26a.qea iec61970cim17v16.qea D:\\reports
 
 
 ## Latest Release
@@ -258,7 +258,7 @@ java <span style="color:red">-mx3072m</span> -jar **cim-compare-1.3.0.jar** iec6
 1.3.0  
 
  - The latest release is available at [cim-compare-1.3.0](https://github.com/cimug-org/cim-compare/releases) with all features and/or fixes in the release described there.
- - Beginning with the 1.3.0 release of **cim-compare** distinct JAR files corresponding to the respective release of Sparx EA are now included in the distribution (e.g. `cim-compare-1.3.0-ea15.jar` or `cim-compare-1.3.0-ea16.jar`).
+ - Beginning with the 1.3.0 release of **cim-compare** distinct JAR files corresponding to the respective release of Sparx EA are now included in the distribution (e.g. `cim-compare-1.3.0-ea15.jar`, `cim-compare-1.3.0-ea16.jar`, or `cim-compare-1.3.0-ea17.jar or `).
 
 ## License
 

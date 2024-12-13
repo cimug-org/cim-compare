@@ -241,7 +241,7 @@ public class CIMModelComparisonGenerator {
 					case PARAM_INCLUDE_DIAGRAMS:
 					case PARAM_ZIP:
 					case PARAM_CLEANUP:
-						value = Boolean.TRUE.toString(); // All four must have to a default value of "true"...
+						value = Boolean.TRUE.toString(); // All four must have a default value of "true"...
 						break;
 					case PARAM_IMAGE_TYPE:
 						if ((value != null) && (!"".equals(value))) {
@@ -285,7 +285,7 @@ public class CIMModelComparisonGenerator {
 
 		if (!options.containsKey(PARAM_IMAGE_TYPE)) {
 			/**
-			 * When processing .EAP files and exporting diagrams we ensure that a default
+			 * When processing .EAP/.QEA files and exporting diagrams we ensure that a default
 			 * image type of 'JPG' is used if no image-type is explicitly specified on the
 			 * command line.
 			 */
@@ -409,9 +409,7 @@ public class CIMModelComparisonGenerator {
 					+ arguments[0].getName().replace(baselineFileExt, "") + "_AND_"
 					+ arguments[1].getName().replace(destinationFileExt, "") + HTML;
 
-			/**
-			 * Determine the output directory...
-			 */
+			// Determine the output directory...
 			switch (arguments.length)
 				{
 				case 2:
@@ -543,8 +541,8 @@ public class CIMModelComparisonGenerator {
 						eaProjectFailed = true;
 						e.printStackTrace();
 					} finally {
-						// We must explicitly make a GC call. This is due to a limitation in EA's Java
-						// API and memory...
+						// We must explicitly make a GC call. This is due to a 
+						// limitation in Sparx EA's Java API and memory...
 						System.gc();
 						if (repository != null) {
 							/**
@@ -686,15 +684,6 @@ public class CIMModelComparisonGenerator {
 				}
 			}
 
-			/**
-			 * Currently we are not packaging these files in order to keep the ZIP archive
-			 * small
-			 *
-			 * if (baselineXmiFile.exists()) { zipFile(baselineXmiFile,
-			 * baselineXmiFile.getName(), zipOut); } if (destinationXmiFile.exists()) {
-			 * zipFile(destinationXmiFile, destinationXmiFile.getName(), zipOut); }
-			 * zipFile(compareLogXMLFile, compareLogXMLFile.getName(), zipOut);
-			 */
 			zipOut.close();
 			fos.close();
 			if (options.containsKey(PARAM_CLEANUP)) {
@@ -821,7 +810,7 @@ public class CIMModelComparisonGenerator {
 		System.err.println(
 				"To generate a model comparison report directly from Sparx Enterprise Architect baseline and target models (.eap files) use the command line option.");
 		System.err.println(
-				"   Usage: java -jar cim-compare.jar <baseline-model-eap-file> <target-model-eap-file> [<output-directory-or-html-file>] [--package=<iec-package-name>] [--minimal] [--include-diagrams] [--image-type=<image-files-extension>] [--zip] [--cleanup]");
+				"   Usage: java -jar cim-compare.jar <baseline-model-file> <target-model-file> [<output-directory-or-html-file>] [--package=<iec-package-name>] [--minimal] [--include-diagrams] [--image-type=<image-files-extension>] [--zip] [--cleanup]");
 		System.err.println();
 		System.err.println("   Examples: ");
 		System.err.println(

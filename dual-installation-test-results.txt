@@ -1,0 +1,57 @@
+
+Results of various test permutations for dual installation systems:
+
+
+SUCCESSFUL EXECUTION:
+
+32-bit:
+
+REM Example of a 32-bit Java 11 JVM with a max heap size of 1024MB (i.e. 1GB) which uses the 32-bit DLL file (SSJavaCOM.dll) copied from the EA15\Java API folder into the folder specified by the "java.library.path" parameter 
+"C:\Program Files (x86)\Zulu\zulu-11\bin\java.exe" -mx1024m -Djava.library.path="D:\cim-compare-1.3.0\sparx-dlls\ea15" -jar cim-compare-1.3.0-ea15.jar cim17v40.eap cim18v02.eap "D:\output\report.html" --include-diagrams --image-type=JPG --minimal
+
+REM Example of a 32-bit Java 17 JVM with a max heap size of 1024MB (i.e. 1GB) which uses the 32-bit DLL file (SSJavaCOM.dll) copied from the EA15\Java API folder into the folder specified by the "java.library.path" parameter 
+"C:\Program Files (x86)\Zulu\zulu-17\bin\java.exe" -mx1024m -Djava.library.path="D:\cim-compare-1.3.0\sparx-dlls\ea15" -jar cim-compare-1.3.0-ea15.jar cim17v40.eap cim18v02.eap "D:\output\report.html" --include-diagrams --image-type=JPG --minimal
+
+REM Example of a 32-bit Java 17 JVM with a max heap size of 1024MB (i.e. 1GB) which uses the 64-bit DLL file (SSJavaCOM.dll) copied from the EA16\Java API folder into the folder specified by the "java.library.path" parameter 
+"C:\Program Files (x86)\Zulu\zulu-17\bin\java.exe" -mx1024m -Djava.library.path="D:\cim-compare-1.3.0\sparx-dlls\ea16" -jar cim-compare-1.3.0-ea15.jar cim17v40.eap cim18v02.eap "D:\output\report.html" --include-diagrams --image-type=JPG --minimal
+
+REM Example of a 32-bit Java 17 JVM with a max heap size of 1024MB (i.e. 1GB) which uses the 32-bit DLL file (SSJavaCOM.dll) copied from the EA16\Java API folder into the folder specified by the "java.library.path" parameter 
+"C:\Program Files (x86)\Zulu\zulu-17\bin\java.exe" -mx1024m -Djava.library.path="D:\cim-compare-1.3.0\sparx-dlls\ea16" -jar cim-compare-1.3.0-ea17.jar cim17v40.eap cim18v02.eap "D:\output\report.html" --include-diagrams --image-type=JPG --minimal
+
+REM Example of a 32-bit Java 17 JVM with a max heap size of 1024MB (i.e. 1GB) which uses the 32-bit DLL file (SSJavaCOM.dll) copied from the EA15\Java API folder into the folder specified by the "java.library.path" parameter 
+"C:\Program Files (x86)\Zulu\zulu-17\bin\java.exe" -mx1024m -Djava.library.path="D:\cim-compare-1.3.0\sparx-dlls\ea15" -jar cim-compare-1.3.0-ea17.jar cim17v40.eap cim18v02.eap "D:\output\report.html" --include-diagrams --image-type=JPG --minimal
+
+64-bit:
+
+REM Example of a 64-bit Java 11 JVM with a max heap size of 4096m (i.e. 4GB) which uses the 64-bit DLL file (SSJavaCOM64.dll) copied from the EA15\Java API folder into the folder specified by the "java.library.path" parameter
+"C:\Program Files\Zulu\zulu-11\bin\java.exe" -mx4096m -Djava.library.path="D:\cim-compare-1.3.0\sparx-dlls\ea15" -jar cim-compare-1.3.0-ea17.jar cim17v40.qea cim18v02.qea "D:\output\report.html" --include-diagrams --image-type=JPG --minimal
+
+REM Example of a 64-bit Java 17 JVM with a max heap size of 4096m (i.e. 4GB) which uses the 64-bit DLL file (SSJavaCOM64.dll) copied from the EA16\Java API folder into the folder specified by the "java.library.path" parameter
+"C:\Program Files\Zulu\zulu-17\bin\java.exe" -mx4096m -Djava.library.path="D:\cim-compare-1.3.0\sparx-dlls\ea16" -jar cim-compare-1.3.0-ea16.jar cim17v40.qea cim18v02.qea "D:\output\report.html" --include-diagrams --image-type=JPG --minimal
+
+
+
+FAILED EXECUTION:
+
+32-bit:
+
+REM Example of a 32-bit Java 17 JVM with a max heap size of 1024MB (i.e. 1GB) which uses the 32-bit DLL file (SSJavaCOM.dll) copied from the EA15\Java API folder into the folder specified by the "java.library.path" parameter 
+REM Produces an "Unrecognized database format" dialog box when executed.  
+"C:\Program Files (x86)\Zulu\zulu-17\bin\java.exe" -mx1024m -Djava.library.path="D:\cim-compare-1.3.0\sparx-dlls\ea15" -jar cim-compare-1.3.0-ea17.jar cim17v40.qea cim18v02.qea "D:\output\report.html" --include-diagrams --image-type=JPG --minimal
+
+REM Example of a 32-bit Java 17 JVM with a max heap size of 1024MB (i.e. 1GB) which uses the 32-bit DLL file (SSJavaCOM.dll) copied from the EA16\Java API folder into the folder specified by the "java.library.path" parameter 
+REM Produces an "Unrecognized database format" dialog box when executed.  
+"C:\Program Files (x86)\Zulu\zulu-17\bin\java.exe" -mx1024m -Djava.library.path="D:\cim-compare-1.3.0\sparx-dlls\ea16" -jar cim-compare-1.3.0-ea16.jar cim17v40.qea cim18v02.qea "D:\output\report.html" --include-diagrams --image-type=JPG --minimal
+
+64-bit:
+
+REM Example of a 64-bit Java 11 JVM with a max heap size of 4096m (i.e. 4GB) which uses the 64-bit DLL file (SSJavaCOM64.dll) copied from the EA15\Java API folder into the folder specified by the "java.library.path" parameter
+"C:\Program Files\Zulu\zulu-11\bin\java.exe" -mx4096m -Djava.library.path="D:\cim-compare-1.3.0\sparx-dlls\ea15" -jar cim-compare-1.3.0-ea15.jar cim17v40.eap cim18v02.eap "D:\output\report.html" --include-diagrams --image-type=JPG --minimal
+
+REM Example of a 64-bit Java 11 JVM with a max heap size of 4096m (i.e. 4GB) which uses the 64-bit DLL file (SSJavaCOM64.dll) copied from the EA15\Java API folder into the folder specified by the "java.library.path" parameter
+"C:\Program Files\Zulu\zulu-17\bin\java.exe" -mx4096m -Djava.library.path="D:\cim-compare-1.3.0\sparx-dlls\ea15" -jar cim-compare-1.3.0-ea15.jar cim17v40.eap cim18v02.eap "D:\output\report.html" --include-diagrams --image-type=JPG --minimal
+
+REM Example of a 64-bit Java 11 JVM with a max heap size of 4096m (i.e. 4GB) which uses the 64-bit DLL file (SSJavaCOM64.dll) copied from the EA16\Java API folder into the folder specified by the "java.library.path" parameter
+REM Translated, this means that .eap files will ONLY work with a 32-bit Java JRE/JDK and 32-bit SSJavaCOM.dll for COMs
+"C:\Program Files\Zulu\zulu-11\bin\java.exe" -mx4096m -Djava.library.path="D:\cim-compare-1.3.0\sparx-dlls\ea16" -jar cim-compare-1.3.0-ea16.jar cim17v40.eap cim18v02.eap "D:\output\report.html" --include-diagrams --image-type=JPG --minimal
+

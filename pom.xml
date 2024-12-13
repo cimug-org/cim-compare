@@ -11,7 +11,6 @@
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <java.version>10</java.version>
         <junit.version>4.13.2</junit.version>
-        <!-- <ea.version.default>ea16</ea.version.default> -->
     </properties>
 
     <dependencies>
@@ -30,7 +29,7 @@
     </dependencies>
 
     <build>
-        <finalName>${project.artifactId}-${project.version}-${ea.version}-original</finalName>
+        <finalName>${project.artifactId}-${project.version}-original</finalName>
         <resources>
             <resource>
                 <directory>src/main/resources</directory>
@@ -69,7 +68,7 @@
                         <configuration>
                             <resources>
                                 <resource>
-                                    <directory>${basedir}/lib/${ea.version}</directory>
+                                    <directory>${basedir}/lib</directory>
                                 </resource>
                             </resources>
                         </configuration>
@@ -85,7 +84,7 @@
                             <goal>shade</goal>
                         </goals>
                         <configuration>
-                            <finalName>${project.artifactId}-${project.version}-${ea.version}</finalName>
+                            <finalName>${project.artifactId}-${project.version}</finalName>
                             <artifactSet>
                                 <excludes>
                                     <exclude>junit:junit</exclude>

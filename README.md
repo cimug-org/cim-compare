@@ -268,19 +268,13 @@ The procedure to perform an export of EA baseline and destination models as **XM
 
 Given the large file sizes consumed and produced by the utility, **OutOfMemory** exceptions occur if the default heap size is used. The following guidelines should be followed:
 
-> For a 32-bit JRE it is recommended to specify a max heap size of at least 1G
-    (i.e. 1024m) resources permitting. With a 1G heap size the execution will
-    typically run slower. Note that the maximum theoretical heap limit for a 
-    32-bit JVM is 4G. However, due to various additional constraints such as
-    available swap, kernel address space usage, memory fragmentation, and VM
-    overhead, in practice the limit can be much lower. On most modern 32-bit
-    Windows systems the maximum heap size will range from 1.4G to 1.6G.
+> For a 32-bit JRE it is recommended to specify a max heap size of at least 1G (i.e. 1024m) resources permitting. With a 1G heap size the execution will typically run slower. Note that the maximum theoretical heap limit for a 32-bit JVM is 4G. However, due to various additional constraints such as available swap, kernel address space usage, memory fragmentation, and VM overhead, in practice the limit can be much lower. On most modern 32-bit Windows systems the maximum heap size will range from 1.4G to 1.6G.
 
 java <span style="color:red">-mx1024m</span> -jar **cim-compare-1.3.0.jar** iec61970cim16v26a.xmi iec61970cim17v16.xmi D:\\reports
 
 > For 64 bit JREs it is recommended that the maximum heap size be increased to at least 2G (i.e. 2048m) but more if available. It has been observed that 2G is minimally sufficient to handle larger CIM models one might encounter. In the below example 3G is being allocated.
 
-java <span style="color:red">-mx3072m</span> -jar **cim-compare-1.3.0-ea16.jar** iec61970cim16v26a.qea iec61970cim17v16.qea D:\\reports
+java <span style="color:red">-mx3072m</span> -jar **cim-compare-1.3.0.jar** iec61970cim16v26a.qea iec61970cim17v16.qea D:\\reports
 
 
 ## Latest Release

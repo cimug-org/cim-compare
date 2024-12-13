@@ -85,7 +85,7 @@ NOTE:  The above command line examples illustrate the use of both `.eap` and `.q
 >    - The EA COM API and `eaapi.jar` rely on the backend functionality of the Enterprise Architect software. They act as a bridge to interact with the models, diagrams, and repositories managed by EA.
 >    - Without the Enterprise Architect application installed, there is no core functionality or data source for the API to connect to.
 > - Enterprise Architect COM Object:
->    - The `SSJavaCOM.dll` ad `SSJavaCOM64.dll` are COM interface wrappers that requires Enterprise Architect's COM objects to function. These COM objects are installed as part of the Enterprise Architect installation process.
+>    - The `SSJavaCOM.dll` and `SSJavaCOM64.dll` are COM interface wrappers that requires Enterprise Architect's COM objects to function. These COM objects are installed as part of the Enterprise Architect installation process.
 > - Licensing Requirements:
 >    - Sparx Enterprise Architect is a licensed product, and the API requires a valid license to access its features. Without a licensed installation of Enterprise Architect, the API calls will fail or be severely limited.
 > - Runtime Dependency:

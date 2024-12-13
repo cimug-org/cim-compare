@@ -287,7 +287,7 @@ java <span style="color:red">-mx3072m</span> -jar **cim-compare-1.3.0-ea16.jar**
 
 1.3.0  
 
- - The latest release is available at [cim-compare-1.3.0](https://github.com/cimug-org/cim-compare/releases) with all features and/or fixes in the release described there.
+ - The latest release is available at [releases](https://github.com/cimug-org/cim-compare/releases) with all features and/or fixes in the release described there.
 
 ## License
 

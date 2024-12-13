@@ -65,58 +65,90 @@ Notice that in the following command line examples where a directory or file pat
 
 | **Command Line Examples:**                                                                               |
 |----------------------------------------------------------------------------------------------------------|
-| java -jar **cim-compare-1.3.0-ea15.jar** "C:\\exports\\15v33.eap" "C:\\exports\\CIM16v26a.eap" "C:\\" |
-| java -jar **cim-compare-1.3.0-ea16.jar** "C:\\exports\\15v33.qea" "C:\\exports\\CIM16v26a.qea" "C:\\" |
-| java -jar **cim-compare-1.3.0-ea15.jar** "C:\\exports\\15v33.eap" "C:\\exports\\CIM16v26a.eap" --package=IEC61970 --minimal |
-| java -jar **cim-compare-1.3.0-ea15.jar** CIM15v33.eap CIM16v26a.eap C:\\ --minimal  |
-| java -jar **cim-compare-1.3.0-ea15.jar** CIM15v33.eap CIM16v26a.eap C:\\ --minimal --include-diagrams --zip |
-| java -jar **cim-compare-1.3.0-ea16.jar** CIM15v33.qea CIM16v26a.qea C:\\CIM15v33_CIM16v26a_ComparisonReport.html |
-| java -jar **cim-compare-1.3.0-ea15.jar** CIM15v33.eapx CIM16v26a.eapx CIM15v33_CIM16v26a_ComparisonReport.html --minimal |
-| java -jar **cim-compare-1.3.0-ea15.jar** CIM15v33.eap CIM16v26a.eap --package=IEC62325 --minimal --include-diagrams --image-type=GIF --zip --cleanup |
-| java -jar **cim-compare-1.3.0-ea17.jar** CIM15v33.qea CIM16v26a.qea --package=Grid --minimal --include-diagrams --image-type=GIF --zip --cleanup |
+| java -jar **cim-compare-1.3.0.jar** -Djava.library.path="D:\cim-compare\ea15" "C:\\exports\\15v33.eap" "C:\\exports\\CIM16v26a.eap" "C:\\" |
+| java -jar **cim-compare-1.3.0.jar** -Djava.library.path="D:\cim-compare\ea16" "C:\\exports\\15v33.qea" "C:\\exports\\CIM16v26a.qea" "C:\\" |
+| java -jar **cim-compare-1.3.0.jar** -Djava.library.path="D:\cim-compare\ea15" "C:\\exports\\15v33.eap" "C:\\exports\\CIM16v26a.eap" --package=IEC61970 --minimal |
+| java -jar **cim-compare-1.3.0.jar** -Djava.library.path="D:\cim-compare\ea15" CIM15v33.eap CIM16v26a.eap C:\\ --minimal  |
+| java -jar **cim-compare-1.3.0.jar** -Djava.library.path="D:\cim-compare\ea15" CIM15v33.eap CIM16v26a.eap C:\\ --minimal --include-diagrams --zip |
+| java -jar **cim-compare-1.3.0.jar** -Djava.library.path="D:\cim-compare\ea16" CIM15v33.qea CIM16v26a.qea C:\\CIM15v33_CIM16v26a_ComparisonReport.html |
+| java -jar **cim-compare-1.3.0.jar** -Djava.library.path="D:\cim-compare\ea15" CIM15v33.eap CIM16v26a.eap CIM15v33_CIM16v26a_ComparisonReport.html --minimal |
+| java -jar **cim-compare-1.3.0.jar** -Djava.library.path="D:\cim-compare\ea15" CIM15v33.eap CIM16v26a.eap --package=IEC62325 --minimal --include-diagrams --image-type=GIF --zip --cleanup |
+| java -jar **cim-compare-1.3.0.jar** -Djava.library.path="D:\cim-compare\ea16" CIM15v33.qea CIM16v26a.qea --package=Grid --minimal --include-diagrams --image-type=GIF --zip --cleanup |
 
-NOTE:  the above command line examples illustrate the use of specific distributions of the `cim-compare-1.3.0-eaxx.jar` file. Theassumption is that the system where executed would have the corresponding release of Sparx EA installed.
+NOTE:  The above command line examples illustrate the use of both `.eap` and `.qea` EA files as input. Where `.eap` files appear as input on the command line it is assumed that 32-bit Java is being used to execute the `.jar` file. Likewise, for `.qea` files that 64-bit Java is executed.
 
 #### IMPORTANT:
 
 > This **cim-compare** feature for processing Enterprise Architect `*.eap` or `*.qea` files directly requires EA's COM automation API. Consequently, if you plan to use it you are required to have a licensed version of Sparx Enterprise Architect (EA) installed for the COM automation API to work. The EA API and the `eaapi.jar` file act as interfaces to the Enterprise Architect application. The following explains why:
 > 
 > - Dependency on the Sparx Enterprise Architect Application:
->    - The EA COM API and `eaapi.jar` rely on the backend functionality of the Enterprise Architect software. They act as a bridge to interact with > the models, diagrams, and repositories managed by EA.
+>    - The EA COM API and `eaapi.jar` rely on the backend functionality of the Enterprise Architect software. They act as a bridge to interact with the models, diagrams, and repositories managed by EA.
 >    - Without the Enterprise Architect application installed, there is no core functionality or data source for the API to connect to.
 > - Enterprise Architect COM Object:
->    - The `SSJavaCOM64.dll` is a COM interface wrapper that requires Enterprise Architect's COM objects to function. These COM objects are installed as part of the Enterprise Architect installation process.
+>    - The `SSJavaCOM.dll` ad `SSJavaCOM64.dll` are COM interface wrappers that requires Enterprise Architect's COM objects to function. These COM objects are installed as part of the Enterprise Architect installation process.
 > - Licensing Requirements:
 >    - Sparx Enterprise Architect is a licensed product, and the API requires a valid license to access its features. Without a licensed installation of Enterprise Architect, the API calls will fail or be severely limited.
 > - Runtime Dependency:
 >    - When using the COM automation interface, **cim-compare** initializes and communicates with an EA process. The underlying API calls interact with the installed Enterprise Architect software to perform operations like exporting `.xmi` files from an `.eap` or `.qea` file.
->    
-> Recommendations:
->  - Ensure you have Enterprise Architect (64-bit version if you are using `SSJavaCOM64.dll`) installed on the system where the application will run.
->  - Verify that the version of `eaapi.jar` and `SSJavaCOM64.dll` matches the installed version of Enterprise Architect. Note, that they will ,match if you use those that ship within the Sparx install directory (detailed below).
->  - Beginning with the 1.3.0 release of **cim-compare**, distinct JAR files corresponding to the respective release of Sparx EA are now included in the distribution (e.g. `cim-compare-1.3.0-ea15.jar` or `cim-compare-1.3.0-ea16.jar`). Be sure to use the ea15 JAR for 32-bit `.eap` files and ea16 or ea17 JAR files for 64-bit `.qea` files.
->  - If you need to distribute your application to systems where Enterprise Architect is not installed, you would need to work with Sparx Systems to explore licensing options or runtime distributions (if available).
->    
->  The following steps are required before running cim-compare for the first time or when upgrading your systems to a newer release of Sparx EA (e.g. from EA 15.x to 16.x or EA 16.x to 17.x). The DLLs referenced are those shipped with EA and located in your Sparx install directory at:  
-> 
->  `<Windows 32-bit program files>\Sparx Systems\EAxx\Java API  (e.g. "C:\Program Files (x86)\Sparx Systems\EA15\Java API")`
-> 
->  `<Windows 64-bit program files>\Sparx Systems\EAxx\Java API  (e.g. "C:\Program Files\Sparx Systems\EA16\Java API")`
+>   
+> The COM interface wrappers ship with each release of Sparx EA and are delivered in an installation directory similar to:
 >
-> 64-bit Java:
-> 
-> Copy the file SSJavaCOM64.dll located in the above EA installation folder to:
-> 
->  `<Windows folder>\System32` (on a 64-bit machine)
-> 
-> 32-bit Java:
-> 
-> Copy the file SSJavaCom.dll located in the EA installation folder to:
-> 
->  `<Windows folder>\System32 (on a 32-bit machine) or to <Windows folder>\SysWOW64` (on a 64-bit machine)
-> 
-> Note that on a 64-bit machine for 64-bit Sparx EA you must use a 64-bit Java JRE/JDK when running **cim-compare** from the command line. 
+> `%WINDOWS_PROGRAM_FILES%\Sparx Systems\EAxx\Java API  (e.g. "C:\Program Files\Sparx Systems\EA17\Java API")`
 >
+> The purpose of each is:
+> 
+> - SSJavaCOM.dll - the 32-bit COM Module DLL (Dynamic Linked Library) that **cim-compare** will link to when a 32-bit Java JVM/JRE is used to run `cim-compare-1.3.0.jar` from the command line (i.e. required when processing 32-bit .EAP project files).
+>
+> - SSJavaCOM64.dll - the 64-bit COM Module DLL that **cim-compare** will link to when a 64-bit Java JVM/JRE is used to run `cim-compare.jar` from the command line (i.e. required when processing 64-bit .QEA project files)
+>   	
+> **cim-compare** communicates to the appropriate COM Module DLL depending on the particular JVM (32-bit or 64-bit) being used on the command line. Which DLL COM interface wrapper to load and link to is determined at runtime. 
+>
+> Another key requirement is that these two DLL COM interface wrappers must be available to Java at runtime. This is done on the command line by specifying their directory location using the `-Djava.library.path` JVM parameter.
+> 
+
+To use **cim-compare** on a system with a dual 32-bit and 64-bit Sparx EA installation (e.g. EA 15.x and EA 17.x) you will need to have a configuration similar to the following:
+
+```
+C:\cim-compare\cim-compare-1.3.0.jar  (the latest release downloaded from https://cim-compare.ucaiug.io)
+C:\cim-compare\ea15\SSJavaCOM.dll  (copied from "C:\Program Files (x86)\Sparx Systems\EA15\Java API")
+C:\cim-compare\ea15\SSJavaCOM16.dll  (copied from "C:\Program Files (x86)\Sparx Systems\EA15\Java API")
+C:\cim-compare\ea16\SSJavaCOM.dll  (copied from "C:\Program Files\Sparx Systems\EA16\Java API")
+C:\cim-compare\ea16\SSJavaCOM16.dll  (copied from "C:\Program Files\Sparx Systems\EA16\Java API")
+```
+Of importance is for each installation's set of DLL files to be located in their own directory. This will allow for the ability to isolate where Java looks for its COM Modules based on release. 
+
+Following is a set of command lines based on the above example configuration. The first illustrates comparison report generation for 32-bit `.eap` files and the second for 64-bit `.qea` files.
+ 
+```
+"C:\Program Files (x86)\Zulu\zulu-17\bin\java.exe" -mx1024m -Djava.library.path="D:\cim-compare\ea15" -jar cim-compare-1.3.0.jar cim17v40.eap cim18v02.eap comparison-report.html --include-diagrams --image-type=JPG --minimal
+```
+
+The above 32-bit command line example uses:
+ - a 32-bit Java 17 JRE/JVM  (i.e. "C:\Program Files (x86)\Zulu\zulu-17\bin\java.exe")
+ - a max heap size of 1024m  (i.e. 1GB specified via -mx1024m)
+ - the 32-bit COM DLL loaded from the "D:\cim-compare\ea16" directory  (i.e. via -Djava.library.path="D:\cim-compare\ea16") 
+ - cim17v40.eap as the input baseline model  (i.e. a 32-bit EA project file indicated by the .eap extension)
+ - cim18v02.eap as the input destination model  (i.e. a 32-bit EA project file indicated by the .eap extension)
+ - comparison-report.html as the name of the generated report
+ - the inclusion of changed diagrams in the report (i.e. --include-diagrams)
+ - JPG for the type of diagrams (i.e. --image-type=JPG)
+ - the inclusion of only changed elements (i.e. --minimal)
+
+```
+"C:\Program Files\Zulu\zulu-17\bin\java.exe" -mx4096m -Djava.library.path="D:\cim-compare\ea16" -jar cim-compare-1.3.0.jar cim17v40.qea cim18v02.qea comparison-report.html --include-diagrams --image-type=JPG --minimal
+```
+The above 64-bit command line example uses:
+ - a 64-bit Java 17 JRE/JVM  (i.e. "C:\Program Files\Zulu\zulu-17\bin\java.exe")
+ - a max heap size of 4096m  (i.e. 4GB specified via -mx4096m)
+ - the 64-bit COM DLL loaded from the "D:\cim-compare\ea16" directory  (i.e. via -Djava.library.path="D:\cim-compare\ea16") 
+ - cim17v40.qea as the input baseline model  (i.e. a 64-bit EA project file indicated by the .qea extension)
+ - cim18v02.qea as the input destination model  (i.e. a 64-bit EA project file indicated by the .qea extension)
+ - comparison-report.html as the name of the generated report
+ - the inclusion of changed diagrams in the report (i.e. --include-diagrams)
+ - JPG for the type of diagrams (i.e. --image-type=JPG)
+ - the inclusion of only changed elements (i.e. --minimal)
+ 
+Finally, it should be noted that if choosing to use `.eap` project files as input into **cim-compare** then 32-bit Java must be used.  Likewise, when using `.qea` files then 64-bit Java must be used.
 
 ### Option \#2: XMI Baseline and Destination Models as Inputs
 
@@ -197,8 +229,6 @@ Again, in the following command line examples, directory or file paths containin
 | java -jar **cim-compare-1.3.0.jar** CIM15v33_CIM16v26a_EA_Comparison_Report.xml --package=IEC61970 --minimal |
 | java -jar **cim-compare-1.3.0.jar** CIM15v33_CIM16v26a_EA_Comparison_Report.xml --package=IEC61970 --minimal --zip --cleanup |
 
-
-
 ## Enterprise Architect XMI Export Procedures
 
 The procedure to perform an export of EA baseline and destination models as **XMI 1.1** compliant files is as follows (screenshots taken from EA v15.1):
@@ -258,7 +288,6 @@ java <span style="color:red">-mx3072m</span> -jar **cim-compare-1.3.0-ea16.jar**
 1.3.0  
 
  - The latest release is available at [cim-compare-1.3.0](https://github.com/cimug-org/cim-compare/releases) with all features and/or fixes in the release described there.
- - Beginning with the 1.3.0 release of **cim-compare** distinct JAR files corresponding to the respective release of Sparx EA are now included in the distribution (e.g. `cim-compare-1.3.0-ea15.jar`, `cim-compare-1.3.0-ea16.jar`, or `cim-compare-1.3.0-ea17.jar or `).
 
 ## License
 

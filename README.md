@@ -65,15 +65,15 @@ Notice that in the following command line examples where a directory or file pat
 
 | **Command Line Examples:**                                                                               |
 |----------------------------------------------------------------------------------------------------------|
-| java -jar **cim-compare-1.3.0.jar** -Djava.library.path="D:\cim-compare\ea15" "C:\\exports\\15v33.eap" "C:\\exports\\CIM16v26a.eap" "C:\\" |
-| java -jar **cim-compare-1.3.0.jar** -Djava.library.path="D:\cim-compare\ea16" "C:\\exports\\15v33.qea" "C:\\exports\\CIM16v26a.qea" "C:\\" |
-| java -jar **cim-compare-1.3.0.jar** -Djava.library.path="D:\cim-compare\ea15" "C:\\exports\\15v33.eap" "C:\\exports\\CIM16v26a.eap" --package=IEC61970 --minimal |
-| java -jar **cim-compare-1.3.0.jar** -Djava.library.path="D:\cim-compare\ea15" CIM15v33.eap CIM16v26a.eap C:\\ --minimal  |
-| java -jar **cim-compare-1.3.0.jar** -Djava.library.path="D:\cim-compare\ea15" CIM15v33.eap CIM16v26a.eap C:\\ --minimal --include-diagrams --zip |
-| java -jar **cim-compare-1.3.0.jar** -Djava.library.path="D:\cim-compare\ea16" CIM15v33.qea CIM16v26a.qea C:\\CIM15v33_CIM16v26a_ComparisonReport.html |
-| java -jar **cim-compare-1.3.0.jar** -Djava.library.path="D:\cim-compare\ea15" CIM15v33.eap CIM16v26a.eap CIM15v33_CIM16v26a_ComparisonReport.html --minimal |
-| java -jar **cim-compare-1.3.0.jar** -Djava.library.path="D:\cim-compare\ea15" CIM15v33.eap CIM16v26a.eap --package=IEC62325 --minimal --include-diagrams --image-type=GIF --zip --cleanup |
-| java -jar **cim-compare-1.3.0.jar** -Djava.library.path="D:\cim-compare\ea16" CIM15v33.qea CIM16v26a.qea --package=Grid --minimal --include-diagrams --image-type=GIF --zip --cleanup |
+| java -mx1096m -Djava.library.path="D:\cim-compare\ea15" -jar **cim-compare-1.3.0.jar** "C:\\exports\\15v33.eap" "C:\\exports\\CIM16v26a.eap" "C:\\" |
+| java -mx4096m -Djava.library.path="D:\cim-compare\ea16" -jar **cim-compare-1.3.0.jar** "C:\\exports\\15v33.qea" "C:\\exports\\CIM16v26a.qea" "C:\\" |
+| java -mx1096m -Djava.library.path="D:\cim-compare\ea15" -jar **cim-compare-1.3.0.jar** "C:\\exports\\15v33.eap" "C:\\exports\\CIM16v26a.eap" --package=IEC61970 --minimal |
+| java -mx1096m -Djava.library.path="D:\cim-compare\ea15" -jar **cim-compare-1.3.0.jar** CIM15v33.eap CIM16v26a.eap C:\\ --minimal  |
+| java -mx1096m -Djava.library.path="D:\cim-compare\ea15" -jar **cim-compare-1.3.0.jar** CIM15v33.eap CIM16v26a.eap C:\\ --minimal --include-diagrams --zip |
+| java -mx4096m -Djava.library.path="D:\cim-compare\ea16" -jar **cim-compare-1.3.0.jar** CIM15v33.qea CIM16v26a.qea C:\\CIM15v33_CIM16v26a_ComparisonReport.html |
+| java -mx1096m -Djava.library.path="D:\cim-compare\ea15" -jar **cim-compare-1.3.0.jar** CIM15v33.eap CIM16v26a.eap CIM15v33_CIM16v26a_ComparisonReport.html --minimal |
+| java -mx1096m -Djava.library.path="D:\cim-compare\ea15" -jar **cim-compare-1.3.0.jar** CIM15v33.eap CIM16v26a.eap --package=IEC62325 --minimal --include-diagrams --image-type=GIF --zip --cleanup |
+| java -mx4096m -Djava.library.path="D:\cim-compare\ea16" -jar **cim-compare-1.3.0.jar** CIM15v33.qea CIM16v26a.qea --package=Grid --minimal --include-diagrams --image-type=GIF --zip --cleanup |
 
 NOTE:  The above command line examples illustrate the use of both `.eap` and `.qea` EA files as input. Where `.eap` files appear as input on the command line it is assumed that 32-bit Java is being used to execute the `.jar` file. Likewise, for `.qea` files that 64-bit Java is executed.
 
@@ -184,13 +184,13 @@ Note that in the following command line examples whenever a directory or file pa
 
 | **Command Line Examples:**                                                                               |
 |----------------------------------------------------------------------------------------------------------|
-| java -jar **cim-compare-1.3.0.jar** "C:\\XMI exports\\15v33.xmi" "C:\\XMI exports\\CIM16v26a.xmi" "C:\\" |
-| java -jar **cim-compare-1.3.0.jar** "C:\\XMI exports\\15v33.xmi" "C:\\XMI exports\\CIM16v26a.xmi" --package=IEC61970 --minimal |
-| java -jar **cim-compare-1.3.0.jar** CIM15v33.xmi CIM16v26a.xmi C:\\ --minimal  |
-| java -jar **cim-compare-1.3.0.jar** CIM15v33.xmi CIM16v26a.xmi C:\\ --minimal --include-diagrams --image-type=gif --zip --cleanup |
-| java -jar **cim-compare-1.3.0.jar** CIM15v33.xmi CIM16v26a.xmi C:\\CIM15v33_CIM16v26a_ComparisonReport.html |
-| java -jar **cim-compare-1.3.0.jar** CIM15v33.xmi CIM16v26a.xmi CIM15v33_CIM16v26a_ComparisonReport.html --minimal |
-| java -jar **cim-compare-1.3.0.jar** CIM15v33.xmi CIM16v26a.xmi CIM15v33_CIM16v26a_ComparisonReport.html --package=IEC62325 --include-diagrams --image-type=JPG --zip |
+| java -mx2048m -jar **cim-compare-1.3.0.jar** "C:\\XMI exports\\15v33.xmi" "C:\\XMI exports\\CIM16v26a.xmi" "C:\\" |
+| java -mx2048m -jar **cim-compare-1.3.0.jar** "C:\\XMI exports\\15v33.xmi" "C:\\XMI exports\\CIM16v26a.xmi" --package=IEC61970 --minimal |
+| java -mx2048m -jar **cim-compare-1.3.0.jar** CIM15v33.xmi CIM16v26a.xmi C:\\ --minimal  |
+| java -mx2048m -jar **cim-compare-1.3.0.jar** CIM15v33.xmi CIM16v26a.xmi C:\\ --minimal --include-diagrams --image-type=gif --zip --cleanup |
+| java -mx2048m -jar **cim-compare-1.3.0.jar** CIM15v33.xmi CIM16v26a.xmi C:\\CIM15v33_CIM16v26a_ComparisonReport.html |
+| java -mx2048m -jar **cim-compare-1.3.0.jar** CIM15v33.xmi CIM16v26a.xmi CIM15v33_CIM16v26a_ComparisonReport.html --minimal |
+| java -mx2048m -jar **cim-compare-1.3.0.jar** CIM15v33.xmi CIM16v26a.xmi CIM15v33_CIM16v26a_ComparisonReport.html --package=IEC62325 --include-diagrams --image-type=JPG --zip |
 
 ### Option \#3: EA Model Comparison Logs as Input
 
@@ -220,14 +220,14 @@ Again, in the following command line examples, directory or file paths containin
 
 | **Command Line Examples:**                                                                                |
 |-----------------------------------------------------------------------------------------------------------|
-| java -jar **cim-compare-1.3.0.jar** "C:\\CIM XMI Exports\\CIM15v33_CIM16v26a_EA_Comparison_Report.xml" "C:\\Reports" |
-| java -jar **cim-compare-1.3.0.jar** CIM15v33_CIM16v26a_EA_Comparison_Report.xml "C:\\Comparison Reports" --minimal |
-| java -jar **cim-compare-1.3.0.jar** CIM15v33_CIM16v26a_EA_Comparison_Report.xml "C:\\Comparison Reports" --package=IEC61968 --include-diagrams |
-| java -jar **cim-compare-1.3.0.jar** CIM15v33_CIM16v26a_EA_Comparison_Report.xml ComparisonReport_CIM15v33_CIM16v26a.html |
-| java -jar **cim-compare-1.3.0.jar** CIM15v33_CIM16v26a_EA_Comparison_Report.xml |
-| java -jar **cim-compare-1.3.0.jar** CIM15v33_CIM16v26a_EA_Comparison_Report.xml --package=IEC61970 |
-| java -jar **cim-compare-1.3.0.jar** CIM15v33_CIM16v26a_EA_Comparison_Report.xml --package=IEC61970 --minimal |
-| java -jar **cim-compare-1.3.0.jar** CIM15v33_CIM16v26a_EA_Comparison_Report.xml --package=IEC61970 --minimal --zip --cleanup |
+| java -mx2048m -jar **cim-compare-1.3.0.jar** "C:\\CIM XMI Exports\\CIM15v33_CIM16v26a_EA_Comparison_Report.xml" "C:\\Reports" |
+| java -mx2048m -jar **cim-compare-1.3.0.jar** CIM15v33_CIM16v26a_EA_Comparison_Report.xml "C:\\Comparison Reports" --minimal |
+| java -mx2048m -jar **cim-compare-1.3.0.jar** CIM15v33_CIM16v26a_EA_Comparison_Report.xml "C:\\Comparison Reports" --package=IEC61968 --include-diagrams |
+| java -mx2048m -jar **cim-compare-1.3.0.jar** CIM15v33_CIM16v26a_EA_Comparison_Report.xml ComparisonReport_CIM15v33_CIM16v26a.html |
+| java -mx2048m -jar **cim-compare-1.3.0.jar** CIM15v33_CIM16v26a_EA_Comparison_Report.xml |
+| java -mx2048m -jar **cim-compare-1.3.0.jar** CIM15v33_CIM16v26a_EA_Comparison_Report.xml --package=IEC61970 |
+| java -mx2048m -jar **cim-compare-1.3.0.jar** CIM15v33_CIM16v26a_EA_Comparison_Report.xml --package=IEC61970 --minimal |
+| java -mx2048m -jar **cim-compare-1.3.0.jar** CIM15v33_CIM16v26a_EA_Comparison_Report.xml --package=IEC61970 --minimal --zip --cleanup |
 
 ## Enterprise Architect XMI Export Procedures
 

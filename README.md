@@ -38,10 +38,12 @@ The preferred usage is to provide two Enterprise Architect `*.eap` or `*.qea` fi
 The command-line usage for this option takes the following form:
 
 ```
-java [<jvm-parameters>] -jar cim-compare-1.3.0.jar <baseline-model-file> <destination-model-file> [<output-directory-or-html-file>] [--package=<package-name>] [--minimal] [--include-diagrams] [--image-type=<image-file-extension>] [--zip]
+java [<jvm-parameter-1>]...[<jvm-parameter-n>] -jar cim-compare-1.3.0.jar <baseline-model-file> <destination-model-file> [<output-directory-or-html-file>] [--package=<package-name>] [--minimal] [--include-diagrams] [--image-type=<image-file-extension>] [--zip] [--cleanup]]
 ```
 
 *Parameter Details*:
+
+**[\<jvm-parameter-x\>] (Optional)**: A JVM (Java Virtual Machine) parameter that you may need for your execution.  JVM parameters are configurations used to control the behavior of the JVM at runtime and take a form such as `-mx1096m` or `-Dfile.encoding=UTF-8` for example. These parameters can influence memory usage, garbage collection, system properties, debugging, and performance tuning. JVM parameters are passed as command-line arguments when starting a Java application and if used should appear first in the sequence of command line arguments (before `cim-compare-1.3.0.jar`). This is necessary so that **cim-compare** does not try to process them as part of its command line arguments which should always appear after `cim-compare-1.3.0.jar`. 
 
 **\<baseline-model-file\>** (**Required**): An Enterprise Architect baseline .eap or .qea model file. When not specified as an absolute file path the location is assumed to be the directory **cim-compare** is being executed from.
 
@@ -125,28 +127,28 @@ Following is a set of command lines based on the above example configuration. Th
 
 The above 32-bit command line example uses:
  - a 32-bit Java 17 JRE/JVM  (i.e. "C:\Program Files (x86)\Zulu\zulu-17\bin\java.exe")
- - a max heap size of 1024m  (i.e. 1GB specified via -mx1024m)
- - the 32-bit COM DLL loaded from the "D:\cim-compare\ea16" directory  (i.e. via -Djava.library.path="D:\cim-compare\ea16") 
- - cim17v40.eap as the input baseline model  (i.e. a 32-bit EA project file indicated by the .eap extension)
- - cim18v02.eap as the input destination model  (i.e. a 32-bit EA project file indicated by the .eap extension)
+ - a max heap size of 1024m  (i.e. 1GB specified via `-mx1024m`)
+ - the 32-bit COM DLL loaded from the "D:\cim-compare\ea16" directory  (i.e. via `-Djava.library.path="D:\cim-compare\ea16"`) 
+ - cim17v40.eap as the input baseline model  (i.e. a 32-bit EA project file indicated by the `.eap` extension)
+ - cim18v02.eap as the input destination model  (i.e. a 32-bit EA project file indicated by the `.eap` extension)
  - comparison-report.html as the name of the generated report
- - the inclusion of changed diagrams in the report (i.e. --include-diagrams)
- - JPG for the type of diagrams (i.e. --image-type=JPG)
- - the inclusion of only changed elements (i.e. --minimal)
+ - the inclusion of changed diagrams in the report (i.e. `--include-diagrams`)
+ - JPG for the type of diagrams (i.e. `--image-type=JPG`)
+ - the inclusion of only changed elements (i.e. `--minimal`)
 
 ```
 "C:\Program Files\Zulu\zulu-17\bin\java.exe" -mx4096m -Djava.library.path="D:\cim-compare\ea16" -jar cim-compare-1.3.0.jar cim17v40.qea cim18v02.qea comparison-report.html --include-diagrams --image-type=JPG --minimal
 ```
 The above 64-bit command line example uses:
  - a 64-bit Java 17 JRE/JVM  (i.e. "C:\Program Files\Zulu\zulu-17\bin\java.exe")
- - a max heap size of 4096m  (i.e. 4GB specified via -mx4096m)
- - the 64-bit COM DLL loaded from the "D:\cim-compare\ea16" directory  (i.e. via -Djava.library.path="D:\cim-compare\ea16") 
- - cim17v40.qea as the input baseline model  (i.e. a 64-bit EA project file indicated by the .qea extension)
- - cim18v02.qea as the input destination model  (i.e. a 64-bit EA project file indicated by the .qea extension)
+ - a max heap size of 4096m  (i.e. 4GB specified via `-mx4096m`)
+ - the 64-bit COM DLL loaded from the "D:\cim-compare\ea16" directory  (i.e. via `-Djava.library.path="D:\cim-compare\ea16"`) 
+ - cim17v40.qea as the input baseline model  (i.e. a 64-bit EA project file indicated by the `.qea` extension)
+ - cim18v02.qea as the input destination model  (i.e. a 64-bit EA project file indicated by the `.qea` extension)
  - comparison-report.html as the name of the generated report
- - the inclusion of changed diagrams in the report (i.e. --include-diagrams)
- - JPG for the type of diagrams (i.e. --image-type=JPG)
- - the inclusion of only changed elements (i.e. --minimal)
+ - the inclusion of changed diagrams in the report (i.e. `--include-diagrams`)
+ - JPG for the type of diagrams (i.e. `--image-type=JPG`)
+ - the inclusion of only changed elements (i.e. `--minimal`)
  
 Finally, it should be noted that if choosing to use `.eap` project files as input into **cim-compare** then 32-bit Java must be used.  Likewise, when using `.qea` files then 64-bit Java must be used.
 
@@ -155,11 +157,12 @@ Finally, it should be noted that if choosing to use `.eap` project files as inpu
 The second usage is to directly specify two XMI 1.1 compliant files representing the "baseline" and “destination” models exported as described later in "Enterprise Architect XMI Export Procedures". In this scenario the command-line usage takes the following form:
 
 ```
-java -jar cim-compare-1.3.0.jar <baseline-model-xmi-file> <destination-model-xmi-file> [<output-directory-or-html-file>] [--package=<package-name>] [--minimal] [--include-diagrams] [--image-type=<image-file-extension>] [--zip]
+java [<jvm-parameter-1>]...[<jvm-parameter-n>] -jar cim-compare-1.3.0.jar <baseline-model-xmi-file> <destination-model-xmi-file> [<output-directory-or-html-file>] [--package=<package-name>] [--minimal] [--include-diagrams] [--image-type=<image-file-extension>] [--zip] [--cleanup]
 ```
 
 *Parameter Details*:
 
+**[\<jvm-parameter-x\>] (Optional)**: A JVM (Java Virtual Machine) parameter that you may need for your execution.  JVM parameters are configurations used to control the behavior of the JVM at runtime and take a form such as `-mx1096m` or `-Dfile.encoding=UTF-8` for example. These parameters can influence memory usage, garbage collection, system properties, debugging, and performance tuning. JVM parameters are passed as command-line arguments when starting a Java application and if used should appear first in the sequence of command line arguments (before `cim-compare-1.3.0.jar`). This is necessary so that **cim-compare** does not try to process them as part of its command line arguments which should always appear after `cim-compare-1.3.0.jar`.
 **\<baseline-model-xmi-file\>** (**Required**): An XMI 1.1 compliant baseline model file exported from EA. When not specified as an absolute file path the location of the file is assumed to be the directory the utility is being executed from.
 
 **\<destination-model-xmi-file\>** (**Required**): An XMI 1.1 compliant destination model file exported from EA. When not specified as an absolute file path the location of the file is assumed to be the directory the utility is being executed from.
@@ -199,10 +202,12 @@ The third option is by specifying an **EA model comparison log** file as input o
 This particular usage takes the following form:
 
 ```
-java -jar cim-compare-1.3.0.jar <comparison-results-xml-file> [<output-directory-or-html-file>] [--package=<package-name>] [--minimal] [--zip]
+java [<jvm-parameter-1>]...[<jvm-parameter-n>] -jar cim-compare-1.3.0.jar <comparison-results-xml-file> [<output-directory-or-html-file>] [--package=<package-name>] [--minimal] [--zip] [--cleanup]
 ```
 
 *Parameter Details*:
+
+**[\<jvm-parameter-x\>] (Optional)**: A JVM (Java Virtual Machine) parameter that you may need for your execution.  JVM parameters are configurations used to control the behavior of the JVM at runtime and take a form such as `-mx1096m` or `-Dfile.encoding=UTF-8` for example. These parameters can influence memory usage, garbage collection, system properties, debugging, and performance tuning. JVM parameters are passed as command-line arguments when starting a Java application and if used should appear first in the sequence of command line arguments (before `cim-compare-1.3.0.jar`). This is necessary so that **cim-compare** does not try to process them as part of its command line arguments which should always appear after `cim-compare-1.3.0.jar`.
 
 **\<comparison-results-xml-file\> (Required):** The model comparison file. When not specified as an absolute file path the location of the file is assumed to be the directory the utility is being executed in.
 

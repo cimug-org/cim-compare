@@ -38,7 +38,7 @@ The preferred usage is to provide two Enterprise Architect `*.eap` or `*.qea` fi
 The command-line usage for this option takes the following form:
 
 ```
-java -jar cim-compare-1.3.0.jar <baseline-model-file> <destination-model-file> [<output-directory-or-html-file>] [--package=<package-name>] [--minimal] [--include-diagrams] [--image-type=<image-file-extension>] [--zip]
+java [<jvm-parameters>] -jar cim-compare-1.3.0.jar <baseline-model-file> <destination-model-file> [<output-directory-or-html-file>] [--package=<package-name>] [--minimal] [--include-diagrams] [--image-type=<image-file-extension>] [--zip]
 ```
 
 *Parameter Details*:

@@ -128,7 +128,7 @@ Following is a set of command lines based on the above example configuration. Th
 The above 32-bit command line example uses:
  - a 32-bit Java 17 JRE/JVM  (i.e. "C:\Program Files (x86)\Zulu\zulu-17\bin\java.exe")
  - a max heap size of 1024m  (i.e. 1GB specified via `-mx1024m`)
- - the 32-bit COM DLL loaded from the "D:\cim-compare\ea16" directory  (i.e. via `-Djava.library.path="D:\cim-compare\ea16"`) 
+ - the 32-bit COM DLL loaded from the "D:\cim-compare\ea15" directory  (i.e. via `-Djava.library.path="D:\cim-compare\ea15"`) 
  - cim17v40.eap as the input baseline model  (i.e. a 32-bit EA project file indicated by the `.eap` extension)
  - cim18v02.eap as the input destination model  (i.e. a 32-bit EA project file indicated by the `.eap` extension)
  - comparison-report.html as the name of the generated report

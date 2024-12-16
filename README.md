@@ -93,7 +93,7 @@ NOTE:  The above command line examples illustrate the use of both `.eap` and `.q
 > - Runtime Dependency:
 >    - When using the COM automation interface, **cim-compare** initializes and communicates with an EA process. The underlying API calls interact with the installed Enterprise Architect software to perform operations like exporting `.xmi` files from an `.eap` or `.qea` file.
 >   
-> The COM interface wrappers ship with each release of Sparx EA and are delivered in an installation directory similar to:
+> The COM interface wrappers ship with each  of Sparx EA and are delivered in an installation directory similar to:
 >
 > `%WINDOWS_PROGRAM_FILES%\Sparx Systems\EAxx\Java API  (e.g. "C:\Program Files\Sparx Systems\EA17\Java API")`
 >
@@ -111,13 +111,13 @@ NOTE:  The above command line examples illustrate the use of both `.eap` and `.q
 To use **cim-compare** on a system with a dual 32-bit and 64-bit Sparx EA installation (e.g. EA 15.x and EA 17.x) you will need to have a configuration similar to the following:
 
 ```
-C:\cim-compare\cim-compare-1.3.0.jar  (the latest release downloaded from https://cim-compare.ucaiug.io)
+C:\cim-compare\cim-compare-1.3.0.jar  (the latest  downloaded from https://cim-compare.ucaiug.io)
 C:\cim-compare\ea15\SSJavaCOM.dll  (copied from "C:\Program Files (x86)\Sparx Systems\EA15\Java API")
 C:\cim-compare\ea15\SSJavaCOM16.dll  (copied from "C:\Program Files (x86)\Sparx Systems\EA15\Java API")
 C:\cim-compare\ea16\SSJavaCOM.dll  (copied from "C:\Program Files\Sparx Systems\EA16\Java API")
 C:\cim-compare\ea16\SSJavaCOM16.dll  (copied from "C:\Program Files\Sparx Systems\EA16\Java API")
 ```
-Of importance is for each installation's set of DLL files to be located in their own directory. This will allow for the ability to isolate where Java looks for its COM Modules based on release. 
+Of importance is for each installation's set of DLL files to be located in their own directory. This will allow for the ability to isolate where Java looks for its COM Modules based on the specific release of Sparx EA. 
 
 Following is a set of command lines based on the above example configuration. The first illustrates comparison report generation for 32-bit `.eap` files and the second for 64-bit `.qea` files.
  

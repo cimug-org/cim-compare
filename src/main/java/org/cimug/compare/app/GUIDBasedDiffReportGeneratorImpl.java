@@ -646,13 +646,9 @@ class GUIDBasedDiffReportGeneratorImpl implements DiffReportGenerator {
 				
 				if (Status.Identical.equals(diagramStatus)) {
 					File baselineImageFile = new File(this.baselineImagesDir, targetDiagram.getXmiId()+ "." + imageType.ext());
-					if (baselineImageFile.delete()) {
-						System.out.println("Image file deleted: " + baselineImageFile.getAbsolutePath());
-					};
+					baselineImageFile.delete();
 					File destinationImageFile = new File(this.destinationImagesDir, targetDiagram.getXmiId()+ "." + imageType.ext());
-					if (destinationImageFile.delete()) {
-						System.out.println("Image file deleted: " + destinationImageFile.getAbsolutePath());
-					}
+					destinationImageFile.delete();
 				} 
 			}
 		}

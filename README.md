@@ -5,6 +5,14 @@
       
 Command line tool for generating CIM model comparison reports. For an example report visit [comparison-report.html](https://cim-compare.ucaiug.io/example-comparison-report/comparison-report.html).
 
+## Latest Release
+
+1.3.0  
+
+ - The release notes describing all features and/or fixes for the latest available release can be found at [release notes](https://github.com/cimug-org/cim-compare/releases).
+ - To download the latest release of the command-line application visit [latest](https://github.com/cimug-org/cim-compare/releases/download/1.3.0/cim-compare-1.3.0.jar).
+
+
 ## CIM Model Comparison Report Utility
 
 **cim-compare** generates model comparison reports between two points in time. A link to the latest release can be found at the end of this README.
@@ -348,13 +356,6 @@ java <span style="color:red">-mx1024m</span> -jar **cim-compare-1.3.0.jar** iec6
 > For 64 bit JREs it is recommended that the maximum heap size be increased to at least 2G (i.e. 2048m) but more if available. It has been observed that 2G is minimally sufficient to handle larger CIM models one might encounter. In the below example 4G is being allocated.
 
 java <span style="color:red">-mx4096m</span> -jar **cim-compare-1.3.0.jar** iec61970cim16v26a.qea iec61970cim17v16.qea D:\\reports
-
-
-## Latest Release
-
-1.3.0  
-
- - The latest release is available at [releases](https://github.com/cimug-org/cim-compare/releases) with all features and/or fixes in the release described there.
 
 ## License
 

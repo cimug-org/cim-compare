@@ -9,8 +9,8 @@ Command line tool for generating CIM model comparison reports. For an example re
 
 1.3.0  
 
- - The release notes describing all features and/or fixes for the latest available release can be found at [release notes](https://github.com/cimug-org/cim-compare/releases).
- - To download the latest release of the command-line application visit [latest](https://github.com/cimug-org/cim-compare/releases/download/1.3.0/cim-compare-1.3.0.jar).
+ - For release notes describing the latest features and/or fixes visit [latest release](https://github.com/cimug-org/cim-compare/releases).
+ - To directly download the latest release of the cim-compare command-line application click [cim-compare-1.3.0.jar](https://github.com/cimug-org/cim-compare/releases/download/1.3.0/cim-compare-1.3.0.jar).
 
 
 ## CIM Model Comparison Report Utility

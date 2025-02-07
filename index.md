@@ -32,7 +32,11 @@ The **cim-compare** project is a command line tool for generating CIM model comp
 
 <div class="sidebar">
   <h3>Contents</h3>
-  <ul></ul>
+  <ul>
+    <li><a href="#section-1">Section 1</a></li>
+    <li><a href="#section-2">Section 2</a></li>
+    <li><a href="#section-3">Section 3</a></li>
+  </ul>
 </div>
 
 <div class="content">

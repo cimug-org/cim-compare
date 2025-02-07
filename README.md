@@ -7,11 +7,12 @@ The **cim-compare** project is a command line tool for generating CIM model comp
 
 ## Table of Contents
 - [Latest Release](#latest-release)
-- [CIM Model Comparison Report Utility Overview](#cim-model-comparison-report-utility)
+- [CIM Model Comparison Report Utility](#cim-model-comparison-report-utility)
+- [Setup & Configuration](#important)
+  - [Important Considerations](#important)
+  - [Warning: Potential Configuration Pitfalls](#warning)
 - [Command Line Usage](#command-line-usage)
   - [Option #1: Enterprise Architect .EAP or .QEA Baseline and Destination Project Files as Inputs](#option-1-enterprise-architect-eap-or-qea-baseline-and-destination-project-files-as-inputs)
-    - [Setup & Configuration (with examples)](#important)
-    - [Warning: Potential Configuration Pitfalls](#warning)
   - [Option #2: XMI Baseline and Destination Models as Inputs](#option-2-xmi-baseline-and-destination-models-as-inputs)
   - [Option #3: EA Model Comparison Logs as Input](#option-3-ea-model-comparison-logs-as-input)
 - [Enterprise Architect XMI Export Procedures](#enterprise-architect-xmi-export-procedures)
@@ -49,60 +50,7 @@ For ease of identification, changes to class and attribute descriptions are visu
 
 ![](media/Text_Diff_Visualization.png)
 
-## Command Line Usage
-
-The **cim-compare** utility has three possible command-line options to produce comparison reports as described next.
-
-### Option \#1: Enterprise Architect .EAP or .QEA Baseline and Destination Project Files as Inputs
-
-The preferred usage is to provide two Enterprise Architect `*.eap` or `*.qea` files for the "baseline" and "destination" input files.  Using these file types eliminates the need to manually export XMI and diagrams from EA as described later in the "Enterprise Architect XMI Export Procedures" section. When using these file types as inputs on the command line both "baseline" and "destination" files must be either 32-bit (i.e. `*.eap`) or 64-bit (i.e. `*.qea`) files. Note that the processing of 64-bit `*.qea` files is more performant.
-
-The command-line usage for this option takes the following form:
-
-```
-java [<jvm-parameter-1>]...[<jvm-parameter-n>] -jar cim-compare-1.3.0.jar \
-<baseline-model-file> <destination-model-file> [<output-directory-or-html-file>] \
-[--package=<package-name>] [--minimal] [--include-diagrams] [--image-type=<image-file-extension>] \
-[--zip] [--cleanup]
-```
-
-*Parameter Details*:
-
-**[\<`jvm-parameter-x`\>] (Optional)**: A JVM (Java Virtual Machine) parameter that may be needed for execution. JVM parameters are configurations used to control the behavior of the JVM at runtime and take a form such as `-mx1096m`, `-mx4G` or `-Dfile.encoding=UTF-8`. These parameters can influence memory usage, garbage collection, system properties, debugging, and performance tuning. JVM parameters are passed as command-line arguments when starting a Java application and if used should **appear first** in the sequence of command line arguments (before `cim-compare-1.3.0.jar`). This is necessary so that **cim-compare** does not try to process them as part of its command line arguments which should always appear after `cim-compare-1.3.0.jar`. Note that for this Option #1 the `-Djava.library.path=<directory>` JVM parameter is required as will be described later.
-
-**\<`baseline-model-file`\>** (**Required**): An Enterprise Architect baseline .eap or .qea model file. When not specified as an absolute file path the location is assumed to be the directory **cim-compare** is being executed from.
-
-**\<`destination-model-file`\>** (**Required**): An Enterprise Architect destination .eap or .qea model file. When not specified as an absolute file path the location is assumed to be the directory **cim-compare** is being executed from.
-
-**[\<`output-directory-or-html-file`\>] (Optional)**: An output directory or an output HTML file. In the case where a directory is specified but does not exist it will be created. The same is true for the parent directory of a specified HTML file if it does not exist. When an HTML file is provided it may be specified as an absolute file path or as the simple name of an HTML file to be generated. If this command line option is not specified then **cim-compare** will generate an HTML file whose name is derived from the two input files.
-
-**[`--package=<package-name>`] (Optional):** The root package within the models from which to start the comparison report from. Appearing at the end of the command-line after file and directory specifications, when specified the package must exist in both the baseline and destination models (e.g. --package=IEC61970, --package=Grid, --package=IEC61968, --package=IEC62325, --package=CIM, etc.) and be specified with two leading dashes (--). Note that when **no** IEC package name is specified that the report is generated from the root package in the models.
-
-**[`--minimal`] (Optional):** When specified **cim-compare** will exclude all "Identical" packages, classes, attributes, links, diagrams, etc. from the generated report. This is useful when it is necessary to perform detailed analysis of only the most concise set of changes between models.
-
-**[`--include-diagrams`] (Optional):** Indicates that diagram images should also be exported from EA along with the XMI exports. The type of images to be exported should also be provided using the --image-type option. When not specified the image type will default to JPG.
-
-**[`--image-type=<image-file-extension>`] (Optional):** The type of diagrams to be exported from EA (i.e. JPG, GIF, PNG, BMP, or EMF). This can be skipped for JPG images as JPG is used as the default value when the option is not specified. This command line option is only used when --include-diagrams also appears on the command line.
-
-**[`--zip`] (Optional):** When specified **cim-compare** will package up the generated report and any associated diagrams into a single ZIP archive. It is most often utilized for packaging the report when diagram images are included and can help simplify distribution.
-
-**[`--cleanup`] (Optional):** When specified **cim-compare** will delete all artifacts and directories created during report generation except for the ZIP archive. This command line option is only relevant when --zip also appears on the command line.
-
-Notice that in the following command line examples where a directory or file path contains spaces it is specified within quotes.
-
-| **Command Line Examples:**                                                                               |
-|----------------------------------------------------------------------------------------------------------|
-| `java -mx1096m -Djava.library.path="D:\cim-compare\ea15" -jar cim-compare-1.3.0.jar "C:\\exports\\15v33.eap" "C:\\exports\\CIM16v26a.eap" "C:\\"` |
-| `java -mx4096m -Djava.library.path="D:\cim-compare\ea16" -jar cim-compare-1.3.0.jar "C:\\exports\\15v33.qea" "C:\\exports\\CIM16v26a.qea" "C:\\"` |
-| `java -mx1096m -Djava.library.path="D:\cim-compare\ea15" -jar cim-compare-1.3.0.jar "C:\\exports\\15v33.eap" "C:\\exports\\CIM16v26a.eap" --package=IEC61970 --minimal` |
-| `java -mx1096m -Djava.library.path="D:\cim-compare\ea15" -jar cim-compare-1.3.0.jar CIM15v33.eap CIM16v26a.eap C:\\ --minimal`  |
-| `java -mx1096m -Djava.library.path="D:\cim-compare\ea15" -jar cim-compare-1.3.0.jar CIM15v33.eap CIM16v26a.eap C:\\ --minimal --include-diagrams --zip` |
-| `java -mx4096m -Djava.library.path="D:\cim-compare\ea16" -jar cim-compare-1.3.0.jar CIM15v33.qea CIM16v26a.qea C:\\CIM15v33_CIM16v26a_ComparisonReport.html` |
-| `java -mx1096m -Djava.library.path="D:\cim-compare\ea15" -jar cim-compare-1.3.0.jar CIM15v33.eap CIM16v26a.eap CIM15v33_CIM16v26a_ComparisonReport.html --minimal` |
-| `java -mx1096m -Djava.library.path="D:\cim-compare\ea15" -jar cim-compare-1.3.0.jar CIM15v33.eap CIM16v26a.eap --package=IEC62325 --minimal --include-diagrams --image-type=GIF --zip --cleanup` |
-| `java -mx4096m -Djava.library.path="D:\cim-compare\ea16" -jar cim-compare-1.3.0.jar CIM15v33.qea CIM16v26a.qea --package=Grid --minimal --include-diagrams --image-type=GIF --zip --cleanup` |
-
-NOTE:  The above command line examples illustrate the use of both `.eap` and `.qea` EA files as input. Where `.eap` files appear as input on the command line it is assumed that 32-bit Java is being used to execute the `.jar` file. Likewise, for `.qea` files that 64-bit Java is executed.
+## Setup & Configuration
 
 #### IMPORTANT:
 
@@ -237,6 +185,61 @@ The above 64-bit command line example uses:
 > 
 > Finally, keep in mind that when using the default installation you could have a bit-wise compliant version of Java and have no issues creating reports which than later no longer appears functions. Such a scenario can occur when between uses of cim-compare, software is installed on your system that, as part of its installer, install a newer 64-bit version of Java making. This then could make that Java installation your new default Java. This typically happens "under the radar" and should be one of the first things checked when troubleshooting potential issues. 
 >
+
+## Command Line Usage
+
+The **cim-compare** utility has three possible command-line options to produce comparison reports as described next.
+
+### Option \#1: Enterprise Architect .EAP or .QEA Baseline and Destination Project Files as Inputs
+
+The preferred usage is to provide two Enterprise Architect `*.eap` or `*.qea` files for the "baseline" and "destination" input files.  Using these file types eliminates the need to manually export XMI and diagrams from EA as described later in the "Enterprise Architect XMI Export Procedures" section. When using these file types as inputs on the command line both "baseline" and "destination" files must be either 32-bit (i.e. `*.eap`) or 64-bit (i.e. `*.qea`) files. Note that the processing of 64-bit `*.qea` files is more performant.
+
+The command-line usage for this option takes the following form:
+
+```
+java [<jvm-parameter-1>]...[<jvm-parameter-n>] -jar cim-compare-1.3.0.jar \
+<baseline-model-file> <destination-model-file> [<output-directory-or-html-file>] \
+[--package=<package-name>] [--minimal] [--include-diagrams] [--image-type=<image-file-extension>] \
+[--zip] [--cleanup]
+```
+
+*Parameter Details*:
+
+**[\<`jvm-parameter-x`\>] (Optional)**: A JVM (Java Virtual Machine) parameter that may be needed for execution. JVM parameters are configurations used to control the behavior of the JVM at runtime and take a form such as `-mx1096m`, `-mx4G` or `-Dfile.encoding=UTF-8`. These parameters can influence memory usage, garbage collection, system properties, debugging, and performance tuning. JVM parameters are passed as command-line arguments when starting a Java application and if used should **appear first** in the sequence of command line arguments (before `cim-compare-1.3.0.jar`). This is necessary so that **cim-compare** does not try to process them as part of its command line arguments which should always appear after `cim-compare-1.3.0.jar`. Note that for this Option #1 the `-Djava.library.path=<directory>` JVM parameter is required as will be described later.
+
+**\<`baseline-model-file`\>** (**Required**): An Enterprise Architect baseline .eap or .qea model file. When not specified as an absolute file path the location is assumed to be the directory **cim-compare** is being executed from.
+
+**\<`destination-model-file`\>** (**Required**): An Enterprise Architect destination .eap or .qea model file. When not specified as an absolute file path the location is assumed to be the directory **cim-compare** is being executed from.
+
+**[\<`output-directory-or-html-file`\>] (Optional)**: An output directory or an output HTML file. In the case where a directory is specified but does not exist it will be created. The same is true for the parent directory of a specified HTML file if it does not exist. When an HTML file is provided it may be specified as an absolute file path or as the simple name of an HTML file to be generated. If this command line option is not specified then **cim-compare** will generate an HTML file whose name is derived from the two input files.
+
+**[`--package=<package-name>`] (Optional):** The root package within the models from which to start the comparison report from. Appearing at the end of the command-line after file and directory specifications, when specified the package must exist in both the baseline and destination models (e.g. --package=IEC61970, --package=Grid, --package=IEC61968, --package=IEC62325, --package=CIM, etc.) and be specified with two leading dashes (--). Note that when **no** IEC package name is specified that the report is generated from the root package in the models.
+
+**[`--minimal`] (Optional):** When specified **cim-compare** will exclude all "Identical" packages, classes, attributes, links, diagrams, etc. from the generated report. This is useful when it is necessary to perform detailed analysis of only the most concise set of changes between models.
+
+**[`--include-diagrams`] (Optional):** Indicates that diagram images should also be exported from EA along with the XMI exports. The type of images to be exported should also be provided using the --image-type option. When not specified the image type will default to JPG.
+
+**[`--image-type=<image-file-extension>`] (Optional):** The type of diagrams to be exported from EA (i.e. JPG, GIF, PNG, BMP, or EMF). This can be skipped for JPG images as JPG is used as the default value when the option is not specified. This command line option is only used when --include-diagrams also appears on the command line.
+
+**[`--zip`] (Optional):** When specified **cim-compare** will package up the generated report and any associated diagrams into a single ZIP archive. It is most often utilized for packaging the report when diagram images are included and can help simplify distribution.
+
+**[`--cleanup`] (Optional):** When specified **cim-compare** will delete all artifacts and directories created during report generation except for the ZIP archive. This command line option is only relevant when --zip also appears on the command line.
+
+Notice that in the following command line examples where a directory or file path contains spaces it is specified within quotes.
+
+| **Command Line Examples:**                                                                               |
+|----------------------------------------------------------------------------------------------------------|
+| `java -mx1096m -Djava.library.path="D:\cim-compare\ea15" -jar cim-compare-1.3.0.jar "C:\\exports\\15v33.eap" "C:\\exports\\CIM16v26a.eap" "C:\\"` |
+| `java -mx4096m -Djava.library.path="D:\cim-compare\ea16" -jar cim-compare-1.3.0.jar "C:\\exports\\15v33.qea" "C:\\exports\\CIM16v26a.qea" "C:\\"` |
+| `java -mx1096m -Djava.library.path="D:\cim-compare\ea15" -jar cim-compare-1.3.0.jar "C:\\exports\\15v33.eap" "C:\\exports\\CIM16v26a.eap" --package=IEC61970 --minimal` |
+| `java -mx1096m -Djava.library.path="D:\cim-compare\ea15" -jar cim-compare-1.3.0.jar CIM15v33.eap CIM16v26a.eap C:\\ --minimal`  |
+| `java -mx1096m -Djava.library.path="D:\cim-compare\ea15" -jar cim-compare-1.3.0.jar CIM15v33.eap CIM16v26a.eap C:\\ --minimal --include-diagrams --zip` |
+| `java -mx4096m -Djava.library.path="D:\cim-compare\ea16" -jar cim-compare-1.3.0.jar CIM15v33.qea CIM16v26a.qea C:\\CIM15v33_CIM16v26a_ComparisonReport.html` |
+| `java -mx1096m -Djava.library.path="D:\cim-compare\ea15" -jar cim-compare-1.3.0.jar CIM15v33.eap CIM16v26a.eap CIM15v33_CIM16v26a_ComparisonReport.html --minimal` |
+| `java -mx1096m -Djava.library.path="D:\cim-compare\ea15" -jar cim-compare-1.3.0.jar CIM15v33.eap CIM16v26a.eap --package=IEC62325 --minimal --include-diagrams --image-type=GIF --zip --cleanup` |
+| `java -mx4096m -Djava.library.path="D:\cim-compare\ea16" -jar cim-compare-1.3.0.jar CIM15v33.qea CIM16v26a.qea --package=Grid --minimal --include-diagrams --image-type=GIF --zip --cleanup` |
+
+NOTE:  The above command line examples illustrate the use of both `.eap` and `.qea` EA files as input. Where `.eap` files appear as input on the command line it is assumed that 32-bit Java is being used to execute the `.jar` file. Likewise, for `.qea` files that 64-bit Java is executed.
 
 ### Option \#2: XMI Baseline and Destination Models as Inputs
 

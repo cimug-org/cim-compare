@@ -8,8 +8,8 @@ The **cim-compare** project is a command line tool for generating CIM model comp
 ## Table of Contents
 - [Latest Release](#latest-release)
 - [CIM Model Comparison Report Utility](#cim-model-comparison-report-utility)
-- [Setup & Configuration](#important)
-  - [Important Considerations](#important)
+- [Setup & Configuration](#setup--configuration)
+  - [Important Setup Considerations](#important-setup-considerations)
   - [Warning: Potential Configuration Pitfalls](#warning)
 - [Command Line Usage](#command-line-usage)
   - [Option #1: Enterprise Architect .EAP or .QEA Baseline and Destination Project Files as Inputs](#option-1-enterprise-architect-eap-or-qea-baseline-and-destination-project-files-as-inputs)
@@ -52,7 +52,7 @@ For ease of identification, changes to class and attribute descriptions are visu
 
 ## Setup & Configuration
 
-#### IMPORTANT:
+### Important Setup Considerations
 
 > This **cim-compare** feature for processing Enterprise Architect `*.eap` or `*.qea` files directly requires EA's COM automation API. Consequently, if you plan to use it you are required to have a licensed version of Sparx Enterprise Architect (EA) installed for the COM automation API to work. The EA API and the `eaapi.jar` file act as interfaces to the Enterprise Architect application. The following explains why:
 > 
@@ -153,7 +153,7 @@ The above 64-bit command line example uses:
  - JPG for the type of diagrams (i.e. `--image-type=JPG`)
  - the inclusion of only changed elements (i.e. `--minimal`)
  
-#### WARNING:
+### Warning: Potential Configuration Pitfalls
 
 > A common "gotcha" that users run into is that when using `.eap` project files as input into **cim-compare**, they unknowingly use 64-bit Java instead of 32-bit Java (and vice versa). It is a hard requirement that when using `.qea` files 64-bit Java **must** be used and, conversely, when using `.qea` files 64-bit Java **must** be used. 
 >

@@ -11,8 +11,8 @@ The **cim-compare** project is a command line tool for generating CIM model comp
 - [Overview: CIM Model Comparison Reports](#overview-cim-model-comparison-reports)
 - [Setup & Configuration](#setup--configuration)
   - [Java Technical Requirements](#java-technical-requirements)
-    - [Download for 32-bit Java 17](#download-for-32-bit-java-17)
-    - [Download for 64-bit Java 17](#download-for-64-bit-java-17)
+    - [Download 32-bit Java 17](#download-for-32-bit-java-17)
+    - [Download 64-bit Java 17](#download-for-64-bit-java-17)
   - [Important Setup Considerations](#important-setup-considerations)
   - [Warning: Potential Configuration Pitfalls](#warning-potential-configuration-pitfalls)
 - [Command Line Usage](#command-line-usage)
@@ -71,13 +71,13 @@ java <span style="color:red">-mx4G</span> -jar **cim-compare-1.3.0.jar** iec6197
 
 > For freely available downloads of Java visit [Azul Systems'](https://en.wikipedia.org/wiki/Azul_Systems) download site at [Download Azul JDKs](https://www.azul.com/downloads/?package=jdk#zulu).
 
-#### Download for 32-bit Java 17
+#### Download 32-bit Java 17
 
 To directly download a 32-bit Java 17 click the image below:
 
 [![image](https://github.com/user-attachments/assets/d4949280-c8e2-4fa9-b792-35db15f33344)](https://www.azul.com/core-post-download/?endpoint=zulu&uuid=7669f8bc-8512-4993-8598-8a65866bad5c)
 
-#### Download for 64-bit Java 17
+#### Download 64-bit Java 17
 
 To directly download a 64-bit Java 17 click the image below:
 

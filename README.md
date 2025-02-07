@@ -5,42 +5,6 @@
       
 The **cim-compare** project is a command line tool for generating CIM model comparison reports. For an example report visit [comparison-report.html](https://cim-compare.ucaiug.io/example-comparison-report/comparison-report.html).
 
-## Table of Contents
-{:.no_toc}
-
-* TOC
-{:toc}
-
----
-
-<style>
-  .sidebar {
-    position: fixed;
-    left: 0;
-    top: 0;
-    width: 250px;
-    height: 100%;
-    background: #f4f4f4;
-    padding: 20px;
-    overflow-y: auto;
-  }
-  .content {
-    margin-left: 270px;
-    padding: 20px;
-  }
-</style>
-
-<div class="sidebar">
-  <h3>Contents</h3>
-  <ul>
-    <li><a href="#section-1">Section 1</a></li>
-    <li><a href="#section-2">Section 2</a></li>
-    <li><a href="#section-3">Section 3</a></li>
-  </ul>
-</div>
-
-<div class="content">
-
 ## Latest Release
 
 1.3.0  
@@ -396,6 +360,3 @@ java <span style="color:red">-mx4096m</span> -jar **cim-compare-1.3.0.jar** iec6
 ## License
 
 Distributed under the MIT license. See [LICENSE](LICENSE) for more information.
-
-
-</div>

@@ -207,7 +207,7 @@ The **cim-compare** utility has three possible command-line options to produce c
 
 ### Option \#1: Enterprise Architect .EAP or .QEA Project Files as Input
 
-The preferred usage is to provide two Enterprise Architect `*.eap` or `*.qea` files for the "baseline" and "destination" input files.  Using these file types eliminates the need to manually export XMI and diagrams from EA as described later in the "Enterprise Architect XMI Export Procedures" section. When using these file types as inputs on the command line both "baseline" and "destination" files must be either 32-bit (i.e. `*.eap`) or 64-bit (i.e. `*.qea`) files. Note that the processing of 64-bit `*.qea` files is more performant.
+The preferred usage is to provide two Enterprise Architect `*.eap` or `*.qea` files for the "baseline" and "destination" input files.  Using these file types eliminates the need to manually export XMI and diagrams from EA as described later in the [Enterprise Architect XMI Export Procedures](#enterprise-architect-xmi-export-procedures) section. When using these file types as inputs on the command line both "baseline" and "destination" files must be either 32-bit (i.e. `*.eap`) or 64-bit (i.e. `*.qea`) files. Note that the processing of 64-bit `*.qea` files is more performant.
 
 The command-line usage for this option takes the following form:
 
@@ -258,7 +258,7 @@ NOTE:  The above command line examples illustrate the use of both `.eap` and `.q
 
 ### Option \#2: XMI Baseline and Destination Models as Inputs
 
-The second usage is to directly specify two XMI 1.1 compliant files representing the "baseline" and “destination” models exported as described later in "Enterprise Architect XMI Export Procedures". In this scenario the command-line usage takes the following form:
+The second usage is to directly specify two XMI 1.1 compliant files representing the "baseline" and “destination” models exported as described later in [Enterprise Architect XMI Export Procedures](#enterprise-architect-xmi-export-procedures). In this scenario the command-line usage takes the following form:
 
 ```
 java [<jvm-parameter-1>]...[<jvm-parameter-n>] -jar cim-compare-1.3.0.jar \

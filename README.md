@@ -364,19 +364,16 @@ Again, in the following command line examples, directory or file paths containin
 The procedure to perform an export of EA baseline and destination models as **XMI 1.1** compliant files is as follows (screenshots taken from EA v15.1):
 
 1.  In Enterprise Architect load the “baseline” (or older) model and select the top-level package of the model as shown.
-
    <p align="left">
       <img src="media/Select_Model_Root_Package.png">
    </p>
 
 2.  Once selected, choose the Publish menu and then the “Other Formats…” menu.
-
    <p align="left">
       <img src="media/Publish_Other_Formats.png">
    </p>
 
 3. The dialog box shown next will be presented to allow selection of the specific settings to use for export.  Select the **“UML 1.3 (XMI 1.1)”** XML export type.  This is the only export format supported for **cim-compare** comparison reports. It is important that the "Unisys/Rose Format" option **not** be checked. Finally, the inclusion of UML diagrams in the comparison report can optionally be selected at this time. This is done by additionally checking the "Export Diagrams" and "Generate Diagram Images" check boxes along with the selection of an image type (e.g. JPG, GIF, PNG, etc.) to export the diagrams in. Note that when including UML diagrams as part of the export EA will automatically create a directory called "Images" and export all image files into that directory. Note that when exporting an image type other than JPG the **`--image-type`** command line option described in the [Command Line Usage](#command-line-usage) section must be used.
-
    <p align="left">
       <img src="media/Publish_Model_Package_Export_Settings.png">
    </p>

@@ -146,7 +146,7 @@ C:\
 │               └── java.exe
 └── ...
 ```
-Of importance is for each installation's set of DLL files to be located in their own directory. This will allow for the ability to isolate where Java looks for its COM Modules based on the specific release of Sparx EA. 
+Of importance is that each EA installation's set of DLL files be located in their own directory. This will allow for the ability to isolate where Java looks for its COM Modules based on the specific release of Sparx EA. 
 
 Following is a set of command lines based on the above example configuration and file system structure. The first illustrates comparison report generation for 32-bit `.eap` files and the second for 64-bit `.qea` files. 
  
@@ -189,11 +189,11 @@ The above 64-bit command line example uses:
 >
 > Noteworthy in the previous command line examples is that `java` has been expressly qualified as either `"C:\Program Files (x86)\Zulu\zulu-17\bin\java.exe"` or `"C:\Program Files\Zulu\zulu-17\bin\java.exe"` to ensure that the correct version of Java is used. This is not a requirement but rather one method to eliminate this as a pitfall.
 >
-> If choosing to simply the command line via use of the default installation of Java such as:
+> If choosing to simplify the command line via use of the default installation of Java such as:
 >
 > `java -mx4G -Djava.library.path="D:\cim-compare\ea16" -jar cim-compare-1.3.0.jar ...`
 > 
-> ...then it is suggested that you confirm the bit-wise version of your default Java installation. The following java command will result in output that should indicate if your default installation is a 32-bit Java installation. This either by explicitly stating as such or by including the installation directory which for 32-bit will be located in `C:\Program Files (x86)\...`. Note that for many of the latest releases of Java, if not explicitly stated as 32-bit, athey are implied to be 64-bit as implied in the example shown.
+> ...then it is suggested that you confirm the bit-wise version of your default Java installation. The following java command will result in output that should indicate if your default installation is 32-bit. This either by explicitly stating as such or by including the installation directory which for 32-bit will be located in `C:\Program Files (x86)\...`. Note that for many of the newest releases of Java, if not explicitly stated as begin 32-bit, it is them implied to be 64-bit as illustrated in this example:
 >
 > ```
 > C:\>java -version

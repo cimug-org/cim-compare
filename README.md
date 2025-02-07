@@ -8,7 +8,7 @@ The **cim-compare** project is a command line tool for generating CIM model comp
 ## Table of Contents
 - [Home](#cim-compare)
 - [Latest Release](#latest-release)
-- [Overview: CIM Model Comparison Report Utility](#overview-cim-model-comparison-report-utility)
+- [Overview: CIM Model Comparison Reports](#overview-cim-model-comparison-reports)
 - [Setup & Configuration](#setup--configuration)
   - [Java Technical Requirements](#java-technical-requirements)
   - [Important Setup Considerations](#important-setup-considerations)
@@ -29,7 +29,7 @@ The **cim-compare** project is a command line tool for generating CIM model comp
  - To directly download the latest release of the cim-compare command-line application click [cim-compare-1.3.0.jar](https://github.com/cimug-org/cim-compare/releases/download/1.3.0/cim-compare-1.3.0.jar).
 
 
-## Overview: CIM Model Comparison Report Utility
+## Overview: CIM Model Comparison Reports
 
 **cim-compare** generates model comparison reports between two points in time. A link to the latest release can be found at the end of this README.
 

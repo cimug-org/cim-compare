@@ -69,7 +69,7 @@ java <span style="color:red">-mx4G</span> -jar **cim-compare-1.3.0.jar** iec6197
 
 ### Important Setup Considerations
 
-> The **cim-compare** commoand line option described in the [Option #1: Enterprise Architect .EAP or .QEA Project Files as Input](#option-1-enterprise-architect-eap-or-qea-project-files-as-input) section requires EA's COM automation API. Consequently, if you plan to use it you are required to have a licensed version of Sparx Enterprise Architect (EA) installed for the COM automation API to work. The EA API and the `eaapi.jar` file act as interfaces to the Enterprise Architect application. The following explains why:
+> The **cim-compare** command-line option described in the [Option #1: Enterprise Architect .EAP or .QEA Project Files as Input](#option-1-enterprise-architect-eap-or-qea-project-files-as-input) section requires EA's COM automation API. Consequently, if you plan to use it you are required to have a licensed version of Sparx Enterprise Architect (EA) installed for the COM automation API to work. The EA API and the `eaapi.jar` file act as interfaces to the Enterprise Architect application. The following explains why:
 > 
 > - Dependency on the Sparx Enterprise Architect Application:
 >    - The EA COM API and `eaapi.jar` rely on the backend functionality of the Enterprise Architect software. They act as a bridge to interact with the models, diagrams, and repositories managed by EA.

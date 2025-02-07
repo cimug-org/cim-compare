@@ -46,7 +46,7 @@ java [<jvm-parameter-1>]...[<jvm-parameter-n>] -jar cim-compare-1.3.0.jar \
 
 *Parameter Details*:
 
-**[\<`jvm-parameter-x`\>] (Optional)**: A JVM (Java Virtual Machine) parameter that may be need for execution. JVM parameters are configurations used to control the behavior of the JVM at runtime and take a form such as `-mx1096m` or `-Dfile.encoding=UTF-8`. These parameters can influence memory usage, garbage collection, system properties, debugging, and performance tuning. JVM parameters are passed as command-line arguments when starting a Java application and if used should appear first in the sequence of command line arguments (before `cim-compare-1.3.0.jar`). This is necessary so that **cim-compare** does not try to process them as part of its command line arguments which should always appear after `cim-compare-1.3.0.jar`. Note that for this Option #1 the `-Djava.library.path=<directory>` JVM parameter is required as will be described later.
+**[\<`jvm-parameter-x`\>] (Optional)**: A JVM (Java Virtual Machine) parameter that may be needed for execution. JVM parameters are configurations used to control the behavior of the JVM at runtime and take a form such as `-mx1096m`, `-mx4G` or `-Dfile.encoding=UTF-8`. These parameters can influence memory usage, garbage collection, system properties, debugging, and performance tuning. JVM parameters are passed as command-line arguments when starting a Java application and if used should **appear first** in the sequence of command line arguments (before `cim-compare-1.3.0.jar`). This is necessary so that **cim-compare** does not try to process them as part of its command line arguments which should always appear after `cim-compare-1.3.0.jar`. Note that for this Option #1 the `-Djava.library.path=<directory>` JVM parameter is required as will be described later.
 
 **\<`baseline-model-file`\>** (**Required**): An Enterprise Architect baseline .eap or .qea model file. When not specified as an absolute file path the location is assumed to be the directory **cim-compare** is being executed from.
 
@@ -119,20 +119,46 @@ C:\cim-compare\ea15\SSJavaCOM.dll  (copied from "C:\Program Files (x86)\Sparx Sy
 C:\cim-compare\ea15\SSJavaCOM16.dll  (copied from "C:\Program Files (x86)\Sparx Systems\EA15\Java API")
 C:\cim-compare\ea16\SSJavaCOM.dll  (copied from "C:\Program Files\Sparx Systems\EA16\Java API")
 C:\cim-compare\ea16\SSJavaCOM16.dll  (copied from "C:\Program Files\Sparx Systems\EA16\Java API")
+
+C:\
+├── cim-compare
+│   ├── cim-compare-1.3.0.jar
+│   ├── cim-compare-1.3.0.bat   (example batch file for execution)
+│   ├── ea15
+│   │   ├── SSJavaCOM.dll
+│   │   └── SSJavaCOM16.dll
+│   ├── ea16
+│   │   ├── SSJavaCOM.dll
+│   │   └── SSJavaCOM16.dll
+│   ├── cim17v40.eap
+│   ├── cim18v02.eap
+│   ├── cim18v12.qea
+│   └── cim18v13.qea
+├── Program Files (x86)      (32-bit JVM installation required if processing 32-bit .eap files)
+│   └── Zulu
+│       └── zulu-17
+│           └── bin
+│               └── java.exe
+├── Program Files            (64-bit JVM installation required if processing 64-bit .qea files)
+│   └── Zulu
+│       └── zulu-17
+│           └── bin
+│               └── java.exe
+└── ...
 ```
 Of importance is for each installation's set of DLL files to be located in their own directory. This will allow for the ability to isolate where Java looks for its COM Modules based on the specific release of Sparx EA. 
 
-Following is a set of command lines based on the above example configuration. The first illustrates comparison report generation for 32-bit `.eap` files and the second for 64-bit `.qea` files.
+Following is a set of command lines based on the above example configuration and file system structure. The first illustrates comparison report generation for 32-bit `.eap` files and the second for 64-bit `.qea` files. 
  
 ```
-"C:\Program Files (x86)\Zulu\zulu-17\bin\java.exe" -mx1024m -Djava.library.path="D:\cim-compare\ea15" \
+"C:\Program Files (x86)\Zulu\zulu-17\bin\java.exe" -mx1G -Djava.library.path="D:\cim-compare\ea15" \
 -jar cim-compare-1.3.0.jar cim17v40.eap cim18v02.eap comparison-report.html \
 --include-diagrams --image-type=JPG --minimal
 ```
 
 The above 32-bit command line example uses:
  - a 32-bit Java 17 JRE/JVM  (i.e. "C:\Program Files (x86)\Zulu\zulu-17\bin\java.exe")
- - a max heap size of 1024m  (i.e. 1GB specified via `-mx1024m`)
+ - a max heap size of 1G (i.e. 1024m)  (i.e. 1GB specified via `-mx1G` or `-mx1024m`)
  - the 32-bit COM DLL loaded from the "D:\cim-compare\ea15" directory  (i.e. via `-Djava.library.path="D:\cim-compare\ea15"`) 
  - cim17v40.eap as the input baseline model  (i.e. a 32-bit EA project file indicated by the `.eap` extension)
  - cim18v02.eap as the input destination model  (i.e. a 32-bit EA project file indicated by the `.eap` extension)
@@ -142,13 +168,13 @@ The above 32-bit command line example uses:
  - the inclusion of only changed elements (i.e. `--minimal`)
 
 ```
-"C:\Program Files\Zulu\zulu-17\bin\java.exe" -mx4096m -Djava.library.path="D:\cim-compare\ea16" \
+"C:\Program Files\Zulu\zulu-17\bin\java.exe" -mx4G -Djava.library.path="D:\cim-compare\ea16" \
 -jar cim-compare-1.3.0.jar cim17v40.qea cim18v02.qea comparison-report.html \
 --include-diagrams --image-type=JPG --minimal
 ```
 The above 64-bit command line example uses:
  - a 64-bit Java 17 JRE/JVM  (i.e. "C:\Program Files\Zulu\zulu-17\bin\java.exe")
- - a max heap size of 4096m  (i.e. 4GB specified via `-mx4096m`)
+ - a max heap size of 4G (i.e. 4096m) (i.e. 4GB specified via `-mx4G` or `-mx4096m`)
  - the 64-bit COM DLL loaded from the "D:\cim-compare\ea16" directory  (i.e. via `-Djava.library.path="D:\cim-compare\ea16"`) 
  - cim17v40.qea as the input baseline model  (i.e. a 64-bit EA project file indicated by the `.qea` extension)
  - cim18v02.qea as the input destination model  (i.e. a 64-bit EA project file indicated by the `.qea` extension)
@@ -157,7 +183,38 @@ The above 64-bit command line example uses:
  - JPG for the type of diagrams (i.e. `--image-type=JPG`)
  - the inclusion of only changed elements (i.e. `--minimal`)
  
-Finally, it should be noted that if choosing to use `.eap` project files as input into **cim-compare** then 32-bit Java must be used.  Likewise, when using `.qea` files then 64-bit Java must be used.
+#### WARNING:
+
+> A common "gotcha" that users run into is that when using `.eap` project files as input into **cim-compare**, they unknowingly use 64-bit Java instead of 32-bit Java (and vice versa). It is a hard requirement that when using `.qea` files 64-bit Java **must** be used and, conversely, when using `.qea` files 64-bit Java **must** be used. 
+>
+> Noteworthy in the previous command line examples is that `java` has been expressly qualified as either `"C:\Program Files (x86)\Zulu\zulu-17\bin\java.exe"` or `"C:\Program Files\Zulu\zulu-17\bin\java.exe"` to ensure that the correct version of Java is used. This is not a requirement but rather one method to eliminate this as a pitfall.
+>
+> If choosing to simply the command line via use of the default installation of Java such as:
+>
+> `java -mx4G -Djava.library.path="D:\cim-compare\ea16" -jar cim-compare-1.3.0.jar ...`
+> 
+> ...then it is suggested that you confirm the bit-wise version of your default Java installation. The following java command will result in output that should indicate if your default installation is a 32-bit Java installation. This either by explicitly stating as such or by including the installation directory which for 32-bit will be located in `C:\Program Files (x86)\...`. Note that for many of the latest releases of Java, if not explicitly stated as 32-bit, athey are implied to be 64-bit as implied in the example shown.
+>
+> ```
+> C:\>java -version
+> openjdk version "17.0.13" 2024-10-15 LTS
+> OpenJDK Runtime Environment Zulu17.54+21-CA (build 17.0.13+11-LTS)
+> OpenJDK Client VM Zulu17.54+21-CA (build 17.0.13+11-LTS, mixed mode, emulated-client)
+> ```
+> 
+> If command line execution results in an error similar to the following then it typically is an indicator that the Java executable being used does not bit-wise match the project files being input:
+>
+> ```
+> java.lang.Exception: Internal application error.
+>        at org.sparx.Repository.comGetModels(Native Method)
+>        at org.sparx.Repository.GetModels(Repository.java:805)
+>        at org.cimug.compare.app.CIMModelComparisonGenerator.parseFileArguments(CIMModelComparisonGenerator.java:492)
+>        at org.cimug.compare.app.CIMModelComparisonGenerator.main(CIMModelComparisonGenerator.java:107)
+>ERROR:  Terminating XMI export processing for EA project file [CIMMarket04v16a.eap] due to an unexpected exception.
+> ```
+> 
+> Finally, keep in mind that when using the default installation you could have a bit-wise compliant version of Java and have no issues creating reports but suddently it no longer functions and appears to have broken. This scenario can happen when between uses of cim-compare software was installed on your system that needed a version of Java for its purposes and which, as part of its installer, happened to install a newer 64-bit release of Java making it the new default Java installation. This typically happens "under the radar" and should  often be the first thing checked when trouble shooting. 
+>
 
 ### Option \#2: XMI Baseline and Destination Models as Inputs
 
@@ -171,7 +228,7 @@ java [<jvm-parameter-1>]...[<jvm-parameter-n>] -jar cim-compare-1.3.0.jar \
 
 *Parameter Details*:
 
-**[`<jvm-parameter-x>`] (Optional)**: A JVM (Java Virtual Machine) parameter that may be need for execution. JVM parameters are configurations used to control the behavior of the JVM at runtime and take a form such as `-mx1096m` or `-Dfile.encoding=UTF-8`. These parameters can influence memory usage, garbage collection, system properties, debugging, and performance tuning. JVM parameters are passed as command-line arguments when starting a Java application and if used should appear first in the sequence of command line arguments (before `cim-compare-1.3.0.jar`). This is necessary so that **cim-compare** does not try to process them as part of its command line arguments which should always appear after `cim-compare-1.3.0.jar`.
+**[`<jvm-parameter-x>`] (Optional)**: A JVM (Java Virtual Machine) parameter that may be needed for execution. JVM parameters are configurations used to control the behavior of the JVM at runtime and take a form such as `-mx1096m`, `-mx4G` or `-Dfile.encoding=UTF-8`. These parameters can influence memory usage, garbage collection, system properties, debugging, and performance tuning. JVM parameters are passed as command-line arguments when starting a Java application and if used should **appear first** in the sequence of command line arguments (before `cim-compare-1.3.0.jar`). This is necessary so that **cim-compare** does not try to process them as part of its command line arguments which should always appear after `cim-compare-1.3.0.jar`.
 **`<baseline-model-xmi-file>`** (**Required**): An XMI 1.1 compliant baseline model file exported from EA. When not specified as an absolute file path the location of the file is assumed to be the directory the utility is being executed from.
 
 **`<destination-model-xmi-file>`** (**Required**): An XMI 1.1 compliant destination model file exported from EA. When not specified as an absolute file path the location of the file is assumed to be the directory the utility is being executed from.
@@ -218,7 +275,7 @@ java [<jvm-parameter-1>]...[<jvm-parameter-n>] -jar cim-compare-1.3.0.jar \
 
 *Parameter Details*:
 
-**[`<jvm-parameter-x>`] (Optional)**: A JVM (Java Virtual Machine) parameter that may be need for execution. JVM parameters are configurations used to control the behavior of the JVM at runtime and take a form such as `-mx1096m` or `-Dfile.encoding=UTF-8`. These parameters can influence memory usage, garbage collection, system properties, debugging, and performance tuning. JVM parameters are passed as command-line arguments when starting a Java application and if used should appear first in the sequence of command line arguments (before `cim-compare-1.3.0.jar`). This is necessary so that **cim-compare** does not try to process them as part of its command line arguments which should always appear after `cim-compare-1.3.0.jar`.
+**[`<jvm-parameter-x>`] (Optional)**: A JVM (Java Virtual Machine) parameter that may be needed for execution. JVM parameters are configurations used to control the behavior of the JVM at runtime and take a form such as `-mx1096m`, `-mx4G` or `-Dfile.encoding=UTF-8`. These parameters can influence memory usage, garbage collection, system properties, debugging, and performance tuning. JVM parameters are passed as command-line arguments when starting a Java application and if used should **appear first** in the sequence of command line arguments (before `cim-compare-1.3.0.jar`). This is necessary so that **cim-compare** does not try to process them as part of its command line arguments which should always appear after `cim-compare-1.3.0.jar`.
 
 **`<comparison-results-xml-file>` (Required):** The model comparison file. When not specified as an absolute file path the location of the file is assumed to be the directory the utility is being executed in.
 

@@ -10,6 +10,7 @@ The **cim-compare** project is a command line tool for generating CIM model comp
 - [Latest Release](#latest-release)
 - [Overview: CIM Model Comparison Report Utility](#overview-cim-model-comparison-report-utility)
 - [Setup & Configuration](#setup--configuration)
+  - [Java Technical Requirements](#java-technical-requirements)
   - [Important Setup Considerations](#important-setup-considerations)
   - [Warning: Potential Configuration Pitfalls](#warning-potential-configuration-pitfalls)
 - [Command Line Usage](#command-line-usage)
@@ -17,7 +18,6 @@ The **cim-compare** project is a command line tool for generating CIM model comp
   - [Option #2: XMI Baseline and Destination Models as Inputs](#option-2-xmi-baseline-and-destination-models-as-inputs)
   - [Option #3: EA Model Comparison Logs as Input](#option-3-ea-model-comparison-logs-as-input)
 - [Enterprise Architect XMI Export Procedures](#enterprise-architect-xmi-export-procedures)
-- [Java Technical Requirements](#java-technical-requirements)
 - [License](#license)
 
 
@@ -52,6 +52,20 @@ For ease of identification, changes to class and attribute descriptions are visu
 ![](media/Text_Diff_Visualization.png)
 
 ## Setup & Configuration
+
+### Java Technical Requirements
+
+**cim-compare** ships as a fully self-contained executable jar file with no external dependencies.
+
+Given the large file sizes consumed and produced by the utility, **OutOfMemory** exceptions occur if the default heap (memory) size is used. The following guidelines should be followed:
+
+> For a 32-bit JRE it is recommended to specify a max heap size of at least 1G (i.e. 1024m) resources permitting. With a 1G heap size the execution will typically run slower. Note that the maximum theoretical heap limit for a 32-bit JVM is 4G. However, due to various additional constraints such as available swap, kernel address space usage, memory fragmentation, and VM overhead, in practice the limit can be much lower. On most modern 32-bit Windows systems the maximum heap size will range from 1.4G to 1.6G.
+
+java <span style="color:red">-mx1024m</span> -jar **cim-compare-1.3.0.jar** iec61970cim16v26a.xmi iec61970cim17v16.xmi D:\\reports
+
+> For 64 bit JREs it is recommended that the maximum heap size be increased to at least 2G (i.e. 2048m) but more if available. It has been observed that 2G is minimally sufficient to handle larger CIM models one might encounter. In the below example 4G is being allocated.
+
+java <span style="color:red">-mx4096m</span> -jar **cim-compare-1.3.0.jar** iec61970cim16v26a.qea iec61970cim17v16.qea D:\\reports
 
 ### Important Setup Considerations
 
@@ -360,20 +374,6 @@ The procedure to perform an export of EA baseline and destination models as **XM
 
 8. The result should be a final export directory containing two images directories (i.e. "Images-baseline" and "Images-destination" containing the baseline and destination diagrams respectively) and two distinct XMI files to be used as input on the command line to **cim-compare**.
 
-
-## Java Technical Requirements
-
-**cim-compare** ships as a fully self-contained executable jar file with no external dependencies.
-
-Given the large file sizes consumed and produced by the utility, **OutOfMemory** exceptions occur if the default heap (memory) size is used. The following guidelines should be followed:
-
-> For a 32-bit JRE it is recommended to specify a max heap size of at least 1G (i.e. 1024m) resources permitting. With a 1G heap size the execution will typically run slower. Note that the maximum theoretical heap limit for a 32-bit JVM is 4G. However, due to various additional constraints such as available swap, kernel address space usage, memory fragmentation, and VM overhead, in practice the limit can be much lower. On most modern 32-bit Windows systems the maximum heap size will range from 1.4G to 1.6G.
-
-java <span style="color:red">-mx1024m</span> -jar **cim-compare-1.3.0.jar** iec61970cim16v26a.xmi iec61970cim17v16.xmi D:\\reports
-
-> For 64 bit JREs it is recommended that the maximum heap size be increased to at least 2G (i.e. 2048m) but more if available. It has been observed that 2G is minimally sufficient to handle larger CIM models one might encounter. In the below example 4G is being allocated.
-
-java <span style="color:red">-mx4096m</span> -jar **cim-compare-1.3.0.jar** iec61970cim16v26a.qea iec61970cim17v16.qea D:\\reports
 
 ## License
 

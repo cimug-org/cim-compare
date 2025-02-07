@@ -213,7 +213,7 @@ The above 64-bit command line example uses:
 >ERROR:  Terminating XMI export processing for EA project file [CIMMarket04v16a.eap] due to an unexpected exception.
 > ```
 > 
-> Finally, keep in mind that when using the default installation you could have a bit-wise compliant version of Java and have no issues creating reports but suddently it no longer functions and appears to have broken. This scenario can happen when between uses of cim-compare software was installed on your system that needed a version of Java for its purposes and which, as part of its installer, happened to install a newer 64-bit release of Java making it the new default Java installation. This typically happens "under the radar" and should  often be the first thing checked when trouble shooting. 
+> Finally, keep in mind that when using the default installation you could have a bit-wise compliant version of Java and have no issues creating reports that suddenly no longer functions and appears to have broken. This scenario can happen when between uses of cim-compare software was installed on your system that needed a version of Java for its purposes and which, as part of its installer, happened to install a newer 64-bit release of Java making it the new default Java installation. This typically happens "under the radar" and should  often be the first thing checked when trouble shooting. 
 >
 
 ### Option \#2: XMI Baseline and Destination Models as Inputs

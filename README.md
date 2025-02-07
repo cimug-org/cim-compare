@@ -201,7 +201,7 @@ The above 64-bit command line example uses:
 >
 > `java -mx4G -Djava.library.path="D:\cim-compare\ea16" -jar cim-compare-1.3.0.jar ...`
 > 
-> ...then it is suggested that you confirm the bit-wise version of your default Java installation. The following java command will result in output that should indicate if your default installation is 32-bit. This either by explicitly stating as such or by including the installation directory which for 32-bit will be located in `C:\Program Files (x86)\...`. Note that for many of the newest releases of Java, if not explicitly stated as begin 32-bit, it is them implied to be 64-bit as illustrated in this example:
+> ...then it is suggested that you confirm the bit-wise version of your default Java installation. The following java command will result in output that should indicate if your default installation is 32-bit. This either by explicitly stating as such or by including the installation directory which for 32-bit will be located in `C:\Program Files (x86)\...`. Note that for many of the newest releases of Java, if not explicitly stated as being 32-bit, it is then implied to be 64-bit as illustrated in this example:
 >
 > ```
 > C:\>java -version

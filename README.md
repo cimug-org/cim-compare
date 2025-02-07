@@ -98,7 +98,7 @@ NOTE:  The above command line examples illustrate the use of both `.eap` and `.q
 >   
 > The COM interface wrappers ship with each  of Sparx EA and are delivered in an installation directory similar to:
 >
-> `%WINDOWS_PROGRAM_FILES%\Sparx Systems\EAxx\Java API  (e.g. "C:\Program Files\Sparx Systems\EA17\Java API")`
+> `%WINDOWS_PROGRAM_FILES%\Sparx Systems\EAxx\Java API  (e.g. "C:\Program Files\Sparx Systems\EA16\Java API")`
 >
 > The purpose of each is:
 > 
@@ -111,35 +111,35 @@ NOTE:  The above command line examples illustrate the use of both `.eap` and `.q
 > Another key requirement is that these two DLL COM interface wrappers must be available to Java at runtime. This is done on the command line by specifying their directory location using the `-Djava.library.path` JVM parameter.
 > 
 
-To use **cim-compare** on a system with a dual 32-bit and 64-bit Sparx EA installation (e.g. EA 15.x and EA 17.x) you will need to have a configuration similar to the following:
+To use **cim-compare** on a system with a dual 32-bit and 64-bit Sparx EA installation (e.g. EA 15.x and EA 16.x) you will need to have a configuration similar to the following:
 
 ```
-C:\cim-compare\cim-compare-1.3.0.jar  (the latest  downloaded from https://cim-compare.ucaiug.io)
-C:\cim-compare\ea15\SSJavaCOM.dll  (copied from "C:\Program Files (x86)\Sparx Systems\EA15\Java API")
-C:\cim-compare\ea15\SSJavaCOM16.dll  (copied from "C:\Program Files (x86)\Sparx Systems\EA15\Java API")
-C:\cim-compare\ea16\SSJavaCOM.dll  (copied from "C:\Program Files\Sparx Systems\EA16\Java API")
-C:\cim-compare\ea16\SSJavaCOM16.dll  (copied from "C:\Program Files\Sparx Systems\EA16\Java API")
+C:\cim-compare\cim-compare-1.3.0.jar  
+C:\cim-compare\ea15\SSJavaCOM.dll
+C:\cim-compare\ea15\SSJavaCOM16.dll
+C:\cim-compare\ea16\SSJavaCOM.dll
+C:\cim-compare\ea16\SSJavaCOM16.dll
 
 C:\
 ├── cim-compare
-│   ├── cim-compare-1.3.0.jar
+│   ├── cim-compare-1.3.0.jar   (the latest downloaded from https://cim-compare.ucaiug.io)
 │   ├── cim-compare-1.3.0.bat   (example batch file for execution)
 │   ├── ea15
-│   │   ├── SSJavaCOM.dll
-│   │   └── SSJavaCOM16.dll
+│   │   ├── SSJavaCOM.dll       (copied from "C:\Program Files (x86)\Sparx Systems\EA15\Java API")
+│   │   └── SSJavaCOM16.dll     (copied from "C:\Program Files (x86)\Sparx Systems\EA15\Java API")
 │   ├── ea16
-│   │   ├── SSJavaCOM.dll
-│   │   └── SSJavaCOM16.dll
+│   │   ├── SSJavaCOM.dll       (copied from "C:\Program Files\Sparx Systems\EA16\Java API")
+│   │   └── SSJavaCOM16.dll     (copied from "C:\Program Files\Sparx Systems\EA16\Java API")
 │   ├── cim17v40.eap
 │   ├── cim18v02.eap
 │   ├── cim18v12.qea
 │   └── cim18v13.qea
-├── Program Files (x86)      (32-bit JVM installation required if processing 32-bit .eap files)
+├── Program Files (x86)         (32-bit JVM installation required for processing 32-bit .eap files)
 │   └── Zulu
 │       └── zulu-17
 │           └── bin
 │               └── java.exe
-├── Program Files            (64-bit JVM installation required if processing 64-bit .qea files)
+├── Program Files               (64-bit JVM installation required for processing 64-bit .qea files)
 │   └── Zulu
 │       └── zulu-17
 │           └── bin

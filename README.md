@@ -10,7 +10,7 @@ The **cim-compare** project is a command line tool for generating CIM model comp
 - [CIM Model Comparison Report Utility Overview](#cim-model-comparison-report-utility)
 - [Command Line Usage](#command-line-usage)
   - [Option #1: Enterprise Architect .EAP or .QEA Baseline and Destination Project Files as Inputs](#option-1-enterprise-architect-eap-or-qea-baseline-and-destination-project-files-as-inputs)
-    - [Important Setup & Configuration](#important)
+    - [Setup & Configuration (with examples)](#important)
     - [Warning: Potential Configuration Pitfalls](#warning)
   - [Option #2: XMI Baseline and Destination Models as Inputs](#option-2-xmi-baseline-and-destination-models-as-inputs)
   - [Option #3: EA Model Comparison Logs as Input](#option-3-ea-model-comparison-logs-as-input)

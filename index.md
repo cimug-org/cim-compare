@@ -393,17 +393,5 @@ java <span style="color:red">-mx4096m</span> -jar **cim-compare-1.3.0.jar** iec6
 
 Distributed under the MIT license. See [LICENSE](LICENSE) for more information.
 
-<script>
-document.addEventListener("DOMContentLoaded", function() {
-  var toc = document.querySelector(".sidebar ul");
-  document.querySelectorAll("h2, h3").forEach(function(header) {
-    var id = header.textContent.toLowerCase().replace(/ /g, "-");
-    header.id = id;
-    var li = document.createElement("li");
-    li.innerHTML = `<a href="#${id}">${header.textContent}</a>`;
-    toc.appendChild(li);
-  });
-});
-</script>
 
 </div>

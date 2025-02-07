@@ -205,7 +205,7 @@ The above 64-bit command line example uses:
 
 The **cim-compare** utility has three possible command-line options to produce comparison reports as described next.
 
-### Option \#1: Enterprise Architect .EAP or .QEA Baseline and Destination Project Files as Inputs
+### Option \#1: Enterprise Architect .EAP or .QEA Project Files as Input
 
 The preferred usage is to provide two Enterprise Architect `*.eap` or `*.qea` files for the "baseline" and "destination" input files.  Using these file types eliminates the need to manually export XMI and diagrams from EA as described later in the "Enterprise Architect XMI Export Procedures" section. When using these file types as inputs on the command line both "baseline" and "destination" files must be either 32-bit (i.e. `*.eap`) or 64-bit (i.e. `*.qea`) files. Note that the processing of 64-bit `*.qea` files is more performant.
 

@@ -67,6 +67,17 @@ java <span style="color:red">-mx1G</span> -jar **cim-compare-1.3.0.jar** iec6197
 
 java <span style="color:red">-mx4G</span> -jar **cim-compare-1.3.0.jar** iec61970cim16v26a.qea iec61970cim17v16.qea D:\\reports
 
+> For freely available downloads of Java visit [Azul Systems'](https://en.wikipedia.org/wiki/Azul_Systems) download site at [Download Azul JDKs](https://www.azul.com/downloads/?package=jdk#zulu).
+
+To directly download a 32-bit Java 17 click the image below:
+
+[![image](https://github.com/user-attachments/assets/d4949280-c8e2-4fa9-b792-35db15f33344)](https://www.azul.com/core-post-download/?endpoint=zulu&uuid=7669f8bc-8512-4993-8598-8a65866bad5c)
+
+To directly download a 64-bit Java 17 click the image below:
+
+[![image](https://github.com/user-attachments/assets/1771bc8e-07c2-48ef-97f2-5c1bd1d804c4)](https://www.azul.com/core-post-download/?endpoint=zulu&uuid=1523a07f-3c0b-4869-8eea-a4276f0ea944)
+
+
 ### Important Setup Considerations
 
 > The **cim-compare** command-line option described in the [Option #1: Enterprise Architect .EAP or .QEA Project Files as Input](#option-1-enterprise-architect-eap-or-qea-project-files-as-input) section requires EA's COM automation API. Consequently, if you plan to use it you are required to have a licensed version of Sparx Enterprise Architect (EA) installed for the COM automation API to work. The EA API and the `eaapi.jar` file act as interfaces to the Enterprise Architect application. The following explains why:

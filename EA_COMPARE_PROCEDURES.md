@@ -11,8 +11,7 @@ describe the **historical** model against which the “target” model is to be
 compared to determine what has changed. The comparison is accomplished using
 EA’s Compare Utility.
 
-(see:
-<https://sparxsystems.com/enterprise_architect_user_guide/15.1/model_repository/differences.html>).
+(see: [Enterprise Architect User Guide](https://sparxsystems.com/enterprise_architect_user_guide/15.1/model_repository/differences.html).
 
 The procedure to execute a comparison is done in the following manner
 (screenshots taken from EA v15.1):

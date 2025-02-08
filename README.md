@@ -33,7 +33,7 @@ The **cim-compare** project is a command line tool for generating CIM model comp
 
 ## Overview: CIM Model Comparison Reports
 
-**cim-compare** generates model comparison reports between two points in time. A link to the latest release can be found at the end of this README.
+**cim-compare** generates model comparison reports between two points in time.
 
 The term “destination” is used to describe some current version (or latest working copy) of a CIM model that is to be the target of the comparison. The term “baseline” is used to describe the **historical** model against which the “destination” model is to be compared to determine what has changed.
 

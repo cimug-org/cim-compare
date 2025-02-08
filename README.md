@@ -73,13 +73,13 @@ java <span style="color:red">-mx4G</span> -jar **cim-compare-1.3.0.jar** iec6197
 
 #### Download 32-bit Java 17
 
-To directly download a 32-bit Java 17 click the image below:
+If you are looking to run comparisons of `.eap` files then you'll need 32-bit Java. To directly download a 32-bit Java 17 click the image below:
 
 [![image](https://github.com/user-attachments/assets/d4949280-c8e2-4fa9-b792-35db15f33344)](https://www.azul.com/core-post-download/?endpoint=zulu&uuid=7669f8bc-8512-4993-8598-8a65866bad5c)
 
 #### Download 64-bit Java 17
 
-To directly download a 64-bit Java 17 click the image below:
+If you are looking to run comparisons of `.qea` files then you'll need 64-bit Java. To directly download a 64-bit Java 17 click the image below:
 
 [![image](https://github.com/user-attachments/assets/1771bc8e-07c2-48ef-97f2-5c1bd1d804c4)](https://www.azul.com/core-post-download/?endpoint=zulu&uuid=1523a07f-3c0b-4869-8eea-a4276f0ea944)
 

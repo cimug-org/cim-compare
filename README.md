@@ -17,7 +17,7 @@ The **cim-compare** project is a command line tool for generating CIM model comp
   - [Warning: Potential Configuration Pitfalls](#warning-potential-configuration-pitfalls)
 - [Command Line Usage](#command-line-usage)
   - [Option #1: Enterprise Architect .EAP or .QEA Project Files as Input](#option-1-enterprise-architect-eap-or-qea-project-files-as-input)
-  - [Option #2: XMI Baseline and Destination Models as Inputs](#option-2-xmi-baseline-and-destination-models-as-inputs)
+  - [Option #2: XMI Baseline and Destination Models as Input](#option-2-xmi-baseline-and-destination-models-as-input)
   - [Option #3: EA Model Comparison Logs as Input](#option-3-ea-model-comparison-logs-as-input)
 - [Enterprise Architect XMI Export Procedures](#enterprise-architect-xmi-export-procedures)
 - [License](#license)
@@ -273,7 +273,7 @@ Notice that in the following command line examples where a directory or file pat
 
 NOTE:  The above command line examples illustrate the use of both `.eap` and `.qea` EA files as input. Where `.eap` files appear as input on the command line it is assumed that 32-bit Java is being used to execute the `.jar` file. Likewise, for `.qea` files that 64-bit Java is executed.
 
-### Option \#2: XMI Baseline and Destination Models as Inputs
+### Option \#2: XMI Baseline and Destination Models as Input
 
 The second usage is to directly specify two XMI 1.1 compliant files representing the "baseline" and “destination” models exported as described later in [Enterprise Architect XMI Export Procedures](#enterprise-architect-xmi-export-procedures). In this scenario the command-line usage takes the following form:
 

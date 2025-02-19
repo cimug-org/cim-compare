@@ -187,7 +187,7 @@ The above 64-bit command line example uses:
  
 ### Warning: Potential Configuration Pitfalls
 
-> A common "gotcha" that users run into is that when using `.eap` project files as input into **cim-compare**, they unknowingly use 64-bit Java instead of 32-bit Java (and vice versa). It is a hard requirement that when using `.qea` files 64-bit Java **must** be used and, conversely, when using `.qea` files 64-bit Java **must** be used. 
+> A common "gotcha" that users run into is that when using `.eap` project files as input into **cim-compare**, they unknowingly use 64-bit Java instead of 32-bit Java (and vice versa). It is a hard requirement that when comparing two `.qea` files 64-bit Java **must** be used and, conversely, when comparing two `.eap` files 32-bit Java **must** be used. 
 >
 > Noteworthy in the previous command line examples is that `java` has been expressly qualified as either `"C:\Program Files (x86)\Zulu\zulu-17\bin\java.exe"` or `"C:\Program Files\Zulu\zulu-17\bin\java.exe"` to ensure that the correct version of Java is used. This is not a requirement but rather one method to eliminate this as a pitfall.
 >

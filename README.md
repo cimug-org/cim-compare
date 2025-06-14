@@ -11,7 +11,7 @@ The **cim-compare** project is a command line tool for generating CIM model comp
 - [Overview: CIM Model Comparison Reports](#overview-cim-model-comparison-reports)
 - [Setup & Configuration](#setup--configuration)
   - [Java Technical Requirements](#java-technical-requirements)
-  - [Azule OpenJDK](#azul-openjdk)
+  - [Azul OpenJDK](#azul-openjdk)
     - [Download 32-bit Java 17](#download-32-bit-java-17)
     - [Download 64-bit Java 17](#download-64-bit-java-17)
   - [Important Setup Considerations](#important-setup-considerations)
@@ -72,7 +72,7 @@ java <span style="color:red">-mx4G</span> -jar **cim-compare-1.3.0.jar** iec6197
 
 > For freely available downloads of Java visit [Azul Systems'](https://en.wikipedia.org/wiki/Azul_Systems) download site at [Download Azul JDKs](https://www.azul.com/downloads/?package=jdk#zulu).
 
-### Azule OpenJDK
+### Azul OpenJDK
 
 Azul OpenJDK (Zulu) is Azul Systems’ free, TCK-certified binary distribution of the OpenJDK — the open-source implementation of the Java Platform, Standard Edition (Java SE). They provide reliable, production-ready Java runtimes for enterprises and developers who want an open-source alternative to Oracle JDK. OpenJDK is:
 

@@ -11,6 +11,7 @@ The **cim-compare** project is a command line tool for generating CIM model comp
 - [Overview: CIM Model Comparison Reports](#overview-cim-model-comparison-reports)
 - [Setup & Configuration](#setup--configuration)
   - [Java Technical Requirements](#java-technical-requirements)
+  - [Azule OpenJDK](#azul-openjdk)
     - [Download 32-bit Java 17](#download-32-bit-java-17)
     - [Download 64-bit Java 17](#download-64-bit-java-17)
   - [Important Setup Considerations](#important-setup-considerations)
@@ -57,7 +58,7 @@ For ease of identification, changes to class and attribute descriptions are visu
 
 ### Java Technical Requirements
 
-**cim-compare** ships as a fully self-contained executable jar file with no external dependencies.
+**cim-compare** ships as a fully self-contained executable jar file with no external dependencies. To execute it requires that an appropriate release of Java be installed on your system. 
 
 Given the large file sizes consumed and produced by the utility, **OutOfMemory** exceptions occur if the default heap (memory) size is used. The following guidelines should be followed:
 
@@ -70,6 +71,22 @@ java <span style="color:red">-mx1G</span> -jar **cim-compare-1.3.0.jar** iec6197
 java <span style="color:red">-mx4G</span> -jar **cim-compare-1.3.0.jar** iec61970cim16v26a.qea iec61970cim17v16.qea D:\\reports
 
 > For freely available downloads of Java visit [Azul Systems'](https://en.wikipedia.org/wiki/Azul_Systems) download site at [Download Azul JDKs](https://www.azul.com/downloads/?package=jdk#zulu).
+
+### Azule OpenJDK
+
+Azul OpenJDK (Zulu) is Azul Systems’ free, TCK-certified binary distribution of the OpenJDK — the open-source implementation of the Java Platform, Standard Edition (Java SE). They provide reliable, production-ready Java runtimes for enterprises and developers who want an open-source alternative to Oracle JDK. OpenJDK is:
+
+* 100% open-source, fully compliant with Oracle’s Java SE standard.
+* Offers builds for many Java versions (e.g., 6, 7, 8, 11, 17, 21, and newer).
+* Available for multiple platforms: Windows, Linux, macOS, and others.
+* Includes free updates, security patches, and optional commercial support.
+
+As of Azul's [April 2025 supported-platforms list](https://docs.azul.com/core/supported-platforms), Java 8, 11, 17, 21 — are available in both Windows x86 32‑bit and 64‑bit, as well as Linux x86 32‑bit and 64‑bit. However, there are no 32-bit builds for the latest releases:
+
+* **Java 24 (OpenJDK 24)** — The supported platform table explicitly states that Azul Zulu builds of **Java 24 are only offered for 64‑bit Windows**, with no mention of 32‑bit availability .
+* The broader Azul download UI includes the latest versions (Java 23, 21, 17, etc.) but **only surfaces 64‑bit options for newer platform support**, clearly showing lack of 32‑bit for recent versions.
+
+The reason for the shift is that it reflects a broader community trend. OpenJDK deprecated Windows 32‑bit, targeting removal in JDK 23+, making it increasingly rare to see 32‑bit builds in newer OpenJDK distributions. Therefore, though **cim-compare** is not tied to Java 17 the below provided downloads currently point to Java 17 where both 32-bit and 64-bit versions are available.
 
 #### Download 32-bit Java 17
 

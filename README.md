@@ -5,6 +5,8 @@
       
 The **cim-compare** project is a command line tool for generating CIM model comparison reports. For an example report visit [comparison-report.html](https://cim-compare.ucaiug.io/example-comparison-report/comparison-report.html).
 
+To download this setup and usage guide as a PDF click [here](cim-compare-1.3.0-users-guide.pdf).
+
 ## Table of Contents
 - [Home](#cim-compare)
 - [Latest Release](#latest-release)

@@ -83,7 +83,7 @@ We recommend end-users use Azul OpenJDK (Zulu) which is Azul Systems’ free, TC
 * Available for multiple platforms: Windows, Linux, macOS, and others.
 * Includes free updates, security patches, and optional commercial support.
 
-When downloading there are special consideration related to the 32-bit version. As of Azul's [April 2025 supported-platforms list](https://docs.azul.com/core/supported-platforms), Java 8, 11, 17, 21 — are available in both Windows x86 32‑bit and 64‑bit, as well as Linux x86 32‑bit and 64‑bit. However, there are no 32-bit builds for the latest releases:
+When downloading there are special considerations related to the 32-bit version. As of Azul's [April 2025 supported-platforms list](https://docs.azul.com/core/supported-platforms), Java 8, 11, 17, 21 — are available in both Windows x86 32‑bit and 64‑bit, as well as Linux x86 32‑bit and 64‑bit. However, there are no 32-bit builds for the latest releases:
 
 * **Java 24 (OpenJDK 24)** — The supported platform table explicitly states that Azul Zulu builds of **Java 24 are only offered for 64‑bit Windows**, with no mention of 32‑bit availability.
 * The broader Azul download includes the latest versions (Java 23, 21, 17, etc.) but **only have available 64‑bit options for newer platform support**.

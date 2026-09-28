@@ -14,11 +14,11 @@ assignees: ''
 
 ### Describe the defect:
 
-A clear and concise description of what the defect is. Include what you were trying to do, the input you used (two `.eap`/`.qea` project files, two XMI files, or an EA compare log) and the full command line with its options (e.g. `java -Xmx4G -Djava.library.path="C:\cim-compare\ea16" -jar cim-compare-2.0.0.jar CIM17v40.qea CIM18v16.qea --package=Grid --include-diagrams --zip`).
+A clear and concise description of what the defect is. Include what you were trying to do, the input you used (two `.eap`/`.qea` project files, two XMI files, or an EA compare log) and the full command line with its options (e.g. `java -Xmx4G -Djava.library.path="C:\cim-compare\ea16" -jar cim-compare-2.0.1.jar CIM17v40.qea CIM18v16.qea --package=Grid --include-diagrams --zip`).
 
 ### cim-compare release:
 
-The exact release of cim-compare you were using (e.g. `cim-compare-2.0.0.jar`), and how it was run:
+The exact release of cim-compare you were using (e.g. `cim-compare-2.0.1.jar`), and how it was run:
 - Java vendor and version, and whether it is 32-bit or 64-bit (the output of `java -version`)
 - when `.eap`/`.qea` project files are the input: the Enterprise Architect version and which `SSJavaCOM.dll` / `SSJavaCOM64.dll` folder was on `-Djava.library.path`
 
@@ -32,7 +32,7 @@ The baseline and destination models compared. For example:
 ### To Reproduce:
 
 Depending on the nature of the defect, it can help to give the steps that produce it. For example:
-1. Run `java -jar cim-compare-2.0.0.jar ...`
+1. Run `java -jar cim-compare-2.0.1.jar ...`
 2. Open the report and expand '...'
 3. See '...'
 

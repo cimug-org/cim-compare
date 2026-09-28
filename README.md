@@ -108,6 +108,8 @@ Other controls in the header:
 - **Hide redline** – shows the destination text without the struck and inserted markings.
 
 Redlining marks changed descriptions and notes, names (including role names) and multiplicities. A changed attribute type is the one exception: it is shown as the new type, in blue. A renamed element also shows "renamed from *old name*" next to its new name.
+
+Descriptions and notes are shown exactly as stored in Enterprise Architect. Any rich-text formatting (for example `<i>`, `<sub>`, `<li>`) appears as raw markup; it is not rendered.
 - **GUIDs** – each package, class, attribute and link shows its GUID, in grey at the right. Turn them off with the checkbox or the `g` key. The GUID shows when an element was renamed rather than replaced: a renamed element keeps its GUID.
 
 ![](media/Report_Metadata_Popup.png)

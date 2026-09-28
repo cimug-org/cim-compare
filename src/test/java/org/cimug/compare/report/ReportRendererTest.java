@@ -127,9 +127,9 @@ public class ReportRendererTest {
 		new ReportRenderer(false, null, true, "png").render(xml, html);
 		String page = read(html);
 		assertTrue(page.contains("<span class=\"hl hl-added\" data-box=\"500,40,640,90\" title=\"ACLineSegment: added\"></span>"));
-		assertTrue(page.contains("<span class=\"hl hl-moved\" data-box=\"260,40,380,90\" title=\"Switch: moved or resized\"></span>"));
+		assertTrue(page.contains("<span class=\"hl hl-moved\" data-box=\"40,20,200,80\" title=\"IdentifiedObject: moved or resized\"></span>"));
 		assertTrue("legend lists the kinds present, in order",
-				page.matches("(?s).*class=\"hl-legend\">.*hl-added.*hl-removed.*hl-changed.*hl-moved.*hl-restyled.*"));
+				page.matches("(?s).*class=\"hl-legend\">\\s*<span class=\"hl-key\"><span class=\"hl-sw hl-added\">.*hl-removed.*hl-changed.*hl-restyled.*"));
 		assertTrue(page.contains("<div class=\"dimg\" data-side=\"baseline\"><img loading=\"lazy\" src=\"Images-baseline/EAID_00000000_0000_0000_0000_000000000118.png\""));
 		// connectors: a table under the images, removed before labels moved
 		assertTrue(page.contains("<span class=\"cx-n\">1 removed · 1 labels moved</span>"));

@@ -201,15 +201,22 @@ public class ReportPreProcessorTest {
 		assertEquals("", highlight(d, "PowerSystemResource", "baseline"));
 		// nothing changed: no box
 		assertEquals("", highlight(d, "IdentifiedObject", "destination"));
+		// the class changed, but only in an attribute description, which the box
+		// does not show: no box
+		assertEquals("changed", str(d, "//Class[@name='Location']/@status"));
+		assertEquals("", highlight(d, "Location", "destination"));
 		// moved, and the class changed: changed wins
 		assertEquals("changed", highlight(d, "Equipment", "destination"));
-		// moved only: both sides, each in its own position
-		assertEquals("moved", highlight(d, "Switch", "baseline"));
-		assertEquals("moved", highlight(d, "Switch", "destination"));
-		assertEquals("260,40,380,90",
-				str(d, "//Diagram[@name='CoreOverview']/Highlight[@name='Switch' and @side='baseline']/@box"));
-		assertEquals("260,120,380,170",
-				str(d, "//Diagram[@name='CoreOverview']/Highlight[@name='Switch' and @side='destination']/@box"));
+		// moved to another package (its box now shows "Wires::"), and moved on the
+		// diagram: changed wins, on the destination only
+		assertEquals("changed", highlight(d, "Switch", "destination"));
+		assertEquals("", highlight(d, "Switch", "baseline"));
+		// moved only (CoreLayout): both sides, each in its own position
+		String moved = "//Diagram[@name='CoreLayout']/Highlight[@name='IdentifiedObject' and @side='%s']/";
+		assertEquals("moved", str(d, String.format(moved, "baseline") + "@kind"));
+		assertEquals("moved", str(d, String.format(moved, "destination") + "@kind"));
+		assertEquals("40,20,200,80", str(d, String.format(moved, "baseline") + "@box"));
+		assertEquals("90,20,250,80", str(d, String.format(moved, "destination") + "@box"));
 		// style only
 		assertEquals("restyled", highlight(d, "Customer", "destination"));
 	}
@@ -342,8 +349,8 @@ public class ReportPreProcessorTest {
 		assertEquals("1", str(d, "/ComparisonReport/Summary/Count[@kind='class'][@status='added']/@n"));
 		assertEquals("1", str(d, "/ComparisonReport/Summary/Count[@kind='class'][@status='deleted']/@n"));
 		assertEquals("1", str(d, "/ComparisonReport/Summary/Count[@kind='class'][@status='moved']/@n"));
-		// PowerSystemResource, Equipment, GridCIMVersion
-		assertEquals("3", str(d, "/ComparisonReport/Summary/Count[@kind='class'][@status='changed']/@n"));
+		// PowerSystemResource, Location, Equipment, GridCIMVersion
+		assertEquals("4", str(d, "/ComparisonReport/Summary/Count[@kind='class'][@status='changed']/@n"));
 		// CoreOverview, CoreLayout (moved element), DocWires (renamed), WiresConnectors (connector)
 		assertEquals("4", str(d, "/ComparisonReport/Summary/Count[@kind='diagram'][@status='changed']/@n"));
 		assertEquals("1", str(d, "/ComparisonReport/Summary/Count[@kind='package'][@status='deleted']/@n"));
@@ -354,15 +361,16 @@ public class ReportPreProcessorTest {
 	public void packageCountsCoverTheWholeSubtree() throws Exception {
 		Document d = enrich(false, null);
 		Element grid = pkg(d, "Grid");
-		// Core: PowerSystemResource, Plant, Equipment; Wires: ACLineSegment, Switch; Grid: GridCIMVersion
-		assertEquals("6", grid.getAttribute("changedClasses"));
+		// Core: PowerSystemResource, Plant, Location, Equipment; Wires: ACLineSegment, Switch;
+		// Grid: GridCIMVersion
+		assertEquals("7", grid.getAttribute("changedClasses"));
 		// CoreOverview (notes), CoreLayout (a moved element), DocWires (renamed),
 		// WiresConnectors (a rerouted connector); not DERLayout
 		assertEquals("4", grid.getAttribute("changedDiagrams"));
 		Element core = pkg(d, "Core");
-		assertEquals("classes directly in Core, identical included", "4", core.getAttribute("classCount"));
+		assertEquals("classes directly in Core, identical included", "5", core.getAttribute("classCount"));
 		assertEquals("2", core.getAttribute("diagramCount"));
-		assertEquals("3", core.getAttribute("changedClasses"));
+		assertEquals("4", core.getAttribute("changedClasses"));
 	}
 
 	// ------------------------------------------------------------ --package

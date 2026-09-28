@@ -92,8 +92,18 @@ public class ReportPreProcessor {
 	private Document out;
 	/** class name → element id, for type / end-class links */
 	private final Map<String, String> classIdIndex = new HashMap<String, String>();
-	/** effective status of every class, by EAID (for diagram highlights) */
-	private final Map<String, String> classStatusIndex = new HashMap<String, String>();
+	/**
+	 * EAIDs of the classes with a change that shows in their box on a diagram
+	 * (for the "changed" diagram highlight, #37); see {@link #changeShowsOnDiagram}.
+	 */
+	private final Set<String> visiblyChangedClasses = new HashSet<String>();
+
+	/** Class properties drawn in a class's box on a diagram. */
+	private static final Set<String> DRAWN_CLASS_PROPS = new HashSet<String>(
+			Arrays.asList("Name", "Stereotype", "Abstract", "ParentPackage"));
+	/** Attribute properties drawn in a class's box on a diagram. */
+	private static final Set<String> DRAWN_ATTRIBUTE_PROPS = new HashSet<String>(Arrays.asList("Name", "Stereotype",
+			"Type", "LowerBound", "UpperBound", "Default", "Scope", "Static", "Const", "IsLiteral"));
 	private final Map<String, Integer> counts = new LinkedHashMap<String, Integer>();
 	private final Set<String> usedIds = new HashSet<String>();
 
@@ -349,8 +359,8 @@ public class ReportPreProcessor {
 	/**
 	 * #37: boxes to draw over the diagram images. Removed elements are marked
 	 * on the baseline image; added, changed and restyled ones on the destination
-	 * image; moved (or resized) ones on both. An element whose class changed is
-	 * marked "changed" whatever happened to its box.
+	 * image; moved (or resized) ones on both. An element whose class changed in
+	 * a way the box shows is marked "changed" whatever happened to its box.
 	 */
 	private void addHighlights(Element d, Element e) {
 		for (Element o : children(d, "CompareItem")) {
@@ -366,7 +376,7 @@ public class ReportPreProcessor {
 					: "moved".equals(layout) ? "moved"
 					: "changed".equals(layout) ? "restyled" : null;
 			if (!"added".equals(kind) && !"removed".equals(kind)
-					&& "changed".equals(classStatusIndex.get(eaid(attr(o, "guid")))))
+					&& visiblyChangedClasses.contains(eaid(attr(o, "guid"))))
 				kind = "changed";
 			if (kind == null)
 				continue;
@@ -575,7 +585,7 @@ public class ReportPreProcessor {
 				return true;
 			if (!"diagramobject".equals(kindOf(o)))
 				continue;
-			if (!"identical".equals(statusOf(o)) || "changed".equals(classStatusIndex.get(eaid(attr(o, "guid")))))
+			if (!"identical".equals(statusOf(o)) || visiblyChangedClasses.contains(eaid(attr(o, "guid"))))
 				return true;
 		}
 		return false;
@@ -602,14 +612,49 @@ public class ReportPreProcessor {
 				String guid = attr(c, "guid");
 				if (!name.isEmpty() && !guid.isEmpty() && !classIdIndex.containsKey(name))
 					classIdIndex.put(name, eaid(guid));
-				if (!guid.isEmpty()) {
-					String st = statusOf(c);
-					if ("identical".equals(st) && hasChanges(c))
-						st = "changed";
-					classStatusIndex.put(eaid(guid), st);
-				}
+				if (!guid.isEmpty() && changeShowsOnDiagram(c))
+					visiblyChangedClasses.add(eaid(guid));
 			}
 		}
+	}
+
+	/**
+	 * true when a class present in both models changed in a way its box on a
+	 * diagram shows: its name, stereotype, abstractness or package prefix; an
+	 * attribute added, removed, or changed in something drawn (name, stereotype,
+	 * type, multiplicity, initial value, visibility, static, const); or its
+	 * generalization (the parent's name drawn in the box). Descriptions and other
+	 * undrawn properties are not counted: they are reported with the class.
+	 */
+	private boolean changeShowsOnDiagram(Element cls) {
+		String st = statusOf(cls);
+		if ("added".equals(st) || "deleted".equals(st))
+			return false; // the element itself is added to or removed from the diagram
+		if (changedAny(cls, DRAWN_CLASS_PROPS))
+			return true;
+		for (Element c : children(cls, "CompareItem")) {
+			String kind = kindOf(c);
+			if ("attribute".equals(kind)) {
+				String as = statusOf(c);
+				if ("added".equals(as) || "deleted".equals(as) || changedAny(c, DRAWN_ATTRIBUTE_PROPS))
+					return true;
+			} else if ("links".equals(kind)) {
+				for (Element l : children(c, "CompareItem"))
+					if ("link".equals(kindOf(l)) && "Generalization".equals(attr(l, "name")) && hasChanges(l))
+						return true;
+			}
+		}
+		return false;
+	}
+
+	private static boolean changedAny(Element item, Set<String> names) {
+		Element props = firstChild(item, "Properties");
+		if (props == null)
+			return false;
+		for (Element p : children(props, "Property"))
+			if (names.contains(attr(p, "name")) && !"identical".equals(normalize(attr(p, "status"))))
+				return true;
+		return false;
 	}
 
 	private String classId(String typeName) {

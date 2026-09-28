@@ -328,8 +328,10 @@ public class ReportPreProcessor {
 	private Element renderDiagram(Element d) {
 		String status = statusOf(d);
 		// Diagrams are reported as Changed whenever anything (including element
-		// positions) differs; only property changes are material, as today.
-		if ("changed".equals(status) && !hasChangedProperties(d))
+		// positions) differs. Property changes are material; so are layout
+		// changes that can be highlighted on the images (#37). Anything else
+		// (connectors or labels moved, say) is not.
+		if ("changed".equals(status) && !hasChangedProperties(d) && !hasHighlights(d))
 			status = "identical";
 		if (!full && "identical".equals(status))
 			return null;
@@ -513,11 +515,12 @@ public class ReportPreProcessor {
 	}
 
 	/** true when the item or anything beneath it is not identical */
-	private static boolean hasChanges(Element item) {
-		// A diagram reported as Changed with no changed properties differs only in
-		// layout; it is not rendered (see renderDiagram), so it must not make its
+	private boolean hasChanges(Element item) {
+		// A diagram reported as Changed with no changed properties and nothing to
+		// highlight is not rendered (see renderDiagram), so it must not make its
 		// package count as changed either.
-		if ("diagram".equals(kindOf(item)) && "changed".equals(statusOf(item)) && !hasChangedProperties(item))
+		if ("diagram".equals(kindOf(item)) && "changed".equals(statusOf(item)) && !hasChangedProperties(item)
+				&& !hasHighlights(item))
 			return false;
 		if (!"identical".equals(statusOf(item)))
 			return true;
@@ -526,6 +529,17 @@ public class ReportPreProcessor {
 		for (Element c : children(item, "CompareItem"))
 			if (hasChanges(c))
 				return true;
+		return false;
+	}
+
+	/** true when the diagram has at least one element to highlight (#37) */
+	private boolean hasHighlights(Element d) {
+		for (Element o : children(d, "CompareItem")) {
+			if (!"diagramobject".equals(kindOf(o)))
+				continue;
+			if (!"identical".equals(statusOf(o)) || "changed".equals(classStatusIndex.get(eaid(attr(o, "guid")))))
+				return true;
+		}
 		return false;
 	}
 

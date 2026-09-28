@@ -64,6 +64,7 @@ public class ReportRendererTest {
 		assertFalse("identical class left out of minimal output",
 				page.contains("id=\"EAID_00000000_0000_0000_0000_000000000111\""));
 		assertTrue("package outline", page.contains("id=\"rail\""));
+		assertFalse("no highlight toggle without diagrams", page.contains("<input id=\"chk-hl\""));
 		assertTrue("redline", page.contains("<ins>") || page.contains("<ins "));
 		assertFalse("diagrams only with --include-diagrams", page.contains("CoreOverview"));
 	}
@@ -109,7 +110,9 @@ public class ReportRendererTest {
 		String page = read(html);
 		assertTrue(page.contains("CoreOverview"));
 		assertTrue("image file name from the diagram GUID", page.contains("EAID_00000000_0000_0000_0000_000000000118.png"));
-		assertFalse("layout-only diagram", page.contains("CoreLayout"));
+		assertFalse("layout-only diagram with nothing to highlight", page.contains("DERLayout"));
+		assertTrue("header toggle, on by default",
+				page.contains("<input id=\"chk-hl\" type=\"checkbox\" checked> Diagram highlights"));
 	}
 
 	@Test

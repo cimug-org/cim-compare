@@ -262,6 +262,7 @@ table.attrsB td.nt .side { font-size: 10px; text-transform: uppercase; letter-sp
 .hl-changed  { border-color: #2864d2; background: #2864d226; }
 .hl-moved    { border-color: #e68c00; background: #e68c0026; }
 .hl-restyled { border-color: #8c46be; background: #8c46be26; }
+body.no-hl .hl, body.no-hl .hl-legend { display: none !important; }
 .hl-legend { display: flex; flex-wrap: wrap; gap: 4px 16px; font-size: var(--fs-s); color: var(--ink-2); margin: 0 0 6px; }
 .hl-key { display: inline-flex; align-items: center; gap: 6px; }
 .hl-sw { display: inline-block; width: 14px; height: 11px; border-width: 2px; border-style: solid; box-sizing: border-box; }

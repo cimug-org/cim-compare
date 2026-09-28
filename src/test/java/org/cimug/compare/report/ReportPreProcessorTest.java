@@ -215,15 +215,16 @@ public class ReportPreProcessorTest {
 	}
 
 	@Test
-	public void layoutOnlyDiagramStaysHiddenAndUnhighlighted() throws Exception {
-		assertNull(one(enrich(false, null), "//Diagram[@name='CoreLayout']"));
-		assertNull(one(enrich(true, null), "//Diagram[@name='CoreLayout']/Highlight"));
+	public void layoutOnlyDiagramWithSomethingToHighlightIsShown() throws Exception {
+		Document d = enrich(false, null);
+		assertEquals("changed", str(d, "//Diagram[@name='CoreLayout']/@status"));
+		assertEquals("moved", str(d, "//Diagram[@name='CoreLayout']/Highlight[@side='destination']/@kind"));
 	}
 
 	@Test
-	public void layoutOnlyDiagramIsHidden() throws Exception {
-		Document d = enrich(false, null);
-		assertNull(one(d, "//Diagram[@name='CoreLayout']"));
+	public void layoutOnlyDiagramWithNothingToHighlightIsHidden() throws Exception {
+		// DERLayout: EA reported it Changed, but no element box moved (connectors, say)
+		assertNull(one(enrich(false, null), "//Diagram[@name='DERLayout']"));
 	}
 
 	@Test
@@ -233,10 +234,10 @@ public class ReportPreProcessorTest {
 	}
 
 	@Test
-	public void layoutOnlyDiagramIsIdenticalInFullOutput() throws Exception {
+	public void layoutOnlyDiagramWithNothingToHighlightIsIdenticalInFullOutput() throws Exception {
 		Document d = enrich(true, null);
-		assertEquals("identical", str(d, "//Diagram[@name='CoreLayout']/@status"));
 		assertEquals("identical", str(d, "//Diagram[@name='DERLayout']/@status"));
+		assertNull(one(d, "//Diagram[@name='DERLayout']/Highlight"));
 	}
 
 	// ------------------------------------------------------------ enrichment
@@ -316,7 +317,8 @@ public class ReportPreProcessorTest {
 		assertEquals("1", str(d, "/ComparisonReport/Summary/Count[@kind='class'][@status='moved']/@n"));
 		// PowerSystemResource, Equipment, GridCIMVersion
 		assertEquals("3", str(d, "/ComparisonReport/Summary/Count[@kind='class'][@status='changed']/@n"));
-		assertEquals("1", str(d, "/ComparisonReport/Summary/Count[@kind='diagram'][@status='changed']/@n"));
+		// CoreOverview, and CoreLayout for its moved element
+		assertEquals("2", str(d, "/ComparisonReport/Summary/Count[@kind='diagram'][@status='changed']/@n"));
 		assertEquals("1", str(d, "/ComparisonReport/Summary/Count[@kind='package'][@status='deleted']/@n"));
 		assertEquals("", str(d, "/ComparisonReport/Summary/Count[@kind='class'][@status='identical']/@n"));
 	}
@@ -327,7 +329,8 @@ public class ReportPreProcessorTest {
 		Element grid = pkg(d, "Grid");
 		// Core: PowerSystemResource, Plant, Equipment; Wires: ACLineSegment, Switch; Grid: GridCIMVersion
 		assertEquals("6", grid.getAttribute("changedClasses"));
-		assertEquals("1", grid.getAttribute("changedDiagrams"));
+		// CoreOverview (notes) and CoreLayout (a moved element); not DERLayout
+		assertEquals("2", grid.getAttribute("changedDiagrams"));
 		Element core = pkg(d, "Core");
 		assertEquals("classes directly in Core, identical included", "4", core.getAttribute("classCount"));
 		assertEquals("2", core.getAttribute("diagramCount"));

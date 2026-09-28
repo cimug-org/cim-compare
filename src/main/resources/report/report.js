@@ -92,6 +92,13 @@
   /* ---- redline clean toggle ---- */
   $('#chk-clean').addEventListener('change', function () { body.classList.toggle('clean', this.checked); });
 
+  /* ---- diagram highlights toggle (#37); only present when diagrams are included ---- */
+  var hlChk = $('#chk-hl');
+  if (hlChk) {
+    body.classList.toggle('no-hl', !hlChk.checked);   /* a reload may restore it unchecked */
+    hlChk.addEventListener('change', function () { body.classList.toggle('no-hl', !this.checked); });
+  }
+
   /* ---- status filters (class & diagram rows) ---- */
   var active = {};
   function applyFilters() {

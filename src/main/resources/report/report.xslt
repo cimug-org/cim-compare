@@ -262,6 +262,7 @@
             <label class="chk chk-rail"><input id="chk-rail" type="checkbox" checked="checked"/> Outline <kbd>o</kbd></label>
             <label class="chk"><input id="chk-guids" type="checkbox" checked="checked"/> GUIDs <kbd>g</kbd></label>
             <label class="chk"><input id="chk-clean" type="checkbox"/> Hide redline</label>
+            <xsl:if test="$diagrams"><label class="chk" title="Highlight added, removed, changed, moved and restyled elements on the diagram images"><input id="chk-hl" type="checkbox" checked="checked"/> Diagram highlights</label></xsl:if>
             <span class="seg" id="seg-meta" title="How ⓘ metadata is shown"><button type="button" class="on" data-mode="hover">ⓘ hover</button><button type="button" data-mode="inline">ⓘ inline</button></span>
           </div>
         </header>

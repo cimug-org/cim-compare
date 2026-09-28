@@ -124,6 +124,10 @@ button { font: inherit; }
 .row .name { font-family: var(--mono); font-weight: 600; font-size: 12.5px; }
 .pkg > .row .name { font-size: 13px; font-weight: 700; }
 .row .name .arrow { color: var(--muted); font-weight: 400; padding: 0 3px; }
+/* a renamed element: its old name, in grey, beside (tree row) or under (table) the new name */
+.renamed-from { font: italic 400 11px/1.3 var(--sans); color: var(--muted); }
+.row .name .renamed-from { margin-left: 10px; }
+td.nm .renamed-from { display: block; margin-top: 1px; }
 .row .stereo, .row .from { color: var(--muted); font-size: var(--fs-s); }
 .row .from code { color: var(--ink-2); }
 .row .badge { font-size: 10px; letter-spacing: .04em; font-weight: 600; border-radius: 3px; padding: 0 5px; border: 1px solid #0002; }

@@ -190,12 +190,20 @@
     </div>
   </xsl:template>
 
-  <!-- name with rename / deprecated prefix -->
+  <!-- the element's current name: the destination Name property when there is
+       one (it carries a «deprecated» prefix that @name may not), else @name -->
+  <xsl:function name="r:new-name" as="xs:string">
+    <xsl:param name="e" as="element()"/>
+    <xsl:sequence select="(r:prop($e, 'Name', 'model')[. != ''], string($e/@name))[1]"/>
+  </xsl:function>
+
+  <!-- name with rename / deprecated prefix. A renamed element shows its new name
+       only, with "renamed from <old>" in grey beside it (Todd, 2026-09-28). -->
   <xsl:template name="r:display-name">
     <xsl:param name="e" as="element()"/>
     <xsl:choose>
       <xsl:when test="$e/@renamedFrom">
-        <xsl:value-of select="$e/@renamedFrom"/><span class="arrow">→</span><xsl:value-of select="$e/@name"/>
+        <xsl:value-of select="r:new-name($e)"/><span class="renamed-from">renamed from <xsl:value-of select="$e/@renamedFrom"/></span>
       </xsl:when>
       <xsl:when test="starts-with($e/@name, '«deprecated»')">
         <span class="stereo">«deprecated»</span><xsl:text> </xsl:text><xsl:value-of select="normalize-space(substring-after($e/@name, '»'))"/>
@@ -524,10 +532,11 @@
     <tr data-status="{$st}" id="{@id}" data-name="{@name}" data-kind="•" data-path="{r:path(.)}::{../@name}">
       <td class="nm c-{$st}">
         <xsl:choose>
-          <xsl:when test="@renamedFrom"><xsl:value-of select="@renamedFrom"/> <span class="arrow">→</span> <xsl:value-of select="@name"/></xsl:when>
+          <xsl:when test="@renamedFrom"><xsl:value-of select="r:new-name(.)"/></xsl:when>
           <xsl:otherwise><xsl:value-of select="@name"/></xsl:otherwise>
         </xsl:choose>
         <span class="info" data-id="{@guid}" title="attribute metadata">i</span>
+        <xsl:if test="@renamedFrom"><span class="renamed-from">renamed from <xsl:value-of select="@renamedFrom"/></span></xsl:if>
         <span class="guid"><xsl:value-of select="@guid"/></span>
       </td>
       <xsl:choose>

@@ -14,6 +14,7 @@
       │  │  │   ├ name                         changed Notes → redline; Type links to IdentifiedObject
       │  │  │   ├ ratedS                       changed Type and LowerBound → new type only (no redline),
       │  │  │   │                              bound redlined
+      │  │  │   ├ aliasName                    EA deprecation: Name gains «deprecated» (@name unchanged)
       │  │  │   └ Links: Generalization        identical → dropped unless full
       │  │  ├ Plant                           baseline only (type="") → deleted class
       │  │  │   └ Links: Generalization        baseline only (type="") → deleted link
@@ -80,6 +81,14 @@
                     <Property name="LowerBound" model="1" baseline="0" status="Changed"/>
                     <Property name="Name" model="ratedS" baseline="ratedS" status="Identical"/>
                     <Property name="Type" model="IdentifiedObject" baseline="Float" status="Changed"/>
+                    <Property name="UpperBound" model="1" baseline="1" status="Identical"/>
+                  </Properties>
+                </CompareItem>
+                <CompareItem name="aliasName" type="Attribute" guid="{00000000-0000-0000-0000-000000000161}" status="Changed">
+                  <Properties>
+                    <Property name="LowerBound" model="0" baseline="0" status="Identical"/>
+                    <Property name="Name" model="«deprecated» aliasName" baseline="aliasName" status="Changed"/>
+                    <Property name="Type" model="String" baseline="String" status="Identical"/>
                     <Property name="UpperBound" model="1" baseline="1" status="Identical"/>
                   </Properties>
                 </CompareItem>

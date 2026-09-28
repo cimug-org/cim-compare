@@ -84,6 +84,21 @@ public class ReportRendererTest {
 	}
 
 	@Test
+	public void renamesShowTheNewNameAndRenamedFrom() throws Exception {
+		File xml = copyFixture();
+		File html = new File(tmp.getRoot(), "renames.html");
+		new ReportRenderer(false, null, false, "jpg").render(xml, html);
+		String page = read(html);
+		// tree row: new name, then the old name in grey; no arrow
+		assertTrue(page.contains("Equipment<span class=\"renamed-from\">renamed from ConductingEquipmentBase</span>"));
+		assertTrue(page.contains("Grid<span class=\"renamed-from\">renamed from IEC61970</span>"));
+		assertFalse(page.contains("<span class=\"arrow\">→</span>Equipment"));
+		// attribute whose only change is EA's «deprecated»: the new name shows it
+		assertTrue(page.contains("«deprecated» aliasName<span class=\"info\""));
+		assertTrue(page.contains("<span class=\"renamed-from\">renamed from aliasName</span>"));
+	}
+
+	@Test
 	public void diagramsAreIncludedOnRequest() throws Exception {
 		File xml = copyFixture();
 		File html = new File(tmp.getRoot(), "with-diagrams.html");

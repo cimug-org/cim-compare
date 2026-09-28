@@ -272,8 +272,9 @@ body.no-hl .hl, body.no-hl .hl-legend { display: none !important; }
 .cx-row:first-of-type { border-top: 0; }
 .cx-row:hover, .cx-row:focus, .cx-row.pinned { background: var(--changed); }
 .cx-k { display: inline-block; min-width: 112px; font-size: 10.5px; font-weight: 700; text-transform: uppercase; letter-spacing: .03em; }
-.cx-added { color: var(--added-ink); } .cx-removed { color: var(--deleted-ink); }
-.cx-rerouted, .cx-labels-moved { color: var(--moved-ink); } .cx-restyled { color: #8c46be; }
+/* the same fixed colours as the diagram highlights */
+.cx-added { color: #16963c; } .cx-removed { color: #d22828; }
+.cx-rerouted, .cx-labels-moved { color: #e68c00; } .cx-restyled { color: #8c46be; }
 .cx-end { position: absolute; left: 0; top: 0; width: 100%; height: 100%; overflow: visible; pointer-events: none; }
 .hl-legend { display: flex; flex-wrap: wrap; gap: 4px 16px; font-size: var(--fs-s); color: var(--ink-2); margin: 0 0 6px; }
 .hl-key { display: inline-flex; align-items: center; gap: 6px; }

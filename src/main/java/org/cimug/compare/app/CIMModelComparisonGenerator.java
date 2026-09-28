@@ -1,14 +1,9 @@
 package org.cimug.compare.app;
 
-import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStreamWriter;
-import java.io.Writer;
-import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -21,14 +16,8 @@ import java.util.zip.ZipOutputStream;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerException;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
-import javax.xml.transform.stream.StreamSource;
 
+import org.cimug.compare.report.ReportRenderer;
 import org.sparx.Collection;
 import org.sparx.EnumXMIType;
 import org.sparx.Package;
@@ -36,12 +25,12 @@ import org.sparx.Project;
 import org.sparx.Repository;
 import org.w3c.dom.Document;
 import org.xml.sax.InputSource;
-import org.xml.sax.SAXException;
 
 public class CIMModelComparisonGenerator {
 
 	private static final String PARAM_PACKAGE = "package";
-	private static final String PARAM_MINIMAL = "minimal";
+	private static final String PARAM_MINIMAL = "minimal"; // 1.x option; accepted and ignored (minimal is now the default)
+	private static final String PARAM_FULL = "full";
 	private static final String PARAM_INCLUDE_DIAGRAMS = "include-diagrams";
 	private static final String PARAM_ZIP = "zip";
 	private static final String PARAM_CLEANUP = "cleanup";
@@ -56,7 +45,6 @@ public class CIMModelComparisonGenerator {
 	private static final Set<String> EA_PROJECT_EXT = new HashSet<String>(Arrays.asList(".eap", ".eapx", "qea", ".qeax", ".feap"));
 	private static final Set<String> HTML_EXT = new HashSet<String>(Arrays.asList(".htm", ".html"));
 	private static final String ZIP = ".zip";
-	private static final String CIM_MODEL_COMPARISON_XSLT = "CIM_Model_Comparison.xslt";
 
 	static enum DiagramXML {
 		NO_EXPORT(0), EXPORT_WITHOUT_IMAGES(1), EXPORT_WITH_IMAGES(2);
@@ -133,59 +121,19 @@ public class CIMModelComparisonGenerator {
 				}
 			}
 
-			TransformerFactory f = TransformerFactory.newInstance();
-			InputStream stylesheet = ClassLoader.getSystemResourceAsStream(CIM_MODEL_COMPARISON_XSLT);
-			StreamSource stylesource = new StreamSource(stylesheet);
-			Transformer transformer = f.newTransformer(stylesource);
-
 			/**
-			 * Set all XSLT parameters received on the command line. These are passed in as
-			 * various command line options with a leading "--". If the command line option
-			 * includes an equals sign ("=") in it then we know that it is an option that
-			 * has a value associated with it and which must be processed accordingly.
+			 * Stage 3: comparison XML -> enriched XML (written beside the report for
+			 * debugging and for other tooling) -> HTML. See ReportRenderer.
 			 */
-			for (String paramName : options.keySet()) {
-				transformer.setParameter(paramName, options.get(paramName));
+			ReportRenderer renderer = new ReportRenderer(options.containsKey(PARAM_FULL), options.get(PARAM_PACKAGE),
+					options.containsKey(PARAM_INCLUDE_DIAGRAMS), options.get(PARAM_IMAGE_TYPE));
+			File enrichedXMLFile = renderer.render(document, compareLogXMLFile, comparisonHTMLFile);
+			document = null;
+
+			if (comparisonHTMLFile != null) {
+				System.out.println("\nCIM model comparison report successfully generated:  \n" + comparisonHTMLFile.getAbsolutePath());
+				System.out.println("\nEnriched comparison XML (report input, for debugging):  \n" + enrichedXMLFile.getAbsolutePath());
 			}
-
-			if (!options.containsKey(PARAM_IMAGE_TYPE)) {
-				/**
-				 * Behind the scenes we set a default image type. will be overridden if one is
-				 * explicitly specified on the command line
-				 */
-				transformer.setParameter(PARAM_IMAGE_TYPE, DiagramImage.JPG.ext());
-			}
-
-			transformer.setParameter(PARAM_INCLUDE_DIAGRAMS, options.containsKey(PARAM_INCLUDE_DIAGRAMS));
-
-			DOMSource source = new DOMSource(document);
-
-			StreamResult result = null;
-			FileOutputStream fos = null;
-			Writer writer = null;
-			OutputStreamWriter osw = null;
-			try {
-				if (comparisonHTMLFile != null) {
-					fos = new FileOutputStream(comparisonHTMLFile);
-					osw = new OutputStreamWriter(fos, StandardCharsets.UTF_8);
-					writer = new BufferedWriter(osw);
-					result = new StreamResult(writer);
-				} else {
-					result = new StreamResult(System.out);
-				}
-				
-				transformer.transform(source, result);
-			} finally {
-				if (writer != null)
-					writer.close();
-				if (osw != null)
-					osw.close();
-				if (fos != null)
-					fos.close();
-			}
-
-			System.out.println(
-					"\nCIM model comparison report successfully generated:  \n" + comparisonHTMLFile.getAbsolutePath());
 
 			File zipFile = createZipArchive(fileArgs, options);
 
@@ -193,8 +141,9 @@ public class CIMModelComparisonGenerator {
 				System.out.println(
 						"\nCIM model comparison report ZIP archive generated:  \n" + zipFile.getAbsolutePath());
 			}
-		} catch (SAXException | TransformerException | ParserConfigurationException | IOException e) {
+		} catch (Exception e) {
 			e.printStackTrace();
+			System.exit(1);
 		}
 	}
 
@@ -237,11 +186,12 @@ public class CIMModelComparisonGenerator {
 
 				switch (param.toLowerCase())
 					{
-					case PARAM_MINIMAL:
+					case PARAM_MINIMAL: // accepted for compatibility with 1.x; minimal output is the default
+					case PARAM_FULL:
 					case PARAM_INCLUDE_DIAGRAMS:
 					case PARAM_ZIP:
 					case PARAM_CLEANUP:
-						value = Boolean.TRUE.toString(); // All four must have a default value of "true"...
+						value = Boolean.TRUE.toString(); // flags carry no value...
 						break;
 					case PARAM_IMAGE_TYPE:
 						if ((value != null) && (!"".equals(value))) {
@@ -689,9 +639,12 @@ public class CIMModelComparisonGenerator {
 			if (options.containsKey(PARAM_CLEANUP)) {
 				deleteDirectory(baselineImagesDir);
 				deleteDirectory(destinationImagesDir);
-				baselineXmiFile.delete();
-				destinationXmiFile.delete();
+				if (baselineXmiFile != null)
+					baselineXmiFile.delete();
+				if (destinationXmiFile != null)
+					destinationXmiFile.delete();
 				compareLogXMLFile.delete();
+				ReportRenderer.enrichedFileFor(compareLogXMLFile, comparisonHTMLFile).delete();
 				comparisonHTMLFile.delete();
 			}
 		}
@@ -757,7 +710,7 @@ public class CIMModelComparisonGenerator {
 		System.err.println(
 				"To generate an HTML report using the results file (*.xml) of an Enterprise Architect model comparison use the command line option.");
 		System.err.println(
-				"   Usage: java -jar cim-compare.jar <comparison-results-xml-file> [<output-directory-or-html-file>] [--package=<iec-package-name>] [--minimal] [--include-diagrams] [--image-type=<image-files-extension>] [--zip] [--cleanup]");
+				"   Usage: java -jar cim-compare.jar <comparison-results-xml-file> [<output-directory-or-html-file>] [--package=<package-name>] [--full] [--include-diagrams] [--image-type=<image-files-extension>] [--zip] [--cleanup]");
 		System.err.println();
 		System.err.println("   Examples: ");
 		System.err.println(
@@ -770,7 +723,7 @@ public class CIMModelComparisonGenerator {
 				"          java -jar cim-compare.jar CIM15v33_CIM16v26a_EA_Comparison_Report.xml MyComparisonReport_CIM15v33_CIM16v26a.html");
 		System.err.println("          java -jar cim-compare.jar CIM15v33_CIM16v26a_EA_Comparison_Report.xml");
 		System.err.println(
-				"          java -jar cim-compare.jar CIM15v33_CIM16v26a_EA_Comparison_Report.xml --include-diagrams --image-type=gif --minimal");
+				"          java -jar cim-compare.jar CIM15v33_CIM16v26a_EA_Comparison_Report.xml --include-diagrams --image-type=gif");
 		System.err.println(
 				"          java -jar cim-compare.jar CIM15v33_CIM16v26a_EA_Comparison_Report.xml --package=IEC61970");
 		System.err.println(
@@ -784,7 +737,7 @@ public class CIMModelComparisonGenerator {
 		System.err.println(
 				"To generate a model comparison report directly from baseline and target models (XMI files) use the command line option.");
 		System.err.println(
-				"   Usage: java -jar cim-compare.jar <baseline-model-xmi-file> <target-model-xmi-file> [<output-directory-or-html-file>] [--package=<iec-package-name>] [--minimal] [--include-diagrams] [--image-type=<image-files-extension>] [--zip] [--cleanup]");
+				"   Usage: java -jar cim-compare.jar <baseline-model-xmi-file> <target-model-xmi-file> [<output-directory-or-html-file>] [--package=<package-name>] [--full] [--include-diagrams] [--image-type=<image-files-extension>] [--zip] [--cleanup]");
 		System.err.println();
 		System.err.println("   Examples: ");
 		System.err.println(
@@ -798,11 +751,11 @@ public class CIMModelComparisonGenerator {
 		System.err.println(
 				"          java -jar cim-compare.jar CIM15v33.xmi CIM16v26a.xmi CIM15v33_CIM16v26a_ComparisonReport.html --package=IEC62325");
 		System.err.println(
-				"          java -jar cim-compare.jar CIM15v33.xmi CIM16v26a.xmi CIM15v33_CIM16v26a_ComparisonReport.html --minimal");
+				"          java -jar cim-compare.jar CIM15v33.xmi CIM16v26a.xmi CIM15v33_CIM16v26a_ComparisonReport.html");
 		System.err.println(
-				"          java -jar cim-compare.jar CIM15v33.xmi CIM16v26a.xmi --package=IEC62325 --minimal --include-diagrams --image-type=JPG --zip");
+				"          java -jar cim-compare.jar CIM15v33.xmi CIM16v26a.xmi --package=IEC62325 --include-diagrams --image-type=JPG --zip");
 		System.err.println(
-				"          java -jar cim-compare.jar CIM15v33.xmi CIM16v26a.xmi --package=IEC62325 --minimal --include-diagrams --image-type=JPG --zip --cleanup");
+				"          java -jar cim-compare.jar CIM15v33.xmi CIM16v26a.xmi --package=IEC62325 --include-diagrams --image-type=JPG --zip --cleanup");
 		System.err.println();
 		/**
 		 * EAP files as input...
@@ -810,7 +763,7 @@ public class CIMModelComparisonGenerator {
 		System.err.println(
 				"To generate a model comparison report directly from Sparx Enterprise Architect baseline and target models (.eap files) use the command line option.");
 		System.err.println(
-				"   Usage: java -jar cim-compare.jar <baseline-model-file> <target-model-file> [<output-directory-or-html-file>] [--package=<iec-package-name>] [--minimal] [--include-diagrams] [--image-type=<image-files-extension>] [--zip] [--cleanup]");
+				"   Usage: java -jar cim-compare.jar <baseline-model-file> <target-model-file> [<output-directory-or-html-file>] [--package=<package-name>] [--full] [--include-diagrams] [--image-type=<image-files-extension>] [--zip] [--cleanup]");
 		System.err.println();
 		System.err.println("   Examples: ");
 		System.err.println(
@@ -824,13 +777,13 @@ public class CIMModelComparisonGenerator {
 		System.err.println(
 				"          java -jar cim-compare.jar CIM15v33.eap CIM16v26a.eap CIM15v33_CIM16v26a_ComparisonReport.html --package=IEC62325");
 		System.err.println(
-				"          java -jar cim-compare.jar CIM15v33.eapx CIM16v26a.eapx CIM15v33_CIM16v26a_ComparisonReport.html --minimal");
+				"          java -jar cim-compare.jar CIM15v33.eapx CIM16v26a.eapx CIM15v33_CIM16v26a_ComparisonReport.html");
 		System.err.println(
-				"          java -jar cim-compare.jar CIM15v33.eap CIM16v26a.xmi --package=IEC62325 --include-diagrams --image-type=JPG --minimal");
+				"          java -jar cim-compare.jar CIM15v33.eap CIM16v26a.xmi --package=IEC62325 --include-diagrams --image-type=JPG");
 		System.err.println(
-				"          java -jar cim-compare.jar CIM15v33.eap CIM16v26a.xmi --package=IEC62325 --include-diagrams --image-type=JPG --minimal --zip");		
+				"          java -jar cim-compare.jar CIM15v33.eap CIM16v26a.xmi --package=IEC62325 --include-diagrams --image-type=JPG --zip");		
 		System.err.println(
-				"          java -jar cim-compare.jar CIM15v33.eap CIM16v26a.xmi --package=IEC62325 --include-diagrams --image-type=JPG --minimal --zip --cleanup");			
+				"          java -jar cim-compare.jar CIM15v33.eap CIM16v26a.xmi --package=IEC62325 --include-diagrams --image-type=JPG --zip --cleanup");			
 		System.err.println();
 	}
 }

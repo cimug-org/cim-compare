@@ -47,6 +47,7 @@ To download this setup and usage guide as a standalone PDF click [here](cim-comp
 ### What's New in 2.0.0
 
 - **A redesigned HTML report** ([#38](https://github.com/cimug-org/cim-compare/issues/38)): a package outline, search, status filters, links between classes, GUIDs, word-level redlines of changed descriptions, and keyboard shortcuts. Reports are much smaller: the example report is under 1 MB, down from 5.9 MB. See [Reading a Comparison Report](#reading-a-comparison-report).
+- **Diagram differences are highlighted** ([#37](https://github.com/cimug-org/cim-compare/issues/37)): with `--include-diagrams`, added, removed, changed, moved and restyled elements are outlined on the diagram images, and changed connectors are listed under them. Every diagram that changed is listed, including one where only the layout or a connector changed. See [Diagrams](#diagrams).
 - **Only changes are reported by default** ([#42](https://github.com/cimug-org/cim-compare/issues/42)). The new `--full` option includes identical items as well. `--minimal` is still accepted but no longer needed.
 - **`--package` works across renamed packages** ([#49](https://github.com/cimug-org/cim-compare/issues/49)): for example `--package=Grid` when comparing CIM17 (where the package is `IEC61970`) with CIM18. If the package can't be found, **cim-compare** now stops with an error instead of comparing the whole model.
 - **Fixes:** reports are no longer empty when the model's root package isn't named "Model" ([#43](https://github.com/cimug-org/cim-compare/issues/43)); `--cleanup` no longer deletes your own input files ([#53](https://github.com/cimug-org/cim-compare/issues/53)).
@@ -118,9 +119,25 @@ Added and deleted classes are shown compactly (their attributes and links as a s
 
 ### Diagrams
 
-With `--include-diagrams`, each changed diagram shows its changed properties and the baseline and destination images side by side. Click an image to enlarge it; press `Esc` to close. Diagrams whose only differences are in layout (element positions) are not listed.
+With `--include-diagrams`, each changed diagram shows its changed properties and, when something on the diagram changed, the baseline and destination images side by side. Click an image to enlarge it; press `Esc` to close.
+
+Changes are outlined on the images, and a legend above them lists the kinds present:
+
+- **Green** – an element added to the diagram (destination image).
+- **Red** – an element removed from the diagram (baseline image).
+- **Blue** – an element whose class changed in something its box shows: its name, stereotype or package, or an attribute added, removed, or changed in its name, type, multiplicity or initial value (destination image). A change only to descriptions is not outlined; it is shown with the class.
+- **Amber** – an element moved or resized (both images, each in its own position).
+- **Purple** – an element whose style changed, such as its colour or font (destination image).
+
+A shift of the whole diagram, which Enterprise Architect often makes when exporting, is not counted as a move. Turn the outlines off with the **Diagram highlights** checkbox in the header.
 
 ![](media/Report_Diagram_Comparison.png)
+
+Changed connectors (associations, generalizations and other lines) are listed in a **Connectors** table under the images: added, removed, rerouted, labels moved (role names or multiplicities dragged) or restyled, each named by the two elements it joins. Point at a row to outline those two elements with a dashed box on the image it applies to (the baseline for a removed connector); click the row to keep the outline. Connectors are listed rather than drawn because Enterprise Architect does not record the route it draws for them. "(not in this model)" stands for an element the diagram shows but the exported model does not define, such as a class from another model.
+
+![](media/Report_Diagram_Connectors.png)
+
+Every diagram that changed is listed. A diagram whose only changes are its name, notes or modified date, with nothing changed on it, shows its metadata alone, and its images are not kept: **cim-compare** deletes the images of diagrams the report does not show, as it does for identical diagrams, so they are not included by `--zip`.
 
 ### Finding Things
 
@@ -424,7 +441,7 @@ java [<jvm-parameter-1>]...[<jvm-parameter-n>] -jar cim-compare-2.0.0.jar
 
 `[--include-diagrams]` **(Optional)**: When specified **cim-compare** indicates that diagram images should be included in the generated comparison report. Note that if the types of diagrams to be included are not JPG files then the `--image-type` option must also be used in tandem. When this option does not appear on the command line no diagrams will be included in the report.
 
-> IMPORTANT: this command line option does not automatically export diagrams as performed in usage Option \#1.  Rather the expectation is that they be exported as part of manual exports of XMI baseline and destination models from EA and that images are hosted in folders named `<output directory>\Images-baseline` and `<output directory>\Images-destination` respectively. This must be done prior to running **cim-compare**. Refer to the [Enterprise Architect XMI Export Procedures](#enterprise-architect-xmi-export-procedures) for further details.
+> IMPORTANT: this command line option does not automatically export diagrams as performed in usage Option \#1.  Rather the expectation is that they be exported as part of manual exports of XMI baseline and destination models from EA and that images are hosted in folders named `<output directory>\Images-baseline` and `<output directory>\Images-destination` respectively. This must be done prior to running **cim-compare**. Images of diagrams the report does not show (identical diagrams, and diagrams with nothing changed on them) are deleted from those folders. Refer to the [Enterprise Architect XMI Export Procedures](#enterprise-architect-xmi-export-procedures) for further details.
 
 `[--image-type=<image-file-extension>]` **(Optional / Conditionally Required)**: Indicates the type of images (i.e. JPG, GIF, PNG, BMP, or EMF) referenced in the report. Conditionally required when the `--include-diagrams` option is used and the diagram are not JPG image files. When not specified the default image type of JPG is used. This command line option is only relevant when `--include-diagrams` also appears on the command line.
 

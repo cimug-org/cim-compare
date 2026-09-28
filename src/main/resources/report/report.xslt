@@ -159,11 +159,13 @@
             <div><div class="lbl">Destination description</div><xsl:copy-of select="$n/Redline/node()"/></div>
           </div>
         </xsl:when>
+        <!-- unchanged descriptions are also available from the ⓘ popup; the inline block is
+             shown only in "ⓘ inline" mode (body.meta-inline), changed ones always -->
         <xsl:when test="$n/@status = 'deleted'">
-          <div class="desc one"><div><div class="lbl">Description (baseline)</div><xsl:value-of select="$n/Baseline"/></div></div>
+          <div class="desc one plain"><div><div class="lbl">Description (baseline)</div><xsl:value-of select="$n/Baseline"/></div></div>
         </xsl:when>
         <xsl:otherwise>
-          <div class="desc one"><div><div class="lbl">Description</div>
+          <div class="desc one plain"><div><div class="lbl">Description</div>
             <xsl:value-of select="if (string($n/Destination) != '') then $n/Destination else $n/Baseline"/></div></div>
         </xsl:otherwise>
       </xsl:choose>

@@ -40,6 +40,7 @@
   $$('#seg-meta button').forEach(function (b) {
     b.addEventListener('click', function () {
       metaMode = b.dataset.mode;
+      body.classList.toggle('meta-inline', metaMode === 'inline');
       $$('#seg-meta button').forEach(function (x) { x.classList.toggle('on', x === b); });
       if (metaMode === 'hover') $$('tr.meta.open').forEach(function (r) { r.classList.remove('open'); });
       hidePop();

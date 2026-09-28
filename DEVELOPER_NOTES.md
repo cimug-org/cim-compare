@@ -18,8 +18,16 @@ The tests are in `src/test/java`; Maven runs the classes whose names end in `Tes
 - `ReportPreProcessorTest` – the preparation of the comparison XML for the report (statuses, counts, links, `--full`, `--package`), over the small hand-written comparison `src/test/resources/report/mini-comparison.xml`. The comment at the top of that file says which case each element in it exercises.
 - `ReportRendererTest` – producing the HTML report and the enriched XML.
 - `CleanupTest` – `--zip --cleanup` never deletes the user's input files.
+- `XmlProcessingLimitsTest` – a large comparison XML is read under Java 24's XML entity size limits once cim-compare has removed them (#65).
 
 `CIMModelComparisonGeneratorUTEST` runs the whole comparison over large XMI files in `src/test/resources`; Maven doesn't run it by default, so run it by hand when changing the XMI comparison.
+
+### Java Versions: XML Limits and Native Access
+
+Recent Java releases added limits and checks that cim-compare's inputs run into, so cim-compare lifts them itself rather than asking users for command-line settings:
+
+- **XML processing limits.** `CIMModelComparisonGenerator.removeXmlProcessingLimits()`, called first in `main`, sets to `0` (no limit) the XPath limits introduced in Java 11 (#21) and the XML entity size limits Java 24 lowered to 100,000 (`jdk.xml.totalEntitySizeLimit`, `jdk.xml.maxGeneralEntitySizeLimit`; #65). It must run before any XML parser, XPath or XSLT processor is created. If a future Java release tightens another `jdk.xml.*` limit, add it there, with a test in `XmlProcessingLimitsTest`. To reproduce Java 24's behaviour on an older Java, run with `-Djdk.xml.totalEntitySizeLimit=100000 -Djdk.xml.maxGeneralEntitySizeLimit=100000`.
+- **Native access.** EA's Java API (`eaapi.jar`) loads `SSJavaCOM(64).dll`, which Java 24+ reports as a restricted method (JEP 472). The shade plugin's manifest in `pom.xml` declares `Enable-Native-Access: ALL-UNNAMED` for the executable jar; this can't be set from code. Running from an IDE or with the classes on a plain class path instead of the jar, add `--enable-native-access=ALL-UNNAMED` to the JVM arguments.
 
 ### The HTML Report
 

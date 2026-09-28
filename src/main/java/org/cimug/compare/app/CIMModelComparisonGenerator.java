@@ -34,6 +34,15 @@ public class CIMModelComparisonGenerator {
 	private static final String PARAM_INCLUDE_DIAGRAMS = "include-diagrams";
 	private static final String PARAM_ZIP = "zip";
 	private static final String PARAM_CLEANUP = "cleanup";
+
+	/**
+	 * Files and folders this run created before the report (the comparison XML when
+	 * it was generated, and the XMI files and image folders exported from EA
+	 * projects). With --zip, --cleanup deletes these plus the report and the
+	 * enriched XML, and nothing else: files the user supplied are never deleted
+	 * (issue #53).
+	 */
+	private static final List<File> createdByRun = new LinkedList<File>();
 	private static final String PARAM_IMAGE_TYPE = "image-type";
 	private static final String ANSI = "windows-1252";
 	private static final String UTF8 = "UTF-8";
@@ -272,6 +281,7 @@ public class CIMModelComparisonGenerator {
 
 		File modelComparisonXMLFile = null;
 		File targetOutputHTMLFile = null;
+		createdByRun.clear();
 
 		List<File> fileArgs = new LinkedList<File>();
 
@@ -407,6 +417,8 @@ public class CIMModelComparisonGenerator {
 
 			modelComparisonXMLFile = new File(outputDir, defaultComparisonXMLFileName);
 			targetOutputHTMLFile = new File(outputDir, defaultComparisonHTMLFileName);
+			// Generated from the two models by this run (not an input).
+			createdByRun.add(modelComparisonXMLFile);
 
 			System.out.println("\nOutput directory confirmed:  \n" + outputDir.getAbsolutePath());
 
@@ -476,6 +488,15 @@ public class CIMModelComparisonGenerator {
 
 				baselineXmiFile = baselineXmi.getAbsolutePath();
 				destinationXmiFile = destinationXmi.getAbsolutePath();
+
+				// Exported from the EA projects by this run. (With XMI files as input the
+				// XMI files and image folders are the user's own exports.)
+				createdByRun.add(baselineXmi);
+				createdByRun.add(destinationXmi);
+				if (options.containsKey(PARAM_INCLUDE_DIAGRAMS)) {
+					createdByRun.add(new File(outputDir, "Images-baseline"));
+					createdByRun.add(new File(outputDir, "Images-destination"));
+				}
 			} else {
 				// We have determined that the two input files are XMI files so we simply
 				// set the baselineXMIInputFiles & targetXMIInputFiles variables to the
@@ -689,8 +710,6 @@ public class CIMModelComparisonGenerator {
 			//
 			File compareLogXMLFile = fileArgs[1];
 			File comparisonHTMLFile = fileArgs[2];
-			File baselineXmiFile = (fileArgs.length == 5 ? fileArgs[3] : null);
-			File destinationXmiFile = (fileArgs.length == 5 ? fileArgs[4] : null);
 
 			zipFile = new File(outputDir, comparisonHTMLFile.getName().replace(HTML, "") + ZIP);
 			FileOutputStream fos = new FileOutputStream(zipFile);
@@ -711,13 +730,9 @@ public class CIMModelComparisonGenerator {
 			zipOut.close();
 			fos.close();
 			if (options.containsKey(PARAM_CLEANUP)) {
-				deleteDirectory(baselineImagesDir);
-				deleteDirectory(destinationImagesDir);
-				if (baselineXmiFile != null)
-					baselineXmiFile.delete();
-				if (destinationXmiFile != null)
-					destinationXmiFile.delete();
-				compareLogXMLFile.delete();
+				// Only what this run created (issue #53).
+				for (File created : createdByRun)
+					deleteDirectory(created);
 				ReportRenderer.enrichedFileFor(compareLogXMLFile, comparisonHTMLFile).delete();
 				comparisonHTMLFile.delete();
 			}

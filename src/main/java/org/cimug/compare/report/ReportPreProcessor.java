@@ -32,7 +32,7 @@ import org.w3c.dom.NodeList;
  * package / class / attribute / diagram / link.</li>
  * <li>A class (or link) can be marked {@code Identical} while its attributes
  * (or role ends) changed; an <em>effective</em> status is derived.</li>
- * <li>Word-level redlines for changed descriptions (Notes, RoleNote) are computed here (see
+ * <li>Word-level redlines for changed text properties are computed here (see
  * {@link WordDiff}) so that nothing runs in the browser at load time.</li>
  * <li>Type and end-class names are resolved to element ids so the report can
  * link to them.</li>
@@ -77,12 +77,8 @@ public class ReportPreProcessor {
 
 	public static final String GENERATOR = "cim-compare 2.0.0";
 
-	/**
-	 * Properties that get a word-level redline when changed: descriptions only.
-	 * Names (Name, Alias, types, roles) are shown as the new value, not redlined.
-	 */
 	private static final Set<String> TEXT_PROPS = new HashSet<String>(
-			Arrays.asList("Notes", "RoleNote"));
+			Arrays.asList("Notes", "RoleNote", "Alias", "Name"));
 	private static final Set<String> LINK_NAMES = new HashSet<String>(
 			Arrays.asList("Generalization", "Association", "Aggregation"));
 

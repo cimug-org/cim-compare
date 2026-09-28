@@ -162,7 +162,7 @@ body:not(.meta-inline) .desc.plain { display: none; }
 .desc .lbl { font-size: 10.5px; letter-spacing: .04em; text-transform: uppercase; color: var(--muted); margin-bottom: 2px; }
 del { background: var(--del-bg); color: var(--del-ink); text-decoration: line-through; }
 ins { background: var(--ins-bg); color: var(--ins-ink); text-decoration: none; }
-/* a changed type or role name: the new value only, in blue (names are not redlined) */
+/* a changed attribute type: the new type only, in blue (not redlined) */
 .chg, .chg a { color: var(--link); }
 body.clean del { display: none; }
 body.clean ins { background: none; color: inherit; }

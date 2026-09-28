@@ -79,9 +79,8 @@ public class ReportRendererTest {
 				page.contains("<span class=\"chg\"><a href=\"#EAID_00000000_0000_0000_0000_000000000111\">IdentifiedObject</a></span>"));
 		assertFalse("old type not struck", page.contains("<del>Float</del>"));
 		assertTrue("changed bound redlined", page.contains("<del>0</del><ins>1</ins>"));
-		// renamed class: the tree row shows old -> new; no redline of the name anywhere
-		assertFalse(page.contains("<del>ConductingEquipmentBase</del>"));
-		assertFalse(page.contains("<del>IEC61970</del>"));
+		// renamed class: its Name property is redlined in the property table
+		assertTrue(page.contains("<del>ConductingEquipmentBase</del><ins>Equipment</ins>"));
 	}
 
 	@Test

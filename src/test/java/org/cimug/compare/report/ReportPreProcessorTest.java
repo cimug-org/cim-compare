@@ -218,14 +218,16 @@ public class ReportPreProcessorTest {
 	}
 
 	@Test
-	public void namesAndTypesAreNotRedlined() throws Exception {
-		// Redline is for descriptions only; a renamed element shows the new name.
+	public void changedNamesAreRedlinedButTypesAreNot() throws Exception {
+		// Names are redlined (Todd, 2026-09-28); a changed type is shown by the
+		// report as the new type in blue, so the pre-pass computes no redline for it.
 		Document d = enrich(false, null);
-		assertEquals("changed", str(d, "//Class[@name='Equipment']/Properties/Property[@name='Name']/@status"));
-		assertEquals(0, count(d, "//Class[@name='Equipment']/Properties/Property[@name='Name']/Redline"));
-		assertEquals(0, count(d, "//Package[@name='Grid']/Properties/Property[@name='Name']/Redline"));
+		String name = "//Class[@name='Equipment']/Properties/Property[@name='Name']";
+		assertEquals("changed", str(d, name + "/@status"));
+		assertEquals("ConductingEquipmentBase", str(d, name + "/Redline/del"));
+		assertEquals("Equipment", str(d, name + "/Redline/ins"));
+		assertEquals(1, count(d, "//Package[@name='Grid']/Properties/Property[@name='Name']/Redline"));
 		assertEquals(0, count(d, "//Attribute[@name='ratedS']//Redline"));
-		assertEquals(0, count(d, "//Property[@name != 'Notes' and @name != 'RoleNote']/Redline"));
 	}
 
 	@Test

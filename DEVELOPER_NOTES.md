@@ -14,6 +14,7 @@ This compiles the code, runs the unit tests and produces the self-contained `tar
 The tests are in `src/test/java`; Maven runs the classes whose names end in `Test`:
 
 - `WordDiffTest` – the word-level redlining of changed text.
+- `DiagramElementDiffTest` – the element and connector differences between two copies of a diagram ([#37](https://github.com/cimug-org/cim-compare/issues/37)).
 - `ReportPreProcessorTest` – the preparation of the comparison XML for the report (statuses, counts, links, `--full`, `--package`), over the small hand-written comparison `src/test/resources/report/mini-comparison.xml`. The comment at the top of that file says which case each element in it exercises.
 - `ReportRendererTest` – producing the HTML report and the enriched XML.
 - `CleanupTest` – `--zip --cleanup` never deletes the user's input files.
@@ -25,8 +26,9 @@ The tests are in `src/test/java`; Maven runs the classes whose names end in `Tes
 The report is produced in three steps (`org.cimug.compare.report`):
 
 1. `ReportPreProcessor` turns the comparison XML (EA compare log format) into the *enriched* XML: element kinds and effective statuses resolved, identical items dropped unless `--full`, redlines computed (`WordDiff`), links between classes resolved, and summary counts added. The format is described in the class's Javadoc. It is written beside the report as `<name>-enriched.xml`.
-2. `ReportRenderer` runs `src/main/resources/report/report.xslt` (XSLT 3.0, run with Saxon-HE) over the enriched XML.
-3. The stylesheet copies `report.css` and `report.js` into the page, so the report is a single file that needs no network access.
+   For diagrams ([#37](https://github.com/cimug-org/cim-compare/issues/37)), the comparison step (`DiagramElementDiff`, called from `GUIDBasedDiffReportGeneratorImpl`) adds `DiagramObject` and `DiagramConnector` items under each changed diagram in the comparison XML. They carry each element's box in the exported image's pixels, as written by EA (`imgL`/`imgT`/`imgR`/`imgB`), and each changed connector with the boxes of the two elements it joins. `ReportPreProcessor` turns them into `Highlight` and `Connector` elements in the enriched XML; an element is marked changed only when its class changed in something its box shows.
+2. `ReportRenderer` runs `src/main/resources/report/report.xslt` (XSLT 3.0, run with Saxon-HE) over the enriched XML, then deletes the images of diagrams the report does not show.
+3. The stylesheet copies `report.css` and `report.js` into the page, so the report is a single file that needs no network access. `report.js` places the diagram highlights over the images once they load.
 
 To change the look or behaviour of the report, edit those three files in `src/main/resources/report`; to change what the report knows about the comparison, change `ReportPreProcessor` (and its tests).
 

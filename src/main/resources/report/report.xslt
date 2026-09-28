@@ -262,6 +262,7 @@
             <label class="chk chk-rail"><input id="chk-rail" type="checkbox" checked="checked"/> Outline <kbd>o</kbd></label>
             <label class="chk"><input id="chk-guids" type="checkbox" checked="checked"/> GUIDs <kbd>g</kbd></label>
             <label class="chk"><input id="chk-clean" type="checkbox"/> Hide redline</label>
+            <xsl:if test="$diagrams"><label class="chk" title="Highlight added, removed, changed, moved and restyled elements on the diagram images"><input id="chk-hl" type="checkbox" checked="checked"/> Diagram highlights</label></xsl:if>
             <span class="seg" id="seg-meta" title="How ⓘ metadata is shown"><button type="button" class="on" data-mode="hover">ⓘ hover</button><button type="button" data-mode="inline">ⓘ inline</button></span>
           </div>
         </header>
@@ -706,23 +707,62 @@
         <xsl:if test="$nb/*"><div class="sec"><xsl:copy-of select="$nb"/></div></xsl:if>
         <xsl:if test="$meta/*"><div class="sec"><div class="sec-h"><span class="ico">▤</span>Metadata</div><xsl:copy-of select="$meta"/></div></xsl:if>
         <xsl:if test="$st = 'identical'"><div class="empty">Diagram has no material changes made to it.</div></xsl:if>
-        <div class="sec"><div class="sec-h"><span class="ico">▦</span>Diagram</div>
-          <div class="diag">
-            <div><div class="lbl">Baseline</div>
-              <xsl:choose>
-                <xsl:when test="$st = 'added'"><div class="nx">Diagram does not exist in the baseline model.</div></xsl:when>
-                <xsl:otherwise><img loading="lazy" src="Images-baseline/{@eaid}.{$image-type}" alt="{@name} (baseline)"/></xsl:otherwise>
-              </xsl:choose>
+        <!-- #37: the images are shown only when there is something on them to point
+             at (a highlight or a changed connector), or when the diagram was added or
+             removed. A diagram whose only changes are properties (name, notes,
+             modified date) shows its metadata alone. -->
+        <xsl:if test="$st = ('added', 'deleted') or Highlight or Connector">
+          <div class="sec"><div class="sec-h"><span class="ico">▦</span>Diagram</div>
+            <xsl:if test="Highlight">
+              <xsl:variable name="kinds" select="distinct-values(Highlight/@kind)"/>
+              <div class="hl-legend">
+                <xsl:for-each select="('added', 'removed', 'changed', 'moved', 'restyled')[. = $kinds]">
+                  <span class="hl-key"><span class="hl-sw hl-{.}"></span><xsl:value-of select="if (. = 'moved') then 'moved or resized' else ."/></span>
+                </xsl:for-each>
+              </div>
+            </xsl:if>
+            <div class="diag">
+              <div><div class="lbl">Baseline</div>
+                <xsl:choose>
+                  <xsl:when test="$st = 'added'"><div class="nx">Diagram does not exist in the baseline model.</div></xsl:when>
+                  <xsl:otherwise><xsl:call-template name="r:diagram-image"><xsl:with-param name="side" select="'baseline'"/></xsl:call-template></xsl:otherwise>
+                </xsl:choose>
+              </div>
+              <div><div class="lbl">Destination</div>
+                <xsl:choose>
+                  <xsl:when test="$st = 'deleted'"><div class="gone">Diagram was removed from the model.</div></xsl:when>
+                  <xsl:otherwise><xsl:call-template name="r:diagram-image"><xsl:with-param name="side" select="'destination'"/></xsl:call-template></xsl:otherwise>
+                </xsl:choose>
+              </div>
             </div>
-            <div><div class="lbl">Destination</div>
-              <xsl:choose>
-                <xsl:when test="$st = 'deleted'"><div class="gone">Diagram was removed from the model.</div></xsl:when>
-                <xsl:otherwise><img loading="lazy" src="Images-destination/{@eaid}.{$image-type}" alt="{@name} (destination)"/></xsl:otherwise>
-              </xsl:choose>
-            </div>
+            <xsl:if test="Connector">
+              <xsl:variable name="cx" select="Connector"/>
+              <div class="cx-list">
+                <div class="cx-h">Connectors <span class="cx-n"><xsl:value-of select="string-join(for $k in ('added', 'removed', 'rerouted', 'labels moved', 'restyled') return (if ($cx[@kind = $k]) then concat(count($cx[@kind = $k]), ' ', $k) else ()), ' · ')"/></span>
+                  <span class="cx-hint">hover a connector to outline the elements it joins</span></div>
+                <xsl:for-each select="$cx">
+                  <xsl:sort select="index-of(('added', 'removed', 'rerouted', 'labels moved', 'restyled'), @kind)[1]" data-type="number"/>
+                  <xsl:sort select="@name"/>
+                  <div class="cx-row" tabindex="0" data-side="{@side}" data-ends="{@ends}"><span class="cx-k cx-{translate(@kind, ' ', '-')}"><xsl:value-of select="@kind"/></span><span class="cx-name"><xsl:value-of select="@name"/></span></div>
+                </xsl:for-each>
+              </div>
+            </xsl:if>
           </div>
-        </div>
+        </xsl:if>
       </div>
+    </div>
+  </xsl:template>
+
+  <!-- One diagram image with its #37 highlight boxes. The boxes are in the
+       image's own pixels (data-box); report.js places them once the image
+       has loaded and its natural size is known. -->
+  <xsl:template name="r:diagram-image">
+    <xsl:param name="side" as="xs:string"/>
+    <div class="dimg" data-side="{$side}">
+      <img loading="lazy" src="Images-{$side}/{@eaid}.{$image-type}" alt="{@name} ({$side})"/>
+      <xsl:for-each select="Highlight[@side = $side]">
+        <span class="hl hl-{@kind}" data-box="{@box}" title="{if (@name != '') then concat(@name, ': ') else ''}{if (@kind = 'moved') then 'moved or resized' else @kind}"></span>
+      </xsl:for-each>
     </div>
   </xsl:template>
 

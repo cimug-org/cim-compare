@@ -250,7 +250,35 @@ table.attrsB td.nt .side { font-size: 10px; text-transform: uppercase; letter-sp
 .diag .nx { color: var(--muted); font-style: italic; padding: 30px 0; }
 .lightbox { position: fixed; inset: 0; background: #000c; z-index: 50; display: none; align-items: center; justify-content: center; padding: 20px; cursor: zoom-out; }
 .lightbox.on { display: flex; }
-.lightbox img { max-width: 100%; max-height: 100%; background: #fff; }
+.lightbox img { max-width: calc(100vw - 40px); max-height: calc(100vh - 40px); background: #fff; display: block; }
+/* #37 diagram highlights: fixed colours, since diagram images are always white */
+.dimg { position: relative; display: inline-block; max-width: 100%; vertical-align: top; }
+.dimg img { display: block; }
+.hl { position: absolute; display: none; box-sizing: border-box; border: 2px solid; pointer-events: auto; cursor: zoom-in; }
+.dimg.placed .hl { display: block; }
+.lightbox .hl { border-width: 3px; cursor: zoom-out; }
+.hl-added    { border-color: #16963c; background: #16963c26; }
+.hl-removed  { border-color: #d22828; background: #d2282826; }
+.hl-changed  { border-color: #2864d2; background: #2864d226; }
+.hl-moved    { border-color: #e68c00; background: #e68c0026; }
+.hl-restyled { border-color: #8c46be; background: #8c46be26; }
+body.no-hl .hl, body.no-hl .hl-legend { display: none !important; }
+/* #37 connectors: listed under the images; hovering one outlines the two elements it joins */
+.cx-list { margin-top: 10px; border: 1px solid var(--line); border-radius: var(--r); background: var(--surface); font-size: var(--fs-s); }
+.cx-h { padding: 6px 10px; font-weight: 600; border-bottom: 1px solid var(--line); }
+.cx-n { font-weight: 400; color: var(--muted); margin-left: 8px; }
+.cx-hint { float: right; font-weight: 400; font-style: italic; color: var(--faint); }
+.cx-row { padding: 4px 10px; border-top: 1px solid var(--line); cursor: default; outline: none; }
+.cx-row:first-of-type { border-top: 0; }
+.cx-row:hover, .cx-row:focus, .cx-row.pinned { background: var(--changed); }
+.cx-k { display: inline-block; min-width: 112px; font-size: 10.5px; font-weight: 700; text-transform: uppercase; letter-spacing: .03em; }
+/* the same fixed colours as the diagram highlights */
+.cx-added { color: #16963c; } .cx-removed { color: #d22828; }
+.cx-rerouted, .cx-labels-moved { color: #e68c00; } .cx-restyled { color: #8c46be; }
+.cx-end { position: absolute; left: 0; top: 0; width: 100%; height: 100%; overflow: visible; pointer-events: none; }
+.hl-legend { display: flex; flex-wrap: wrap; gap: 4px 16px; font-size: var(--fs-s); color: var(--ink-2); margin: 0 0 6px; }
+.hl-key { display: inline-flex; align-items: center; gap: 6px; }
+.hl-sw { display: inline-block; width: 14px; height: 11px; border-width: 2px; border-style: solid; box-sizing: border-box; }
 
 /* popup (hover mode) */
 .pop { position: absolute; z-index: 40; background: var(--surface); color: var(--ink); border: 1px solid var(--rail); border-radius: var(--r);

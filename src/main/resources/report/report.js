@@ -92,6 +92,13 @@
   /* ---- redline clean toggle ---- */
   $('#chk-clean').addEventListener('change', function () { body.classList.toggle('clean', this.checked); });
 
+  /* ---- diagram highlights toggle (#37); only present when diagrams are included ---- */
+  var hlChk = $('#chk-hl');
+  if (hlChk) {
+    body.classList.toggle('no-hl', !hlChk.checked);   /* a reload may restore it unchecked */
+    hlChk.addEventListener('change', function () { body.classList.toggle('no-hl', !this.checked); });
+  }
+
   /* ---- status filters (class & diagram rows) ---- */
   var active = {};
   function applyFilters() {
@@ -251,11 +258,81 @@
   document.addEventListener('keyup', scheduleSpy);
   scheduleSpy();
 
-  /* ---- lightbox ---- */
+  /* ---- diagram highlights (#37): boxes are in image pixels; place them as
+     percentages of the image's natural size, so they scale with it ---- */
+  var PAD = 4;   /* image pixels between an element and its highlight */
+  function placeBoxes(wrap) {
+    var img = $('img', wrap); if (!img || !img.naturalWidth) return;
+    var w = img.naturalWidth, h = img.naturalHeight;
+    [].forEach.call(wrap.querySelectorAll('.hl'), function (s) {
+      var b = s.getAttribute('data-box').split(',').map(Number);
+      var l = Math.max(0, b[0] - PAD), t = Math.max(0, b[1] - PAD);
+      var r = Math.min(w, b[2] + PAD), bt = Math.min(h, b[3] + PAD);
+      s.style.left = (100 * l / w) + '%'; s.style.top = (100 * t / h) + '%';
+      s.style.width = (100 * (r - l) / w) + '%'; s.style.height = (100 * (bt - t) / h) + '%';
+    });
+    wrap.classList.add('placed');
+  }
+  [].forEach.call(document.querySelectorAll('.diag .dimg'), function (wrap) {
+    if (!wrap.querySelector('.hl')) return;
+    var img = $('img', wrap);
+    if (img.complete && img.naturalWidth) placeBoxes(wrap);
+    else img.addEventListener('load', function () { placeBoxes(wrap); });
+  });
+
+  /* ---- connectors (#37): hovering (or focusing) a row outlines the two elements
+     it joins on the image it belongs to; a click keeps the outline ---- */
+  /* drawn in the image's own pixels, so the outline scales with the image */
+  var ENDPAD = 14, ENDLINE = 5, ENDDASH = '16 10', SVGNS = 'http://www.w3.org/2000/svg';
+  function showEnds(row) {
+    var node = row.closest('.detail'); if (!node) return;
+    var wrap = node.querySelector('.dimg[data-side="' + row.dataset.side + '"]'); if (!wrap) return;
+    var img = $('img', wrap); if (!img || !img.naturalWidth) return;
+    var w = img.naturalWidth, h = img.naturalHeight;
+    var svg = document.createElementNS(SVGNS, 'svg');
+    svg.setAttribute('class', 'cx-end');
+    svg.setAttribute('viewBox', '0 0 ' + w + ' ' + h);
+    svg.setAttribute('preserveAspectRatio', 'none');
+    (row.dataset.ends || '').split(';').forEach(function (bx) {
+      if (!bx) return;
+      var b = bx.split(',').map(Number), r = document.createElementNS(SVGNS, 'rect');
+      r.setAttribute('x', b[0] - ENDPAD); r.setAttribute('y', b[1] - ENDPAD);
+      r.setAttribute('width', b[2] - b[0] + 2 * ENDPAD); r.setAttribute('height', b[3] - b[1] + 2 * ENDPAD);
+      r.setAttribute('fill', 'none'); r.setAttribute('stroke', '#1f2933');
+      r.setAttribute('stroke-width', ENDLINE); r.setAttribute('stroke-dasharray', ENDDASH);
+      svg.appendChild(r);
+    });
+    wrap.appendChild(svg);
+  }
+  function clearEnds(detail) { [].forEach.call(detail.querySelectorAll('.cx-end'), function (s) { s.remove(); }); }
+  function refreshEnds(detail) {
+    clearEnds(detail);
+    var r = detail.querySelector('.cx-row:hover') || detail.querySelector('.cx-row:focus') || detail.querySelector('.cx-row.pinned');
+    if (r) showEnds(r);
+  }
+  document.addEventListener('mouseover', function (e) { var r = e.target.closest('.cx-row'); if (r) refreshEnds(r.closest('.detail')); });
+  document.addEventListener('mouseout', function (e) {
+    var r = e.target.closest('.cx-row'); if (r) setTimeout(function () { refreshEnds(r.closest('.detail')); }, 0);
+  });
+  document.addEventListener('focusin', function (e) { var r = e.target.closest('.cx-row'); if (r) refreshEnds(r.closest('.detail')); });
+  document.addEventListener('focusout', function (e) {
+    var r = e.target.closest('.cx-row'); if (r) setTimeout(function () { refreshEnds(r.closest('.detail')); }, 0);
+  });
+  document.addEventListener('click', function (e) {
+    var r = e.target.closest('.cx-row'); if (!r) return;
+    var was = r.classList.contains('pinned');
+    [].forEach.call(r.parentNode.querySelectorAll('.cx-row.pinned'), function (x) { x.classList.remove('pinned'); });
+    if (!was) r.classList.add('pinned');
+    refreshEnds(r.closest('.detail'));
+  });
+
+  /* ---- lightbox: the image and its highlights ---- */
   var lb = $('#lightbox');
   document.addEventListener('click', function (e) {
-    var img = e.target.closest('.diag img'); if (!img) return;
-    $('img', lb).src = img.src; lb.classList.add('on');
+    var wrap = e.target.closest('.diag .dimg'); if (!wrap) return;
+    var copy = wrap.cloneNode(true);
+    copy.querySelector('img').removeAttribute('loading');
+    lb.replaceChildren(copy); lb.classList.add('on');
   });
   lb.addEventListener('click', function () { lb.classList.remove('on'); });
 })();

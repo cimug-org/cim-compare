@@ -79,7 +79,7 @@ import org.w3c.dom.NodeList;
  */
 public class ReportPreProcessor {
 
-	public static final String GENERATOR = "cim-compare 2.0.0";
+	public static final String GENERATOR = "cim-compare 2.0.1";
 
 	private static final Set<String> TEXT_PROPS = new HashSet<String>(
 			Arrays.asList("Notes", "RoleNote", "Alias", "Name"));

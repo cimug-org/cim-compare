@@ -10,6 +10,7 @@ To download this setup and usage guide as a standalone PDF click [here](cim-comp
 ## Table of Contents
 - [Home](#cim-compare)
 - [Latest Release](#latest-release)
+  - [What's New in 2.0.1](#whats-new-in-201)
   - [What's New in 2.0.0](#whats-new-in-200)
 - [Overview: CIM Model Comparison Reports](#overview-cim-model-comparison-reports)
 - [Reading a Comparison Report](#reading-a-comparison-report)
@@ -39,10 +40,14 @@ To download this setup and usage guide as a standalone PDF click [here](cim-comp
 
 ## Latest Release
 
-2.0.0  
+2.0.1  
 
  - For release notes describing the latest features and/or fixes visit [latest release](https://github.com/cimug-org/cim-compare/releases).
- - To directly download the latest release of the cim-compare command-line application click [cim-compare-2.0.0.jar](https://github.com/cimug-org/cim-compare/releases/download/2.0.0/cim-compare-2.0.0.jar).
+ - To directly download the latest release of the cim-compare command-line application click [cim-compare-2.0.1.jar](https://github.com/cimug-org/cim-compare/releases/download/2.0.1/cim-compare-2.0.1.jar).
+
+### What's New in 2.0.1
+
+- **Runs on Java 24 and later without extra settings** ([#65](https://github.com/cimug-org/cim-compare/issues/65)). Java 24 lowered its XML entity size limits, and a large comparison stopped with `JAXP00010003` before the report was written; **cim-compare** now removes those limits itself. Its jar also lets EA's Java API load its native library without Java's "restricted method" warning. See [Java Technical Requirements](#java-technical-requirements).
 
 ### What's New in 2.0.0
 
@@ -176,13 +181,13 @@ Given the large file sizes consumed and produced by the utility, **OutOfMemory**
 > For a 32-bit JRE it is recommended to specify a max heap size of at least 1G (i.e. 1024m) resources permitting. With a 1G heap size the execution will typically run slower. Note that the maximum theoretical heap limit for a 32-bit JVM is 4G. However, due to various additional constraints such as available swap, kernel address space usage, memory fragmentation, and VM overhead, in practice the limit can be much lower. On most modern 32-bit Windows systems the maximum heap size will range from 1.4G to 1.6G.
 
 ```
-java -Xmx1G -jar cim-compare-2.0.0.jar iec61970cim16v26a.xmi iec61970cim17v16.xmi D:\reports
+java -Xmx1G -jar cim-compare-2.0.1.jar iec61970cim16v26a.xmi iec61970cim17v16.xmi D:\reports
 ```
 
 > For 64 bit JREs it is recommended that the maximum heap size be increased to at least 2G (i.e. 2048m) but more if available. It has been observed that 2G is minimally sufficient to handle larger CIM models one might encounter. In the below example 4G is being allocated.
 
 ```
-java -Xmx4G -jar cim-compare-2.0.0.jar iec61970cim16v26a.qea iec61970cim17v16.qea D:\reports
+java -Xmx4G -jar cim-compare-2.0.1.jar iec61970cim16v26a.qea iec61970cim17v16.qea D:\reports
 ```
 
 > Most of that memory is needed to export and compare the models. Producing the report itself takes much less: for a full-model CIM17v40 → CIM18v16 comparison (a 92 MB comparison XML), the report step needed less than 1G, including with `--full`.
@@ -240,9 +245,9 @@ If you are looking to run comparisons of `.qea` files then you'll need 64-bit Ja
 >
 > The purpose of each is:
 > 
-> - `SSJavaCOM.dll` - the 32-bit COM Module DLL (Dynamic Linked Library) that **cim-compare** will link to when a 32-bit Java JVM/JRE is used to run `cim-compare-2.0.0.jar` from the command line (i.e. required when processing 32-bit .EAP project files).
+> - `SSJavaCOM.dll` - the 32-bit COM Module DLL (Dynamic Linked Library) that **cim-compare** will link to when a 32-bit Java JVM/JRE is used to run `cim-compare-2.0.1.jar` from the command line (i.e. required when processing 32-bit .EAP project files).
 >
-> - `SSJavaCOM64.dll` - the 64-bit COM Module DLL that **cim-compare** will link to when a 64-bit Java JVM/JRE is used to run `cim-compare-2.0.0.jar` from the command line (i.e. required when processing 64-bit .QEA project files)
+> - `SSJavaCOM64.dll` - the 64-bit COM Module DLL that **cim-compare** will link to when a 64-bit Java JVM/JRE is used to run `cim-compare-2.0.1.jar` from the command line (i.e. required when processing 64-bit .QEA project files)
 >   	
 > **cim-compare** communicates to the appropriate COM Module DLL depending on the particular JVM (32-bit or 64-bit) being used on the command line. Which DLL COM interface wrapper to load and link to is determined at runtime. 
 >
@@ -254,8 +259,8 @@ To use **cim-compare** on a system with a dual 32-bit and 64-bit Sparx EA instal
 ```
 C:\
 ├── cim-compare
-│   ├── cim-compare-2.0.0.jar   (the latest downloaded from https://cim-compare.ucaiug.io)
-│   ├── cim-compare-2.0.0.bat   (example batch file for execution)
+│   ├── cim-compare-2.0.1.jar   (the latest downloaded from https://cim-compare.ucaiug.io)
+│   ├── cim-compare-2.0.1.bat   (example batch file for execution)
 │   ├── ea15
 │   │   ├── SSJavaCOM.dll       (copied from "C:\Program Files (x86)\Sparx Systems\EA15\Java API")
 │   │   └── SSJavaCOM64.dll     (copied from "C:\Program Files (x86)\Sparx Systems\EA15\Java API")
@@ -284,7 +289,7 @@ Following is a set of command lines based on the above example configuration and
  
 ```
 "C:\Program Files (x86)\Zulu\zulu-17\bin\java.exe" -Xmx1G -Djava.library.path="C:\cim-compare\ea15" ^
-  -jar cim-compare-2.0.0.jar cim17v40.eap cim18v02.eap comparison-report.html ^
+  -jar cim-compare-2.0.1.jar cim17v40.eap cim18v02.eap comparison-report.html ^
   --include-diagrams --image-type=JPG
 ```
 
@@ -300,7 +305,7 @@ The above 32-bit command line example uses:
 
 ```
 "C:\Program Files\Zulu\zulu-17\bin\java.exe" -Xmx4G -Djava.library.path="C:\cim-compare\ea16" ^
-  -jar cim-compare-2.0.0.jar cim17v40.qea cim18v02.qea comparison-report.html ^
+  -jar cim-compare-2.0.1.jar cim17v40.qea cim18v02.qea comparison-report.html ^
   --include-diagrams --image-type=JPG
 ```
 The above 64-bit command line example uses:
@@ -321,7 +326,7 @@ The above 64-bit command line example uses:
 >
 > If choosing to simplify the command line via use of the default installation of Java such as:
 >
-> `java -Xmx4G -Djava.library.path="C:\cim-compare\ea16" -jar cim-compare-2.0.0.jar ...`
+> `java -Xmx4G -Djava.library.path="C:\cim-compare\ea16" -jar cim-compare-2.0.1.jar ...`
 > 
 > ...then it is suggested that you confirm the bit-wise version of your default Java installation. The following java command will result in output that should indicate if your default installation is 32-bit. This either by explicitly stating as such or by including the installation directory which for 32-bit will be located in `C:\Program Files (x86)\...`. Note that for many of the newest releases of Java, if not explicitly stated as being 32-bit, it is then implied to be 64-bit as illustrated in this example:
 >
@@ -357,7 +362,7 @@ The preferred usage is to provide two Enterprise Architect `*.eap` or `*.qea` fi
 The command-line usage for this option takes the following form:
 
 ```
-java [<jvm-parameter-1>]...[<jvm-parameter-n>] -jar cim-compare-2.0.0.jar
+java [<jvm-parameter-1>]...[<jvm-parameter-n>] -jar cim-compare-2.0.1.jar
      <baseline-model-file> <destination-model-file> [<output-directory-or-html-file>]
      [--package=<package-name>] [--full] [--include-diagrams] [--image-type=<image-file-extension>]
      [--zip] [--cleanup]
@@ -365,7 +370,7 @@ java [<jvm-parameter-1>]...[<jvm-parameter-n>] -jar cim-compare-2.0.0.jar
 
 *Parameter Details*:
 
-`[<jvm-parameter-x>]` **(Optional)**: A JVM (Java Virtual Machine) parameter that may be needed for execution. JVM parameters are configurations used to control the behavior of the JVM at runtime and take a form such as `-Xmx1G`, `-Xmx4G` or `-Dfile.encoding=UTF-8`. These parameters can influence memory usage, garbage collection, system properties, debugging, and performance tuning. JVM parameters are passed as command-line arguments when starting a Java application and if used should **appear first** in the sequence of command line arguments (before `cim-compare-2.0.0.jar`). This is necessary so that **cim-compare** does not try to process them as part of its command line arguments which should always appear after `cim-compare-2.0.0.jar`. Note that for this Option #1 the `-Djava.library.path=<directory>` JVM parameter is required as will be described later.
+`[<jvm-parameter-x>]` **(Optional)**: A JVM (Java Virtual Machine) parameter that may be needed for execution. JVM parameters are configurations used to control the behavior of the JVM at runtime and take a form such as `-Xmx1G`, `-Xmx4G` or `-Dfile.encoding=UTF-8`. These parameters can influence memory usage, garbage collection, system properties, debugging, and performance tuning. JVM parameters are passed as command-line arguments when starting a Java application and if used should **appear first** in the sequence of command line arguments (before `cim-compare-2.0.1.jar`). This is necessary so that **cim-compare** does not try to process them as part of its command line arguments which should always appear after `cim-compare-2.0.1.jar`. Note that for this Option #1 the `-Djava.library.path=<directory>` JVM parameter is required as will be described later.
 
 `<baseline-model-file>` **(Required)**: An Enterprise Architect baseline `.eap` or `.qea` model file. When not specified as an absolute file path the location is assumed to be the directory **cim-compare** is being executed from.
 
@@ -390,25 +395,25 @@ java [<jvm-parameter-1>]...[<jvm-parameter-n>] -jar cim-compare-2.0.0.jar
 **Command Line Examples:**
 
 ```
-java -Xmx1G -Djava.library.path="C:\cim-compare\ea15" -jar cim-compare-2.0.0.jar ^
+java -Xmx1G -Djava.library.path="C:\cim-compare\ea15" -jar cim-compare-2.0.1.jar ^
   "C:\exports\15v33.eap" "C:\exports\CIM16v26a.eap" "C:\reports"
 
-java -Xmx4G -Djava.library.path="C:\cim-compare\ea16" -jar cim-compare-2.0.0.jar ^
+java -Xmx4G -Djava.library.path="C:\cim-compare\ea16" -jar cim-compare-2.0.1.jar ^
   "C:\exports\15v33.qea" "C:\exports\CIM16v26a.qea" "C:\reports"
 
-java -Xmx1G -Djava.library.path="C:\cim-compare\ea15" -jar cim-compare-2.0.0.jar ^
+java -Xmx1G -Djava.library.path="C:\cim-compare\ea15" -jar cim-compare-2.0.1.jar ^
   "C:\exports\15v33.eap" "C:\exports\CIM16v26a.eap" --package=IEC61970
 
-java -Xmx1G -Djava.library.path="C:\cim-compare\ea15" -jar cim-compare-2.0.0.jar ^
+java -Xmx1G -Djava.library.path="C:\cim-compare\ea15" -jar cim-compare-2.0.1.jar ^
   CIM15v33.eap CIM16v26a.eap C:\reports --include-diagrams --zip
 
-java -Xmx4G -Djava.library.path="C:\cim-compare\ea16" -jar cim-compare-2.0.0.jar ^
+java -Xmx4G -Djava.library.path="C:\cim-compare\ea16" -jar cim-compare-2.0.1.jar ^
   CIM15v33.qea CIM16v26a.qea C:\reports\CIM15v33_CIM16v26a_ComparisonReport.html --full
 
-java -Xmx1G -Djava.library.path="C:\cim-compare\ea15" -jar cim-compare-2.0.0.jar ^
+java -Xmx1G -Djava.library.path="C:\cim-compare\ea15" -jar cim-compare-2.0.1.jar ^
   CIM15v33.eap CIM16v26a.eap --package=IEC62325 --include-diagrams --image-type=GIF --zip --cleanup
 
-java -Xmx4G -Djava.library.path="C:\cim-compare\ea16" -jar cim-compare-2.0.0.jar ^
+java -Xmx4G -Djava.library.path="C:\cim-compare\ea16" -jar cim-compare-2.0.1.jar ^
   CIM17v40.qea CIM18v16.qea --package=Grid --include-diagrams --zip --cleanup
 ```
 
@@ -419,7 +424,7 @@ NOTE:  The above command line examples illustrate the use of both `.eap` and `.q
 The second usage is to directly specify two XMI 1.1 compliant files representing the "baseline" and “destination” models exported as described later in [Enterprise Architect XMI Export Procedures](#enterprise-architect-xmi-export-procedures). In this scenario the command-line usage takes the following form:
 
 ```
-java [<jvm-parameter-1>]...[<jvm-parameter-n>] -jar cim-compare-2.0.0.jar
+java [<jvm-parameter-1>]...[<jvm-parameter-n>] -jar cim-compare-2.0.1.jar
      <baseline-model-xmi-file> <destination-model-xmi-file> [<output-directory-or-html-file>]
      [--package=<package-name>] [--full] [--include-diagrams] [--image-type=<image-file-extension>]
      [--zip] [--cleanup]
@@ -427,7 +432,7 @@ java [<jvm-parameter-1>]...[<jvm-parameter-n>] -jar cim-compare-2.0.0.jar
 
 *Parameter Details*:
 
-`[<jvm-parameter-x>]` **(Optional)**: A JVM (Java Virtual Machine) parameter that may be needed for execution. JVM parameters are configurations used to control the behavior of the JVM at runtime and take a form such as `-Xmx1G`, `-Xmx4G` or `-Dfile.encoding=UTF-8`. These parameters can influence memory usage, garbage collection, system properties, debugging, and performance tuning. JVM parameters are passed as command-line arguments when starting a Java application and if used should **appear first** in the sequence of command line arguments (before `cim-compare-2.0.0.jar`). This is necessary so that **cim-compare** does not try to process them as part of its command line arguments which should always appear after `cim-compare-2.0.0.jar`.
+`[<jvm-parameter-x>]` **(Optional)**: A JVM (Java Virtual Machine) parameter that may be needed for execution. JVM parameters are configurations used to control the behavior of the JVM at runtime and take a form such as `-Xmx1G`, `-Xmx4G` or `-Dfile.encoding=UTF-8`. These parameters can influence memory usage, garbage collection, system properties, debugging, and performance tuning. JVM parameters are passed as command-line arguments when starting a Java application and if used should **appear first** in the sequence of command line arguments (before `cim-compare-2.0.1.jar`). This is necessary so that **cim-compare** does not try to process them as part of its command line arguments which should always appear after `cim-compare-2.0.1.jar`.
 
 `<baseline-model-xmi-file>` **(Required)**: An XMI 1.1 compliant baseline model file exported from EA. When not specified as an absolute file path the location of the file is assumed to be the directory the utility is being executed from.
 
@@ -454,18 +459,18 @@ java [<jvm-parameter-1>]...[<jvm-parameter-n>] -jar cim-compare-2.0.0.jar
 **Command Line Examples:**
 
 ```
-java -Xmx2G -jar cim-compare-2.0.0.jar "C:\XMI exports\15v33.xmi" "C:\XMI exports\CIM16v26a.xmi" "C:\reports"
+java -Xmx2G -jar cim-compare-2.0.1.jar "C:\XMI exports\15v33.xmi" "C:\XMI exports\CIM16v26a.xmi" "C:\reports"
 
-java -Xmx2G -jar cim-compare-2.0.0.jar "C:\XMI exports\15v33.xmi" "C:\XMI exports\CIM16v26a.xmi" --package=IEC61970
+java -Xmx2G -jar cim-compare-2.0.1.jar "C:\XMI exports\15v33.xmi" "C:\XMI exports\CIM16v26a.xmi" --package=IEC61970
 
-java -Xmx2G -jar cim-compare-2.0.0.jar CIM15v33.xmi CIM16v26a.xmi C:\reports --full
+java -Xmx2G -jar cim-compare-2.0.1.jar CIM15v33.xmi CIM16v26a.xmi C:\reports --full
 
-java -Xmx2G -jar cim-compare-2.0.0.jar CIM15v33.xmi CIM16v26a.xmi C:\reports ^
+java -Xmx2G -jar cim-compare-2.0.1.jar CIM15v33.xmi CIM16v26a.xmi C:\reports ^
   --include-diagrams --image-type=GIF --zip --cleanup
 
-java -Xmx2G -jar cim-compare-2.0.0.jar CIM15v33.xmi CIM16v26a.xmi C:\reports\CIM15v33_CIM16v26a_ComparisonReport.html
+java -Xmx2G -jar cim-compare-2.0.1.jar CIM15v33.xmi CIM16v26a.xmi C:\reports\CIM15v33_CIM16v26a_ComparisonReport.html
 
-java -Xmx2G -jar cim-compare-2.0.0.jar CIM15v33.xmi CIM16v26a.xmi CIM15v33_CIM16v26a_ComparisonReport.html ^
+java -Xmx2G -jar cim-compare-2.0.1.jar CIM15v33.xmi CIM16v26a.xmi CIM15v33_CIM16v26a_ComparisonReport.html ^
   --package=IEC62325 --include-diagrams --image-type=JPG --zip
 ```
 
@@ -476,14 +481,14 @@ The third option is by specifying an **EA model comparison log** file as input o
 This particular usage takes the following form:
 
 ```
-java [<jvm-parameter-1>]...[<jvm-parameter-n>] -jar cim-compare-2.0.0.jar
+java [<jvm-parameter-1>]...[<jvm-parameter-n>] -jar cim-compare-2.0.1.jar
      <comparison-results-xml-file> [<output-directory-or-html-file>]
      [--package=<package-name>] [--full] [--zip] [--cleanup]
 ```
 
 *Parameter Details*:
 
-`[<jvm-parameter-x>]` **(Optional)**: A JVM (Java Virtual Machine) parameter that may be needed for execution. JVM parameters are configurations used to control the behavior of the JVM at runtime and take a form such as `-Xmx1G`, `-Xmx4G` or `-Dfile.encoding=UTF-8`. These parameters can influence memory usage, garbage collection, system properties, debugging, and performance tuning. JVM parameters are passed as command-line arguments when starting a Java application and if used should **appear first** in the sequence of command line arguments (before `cim-compare-2.0.0.jar`). This is necessary so that **cim-compare** does not try to process them as part of its command line arguments which should always appear after `cim-compare-2.0.0.jar`.
+`[<jvm-parameter-x>]` **(Optional)**: A JVM (Java Virtual Machine) parameter that may be needed for execution. JVM parameters are configurations used to control the behavior of the JVM at runtime and take a form such as `-Xmx1G`, `-Xmx4G` or `-Dfile.encoding=UTF-8`. These parameters can influence memory usage, garbage collection, system properties, debugging, and performance tuning. JVM parameters are passed as command-line arguments when starting a Java application and if used should **appear first** in the sequence of command line arguments (before `cim-compare-2.0.1.jar`). This is necessary so that **cim-compare** does not try to process them as part of its command line arguments which should always appear after `cim-compare-2.0.1.jar`.
 
 `<comparison-results-xml-file>` **(Required)**: The model comparison file. When not specified as an absolute file path the location of the file is assumed to be the directory the utility is being executed in.
 
@@ -502,19 +507,19 @@ java [<jvm-parameter-1>]...[<jvm-parameter-n>] -jar cim-compare-2.0.0.jar
 **Command Line Examples:**
 
 ```
-java -Xmx2G -jar cim-compare-2.0.0.jar "C:\CIM XMI Exports\CIM15v33_CIM16v26a_EA_Comparison_Report.xml" "C:\Reports"
+java -Xmx2G -jar cim-compare-2.0.1.jar "C:\CIM XMI Exports\CIM15v33_CIM16v26a_EA_Comparison_Report.xml" "C:\Reports"
 
-java -Xmx2G -jar cim-compare-2.0.0.jar CIM15v33_CIM16v26a_EA_Comparison_Report.xml "C:\Comparison Reports" --full
+java -Xmx2G -jar cim-compare-2.0.1.jar CIM15v33_CIM16v26a_EA_Comparison_Report.xml "C:\Comparison Reports" --full
 
-java -Xmx2G -jar cim-compare-2.0.0.jar CIM15v33_CIM16v26a_EA_Comparison_Report.xml "C:\Comparison Reports" --package=IEC61968
+java -Xmx2G -jar cim-compare-2.0.1.jar CIM15v33_CIM16v26a_EA_Comparison_Report.xml "C:\Comparison Reports" --package=IEC61968
 
-java -Xmx2G -jar cim-compare-2.0.0.jar CIM15v33_CIM16v26a_EA_Comparison_Report.xml ComparisonReport_CIM15v33_CIM16v26a.html
+java -Xmx2G -jar cim-compare-2.0.1.jar CIM15v33_CIM16v26a_EA_Comparison_Report.xml ComparisonReport_CIM15v33_CIM16v26a.html
 
-java -Xmx2G -jar cim-compare-2.0.0.jar CIM15v33_CIM16v26a_EA_Comparison_Report.xml
+java -Xmx2G -jar cim-compare-2.0.1.jar CIM15v33_CIM16v26a_EA_Comparison_Report.xml
 
-java -Xmx2G -jar cim-compare-2.0.0.jar CIM15v33_CIM16v26a_EA_Comparison_Report.xml --package=IEC61970
+java -Xmx2G -jar cim-compare-2.0.1.jar CIM15v33_CIM16v26a_EA_Comparison_Report.xml --package=IEC61970
 
-java -Xmx2G -jar cim-compare-2.0.0.jar CIM15v33_CIM16v26a_EA_Comparison_Report.xml --package=IEC61970 --zip --cleanup
+java -Xmx2G -jar cim-compare-2.0.1.jar CIM15v33_CIM16v26a_EA_Comparison_Report.xml --package=IEC61970 --zip --cleanup
 ```
 
 ### Output Files
@@ -571,7 +576,7 @@ Distributed under the MIT license. See [LICENSE](LICENSE) for more information.
 
 ### Third-Party Software
 
-The `cim-compare-2.0.0.jar` includes the following third-party software:
+The `cim-compare-2.0.1.jar` includes the following third-party software:
 
 - **Saxon-HE** 12.5 by Saxonica, used to produce the HTML report, distributed under the [Mozilla Public License 2.0](https://www.mozilla.org/en-US/MPL/2.0/). Source code is available from [github.com/Saxonica/Saxon-HE](https://github.com/Saxonica/Saxon-HE).
 - **XML Resolver** 5.2.2, used by Saxon-HE, distributed under the [Apache License 2.0](https://www.apache.org/licenses/LICENSE-2.0).

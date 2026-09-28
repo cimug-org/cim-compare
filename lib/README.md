@@ -16,7 +16,7 @@ Also shipped within the above directory are the **SSJavaCOM.dll** and **SSJavaCO
 To use **cim-compare** on a system with a dual 32-bit and 64-bit Sparx EA installation (e.g. EA 15.x and EA 16.x) you will need to have a configuration similar to the following:
 
 ```
-C:\cim-compare\cim-compare-2.0.0.jar  (the latest release downloaded from https://cim-compare.ucaiug.io)
+C:\cim-compare\cim-compare-2.0.1.jar  (the latest release downloaded from https://cim-compare.ucaiug.io)
 C:\cim-compare\ea15\SSJavaCOM.dll  (copied from "C:\Program Files (x86)\Sparx Systems\EA15\Java API")
 C:\cim-compare\ea15\SSJavaCOM64.dll  (copied from "C:\Program Files (x86)\Sparx Systems\EA15\Java API")
 C:\cim-compare\ea16\SSJavaCOM.dll  (copied from "C:\Program Files\Sparx Systems\EA16\Java API")
@@ -29,7 +29,7 @@ Following is a set of command lines based on the example configuration. The firs
 
 ```
 "C:\Program Files (x86)\Zulu\zulu-17\bin\java.exe" -Xmx1G -Djava.library.path="C:\cim-compare\ea15" ^
-  -jar cim-compare-2.0.0.jar cim17v40.eap cim18v02.eap comparison-report.html ^
+  -jar cim-compare-2.0.1.jar cim17v40.eap cim18v02.eap comparison-report.html ^
   --include-diagrams --image-type=JPG
 ```
 
@@ -45,7 +45,7 @@ The above command line example uses:
 
 ```
 "C:\Program Files\Zulu\zulu-17\bin\java.exe" -Xmx4G -Djava.library.path="C:\cim-compare\ea16" ^
-  -jar cim-compare-2.0.0.jar cim17v40.qea cim18v02.qea comparison-report.html ^
+  -jar cim-compare-2.0.1.jar cim17v40.qea cim18v02.qea comparison-report.html ^
   --include-diagrams --image-type=JPG
 ```
 

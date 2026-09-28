@@ -187,6 +187,8 @@ java -Xmx4G -jar cim-compare-2.0.0.jar iec61970cim16v26a.qea iec61970cim17v16.qe
 
 > Most of that memory is needed to export and compare the models. Producing the report itself takes much less: for a full-model CIM17v40 → CIM18v16 comparison (a 92 MB comparison XML), the report step needed less than 1G, including with `--full`.
 
+> **Java 24 and later:** from 2.0.1, **cim-compare** removes Java's XML entity size limits itself (Java 24 lowered them, and a large comparison stopped with `JAXP00010003`) and its jar allows EA's Java API to load its native library without Java's "restricted method" warning ([#65](https://github.com/cimug-org/cim-compare/issues/65)). No extra command-line settings are needed. With 2.0.0 or earlier on Java 24 or later, add `-Djdk.xml.totalEntitySizeLimit=0 -Djdk.xml.maxGeneralEntitySizeLimit=0 --enable-native-access=ALL-UNNAMED` before `-jar`.
+
 > For freely available downloads of Java visit [Azul Systems'](https://en.wikipedia.org/wiki/Azul_Systems) download site at [Download Azul JDKs](https://www.azul.com/downloads/?package=jdk#zulu).
 
 ### Azul OpenJDK

@@ -116,6 +116,22 @@ public class ReportRendererTest {
 	}
 
 	@Test
+	public void attributeMetadataViewShowsTheNewNameAsItIs() throws Exception {
+		File xml = copyFixture();
+		File html = new File(tmp.getRoot(), "meta.html");
+		new ReportRenderer(false, null, false, "jpg").render(xml, html);
+		String page = read(html);
+		// #67: in an attribute's ⓘ metadata table the Name row shows the new name plainly
+		int meta = page.indexOf("Attribute metadata — aliasName");
+		assertTrue("aliasName metadata view", meta > 0);
+		String view = page.substring(meta, page.indexOf("</tr>", page.indexOf("<th class=\"k\">Name</th>", meta)));
+		assertTrue(view, view.contains("<td>aliasName</td><td>«deprecated» aliasName</td>"));
+		assertFalse(view, view.contains("<del>") || view.contains("<ins>"));
+		// the class Metadata table still redlines a changed name
+		assertTrue(page.contains("<del>ConductingEquipmentBase</del><ins>Equipment</ins>"));
+	}
+
+	@Test
 	public void diagramsAreIncludedOnRequest() throws Exception {
 		File xml = copyFixture();
 		File html = new File(tmp.getRoot(), "with-diagrams.html");

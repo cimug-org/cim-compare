@@ -130,8 +130,13 @@ public class ReportPreProcessor {
 			List<Element> filtered = new ArrayList<Element>();
 			for (Element r : roots)
 				collectPackagesNamed(r, packageFilter, filtered);
+			if (filtered.isEmpty())
+				throw new IllegalArgumentException("Package '" + packageFilter
+						+ "' does not occur in the comparison (checked destination and baseline names).");
 			roots = filtered;
-			scope = packageFilter;
+			Element first = filtered.get(0);
+			String was = prop(first, "Name", "baseline"), now = attr(first, "name");
+			scope = (!was.isEmpty() && !was.equals(now)) ? was + " → " + now : now;
 		} else {
 			StringBuilder sb = new StringBuilder();
 			for (Element r : roots) {
@@ -519,8 +524,13 @@ public class ReportPreProcessor {
 		return id;
 	}
 
+	/**
+	 * Collects the packages matching --package by name. A package renamed between
+	 * versions matches either name (e.g. IEC61970 or Grid).
+	 */
 	private void collectPackagesNamed(Element pkg, String name, List<Element> into) {
-		if (name.equals(attr(pkg, "name")) && "package".equals(kindOf(pkg))) {
+		if ("package".equals(kindOf(pkg))
+				&& (name.equals(attr(pkg, "name")) || name.equals(prop(pkg, "Name", "baseline")))) {
 			into.add(pkg);
 			return;
 		}

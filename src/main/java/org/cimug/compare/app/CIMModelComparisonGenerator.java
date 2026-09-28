@@ -141,6 +141,11 @@ public class CIMModelComparisonGenerator {
 				System.out.println(
 						"\nCIM model comparison report ZIP archive generated:  \n" + zipFile.getAbsolutePath());
 			}
+		} catch (IllegalArgumentException e) {
+			// A problem with the command line or the input (e.g. --package names a package
+			// that is not in the comparison): report it plainly, without a stack trace.
+			System.err.println("ERROR:  " + e.getMessage());
+			System.exit(1);
 		} catch (Exception e) {
 			e.printStackTrace();
 			System.exit(1);
@@ -423,96 +428,54 @@ public class CIMModelComparisonGenerator {
 				String thePackageName = (options.containsKey(PARAM_PACKAGE) ? options.get(PARAM_PACKAGE) : null);
 
 				/**
-				 * Note that argument index 0 corresponds to the 'baseline' file on the command
-				 * line while argument index 1 is for the 'target' file.
+				 * Export the baseline (argument 0) and destination (argument 1) projects.
+				 *
+				 * When --package is given, the package is located by name in each project
+				 * (root nodes included). A package renamed between the two versions (e.g.
+				 * IEC61970 -> Grid) is found by name in only one of them; its counterpart in
+				 * the other is then located by GUID. If the package cannot be resolved on
+				 * both sides processing stops, rather than silently comparing the whole
+				 * model (see issue #49).
 				 */
-				for (int index = 0; index < 2; index++) {
+				File baselineXmi = new File(outputDir, baseName(arguments[0]) + XMI);
+				File destinationXmi = new File(outputDir, baseName(arguments[1]) + XMI);
 
-					Repository repository = null;
-					boolean eaProjectFailed = false;
+				String baselineGuid = exportProject(arguments[0], true, outputDir, baselineXmi, thePackageName, null,
+						diagramXML, diagramImage);
+				String destinationGuid = exportProject(arguments[1], false, outputDir, destinationXmi, thePackageName,
+						baselineGuid, diagramXML, diagramImage);
 
-					try {
-						String eaProjectFile = arguments[index].getAbsolutePath();
-						String eaProjectFileName = arguments[index].getName().substring(0,
-								arguments[index].getName().lastIndexOf("."));
-
-						repository = new Repository();
-						repository.OpenFile(eaProjectFile);
-
-						Collection<Package> packages = repository.GetModels();
-
-						Package rootModelPackage = packages.GetAt((short) 0);
-
-						Project project = repository.GetProjectInterface();
-
-						Package packageToCompare = null;
-
-						if (thePackageName == null) {
-							packageToCompare = rootModelPackage;
-						} else {
-							Collection<Package> childPackages = rootModelPackage.GetPackages();
-							packageToCompare = findPackage(thePackageName, childPackages);
-							if (packageToCompare == null) {
-								packageToCompare = rootModelPackage;
-							}
-						}
-
-						File xmiExportFile = new File(outputDir, eaProjectFileName + XMI);
-
-						if (index == 0) {
-							baselineXmiFile = xmiExportFile.getAbsolutePath();
-						} else {
-							destinationXmiFile = xmiExportFile.getAbsolutePath();
-						}
-
-						project.ExportPackageXMI(packageToCompare.GetPackageGUID(), EnumXMIType.xmiEA11,
-								diagramXML.code(), diagramImage.code(), 1, 0, xmiExportFile.getAbsolutePath());
-
-						if (diagramXML != DiagramXML.NO_EXPORT) {
-							File imagesDirectory = new File(outputDir, "Images");
-							if (imagesDirectory.exists()) {
-								File newImagesDirectory = new File(outputDir,
-										"Images" + (index == 0 ? "-baseline" : "-destination"));
-								imagesDirectory.renameTo(newImagesDirectory);
-
-								System.out.println("\n" + (index == 0 ? "Baseline" : "Destination")
-										+ " model diagrams successfuly exported as " + diagramImage.name()
-										+ " images to:  \n" + newImagesDirectory.getAbsolutePath());
-							} else {
-								System.err.println(
-										"ERROR:  Unable to export diagram images. Terminating EA .eap XMI export processing.");
-								System.exit(1);
-							}
-						}
-
-						System.out.println("\n" + (index == 0 ? "Baseline" : "Destination")
-								+ " model XMI export completed successfully:  \n" + xmiExportFile.getAbsolutePath());
-					} catch (Exception e) {
-						eaProjectFailed = true;
-						e.printStackTrace();
-					} finally {
-						// We must explicitly make a GC call. This is due to a 
-						// limitation in Sparx EA's Java API and memory...
-						System.gc();
-						if (repository != null) {
-							/**
-							 * The following is required by EA's automation API's and ensures that
-							 * everything properly terminates...
-							 */
-							repository.CloseFile();
-							repository.Exit();
-							repository = null;
-						}
-
-						// If an exception occurred we want to exit processing...
-						if (eaProjectFailed) {
-							System.err.println(
-									"ERROR:  Terminating XMI export processing for EA project file [" + arguments[index].getName() + "] due to an unexpected exception.");
-							System.err.println();
+				if (thePackageName != null) {
+					if (baselineGuid == null && destinationGuid == null) {
+						System.err.println("ERROR:  Package '" + thePackageName
+								+ "' was not found in either the baseline or the destination model.");
+						System.exit(1);
+					}
+					if (destinationGuid == null) {
+						System.err.println("ERROR:  Package '" + thePackageName + "' was found in the baseline model (GUID "
+								+ baselineGuid
+								+ ") but the destination model has no package with that name or GUID.");
+						System.exit(1);
+					}
+					if (baselineGuid == null) {
+						// Found in the destination only: export the baseline's package with the same GUID.
+						baselineGuid = exportProject(arguments[0], true, outputDir, baselineXmi, thePackageName,
+								destinationGuid, diagramXML, diagramImage);
+						if (baselineGuid == null) {
+							System.err.println("ERROR:  Package '" + thePackageName
+									+ "' was found in the destination model (GUID " + destinationGuid
+									+ ") but the baseline model has no package with that name or GUID.");
 							System.exit(1);
 						}
+					} else if (!baselineGuid.equals(destinationGuid)) {
+						System.out.println("\nWARNING:  The packages named '" + thePackageName
+								+ "' in the baseline and destination models have different GUIDs (" + baselineGuid + ", "
+								+ destinationGuid + "). They are compared as different packages.");
 					}
 				}
+
+				baselineXmiFile = baselineXmi.getAbsolutePath();
+				destinationXmiFile = destinationXmi.getAbsolutePath();
 			} else {
 				// We have determined that the two input files are XMI files so we simply
 				// set the baselineXMIInputFiles & targetXMIInputFiles variables to the
@@ -587,6 +550,117 @@ public class CIMModelComparisonGenerator {
 		}
 
 		return results;
+	}
+
+	private static String baseName(File file) {
+		String name = file.getName();
+		int dot = name.lastIndexOf(".");
+		return dot > 0 ? name.substring(0, dot) : name;
+	}
+
+	/**
+	 * Opens an EA project and exports one package of it to XMI 1.1 (plus diagram
+	 * images when requested).
+	 *
+	 * <ul>
+	 * <li>No package name: the first root node is exported (with a warning when the
+	 * project has more than one).</li>
+	 * <li>A package name: the package of that name is exported, searching root nodes
+	 * and everything below them. If there is none and {@code guidHint} is given, the
+	 * package with that GUID is exported instead (a package renamed between versions).
+	 * If neither is found nothing is exported and null is returned.</li>
+	 * </ul>
+	 *
+	 * @return the GUID of the exported package, or null when nothing was exported
+	 */
+	private static String exportProject(File eaProject, boolean baseline, File outputDir, File xmiExportFile,
+			String packageName, String guidHint, DiagramXML diagramXML, DiagramImage diagramImage) {
+		String side = baseline ? "Baseline" : "Destination";
+		Repository repository = null;
+		boolean failed = false;
+		try {
+			repository = new Repository();
+			repository.OpenFile(eaProject.getAbsolutePath());
+
+			Collection<Package> models = repository.GetModels();
+			Package packageToCompare = null;
+
+			if (packageName == null) {
+				packageToCompare = models.GetAt((short) 0);
+				if (models.GetCount() > 1) {
+					StringBuilder names = new StringBuilder();
+					for (Package m : models)
+						names.append(names.length() > 0 ? ", " : "").append(m.GetName());
+					System.out.println("\nWARNING:  " + side + " project " + eaProject.getName() + " has "
+							+ models.GetCount() + " root nodes (" + names + "). Only the first, '"
+							+ packageToCompare.GetName() + "', is compared.");
+				}
+			} else {
+				for (Package m : models) {
+					packageToCompare = m.GetName().equals(packageName) ? m : findPackage(packageName, m.GetPackages());
+					if (packageToCompare != null)
+						break;
+				}
+				if (packageToCompare == null && guidHint != null) {
+					try {
+						packageToCompare = repository.GetPackageByGuid(guidHint);
+					} catch (Exception notFound) {
+						packageToCompare = null;
+					}
+					if (packageToCompare != null) {
+						System.out.println("\n" + side + " model: package '" + packageName + "' not found by name; matched by GUID "
+								+ guidHint + " as '" + packageToCompare.GetName() + "'.");
+					}
+				}
+				if (packageToCompare == null) {
+					if (guidHint == null && baseline) {
+						System.out.println("\n" + side + " model: package '" + packageName
+								+ "' not found by name; will look it up by GUID after the destination model is read.");
+					}
+					return null;
+				}
+			}
+
+			repository.GetProjectInterface().ExportPackageXMI(packageToCompare.GetPackageGUID(), EnumXMIType.xmiEA11, diagramXML.code(),
+					diagramImage.code(), 1, 0, xmiExportFile.getAbsolutePath());
+
+			if (diagramXML != DiagramXML.NO_EXPORT) {
+				File imagesDirectory = new File(outputDir, "Images");
+				if (imagesDirectory.exists()) {
+					File newImagesDirectory = new File(outputDir, "Images" + (baseline ? "-baseline" : "-destination"));
+					imagesDirectory.renameTo(newImagesDirectory);
+					System.out.println("\n" + side + " model diagrams successfuly exported as " + diagramImage.name()
+							+ " images to:  \n" + newImagesDirectory.getAbsolutePath());
+				} else {
+					System.err.println("ERROR:  Unable to export diagram images. Terminating EA .eap XMI export processing.");
+					System.exit(1);
+				}
+			}
+
+			System.out.println("\n" + side + " model XMI export completed successfully (package '"
+					+ packageToCompare.GetName() + "'):  \n" + xmiExportFile.getAbsolutePath());
+			return packageToCompare.GetPackageGUID();
+		} catch (Exception e) {
+			failed = true;
+			e.printStackTrace();
+			return null;
+		} finally {
+			// We must explicitly make a GC call. This is due to a
+			// limitation in Sparx EA's Java API and memory...
+			System.gc();
+			if (repository != null) {
+				// Required by EA's automation API to ensure everything terminates properly.
+				repository.CloseFile();
+				repository.Exit();
+				repository = null;
+			}
+			if (failed) {
+				System.err.println("ERROR:  Terminating XMI export processing for EA project file [" + eaProject.getName()
+						+ "] due to an unexpected exception.");
+				System.err.println();
+				System.exit(1);
+			}
+		}
 	}
 
 	private static Package findPackage(String packageName, Collection<Package> packages) {

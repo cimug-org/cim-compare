@@ -60,3 +60,5 @@ The above command line example uses:
  - JPG for the type of diagrams (i.e. `--image-type=JPG`)
  
 Finally, it should be noted that if choosing to use `.eap` project files as input into **cim-compare** then 32-bit Java must be used.  Likewise, when using `.qea` files then 64-bit Java must be used.
+
+**Java 24 and later:** Java prints a "restricted method" warning when a program loads a native library such as `SSJavaCOM.dll` / `SSJavaCOM64.dll` ([JEP 472](https://openjdk.org/jeps/472)), and a future Java release will block it unless it is allowed. From **cim-compare 2.0.1** the jar allows it itself (`Enable-Native-Access: ALL-UNNAMED` in its manifest), so no extra setting is needed. With 2.0.0 or earlier, add `--enable-native-access=ALL-UNNAMED` before `-jar` (together with the XML settings described in the main README under [Java 24 and Later](https://github.com/cimug-org/cim-compare#java-24-and-later)). Windows builds of Java 24 and later are 64-bit only, so they apply to `.qea` input; `.eap` input needs 32-bit Java 21 or earlier.

@@ -23,6 +23,7 @@ To download this setup and usage guide as a standalone PDF click [here](cim-comp
   - [Supported Browsers](#supported-browsers)
 - [Setup & Configuration](#setup--configuration)
   - [Java Technical Requirements](#java-technical-requirements)
+    - [Java 24 and Later](#java-24-and-later)
   - [Azul OpenJDK](#azul-openjdk)
     - [Download 32-bit Java 17](#download-32-bit-java-17)
     - [Download 64-bit Java 17](#download-64-bit-java-17)
@@ -47,7 +48,7 @@ To download this setup and usage guide as a standalone PDF click [here](cim-comp
 
 ### What's New in 2.0.1
 
-- **Runs on Java 24 and later without extra settings** ([#65](https://github.com/cimug-org/cim-compare/issues/65)). Java 24 lowered its XML entity size limits, and a large comparison stopped with `JAXP00010003` before the report was written; **cim-compare** now removes those limits itself. Its jar also lets EA's Java API load its native library without Java's "restricted method" warning. See [Java Technical Requirements](#java-technical-requirements).
+- **Runs on Java 24 and later without extra settings** ([#65](https://github.com/cimug-org/cim-compare/issues/65)). Java 24 lowered its XML entity size limits, and a large comparison stopped with `JAXP00010003` before the report was written; **cim-compare** now removes those limits itself. Its jar also lets EA's Java API load its native library without Java's "restricted method" warning. See [Java 24 and Later](#java-24-and-later).
 
 ### What's New in 2.0.0
 
@@ -192,9 +193,34 @@ java -Xmx4G -jar cim-compare-2.0.1.jar iec61970cim16v26a.qea iec61970cim17v16.qe
 
 > Most of that memory is needed to export and compare the models. Producing the report itself takes much less: for a full-model CIM17v40 → CIM18v16 comparison (a 92 MB comparison XML), the report step needed less than 1G, including with `--full`.
 
-> **Java 24 and later:** from 2.0.1, **cim-compare** removes Java's XML entity size limits itself (Java 24 lowered them, and a large comparison stopped with `JAXP00010003`) and its jar allows EA's Java API to load its native library without Java's "restricted method" warning ([#65](https://github.com/cimug-org/cim-compare/issues/65)). No extra command-line settings are needed. With 2.0.0 or earlier on Java 24 or later, add `-Djdk.xml.totalEntitySizeLimit=0 -Djdk.xml.maxGeneralEntitySizeLimit=0 --enable-native-access=ALL-UNNAMED` before `-jar`.
-
 > For freely available downloads of Java visit [Azul Systems'](https://en.wikipedia.org/wiki/Azul_Systems) download site at [Download Azul JDKs](https://www.azul.com/downloads/?package=jdk#zulu).
+
+#### Java 24 and Later
+
+**cim-compare 2.0.1** runs on Java 24 and later (including Java 25) with no extra settings. Two changes in Java 24 affect it ([#65](https://github.com/cimug-org/cim-compare/issues/65)):
+
+- **XML entity size limits.** Java 24 lowered its default limits on the size of XML entities to 100,000 ([JDK-8343006](https://bugs.openjdk.org/browse/JDK-8343006)). A comparison of full CIM models easily goes over them, and earlier releases of **cim-compare** then stop before writing the report, with an error such as:
+
+  ```
+  JAXP00010003: The length of entity "[xml]" is "100,001" that exceeds the "100,000" limit
+  ```
+
+  From 2.0.1, **cim-compare** removes these limits itself at startup, as it already did for Java 11's XPath limits (1.3.0, [#21](https://github.com/cimug-org/cim-compare/issues/21)). The files it reads are your own models, so the limits aren't needed.
+- **Native access.** Since Java 24, a program that loads a native library prints a "restricted method" warning ([JEP 472](https://openjdk.org/jeps/472)); a future Java release will block it unless it is allowed. **cim-compare** loads EA's `SSJavaCOM.dll` / `SSJavaCOM64.dll` when `.eap` or `.qea` project files are the input ([Option \#1](#option-1-enterprise-architect-eap-or-qea-project-files-as-input)). From 2.0.1, the jar allows this itself (`Enable-Native-Access: ALL-UNNAMED` in its manifest), so there is no warning. Earlier Java releases ignore the setting.
+
+With **cim-compare 2.0.0 or earlier** on Java 24 or later, add the settings to the command line yourself, before `-jar`:
+
+```
+java -Xmx4G -Djdk.xml.totalEntitySizeLimit=0 -Djdk.xml.maxGeneralEntitySizeLimit=0 --enable-native-access=ALL-UNNAMED -jar cim-compare-2.0.0.jar ...
+```
+
+or, in a batch file, set them once for every Java program run from it:
+
+```
+set "JAVA_TOOL_OPTIONS=-Djdk.xml.totalEntitySizeLimit=0 -Djdk.xml.maxGeneralEntitySizeLimit=0 --enable-native-access=ALL-UNNAMED"
+```
+
+Note that newer Java releases for Windows are 64-bit only (see [Azul OpenJDK](#azul-openjdk)). Comparing `.eap` project files needs 32-bit Java, so for `.eap` input use Java 21 or earlier; `.qea`, XMI and compare-log input can use any current release.
 
 ### Azul OpenJDK
 
@@ -210,7 +236,7 @@ When downloading there are special considerations related to the 32-bit version.
 * **Java 24 (OpenJDK 24)** — The supported platform table explicitly states that Azul Zulu builds of **Java 24 are only offered for 64‑bit Windows**, with no mention of 32‑bit availability.
 * The broader Azul download includes the latest versions (Java 23, 21, 17, etc.) but **only have available 64‑bit options for newer platform support**.
 
-The reason for the shift is that it reflects a broader trend. OpenJDK deprecated Windows 32‑bit, targeting removal in JDK 23+, making it increasingly rare to see 32‑bit builds in newer OpenJDK distributions. Therefore, though **cim-compare** is not tied to Java 17 and can run on newer releases of OpenJDK, the below provided download links simply point to Java 17 where both 32-bit and 64-bit versions are available.
+The reason for the shift is that it reflects a broader trend. OpenJDK deprecated Windows 32‑bit, targeting removal in JDK 23+, making it increasingly rare to see 32‑bit builds in newer OpenJDK distributions. Therefore, though **cim-compare** is not tied to Java 17 and can run on newer releases of OpenJDK (from 2.0.1 including Java 24 and later with no extra settings; see [Java 24 and Later](#java-24-and-later)), the below provided download links simply point to Java 17 where both 32-bit and 64-bit versions are available. For `.qea`, XMI or compare-log input a newer 64-bit release such as Java 21 or 25 works equally well.
 
 #### Download 32-bit Java 17
 

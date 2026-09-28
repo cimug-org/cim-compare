@@ -33,6 +33,9 @@ public class CIMModelComparisonGenerator {
 	private static final String PARAM_FULL = "full";
 	private static final String PARAM_INCLUDE_DIAGRAMS = "include-diagrams";
 	private static final String PARAM_ZIP = "zip";
+	/** The release, as in the jar name cim-compare-<VERSION>.jar. */
+	private static final String VERSION = "2.0.0";
+
 	private static final String PARAM_CLEANUP = "cleanup";
 
 	/**
@@ -790,89 +793,56 @@ public class CIMModelComparisonGenerator {
 	}
 
 	private static void printUsage() {
-		System.err.println();
-		System.err.println("There are three possible command line usages for the CIM Model Comparison Report utility:");
-		System.err.println();
-		/**
-		 * XML Compare Log file as input...
-		 */
-		System.err.println(
-				"To generate an HTML report using the results file (*.xml) of an Enterprise Architect model comparison use the command line option.");
-		System.err.println(
-				"   Usage: java -jar cim-compare.jar <comparison-results-xml-file> [<output-directory-or-html-file>] [--package=<package-name>] [--full] [--include-diagrams] [--image-type=<image-files-extension>] [--zip] [--cleanup]");
-		System.err.println();
-		System.err.println("   Examples: ");
-		System.err.println(
-				"          java -jar cim-compare.jar \"C:\\CIM XMI exports\\CIM15v33_CIM16v26a_EA_Comparison_Report.xml\" \"C:\\Comparison Reports\\\"");
-		System.err.println(
-				"          java -jar cim-compare.jar CIM15v33_CIM16v26a_EA_Comparison_Report.xml \"C:\\Comparison Reports\\\"");
-		System.err.println(
-				"          java -jar cim-compare.jar CIM15v33_CIM16v26a_EA_Comparison_Report.xml \"C:\\Comparison Reports\\\" --package=IEC61968");
-		System.err.println(
-				"          java -jar cim-compare.jar CIM15v33_CIM16v26a_EA_Comparison_Report.xml MyComparisonReport_CIM15v33_CIM16v26a.html");
-		System.err.println("          java -jar cim-compare.jar CIM15v33_CIM16v26a_EA_Comparison_Report.xml");
-		System.err.println(
-				"          java -jar cim-compare.jar CIM15v33_CIM16v26a_EA_Comparison_Report.xml --include-diagrams --image-type=gif");
-		System.err.println(
-				"          java -jar cim-compare.jar CIM15v33_CIM16v26a_EA_Comparison_Report.xml --package=IEC61970");
-		System.err.println(
-				"          java -jar cim-compare.jar CIM15v33_CIM16v26a_EA_Comparison_Report.xml --package=IEC61970 --include-diagrams --image-type=GIF --zip");
-		System.err.println(
-				"          java -jar cim-compare.jar CIM15v33_CIM16v26a_EA_Comparison_Report.xml --package=IEC61970 --include-diagrams --image-type=GIF --zip --cleanup");
-		System.err.println();
-		/**
-		 * XMI files as input...
-		 */
-		System.err.println(
-				"To generate a model comparison report directly from baseline and target models (XMI files) use the command line option.");
-		System.err.println(
-				"   Usage: java -jar cim-compare.jar <baseline-model-xmi-file> <target-model-xmi-file> [<output-directory-or-html-file>] [--package=<package-name>] [--full] [--include-diagrams] [--image-type=<image-files-extension>] [--zip] [--cleanup]");
-		System.err.println();
-		System.err.println("   Examples: ");
-		System.err.println(
-				"          java -jar cim-compare.jar \"C:\\CIM XMI exports\\CIM15v33.xmi\" \"C:\\CIM XMI exports\\CIM16v26a.xmi\" \"C:\\Comparison Reports\\\"");
-		System.err
-				.println("          java -jar cim-compare.jar CIM15v33.xmi CIM16v26a.xmi \"C:\\Comparison Reports\\\"");
-		System.err.println(
-				"          java -jar cim-compare.jar CIM15v33.xmi CIM16v26a.xmi \"C:\\Comparison Reports\\CIM15v33_CIM16v26a_ComparisonReport.html\"");
-		System.err.println(
-				"          java -jar cim-compare.jar CIM15v33.xmi CIM16v26a.xmi CIM15v33_CIM16v26a_ComparisonReport.html");
-		System.err.println(
-				"          java -jar cim-compare.jar CIM15v33.xmi CIM16v26a.xmi CIM15v33_CIM16v26a_ComparisonReport.html --package=IEC62325");
-		System.err.println(
-				"          java -jar cim-compare.jar CIM15v33.xmi CIM16v26a.xmi CIM15v33_CIM16v26a_ComparisonReport.html");
-		System.err.println(
-				"          java -jar cim-compare.jar CIM15v33.xmi CIM16v26a.xmi --package=IEC62325 --include-diagrams --image-type=JPG --zip");
-		System.err.println(
-				"          java -jar cim-compare.jar CIM15v33.xmi CIM16v26a.xmi --package=IEC62325 --include-diagrams --image-type=JPG --zip --cleanup");
-		System.err.println();
-		/**
-		 * EAP files as input...
-		 */
-		System.err.println(
-				"To generate a model comparison report directly from Sparx Enterprise Architect baseline and target models (.eap files) use the command line option.");
-		System.err.println(
-				"   Usage: java -jar cim-compare.jar <baseline-model-file> <target-model-file> [<output-directory-or-html-file>] [--package=<package-name>] [--full] [--include-diagrams] [--image-type=<image-files-extension>] [--zip] [--cleanup]");
-		System.err.println();
-		System.err.println("   Examples: ");
-		System.err.println(
-				"          java -jar cim-compare.jar \"C:\\CIM XMI exports\\CIM15v33.eap\" \"C:\\CIM XMI exports\\CIM16v26a.eapx\" \"C:\\Comparison Reports\\\"");
-		System.err
-				.println("          java -jar cim-compare.jar CIM15v33.xmi CIM16v26a.eap \"C:\\Comparison Reports\\\"");
-		System.err.println(
-				"          java -jar cim-compare.jar CIM15v33.eap CIM16v26a.eap \"C:\\Comparison Reports\\CIM15v33_CIM16v26a_ComparisonReport.html\"");
-		System.err.println(
-				"          java -jar cim-compare.jar CIM15v33.qea CIM16v26a.qea CIM15v33_CIM16v26a_ComparisonReport.html");
-		System.err.println(
-				"          java -jar cim-compare.jar CIM15v33.eap CIM16v26a.eap CIM15v33_CIM16v26a_ComparisonReport.html --package=IEC62325");
-		System.err.println(
-				"          java -jar cim-compare.jar CIM15v33.eapx CIM16v26a.eapx CIM15v33_CIM16v26a_ComparisonReport.html");
-		System.err.println(
-				"          java -jar cim-compare.jar CIM15v33.eap CIM16v26a.xmi --package=IEC62325 --include-diagrams --image-type=JPG");
-		System.err.println(
-				"          java -jar cim-compare.jar CIM15v33.eap CIM16v26a.xmi --package=IEC62325 --include-diagrams --image-type=JPG --zip");		
-		System.err.println(
-				"          java -jar cim-compare.jar CIM15v33.eap CIM16v26a.xmi --package=IEC62325 --include-diagrams --image-type=JPG --zip --cleanup");			
-		System.err.println();
+		String jar = "cim-compare-" + VERSION + ".jar";
+		String[] lines = {
+				"",
+				"There are three ways to run cim-compare " + VERSION + " (see https://cim-compare.ucaiug.io):",
+				"",
+				"1. From two Enterprise Architect project files (.eap/.eapx with 32-bit Java, .qea/.qeax with 64-bit Java).",
+				"   Requires a licensed EA installation; -Djava.library.path must name the folder holding SSJavaCOM.dll/SSJavaCOM64.dll.",
+				"",
+				"   Usage: java [<jvm-parameters>] -jar " + jar + " <baseline-model-file> <destination-model-file>",
+				"               [<output-directory-or-html-file>] [--package=<package-name>] [--full]",
+				"               [--include-diagrams] [--image-type=<image-file-extension>] [--zip] [--cleanup]",
+				"",
+				"   Examples:",
+				"      java -Xmx4G -Djava.library.path=\"C:\\cim-compare\\ea16\" -jar " + jar + " CIM17v40.qea CIM18v16.qea \"C:\\Comparison Reports\"",
+				"      java -Xmx4G -Djava.library.path=\"C:\\cim-compare\\ea16\" -jar " + jar + " CIM17v40.qea CIM18v16.qea --package=Grid --include-diagrams --zip",
+				"      java -Xmx1G -Djava.library.path=\"C:\\cim-compare\\ea15\" -jar " + jar + " CIM15v33.eap CIM16v26a.eap CIM15v33_CIM16v26a.html --full",
+				"",
+				"2. From two XMI 1.1 files exported from EA. Diagram images, if wanted, must already be in the",
+				"   Images-baseline and Images-destination folders of the output directory.",
+				"",
+				"   Usage: java [<jvm-parameters>] -jar " + jar + " <baseline-model-xmi-file> <destination-model-xmi-file>",
+				"               [<output-directory-or-html-file>] [--package=<package-name>] [--full]",
+				"               [--include-diagrams] [--image-type=<image-file-extension>] [--zip] [--cleanup]",
+				"",
+				"   Examples:",
+				"      java -Xmx2G -jar " + jar + " \"C:\\XMI exports\\CIM15v33.xmi\" \"C:\\XMI exports\\CIM16v26a.xmi\" \"C:\\Comparison Reports\"",
+				"      java -Xmx2G -jar " + jar + " CIM15v33.xmi CIM16v26a.xmi CIM15v33_CIM16v26a.html --package=IEC62325",
+				"      java -Xmx2G -jar " + jar + " CIM15v33.xmi CIM16v26a.xmi --include-diagrams --image-type=GIF --zip --cleanup",
+				"",
+				"3. From a compare log (.xml) exported from an Enterprise Architect model comparison. Diagrams are not supported.",
+				"",
+				"   Usage: java [<jvm-parameters>] -jar " + jar + " <comparison-results-xml-file>",
+				"               [<output-directory-or-html-file>] [--package=<package-name>] [--full] [--zip] [--cleanup]",
+				"",
+				"   Examples:",
+				"      java -Xmx2G -jar " + jar + " CIM15v33_CIM16v26a_EA_Comparison_Report.xml \"C:\\Comparison Reports\"",
+				"      java -Xmx2G -jar " + jar + " CIM15v33_CIM16v26a_EA_Comparison_Report.xml --package=IEC61970",
+				"      java -Xmx2G -jar " + jar + " CIM15v33_CIM16v26a_EA_Comparison_Report.xml --package=IEC61970 --zip --cleanup",
+				"",
+				"Options:",
+				"   --package=<name>     Compare (or report) only this package and everything below it. Either model's name",
+				"                        for a renamed package can be used (e.g. IEC61970 or Grid).",
+				"   --full               Include identical items in the report as well as the changes.",
+				"   --minimal            Accepted for 1.x command lines; no effect (only changes are reported by default).",
+				"   --include-diagrams   Include changed diagrams (options 1 and 2).",
+				"   --image-type=<ext>   JPG (default), GIF, PNG, BMP or EMF.",
+				"   --zip                Put the report and diagram images in a ZIP archive.",
+				"   --cleanup            With --zip: delete what this run created, leaving the ZIP. Input files are never deleted.",
+				"" };
+		for (String line : lines)
+			System.err.println(line);
 	}
 }

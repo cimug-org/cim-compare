@@ -19,13 +19,21 @@
       │  │  ├ Plant                           baseline only (type="") → deleted class
       │  │  │   └ Links: Generalization        baseline only (type="") → deleted link
       │  │  ├ Equipment                       renamed class (was ConductingEquipmentBase)
-      │  │  ├ CoreOverview (diagram)          changed properties → shown
-      │  │  └ CoreLayout (diagram)            Changed, no changed properties → layout only, hidden
+      │  │  ├ Location                        only an attribute description changed (curly quotes) →
+      │  │  │                                 changed class, but not highlighted on a diagram
+      │  │  ├ CoreOverview (diagram)          changed properties → shown; #37 DiagramObjects (one
+      │  │  │                                 per highlight kind: added, removed, changed class,
+      │  │  │                                 unchanged, moved, restyled) and DiagramConnectors
+      │  │  │                                 (removed, labels moved)
+      │  │  └ CoreLayout (diagram)            Changed, no changed properties, a moved element →
+      │  │                                    shown with its highlight
       │  ├ Wires
       │  │  ├ ACLineSegment                   model only → added
-      │  │  └ Switch                          moved here from Core
-      │  ├ DER                                only a layout-only diagram → package hidden
-      │  │  └ DERLayout (diagram)
+      │  │  ├ Switch                          moved here from Core
+      │  │  ├ DocWires (diagram)              renamed, nothing on it changed → metadata only, no images
+      │  │  └ WiresConnectors (diagram)       only a rerouted connector → shown
+      │  ├ DER                                only a diagram with nothing to highlight → package hidden
+      │  │  └ DERLayout (diagram)             Changed, no changed properties, nothing to highlight
       │  ├ Retired                            baseline only package (type="") → deleted
       │  └ GridCIMVersion                     version class used for the header labels
       └ IEC61968                              wholly identical → dropped unless full
@@ -143,12 +151,65 @@
                 </Properties>
               </CompareItem>
 
+              <CompareItem name="Location" type="Class" guid="{00000000-0000-0000-0000-000000000170}" status="Identical">
+                <Properties>
+                  <Property name="Name" model="Location" baseline="Location" status="Identical"/>
+                  <Property name="Type" model="Class" baseline="Class" status="Identical"/>
+                </Properties>
+                <CompareItem name="mainAddress" type="Attribute" guid="{00000000-0000-0000-0000-000000000171}" status="Changed">
+                  <Properties>
+                    <Property name="Name" model="mainAddress" baseline="mainAddress" status="Identical"/>
+                    <Property name="Notes" model="Main address of the &quot;location&quot;." baseline="Main address of the “location”." status="Changed"/>
+                    <Property name="Type" model="String" baseline="String" status="Identical"/>
+                  </Properties>
+                </CompareItem>
+              </CompareItem>
+
               <CompareItem name="CoreOverview" type="Diagram" guid="{00000000-0000-0000-0000-000000000118}" status="Changed">
                 <Properties>
                   <Property name="DiagramType" model="ClassDiagram" baseline="ClassDiagram" status="Identical"/>
                   <Property name="Name" model="CoreOverview" baseline="CoreOverview" status="Identical"/>
                   <Property name="Notes" model="Main classes of Core." baseline="Core classes." status="Changed"/>
                 </Properties>
+                <!-- #37: element-level differences on the diagram -->
+                <CompareItem name="Plant – PowerSystemResource" type="DiagramConnector" guid="{00000000-0000-0000-0000-000000000161}" status="Baseline only">
+                  <Properties>
+                    <Property name="Change" baseline="removed" status="Baseline only"/>
+                    <Property name="SourceBox" baseline="300,200,420,260" status="Baseline only"/>
+                    <Property name="TargetBox" baseline="40,120,200,200" status="Baseline only"/>
+                  </Properties>
+                </CompareItem>
+                <CompareItem name="PowerSystemResource – IdentifiedObject" type="DiagramConnector" guid="{00000000-0000-0000-0000-000000000162}" status="Changed">
+                  <Properties>
+                    <Property name="Change" model="labels moved" status="Changed"/>
+                    <Property name="SourceBox" model="40,120,200,200" status="Changed"/>
+                    <Property name="TargetBox" model="40,20,200,80" status="Changed"/>
+                  </Properties>
+                </CompareItem>
+                <CompareItem name="ACLineSegment" type="DiagramObject" guid="{00000000-0000-0000-0000-000000000121}" status="Model only">
+                  <Properties><Property name="Box" model="500,40,640,90" status="Model only"/></Properties>
+                </CompareItem>
+                <CompareItem name="Plant" type="DiagramObject" guid="{00000000-0000-0000-0000-000000000115}" status="Baseline only">
+                  <Properties><Property name="Box" baseline="300,200,420,260" status="Baseline only"/></Properties>
+                </CompareItem>
+                <CompareItem name="PowerSystemResource" type="DiagramObject" guid="{00000000-0000-0000-0000-000000000112}" status="Identical">
+                  <Properties><Property name="Box" baseline="40,120,200,200" model="40,120,200,200" status="Identical"/></Properties>
+                </CompareItem>
+                <CompareItem name="Location" type="DiagramObject" guid="{00000000-0000-0000-0000-000000000170}" status="Identical">
+                  <Properties><Property name="Box" baseline="220,20,380,80" model="220,20,380,80" status="Identical"/></Properties>
+                </CompareItem>
+                <CompareItem name="IdentifiedObject" type="DiagramObject" guid="{00000000-0000-0000-0000-000000000111}" status="Identical">
+                  <Properties><Property name="Box" baseline="40,20,200,80" model="40,20,200,80" status="Identical"/></Properties>
+                </CompareItem>
+                <CompareItem name="Equipment" type="DiagramObject" guid="{00000000-0000-0000-0000-000000000117}" status="Moved">
+                  <Properties><Property name="Box" baseline="40,240,200,300" model="60,260,220,320" status="Moved"/></Properties>
+                </CompareItem>
+                <CompareItem name="Switch" type="DiagramObject" guid="{00000000-0000-0000-0000-000000000122}" status="Moved">
+                  <Properties><Property name="Box" baseline="260,40,380,90" model="260,120,380,170" status="Moved"/></Properties>
+                </CompareItem>
+                <CompareItem name="Customer" type="DiagramObject" guid="{00000000-0000-0000-0000-000000000201}" status="Changed">
+                  <Properties><Property name="Box" baseline="420,300,560,340" model="420,300,560,340" status="Changed"/></Properties>
+                </CompareItem>
               </CompareItem>
 
               <CompareItem name="CoreLayout" type="Diagram" guid="{00000000-0000-0000-0000-000000000119}" status="Changed">
@@ -156,6 +217,9 @@
                   <Property name="DiagramType" model="ClassDiagram" baseline="ClassDiagram" status="Identical"/>
                   <Property name="Name" model="CoreLayout" baseline="CoreLayout" status="Identical"/>
                 </Properties>
+                <CompareItem name="IdentifiedObject" type="DiagramObject" guid="{00000000-0000-0000-0000-000000000111}" status="Moved">
+                  <Properties><Property name="Box" baseline="40,20,200,80" model="90,20,250,80" status="Moved"/></Properties>
+                </CompareItem>
               </CompareItem>
             </CompareItem>
 
@@ -177,6 +241,32 @@
                   <Property name="ParentPackage" model="Wires" baseline="Core" status="Changed"/>
                   <Property name="Type" model="Class" baseline="Class" status="Identical"/>
                 </Properties>
+              </CompareItem>
+
+              <!-- #37: a diagram whose only change is its name (nothing on it changed) -->
+              <CompareItem name="DocWires" type="Diagram" guid="{00000000-0000-0000-0000-000000000124}" status="Changed">
+                <Properties>
+                  <Property name="DiagramType" model="ClassDiagram" baseline="ClassDiagram" status="Identical"/>
+                  <Property name="Name" model="DocWires" baseline="Wires" status="Changed"/>
+                </Properties>
+                <CompareItem name="Customer" type="DiagramObject" guid="{00000000-0000-0000-0000-000000000201}" status="Identical">
+                  <Properties><Property name="Box" baseline="10,10,100,50" model="10,10,100,50" status="Identical"/></Properties>
+                </CompareItem>
+              </CompareItem>
+
+              <!-- #37: a diagram whose only change is a connector -->
+              <CompareItem name="WiresConnectors" type="Diagram" guid="{00000000-0000-0000-0000-000000000123}" status="Changed">
+                <Properties>
+                  <Property name="DiagramType" model="ClassDiagram" baseline="ClassDiagram" status="Identical"/>
+                  <Property name="Name" model="WiresConnectors" baseline="WiresConnectors" status="Identical"/>
+                </Properties>
+                <CompareItem name="ACLineSegment – Switch" type="DiagramConnector" guid="{00000000-0000-0000-0000-000000000163}" status="Moved">
+                  <Properties>
+                    <Property name="Change" model="rerouted" status="Moved"/>
+                    <Property name="SourceBox" model="10,10,100,50" status="Moved"/>
+                    <Property name="TargetBox" model="200,10,300,50" status="Moved"/>
+                  </Properties>
+                </CompareItem>
               </CompareItem>
             </CompareItem>
 

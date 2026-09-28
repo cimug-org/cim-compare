@@ -181,10 +181,84 @@ public class ReportPreProcessorTest {
 		assertEquals("EAID_00000000_0000_0000_0000_000000000118", dg.getAttribute("eaid"));
 	}
 
+	// #37: highlight boxes for the diagram images
+
+	private static String highlight(Document d, String name, String side) throws Exception {
+		return str(d, "//Diagram[@name='CoreOverview']/Highlight[@name='" + name + "' and @side='" + side
+				+ "']/@kind");
+	}
+
 	@Test
-	public void layoutOnlyDiagramIsHidden() throws Exception {
+	public void diagramHighlightsFollowTheElementAndItsClass() throws Exception {
 		Document d = enrich(false, null);
-		assertNull(one(d, "//Diagram[@name='CoreLayout']"));
+		// added and removed elements: destination and baseline only
+		assertEquals("added", highlight(d, "ACLineSegment", "destination"));
+		assertEquals("", highlight(d, "ACLineSegment", "baseline"));
+		assertEquals("removed", highlight(d, "Plant", "baseline"));
+		assertEquals("", highlight(d, "Plant", "destination"));
+		// box unchanged, but the class's attributes changed (class itself Identical)
+		assertEquals("changed", highlight(d, "PowerSystemResource", "destination"));
+		assertEquals("", highlight(d, "PowerSystemResource", "baseline"));
+		// nothing changed: no box
+		assertEquals("", highlight(d, "IdentifiedObject", "destination"));
+		// the class changed, but only in an attribute description, which the box
+		// does not show: no box
+		assertEquals("changed", str(d, "//Class[@name='Location']/@status"));
+		assertEquals("", highlight(d, "Location", "destination"));
+		// moved, and the class changed: changed wins
+		assertEquals("changed", highlight(d, "Equipment", "destination"));
+		// moved to another package (its box now shows "Wires::"), and moved on the
+		// diagram: changed wins, on the destination only
+		assertEquals("changed", highlight(d, "Switch", "destination"));
+		assertEquals("", highlight(d, "Switch", "baseline"));
+		// moved only (CoreLayout): both sides, each in its own position
+		String moved = "//Diagram[@name='CoreLayout']/Highlight[@name='IdentifiedObject' and @side='%s']/";
+		assertEquals("moved", str(d, String.format(moved, "baseline") + "@kind"));
+		assertEquals("moved", str(d, String.format(moved, "destination") + "@kind"));
+		assertEquals("40,20,200,80", str(d, String.format(moved, "baseline") + "@box"));
+		assertEquals("90,20,250,80", str(d, String.format(moved, "destination") + "@box"));
+		// style only
+		assertEquals("restyled", highlight(d, "Customer", "destination"));
+	}
+
+	@Test
+	public void changedConnectorsAreListedWithTheirEnds() throws Exception {
+		Document d = enrich(false, null);
+		String cx = "//Diagram[@name='CoreOverview']/Connector";
+		assertEquals("removed", str(d, cx + "[@name='Plant \u2013 PowerSystemResource']/@kind"));
+		assertEquals("baseline", str(d, cx + "[@name='Plant \u2013 PowerSystemResource']/@side"));
+		assertEquals("300,200,420,260;40,120,200,200",
+				str(d, cx + "[@name='Plant \u2013 PowerSystemResource']/@ends"));
+		assertEquals("labels moved", str(d, cx + "[@name='PowerSystemResource \u2013 IdentifiedObject']/@kind"));
+		assertEquals("destination", str(d, cx + "[@name='PowerSystemResource \u2013 IdentifiedObject']/@side"));
+	}
+
+	@Test
+	public void renamedDiagramWithNothingChangedOnItHasNoHighlights() throws Exception {
+		Document d = enrich(false, null);
+		assertEquals("changed", str(d, "//Diagram[@name='DocWires']/@status"));
+		assertNull(one(d, "//Diagram[@name='DocWires']/Highlight"));
+		assertNull(one(d, "//Diagram[@name='DocWires']/Connector"));
+	}
+
+	@Test
+	public void diagramWhoseOnlyChangeIsAConnectorIsShown() throws Exception {
+		Document d = enrich(false, null);
+		assertEquals("changed", str(d, "//Diagram[@name='WiresConnectors']/@status"));
+		assertEquals("rerouted", str(d, "//Diagram[@name='WiresConnectors']/Connector/@kind"));
+	}
+
+	@Test
+	public void layoutOnlyDiagramWithSomethingToHighlightIsShown() throws Exception {
+		Document d = enrich(false, null);
+		assertEquals("changed", str(d, "//Diagram[@name='CoreLayout']/@status"));
+		assertEquals("moved", str(d, "//Diagram[@name='CoreLayout']/Highlight[@side='destination']/@kind"));
+	}
+
+	@Test
+	public void layoutOnlyDiagramWithNothingToHighlightIsHidden() throws Exception {
+		// DERLayout: EA reported it Changed, but no element box moved (connectors, say)
+		assertNull(one(enrich(false, null), "//Diagram[@name='DERLayout']"));
 	}
 
 	@Test
@@ -194,10 +268,10 @@ public class ReportPreProcessorTest {
 	}
 
 	@Test
-	public void layoutOnlyDiagramIsIdenticalInFullOutput() throws Exception {
+	public void layoutOnlyDiagramWithNothingToHighlightIsIdenticalInFullOutput() throws Exception {
 		Document d = enrich(true, null);
-		assertEquals("identical", str(d, "//Diagram[@name='CoreLayout']/@status"));
 		assertEquals("identical", str(d, "//Diagram[@name='DERLayout']/@status"));
+		assertNull(one(d, "//Diagram[@name='DERLayout']/Highlight"));
 	}
 
 	// ------------------------------------------------------------ enrichment
@@ -275,9 +349,10 @@ public class ReportPreProcessorTest {
 		assertEquals("1", str(d, "/ComparisonReport/Summary/Count[@kind='class'][@status='added']/@n"));
 		assertEquals("1", str(d, "/ComparisonReport/Summary/Count[@kind='class'][@status='deleted']/@n"));
 		assertEquals("1", str(d, "/ComparisonReport/Summary/Count[@kind='class'][@status='moved']/@n"));
-		// PowerSystemResource, Equipment, GridCIMVersion
-		assertEquals("3", str(d, "/ComparisonReport/Summary/Count[@kind='class'][@status='changed']/@n"));
-		assertEquals("1", str(d, "/ComparisonReport/Summary/Count[@kind='diagram'][@status='changed']/@n"));
+		// PowerSystemResource, Location, Equipment, GridCIMVersion
+		assertEquals("4", str(d, "/ComparisonReport/Summary/Count[@kind='class'][@status='changed']/@n"));
+		// CoreOverview, CoreLayout (moved element), DocWires (renamed), WiresConnectors (connector)
+		assertEquals("4", str(d, "/ComparisonReport/Summary/Count[@kind='diagram'][@status='changed']/@n"));
 		assertEquals("1", str(d, "/ComparisonReport/Summary/Count[@kind='package'][@status='deleted']/@n"));
 		assertEquals("", str(d, "/ComparisonReport/Summary/Count[@kind='class'][@status='identical']/@n"));
 	}
@@ -286,13 +361,16 @@ public class ReportPreProcessorTest {
 	public void packageCountsCoverTheWholeSubtree() throws Exception {
 		Document d = enrich(false, null);
 		Element grid = pkg(d, "Grid");
-		// Core: PowerSystemResource, Plant, Equipment; Wires: ACLineSegment, Switch; Grid: GridCIMVersion
-		assertEquals("6", grid.getAttribute("changedClasses"));
-		assertEquals("1", grid.getAttribute("changedDiagrams"));
+		// Core: PowerSystemResource, Plant, Location, Equipment; Wires: ACLineSegment, Switch;
+		// Grid: GridCIMVersion
+		assertEquals("7", grid.getAttribute("changedClasses"));
+		// CoreOverview (notes), CoreLayout (a moved element), DocWires (renamed),
+		// WiresConnectors (a rerouted connector); not DERLayout
+		assertEquals("4", grid.getAttribute("changedDiagrams"));
 		Element core = pkg(d, "Core");
-		assertEquals("classes directly in Core, identical included", "4", core.getAttribute("classCount"));
+		assertEquals("classes directly in Core, identical included", "5", core.getAttribute("classCount"));
 		assertEquals("2", core.getAttribute("diagramCount"));
-		assertEquals("3", core.getAttribute("changedClasses"));
+		assertEquals("4", core.getAttribute("changedClasses"));
 	}
 
 	// ------------------------------------------------------------ --package

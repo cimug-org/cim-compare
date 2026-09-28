@@ -64,6 +64,7 @@ public class ReportRendererTest {
 		assertFalse("identical class left out of minimal output",
 				page.contains("id=\"EAID_00000000_0000_0000_0000_000000000111\""));
 		assertTrue("package outline", page.contains("id=\"rail\""));
+		assertFalse("no highlight toggle without diagrams", page.contains("<input id=\"chk-hl\""));
 		assertTrue("redline", page.contains("<ins>") || page.contains("<ins "));
 		assertFalse("diagrams only with --include-diagrams", page.contains("CoreOverview"));
 	}
@@ -109,7 +110,59 @@ public class ReportRendererTest {
 		String page = read(html);
 		assertTrue(page.contains("CoreOverview"));
 		assertTrue("image file name from the diagram GUID", page.contains("EAID_00000000_0000_0000_0000_000000000118.png"));
-		assertFalse("layout-only diagram", page.contains("CoreLayout"));
+		assertFalse("layout-only diagram with nothing to highlight", page.contains("DERLayout"));
+		// a diagram whose only change is its name: listed, metadata only, no images
+		assertTrue(page.contains("DocWires"));
+		assertFalse(page.contains("EAID_00000000_0000_0000_0000_000000000124.png"));
+		assertTrue("a diagram connector change alone still shows the images",
+				page.contains("EAID_00000000_0000_0000_0000_000000000123.png"));
+		assertTrue("header toggle, on by default",
+				page.contains("<input id=\"chk-hl\" type=\"checkbox\" checked> Diagram highlights"));
+	}
+
+	@Test
+	public void diagramHighlightsAreDrawnOverTheImages() throws Exception {
+		File xml = copyFixture();
+		File html = new File(tmp.getRoot(), "highlights.html");
+		new ReportRenderer(false, null, true, "png").render(xml, html);
+		String page = read(html);
+		assertTrue(page.contains("<span class=\"hl hl-added\" data-box=\"500,40,640,90\" title=\"ACLineSegment: added\"></span>"));
+		assertTrue(page.contains("<span class=\"hl hl-moved\" data-box=\"40,20,200,80\" title=\"IdentifiedObject: moved or resized\"></span>"));
+		assertTrue("legend lists the kinds present, in order",
+				page.matches("(?s).*class=\"hl-legend\">\\s*<span class=\"hl-key\"><span class=\"hl-sw hl-added\">.*hl-removed.*hl-changed.*hl-restyled.*"));
+		assertTrue(page.contains("<div class=\"dimg\" data-side=\"baseline\"><img loading=\"lazy\" src=\"Images-baseline/EAID_00000000_0000_0000_0000_000000000118.png\""));
+		// connectors: a table under the images, removed before labels moved
+		assertTrue(page.contains("<span class=\"cx-n\">1 removed · 1 labels moved</span>"));
+		assertTrue(page.contains("<div class=\"cx-row\" tabindex=\"0\" data-side=\"baseline\" data-ends=\"300,200,420,260;40,120,200,200\">"
+				+ "<span class=\"cx-k cx-removed\">removed</span><span class=\"cx-name\">Plant \u2013 PowerSystemResource</span></div>"));
+		assertTrue(page.indexOf("cx-removed\">removed") < page.indexOf("cx-labels-moved\">labels moved"));
+	}
+
+	@Test
+	public void imagesTheReportDoesNotShowAreDeleted() throws Exception {
+		File xml = copyFixture();
+		String[] shown = { "118", "119", "123" }; // CoreOverview, CoreLayout, WiresConnectors
+		String[] unshown = { "124", "131" }; // DocWires (renamed only), DERLayout (nothing to highlight)
+		File other = null;
+		for (String side : new String[] { "Images-baseline", "Images-destination" }) {
+			File dir = tmp.newFolder(side);
+			for (String n : shown)
+				new File(dir, "EAID_00000000_0000_0000_0000_000000000" + n + ".png").createNewFile();
+			for (String n : unshown)
+				new File(dir, "EAID_00000000_0000_0000_0000_000000000" + n + ".png").createNewFile();
+			other = new File(dir, "EAID_11111111_1111_1111_1111_111111111111.png");
+			other.createNewFile();
+		}
+		new ReportRenderer(false, null, true, "png").render(xml, new File(tmp.getRoot(), "comparison-report.html"));
+		for (String side : new String[] { "Images-baseline", "Images-destination" }) {
+			File dir = new File(tmp.getRoot(), side);
+			for (String n : shown)
+				assertTrue(side + " " + n + " kept", new File(dir, "EAID_00000000_0000_0000_0000_000000000" + n + ".png").isFile());
+			for (String n : unshown)
+				assertFalse(side + " " + n + " deleted", new File(dir, "EAID_00000000_0000_0000_0000_000000000" + n + ".png").exists());
+			assertTrue("a file not belonging to a diagram in the comparison is left alone",
+					new File(dir, "EAID_11111111_1111_1111_1111_111111111111.png").isFile());
+		}
 	}
 
 	@Test

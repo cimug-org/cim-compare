@@ -8,6 +8,8 @@ import java.io.InputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.nio.charset.StandardCharsets;
+import java.util.HashSet;
+import java.util.Set;
 
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.transform.OutputKeys;
@@ -20,6 +22,8 @@ import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 
 import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
 
 /**
  * Stage 3 of cim-compare: comparison XML → enriched XML (written beside the
@@ -70,6 +74,7 @@ public class ReportRenderer {
 	 *            the file the document came from (used to name the enriched XML)
 	 */
 	public File render(Document in, File comparisonXml, File html) throws Exception {
+		Set<String> diagrams = includeDiagrams ? diagramIds(in) : null;
 		Document enriched = new ReportPreProcessor(full, packageFilter).process(in);
 		in = null; // let the (large) input go
 
@@ -92,7 +97,63 @@ public class ReportRenderer {
 			if (w != null && html != null)
 				w.close();
 		}
+		if (includeDiagrams && html != null)
+			deleteUnshownImages(html.getAbsoluteFile().getParentFile(), diagrams, shownDiagramIds(enriched), imageType);
 		return enrichedFile;
+	}
+
+	/** EAIDs of every diagram in the comparison. */
+	static Set<String> diagramIds(Document comparison) {
+		Set<String> ids = new HashSet<String>();
+		NodeList all = comparison.getElementsByTagName("CompareItem");
+		for (int i = 0; i < all.getLength(); i++) {
+			Element c = (Element) all.item(i);
+			if ("diagram".equals(ReportPreProcessor.kindOf(c)) && !c.getAttribute("guid").isEmpty())
+				ids.add(ReportPreProcessor.eaid(c.getAttribute("guid")));
+		}
+		return ids;
+	}
+
+	/**
+	 * EAIDs of the diagrams whose images the report shows: added or removed
+	 * diagrams, and diagrams with a highlight or a changed connector (#37). The
+	 * rule matches the Diagram template in report.xslt.
+	 */
+	static Set<String> shownDiagramIds(Document enriched) {
+		Set<String> ids = new HashSet<String>();
+		NodeList all = enriched.getElementsByTagName("Diagram");
+		for (int i = 0; i < all.getLength(); i++) {
+			Element d = (Element) all.item(i);
+			String st = d.getAttribute("status");
+			if ("added".equals(st) || "deleted".equals(st) || d.getElementsByTagName("Highlight").getLength() > 0
+					|| d.getElementsByTagName("Connector").getLength() > 0)
+				ids.add(d.getAttribute("eaid"));
+		}
+		return ids;
+	}
+
+	/**
+	 * Deletes the images of diagrams in the comparison that the report does not
+	 * show (a diagram whose only changes are its name or notes, one with nothing
+	 * to highlight, one outside --package), as the comparison step already does
+	 * for identical diagrams. Other files in the image folders are left alone.
+	 *
+	 * @return the number of images deleted
+	 */
+	static int deleteUnshownImages(File dir, Set<String> diagrams, Set<String> shown, String imageType) {
+		if (dir == null || diagrams == null)
+			return 0;
+		String ext = imageType.toLowerCase();
+		int n = 0;
+		for (String side : new String[] { "Images-baseline", "Images-destination" }) {
+			File folder = new File(dir, side);
+			if (!folder.isDirectory())
+				continue;
+			for (String id : diagrams)
+				if (!shown.contains(id) && new File(folder, id + "." + ext).delete())
+					n++;
+		}
+		return n;
 	}
 
 	public static File enrichedFileFor(File comparisonXml, File html) {

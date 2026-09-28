@@ -18,6 +18,7 @@ import javax.xml.bind.Marshaller;
 import org.cimug.compare.AssociationProperties;
 import org.cimug.compare.AttributeProperties;
 import org.cimug.compare.ClassProperties;
+import org.cimug.compare.DiagramElementDiff;
 import org.cimug.compare.DiagramProperties;
 import org.cimug.compare.DiffUtils;
 import org.cimug.compare.GeneralizationProperties;
@@ -643,7 +644,14 @@ class GUIDBasedDiffReportGeneratorImpl implements DiffReportGenerator {
 
 				theDiagram = new CompareItem(properties, targetDiagram.getName(), "Diagram", targetDiagram.getGUID(),
 						diagramStatus.toString());
-				
+
+				// #37: element-level differences, for highlighting on the diagram images.
+				if (!Status.Identical.equals(diagramStatus)) {
+					theDiagram.getCompareItem()
+							.addAll(DiagramElementDiff.compare(elementsOf(baselineDiagram), elementsOf(targetDiagram),
+									this::diagramSubjectName));
+				}
+
 				if (Status.Identical.equals(diagramStatus)) {
 					File baselineImageFile = new File(this.baselineImagesDir, targetDiagram.getXmiId()+ "." + imageType.ext());
 					baselineImageFile.delete();
@@ -654,6 +662,31 @@ class GUIDBasedDiffReportGeneratorImpl implements DiffReportGenerator {
 		}
 
 		return theDiagram;
+	}
+
+	private static List<DiagramElement> elementsOf(Diagram diagram) {
+		return (diagram == null || diagram.getDiagramElement() == null) ? null
+				: diagram.getDiagramElement().getDiagramElements();
+	}
+
+	/** Names of the classes and packages in either model, for diagram highlights. */
+	private java.util.Map<String, String> diagramSubjectNames;
+
+	/** Name of a class or package shown on a diagram, from either model. */
+	private String diagramSubjectName(String xmiId) {
+		if (diagramSubjectNames == null) {
+			java.util.Map<String, String> m = new java.util.HashMap<>();
+			preProcessor.getAllBaselinePackagesXmiIds().forEach((k, v) -> m.put(k, v.getName()));
+			preProcessor.getAllTargetPackagesXmiIds().forEach((k, v) -> m.put(k, v.getName()));
+			preProcessor.getBaselineClassesXmiIds().forEach((k, v) -> m.put(k, v.getName()));
+			preProcessor.getBaselineDeletedClassesXmiIds().forEach((k, v) -> m.put(k, v.getName()));
+			preProcessor.getBaselineMovedClassesXmiIds().forEach((k, v) -> m.put(k, v.getName()));
+			preProcessor.getTargetNewClassesXmiIds().forEach((k, v) -> m.put(k, v.getName()));
+			preProcessor.getTargedMovedClassesXmiIds().forEach((k, v) -> m.put(k, v.getName()));
+			preProcessor.getTargetClassesXmiIds().forEach((k, v) -> m.put(k, v.getName()));
+			diagramSubjectNames = m;
+		}
+		return diagramSubjectNames.get(xmiId);
 	}
 
 	private CompareItem parseAttribute(AttributeType baselineAttribute, AttributeType targetAttribute) {

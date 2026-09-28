@@ -330,10 +330,12 @@
         <span class="r-chev"><xsl:value-of select="if (Package) then '▸' else ''"/></span>
         <a class="r-name" href="#{@id}">
           <xsl:attribute name="title">
-            <xsl:value-of select="if (@renamedFrom) then concat(@renamedFrom, ' → ', @name) else @name"/>
+            <xsl:value-of select="if (@renamedFrom) then concat(@name, ' (renamed from ', @renamedFrom, ')') else @name"/>
             <xsl:if test="not(@status = ('changed', 'identical'))"><xsl:value-of select="concat(' (', @status, ')')"/></xsl:if>
           </xsl:attribute>
           <xsl:value-of select="@name"/>
+          <!-- a renamed package: "[renamed from <old>]" in grey on the next line (Todd, 2026-09-28, option D) -->
+          <xsl:if test="@renamedFrom"><span class="r-renamed">[renamed from <xsl:value-of select="@renamedFrom"/>]</span></xsl:if>
         </a>
         <xsl:if test="$n gt 0">
           <span class="r-n" title="{@changedClasses} changed classes{if ($diagrams) then concat(', ', @changedDiagrams, ' changed diagrams') else ''}"><xsl:value-of select="$n"/></span>

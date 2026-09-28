@@ -129,6 +129,12 @@
                                     <excludes>
                                         <exclude>module-info.class</exclude>
                                         <exclude>META-INF/versions/*/module-info.class</exclude>
+                                        <!-- Saxon-HE is a signed jar; its signature files cannot be valid in the
+                                             shaded jar and make the JVM refuse to load it. -->
+                                        <exclude>META-INF/*.SF</exclude>
+                                        <exclude>META-INF/*.DSA</exclude>
+                                        <exclude>META-INF/*.RSA</exclude>
+                                        <exclude>META-INF/*.EC</exclude>
                                     </excludes>
                                 </filter>
                             </filters>

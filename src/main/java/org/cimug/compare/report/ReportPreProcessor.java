@@ -49,7 +49,8 @@ import org.w3c.dom.NodeList;
  * ComparisonReport @baselineVersion @destinationVersion @comparedOn @scope @full @generator
  *   Summary
  *     Count @kind (package|class|diagram) @status @n
- *   Package @name @guid @id @status @classCount @diagramCount [@renamedFrom] [@fromPackage]
+ *   Package @name @guid @id @status @classCount @diagramCount
+ *           @changedClasses @changedDiagrams (whole subtree) [@renamedFrom] [@fromPackage]
  *     Notes @status  Baseline | Destination | Redline (mixed: text, del, ins)
  *     Properties  Property @name @status [@baseline] [@model] [Redline]
  *     Package ...   (nested)
@@ -217,7 +218,20 @@ public class ReportPreProcessor {
 					e.appendChild(d);
 			}
 		}
+		// Changed classes / diagrams in this package's whole subtree, for the
+		// package outline (left rail) in the report.
+		e.setAttribute("changedClasses", Integer.toString(countChanged(e, "Class")));
+		e.setAttribute("changedDiagrams", Integer.toString(countChanged(e, "Diagram")));
 		return e;
+	}
+
+	private static int countChanged(Element pkg, String tag) {
+		NodeList all = pkg.getElementsByTagName(tag);
+		int n = 0;
+		for (int i = 0; i < all.getLength(); i++)
+			if (!"identical".equals(((Element) all.item(i)).getAttribute("status")))
+				n++;
+		return n;
 	}
 
 	// ------------------------------------------------------------ classes

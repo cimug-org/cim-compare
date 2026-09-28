@@ -89,7 +89,7 @@ button { font: inherit; }
 .hdr .seg button.on { background: var(--head-ink); color: var(--head); }
 
 /* ---------- summary & legend ---------- */
-.wrap { padding: 12px 16px 60px; max-width: 1600px; margin: 0 auto; }
+.wrap { padding: 12px 16px 60px; max-width: 1880px; margin: 0 auto; }
 .note { background: var(--moved); border: 1px solid var(--moved-line); color: var(--moved-ink); padding: 6px 10px; border-radius: var(--r); margin-bottom: 10px; font-size: var(--fs-s); }
 .summary { display: flex; flex-wrap: wrap; gap: 6px 18px; align-items: center; background: var(--surface); border: 1px solid var(--line);
   border-radius: var(--r); padding: 8px 12px; margin-bottom: 8px; }
@@ -143,7 +143,7 @@ body.hide-guids .guid { display: none; }
 .grp-h .n { color: var(--muted); font-weight: 400; }
 .empty { color: var(--muted); font-size: var(--fs-s); padding: 4px 10px; font-style: italic; }
 .row.target, tr.target > td, ul.plain li.target { box-shadow: 0 0 0 3px var(--hilite); }
-.row, ul.plain li, table.attrs tr { scroll-margin-top: 110px; }  /* clear the sticky header + summary when scrolled to */
+.row, ul.plain li, table.attrs tr { scroll-margin-top: calc(var(--hdr-h, 96px) + 12px); }  /* clear the sticky header when scrolled to */
 .filtered-out { display: none !important; }
 
 /* ---------- detail ---------- */
@@ -284,3 +284,43 @@ details.more .sub { font-size: var(--fs-s); font-weight: 600; color: var(--muted
 details.more .sub .guid { font-weight: 400; font-family: var(--mono); font-size: 10px; color: var(--faint); user-select: all; }
 details.more .endsB { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
 details.more table.t th.k { width: 130px; }
+
+/* ---------- package outline (left rail) ---------- */
+.layout { display: grid; grid-template-columns: 280px minmax(0, 1fr); gap: 12px; align-items: start; }
+body.no-rail .layout { grid-template-columns: minmax(0, 1fr); }
+body.no-rail .rail { display: none; }
+.rail { position: sticky; top: calc(var(--hdr-h, 64px) + 8px); max-height: calc(100vh - var(--hdr-h, 64px) - 16px);
+  overflow: auto; background: var(--surface); border: 1px solid var(--line); border-radius: var(--r); padding: 6px 4px 8px;
+  font-size: 12px; overscroll-behavior: contain; }
+.rail .r-h { display: flex; justify-content: space-between; align-items: baseline; padding: 2px 8px 6px; margin-bottom: 4px;
+  border-bottom: 1px solid var(--line); font-weight: 600; color: var(--ink-2); }
+.rail .r-hn { font-weight: 400; font-size: 10.5px; color: var(--muted); letter-spacing: .03em; text-transform: uppercase; }
+.rail ul { list-style: none; margin: 0; padding: 0; }
+.rail li ul { padding-left: 12px; }
+.rail li.closed > ul { display: none; }
+.rail .r-row { display: flex; align-items: center; gap: 2px; padding: 2px 6px 2px 2px; border-radius: 3px; }
+.rail .r-row:hover { background: var(--ground); }
+.rail .r-chev { flex: none; width: 14px; text-align: center; color: var(--muted); cursor: pointer; font-size: 10px;
+  transition: transform .12s; user-select: none; }
+.rail li.r-kids:not(.closed) > .r-row .r-chev { transform: rotate(90deg); }
+.rail .r-name { flex: 1 1 auto; min-width: 0; font-family: var(--mono); font-size: 11.5px; color: var(--ink);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.rail .r-name:hover { text-decoration: none; color: var(--link); }
+.rail .r-n { flex: none; font-size: 10.5px; font-variant-numeric: tabular-nums; color: var(--ink-2);
+  background: var(--ground); border: 1px solid var(--line); border-radius: 999px; padding: 0 6px; line-height: 16px; }
+.rail li[data-status="added"] > .r-row { background: var(--added); }
+.rail li[data-status="deleted"] > .r-row { background: var(--deleted); }
+.rail li[data-status="moved"] > .r-row { background: var(--moved); }
+.rail li[data-status="added"] > .r-row .r-name { color: var(--added-ink); }
+.rail li[data-status="deleted"] > .r-row .r-name { color: var(--deleted-ink); }
+.rail li[data-status="moved"] > .r-row .r-name { color: var(--moved-ink); }
+.rail li.cur > .r-row { box-shadow: inset 0 0 0 1.5px var(--ink-2); }
+.rail li.cur > .r-row .r-name { font-weight: 700; }
+@media (max-width: 1100px) {
+  .layout { grid-template-columns: minmax(0, 1fr); }
+  .rail, .hdr .chk-rail { display: none; }
+}
+@media print {
+  .rail { display: none; }
+  .layout { grid-template-columns: minmax(0, 1fr); }
+}

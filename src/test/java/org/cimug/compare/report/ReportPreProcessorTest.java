@@ -215,6 +215,25 @@ public class ReportPreProcessorTest {
 	}
 
 	@Test
+	public void changedConnectorsAreListedWithTheirEnds() throws Exception {
+		Document d = enrich(false, null);
+		String cx = "//Diagram[@name='CoreOverview']/Connector";
+		assertEquals("removed", str(d, cx + "[@name='Plant \u2013 PowerSystemResource']/@kind"));
+		assertEquals("baseline", str(d, cx + "[@name='Plant \u2013 PowerSystemResource']/@side"));
+		assertEquals("300,200,420,260;40,120,200,200",
+				str(d, cx + "[@name='Plant \u2013 PowerSystemResource']/@ends"));
+		assertEquals("labels moved", str(d, cx + "[@name='PowerSystemResource \u2013 IdentifiedObject']/@kind"));
+		assertEquals("destination", str(d, cx + "[@name='PowerSystemResource \u2013 IdentifiedObject']/@side"));
+	}
+
+	@Test
+	public void diagramWhoseOnlyChangeIsAConnectorIsShown() throws Exception {
+		Document d = enrich(false, null);
+		assertEquals("changed", str(d, "//Diagram[@name='WiresConnectors']/@status"));
+		assertEquals("rerouted", str(d, "//Diagram[@name='WiresConnectors']/Connector/@kind"));
+	}
+
+	@Test
 	public void layoutOnlyDiagramWithSomethingToHighlightIsShown() throws Exception {
 		Document d = enrich(false, null);
 		assertEquals("changed", str(d, "//Diagram[@name='CoreLayout']/@status"));
@@ -317,8 +336,8 @@ public class ReportPreProcessorTest {
 		assertEquals("1", str(d, "/ComparisonReport/Summary/Count[@kind='class'][@status='moved']/@n"));
 		// PowerSystemResource, Equipment, GridCIMVersion
 		assertEquals("3", str(d, "/ComparisonReport/Summary/Count[@kind='class'][@status='changed']/@n"));
-		// CoreOverview, and CoreLayout for its moved element
-		assertEquals("2", str(d, "/ComparisonReport/Summary/Count[@kind='diagram'][@status='changed']/@n"));
+		// CoreOverview, CoreLayout (moved element), WiresConnectors (connector)
+		assertEquals("3", str(d, "/ComparisonReport/Summary/Count[@kind='diagram'][@status='changed']/@n"));
 		assertEquals("1", str(d, "/ComparisonReport/Summary/Count[@kind='package'][@status='deleted']/@n"));
 		assertEquals("", str(d, "/ComparisonReport/Summary/Count[@kind='class'][@status='identical']/@n"));
 	}
@@ -329,8 +348,9 @@ public class ReportPreProcessorTest {
 		Element grid = pkg(d, "Grid");
 		// Core: PowerSystemResource, Plant, Equipment; Wires: ACLineSegment, Switch; Grid: GridCIMVersion
 		assertEquals("6", grid.getAttribute("changedClasses"));
-		// CoreOverview (notes) and CoreLayout (a moved element); not DERLayout
-		assertEquals("2", grid.getAttribute("changedDiagrams"));
+		// CoreOverview (notes), CoreLayout (a moved element), WiresConnectors (a
+		// rerouted connector); not DERLayout
+		assertEquals("3", grid.getAttribute("changedDiagrams"));
 		Element core = pkg(d, "Core");
 		assertEquals("classes directly in Core, identical included", "4", core.getAttribute("classCount"));
 		assertEquals("2", core.getAttribute("diagramCount"));

@@ -66,6 +66,8 @@ import org.w3c.dom.NodeList;
  *       Notes, Properties
  *       Highlight @kind (added|removed|moved|changed|restyled) @side (baseline|destination)
  *                 @box (left,top,right,bottom in image pixels) @name
+ *       Connector @kind (added|removed|rerouted|labels moved|restyled) @name ("A – B")
+ *                 @side (the image it is on) @ends (the two end boxes, "l,t,r,b;l,t,r,b")
  * </pre>
  *
  * <p>
@@ -352,6 +354,10 @@ public class ReportPreProcessor {
 	 */
 	private void addHighlights(Element d, Element e) {
 		for (Element o : children(d, "CompareItem")) {
+			if ("diagramconnector".equals(kindOf(o))) {
+				e.appendChild(connector(o));
+				continue;
+			}
 			if (!"diagramobject".equals(kindOf(o)))
 				continue;
 			String layout = statusOf(o);
@@ -370,6 +376,34 @@ public class ReportPreProcessor {
 			if (!"removed".equals(kind) && !m.isEmpty())
 				e.appendChild(highlight(kind, "destination", m, o));
 		}
+	}
+
+	/**
+	 * A changed connector. EA does not store the route it draws, so the report
+	 * lists connectors and outlines the two elements they join (on hover).
+	 */
+	private Element connector(Element o) {
+		String kind = "added";
+		String side = "destination";
+		String status = statusOf(o);
+		if ("deleted".equals(status)) {
+			kind = "removed";
+			side = "baseline";
+		} else if (!"added".equals(status)) {
+			kind = prop(o, "Change", "model");
+		}
+		String use = "baseline".equals(side) ? "baseline" : "model";
+		String src = prop(o, "SourceBox", use), dst = prop(o, "TargetBox", use);
+		Element c = out.createElement("Connector");
+		c.setAttribute("kind", kind.isEmpty() ? "rerouted" : kind);
+		c.setAttribute("side", side);
+		c.setAttribute("name", attr(o, "name"));
+		StringBuilder ends = new StringBuilder();
+		for (String b : new String[] { src, dst })
+			if (!b.isEmpty())
+				ends.append(ends.length() > 0 ? ";" : "").append(b);
+		c.setAttribute("ends", ends.toString());
+		return c;
 	}
 
 	private Element highlight(String kind, String side, String box, Element o) {
@@ -474,6 +508,8 @@ public class ReportPreProcessor {
 			return "links";
 		if ("DiagramObject".equals(t))
 			return "diagramobject";
+		if ("DiagramConnector".equals(t))
+			return "diagramconnector";
 		if ("Src".equals(t) || "Dst".equals(t))
 			return "end";
 		Node parent = item.getParentNode();
@@ -535,6 +571,8 @@ public class ReportPreProcessor {
 	/** true when the diagram has at least one element to highlight (#37) */
 	private boolean hasHighlights(Element d) {
 		for (Element o : children(d, "CompareItem")) {
+			if ("diagramconnector".equals(kindOf(o)))
+				return true;
 			if (!"diagramobject".equals(kindOf(o)))
 				continue;
 			if (!"identical".equals(statusOf(o)) || "changed".equals(classStatusIndex.get(eaid(attr(o, "guid")))))

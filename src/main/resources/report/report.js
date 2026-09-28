@@ -280,6 +280,47 @@
     else img.addEventListener('load', function () { placeBoxes(wrap); });
   });
 
+  /* ---- connectors (#37): hovering (or focusing) a row outlines the two elements
+     it joins on the image it belongs to; a click keeps the outline ---- */
+  var ENDPAD = 10;
+  function showEnds(row) {
+    var node = row.closest('.detail'); if (!node) return;
+    var wrap = node.querySelector('.dimg[data-side="' + row.dataset.side + '"]'); if (!wrap) return;
+    var img = $('img', wrap); if (!img || !img.naturalWidth) return;
+    var w = img.naturalWidth, h = img.naturalHeight;
+    (row.dataset.ends || '').split(';').forEach(function (bx) {
+      if (!bx) return;
+      var b = bx.split(',').map(Number), s = document.createElement('span');
+      var l = Math.max(0, b[0] - ENDPAD), t = Math.max(0, b[1] - ENDPAD);
+      var r = Math.min(w, b[2] + ENDPAD), bt = Math.min(h, b[3] + ENDPAD);
+      s.className = 'cx-end';
+      s.style.left = (100 * l / w) + '%'; s.style.top = (100 * t / h) + '%';
+      s.style.width = (100 * (r - l) / w) + '%'; s.style.height = (100 * (bt - t) / h) + '%';
+      wrap.appendChild(s);
+    });
+  }
+  function clearEnds(detail) { [].forEach.call(detail.querySelectorAll('.cx-end'), function (s) { s.remove(); }); }
+  function refreshEnds(detail) {
+    clearEnds(detail);
+    var r = detail.querySelector('.cx-row:hover') || detail.querySelector('.cx-row:focus') || detail.querySelector('.cx-row.pinned');
+    if (r) showEnds(r);
+  }
+  document.addEventListener('mouseover', function (e) { var r = e.target.closest('.cx-row'); if (r) refreshEnds(r.closest('.detail')); });
+  document.addEventListener('mouseout', function (e) {
+    var r = e.target.closest('.cx-row'); if (r) setTimeout(function () { refreshEnds(r.closest('.detail')); }, 0);
+  });
+  document.addEventListener('focusin', function (e) { var r = e.target.closest('.cx-row'); if (r) refreshEnds(r.closest('.detail')); });
+  document.addEventListener('focusout', function (e) {
+    var r = e.target.closest('.cx-row'); if (r) setTimeout(function () { refreshEnds(r.closest('.detail')); }, 0);
+  });
+  document.addEventListener('click', function (e) {
+    var r = e.target.closest('.cx-row'); if (!r) return;
+    var was = r.classList.contains('pinned');
+    [].forEach.call(r.parentNode.querySelectorAll('.cx-row.pinned'), function (x) { x.classList.remove('pinned'); });
+    if (!was) r.classList.add('pinned');
+    refreshEnds(r.closest('.detail'));
+  });
+
   /* ---- lightbox: the image and its highlights ---- */
   var lb = $('#lightbox');
   document.addEventListener('click', function (e) {

@@ -125,7 +125,12 @@ public class ReportRendererTest {
 		assertTrue(page.contains("<span class=\"hl hl-moved\" data-box=\"260,40,380,90\" title=\"Switch: moved or resized\"></span>"));
 		assertTrue("legend lists the kinds present, in order",
 				page.matches("(?s).*class=\"hl-legend\">.*hl-added.*hl-removed.*hl-changed.*hl-moved.*hl-restyled.*"));
-		assertTrue(page.contains("<div class=\"dimg\"><img loading=\"lazy\" src=\"Images-baseline/EAID_00000000_0000_0000_0000_000000000118.png\""));
+		assertTrue(page.contains("<div class=\"dimg\" data-side=\"baseline\"><img loading=\"lazy\" src=\"Images-baseline/EAID_00000000_0000_0000_0000_000000000118.png\""));
+		// connectors: a table under the images, removed before labels moved
+		assertTrue(page.contains("<span class=\"cx-n\">1 removed · 1 labels moved</span>"));
+		assertTrue(page.contains("<div class=\"cx-row\" tabindex=\"0\" data-side=\"baseline\" data-ends=\"300,200,420,260;40,120,200,200\">"
+				+ "<span class=\"cx-k cx-removed\">removed</span><span class=\"cx-name\">Plant \u2013 PowerSystemResource</span></div>"));
+		assertTrue(page.indexOf("cx-removed\">removed") < page.indexOf("cx-labels-moved\">labels moved"));
 	}
 
 	@Test

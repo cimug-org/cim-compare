@@ -730,6 +730,18 @@
               </xsl:choose>
             </div>
           </div>
+          <xsl:if test="Connector">
+            <xsl:variable name="cx" select="Connector"/>
+            <div class="cx-list">
+              <div class="cx-h">Connectors <span class="cx-n"><xsl:value-of select="string-join(for $k in ('added', 'removed', 'rerouted', 'labels moved', 'restyled') return (if ($cx[@kind = $k]) then concat(count($cx[@kind = $k]), ' ', $k) else ()), ' · ')"/></span>
+                <span class="cx-hint">hover a connector to outline the elements it joins</span></div>
+              <xsl:for-each select="$cx">
+                <xsl:sort select="index-of(('added', 'removed', 'rerouted', 'labels moved', 'restyled'), @kind)[1]" data-type="number"/>
+                <xsl:sort select="@name"/>
+                <div class="cx-row" tabindex="0" data-side="{@side}" data-ends="{@ends}"><span class="cx-k cx-{translate(@kind, ' ', '-')}"><xsl:value-of select="@kind"/></span><span class="cx-name"><xsl:value-of select="@name"/></span></div>
+              </xsl:for-each>
+            </div>
+          </xsl:if>
         </div>
       </div>
     </div>
@@ -740,7 +752,7 @@
        has loaded and its natural size is known. -->
   <xsl:template name="r:diagram-image">
     <xsl:param name="side" as="xs:string"/>
-    <div class="dimg">
+    <div class="dimg" data-side="{$side}">
       <img loading="lazy" src="Images-{$side}/{@eaid}.{$image-type}" alt="{@name} ({$side})"/>
       <xsl:for-each select="Highlight[@side = $side]">
         <span class="hl hl-{@kind}" data-box="{@box}" title="{if (@name != '') then concat(@name, ': ') else ''}{if (@kind = 'moved') then 'moved or resized' else @kind}"></span>

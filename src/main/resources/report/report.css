@@ -263,6 +263,18 @@ table.attrsB td.nt .side { font-size: 10px; text-transform: uppercase; letter-sp
 .hl-moved    { border-color: #e68c00; background: #e68c0026; }
 .hl-restyled { border-color: #8c46be; background: #8c46be26; }
 body.no-hl .hl, body.no-hl .hl-legend { display: none !important; }
+/* #37 connectors: listed under the images; hovering one outlines the two elements it joins */
+.cx-list { margin-top: 10px; border: 1px solid var(--line); border-radius: var(--r); background: var(--surface); font-size: var(--fs-s); }
+.cx-h { padding: 6px 10px; font-weight: 600; border-bottom: 1px solid var(--line); }
+.cx-n { font-weight: 400; color: var(--muted); margin-left: 8px; }
+.cx-hint { float: right; font-weight: 400; font-style: italic; color: var(--faint); }
+.cx-row { padding: 4px 10px; border-top: 1px solid var(--line); cursor: default; outline: none; }
+.cx-row:first-of-type { border-top: 0; }
+.cx-row:hover, .cx-row:focus, .cx-row.pinned { background: var(--changed); }
+.cx-k { display: inline-block; min-width: 112px; font-size: 10.5px; font-weight: 700; text-transform: uppercase; letter-spacing: .03em; }
+.cx-added { color: var(--added-ink); } .cx-removed { color: var(--deleted-ink); }
+.cx-rerouted, .cx-labels-moved { color: var(--moved-ink); } .cx-restyled { color: #8c46be; }
+.cx-end { position: absolute; box-sizing: border-box; border: 3px dashed #1f2933; pointer-events: none; }
 .hl-legend { display: flex; flex-wrap: wrap; gap: 4px 16px; font-size: var(--fs-s); color: var(--ink-2); margin: 0 0 6px; }
 .hl-key { display: inline-flex; align-items: center; gap: 6px; }
 .hl-sw { display: inline-block; width: 14px; height: 11px; border-width: 2px; border-style: solid; box-sizing: border-box; }

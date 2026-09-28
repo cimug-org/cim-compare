@@ -121,6 +121,88 @@ public class DiagramElementDiffTest {
 		assertEquals("Identical", m.get(guid(B)).getStatus());
 	}
 
+	// ------------------------------------------------------------ connectors
+
+	private static DiagramElement boxWithDuid(String subject, String duid, int l, int t, int r, int b) {
+		DiagramElement e = el(subject, l, t, r, b, "DUID=" + duid + ";BCol=-1;");
+		return e;
+	}
+
+	private static DiagramElement link(String subject, String from, String to, String geometry, String color) {
+		DiagramElement e = new DiagramElement();
+		e.setSubject(subject);
+		e.setGeometry(geometry);
+		e.setStyle("Mode=3;EOID=" + to + ";SOID=" + from + ";Color=" + color + ";LWidth=0;");
+		return e;
+	}
+
+	private static final String L1 = "EAID_00000000_0000_0000_0000_0000000000A1";
+	private static final String L2 = "EAID_00000000_0000_0000_0000_0000000000B2";
+	private static final String L3 = "EAID_00000000_0000_0000_0000_0000000000C3";
+	private static final String L4 = "EAID_00000000_0000_0000_0000_0000000000D4";
+	private static final String L5 = "EAID_00000000_0000_0000_0000_0000000000E5";
+	private static final String L6 = "EAID_00000000_0000_0000_0000_0000000000F6";
+
+	@Test
+	public void connectorsAreComparedAndNamedByTheirEnds() {
+		String geo = "SX=0;SY=0;EX=0;EY=0;EDGE=2;LLT=CX=10:CY=15:OX=0:OY=0;Path=100:-200$;";
+		List<DiagramElement> baseline = new ArrayList<>(Arrays.asList(boxWithDuid(A, "D1", 10, 10, 100, 50),
+				boxWithDuid(B, "D2", 10, 100, 100, 150), boxWithDuid(C, "D3", 200, 10, 300, 50)));
+		List<DiagramElement> destination = new ArrayList<>();
+		// the whole diagram moves 30 canvas units right and 20 down (15 and 10 image pixels)
+		for (DiagramElement e : baseline) {
+			int[] b = DiagramElementDiff.box(e);
+			destination.add(boxWithDuid(e.getSubject(), DiagramElementDiff.geometry(e.getStyle()).get("DUID"),
+					b[0] + 15, b[1] + 10, b[2] + 15, b[3] + 10));
+		}
+		baseline.add(link(L1, "D1", "D2", geo, "-1")); // unchanged (its bend point moves with the diagram)
+		destination.add(link(L1, "D1", "D2", "SX=0;SY=0;EX=0;EY=0;EDGE=2;LLT=CX=10:CY=15:OX=0:OY=0;Path=130:-220$;", "-1"));
+		baseline.add(link(L2, "D1", "D3", geo, "-1")); // rerouted
+		destination.add(link(L2, "D1", "D3", geo.replace("SX=0", "SX=12"), "-1"));
+		baseline.add(link(L3, "D2", "D3", geo, "-1")); // labels moved
+		destination.add(link(L3, "D2", "D3", geo.replace("OX=0:OY=0", "OX=5:OY=9").replace("Path=100:-200$", "Path=130:-220$"), "-1"));
+		baseline.add(link(L4, "D2", "D1", geo, "-1")); // restyled
+		destination.add(link(L4, "D2", "D1", geo.replace("Path=100:-200$", "Path=130:-220$"), "255"));
+		baseline.add(link(L5, "D3", "D1", geo, "-1")); // removed
+		destination.add(link(L6, "D3", "D2", geo, "-1")); // added
+
+		Map<String, String> names = new HashMap<>();
+		names.put(A, "Alpha");
+		names.put(B, "Beta");
+		names.put(C, "Gamma");
+		List<CompareItem> all = DiagramElementDiff.compare(baseline, destination, names::get);
+		Map<String, CompareItem> m = new HashMap<>();
+		for (CompareItem i : all)
+			if (DiagramElementDiff.CONNECTOR_TYPE.equals(i.getType()))
+				m.put(i.getGuid(), i);
+
+		assertNull("moved with the diagram", m.get(guid(L1)));
+		assertEquals("rerouted", change(m.get(guid(L2))));
+		assertEquals("Moved", m.get(guid(L2)).getStatus());
+		assertEquals("labels moved", change(m.get(guid(L3))));
+		assertEquals("restyled", change(m.get(guid(L4))));
+		assertEquals("Baseline only", m.get(guid(L5)).getStatus());
+		assertEquals("Model only", m.get(guid(L6)).getStatus());
+		assertEquals(5, m.size());
+
+		assertEquals("Gamma \u2013 Alpha", m.get(guid(L5)).getName());
+		// a removed connector's ends are on the baseline image, others on the destination
+		assertEquals("200,10,300,50", prop(m.get(guid(L5)), "SourceBox").getBaseline());
+		assertEquals("25,110,115,160", prop(m.get(guid(L6)), "TargetBox").getModel());
+	}
+
+	private static Property prop(CompareItem i, String name) {
+		for (Property p : i.getProperties().getProperty())
+			if (name.equals(p.getName()))
+				return p;
+		return null;
+	}
+
+	private static String change(CompareItem i) {
+		Property p = prop(i, "Change");
+		return p.getModel() != null ? p.getModel() : p.getBaseline();
+	}
+
 	@Test
 	public void missingDiagramElementsAreTolerated() {
 		assertEquals(0, DiagramElementDiff.compare(null, null, null).size());

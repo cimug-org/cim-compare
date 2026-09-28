@@ -604,24 +604,28 @@
       </xsl:for-each>
     </xsl:when>
     <xsl:otherwise>
+    <!-- each end: the class (a link), then a grey "role" label, the role name
+         and its multiplicity, e.g. "FuseCharacteristicCurve role TotalClearingTimeCurve [0..1]" -->
     <xsl:for-each select="($src, $dst)">
       <xsl:variable name="end" select="."/>
       <xsl:variable name="role" select="r:prop($end, $rolep, $side)"/>
+      <span class="end-sig">
+      <xsl:call-template name="r:class-link">
+        <xsl:with-param name="name" select="r:prop($end, 'End', $side)"/>
+        <xsl:with-param name="id" select="if ($side = 'baseline') then $end/@baselineClassId else $end/@modelClassId"/>
+      </xsl:call-template>
+      <xsl:text> </xsl:text><span class="role-lbl">role</span><xsl:text> </xsl:text>
       <xsl:choose>
         <xsl:when test="$rl and r:pstatus($end, $rolep) = 'changed'">
           <del><xsl:value-of select="r:prop($end, $rolep, 'baseline')"/></del><ins><xsl:value-of select="r:prop($end, $rolep, 'model')"/></ins>
         </xsl:when>
-        <xsl:when test="$role = ''"><i>Role Unspecified</i></xsl:when>
+        <xsl:when test="$role = ''"><i>unspecified</i></xsl:when>
         <xsl:otherwise><xsl:value-of select="$role"/></xsl:otherwise>
       </xsl:choose>
       <xsl:text> </xsl:text><span class="card">[<xsl:choose>
         <xsl:when test="$rl"><xsl:call-template name="r:token"><xsl:with-param name="e" select="$end"/><xsl:with-param name="name" select="'Cardinality'"/><xsl:with-param name="side" select="'model'"/></xsl:call-template></xsl:when>
         <xsl:otherwise><xsl:value-of select="r:prop($end, 'Cardinality', $side)"/></xsl:otherwise>
-      </xsl:choose>]</span><xsl:text> </xsl:text>
-      <xsl:call-template name="r:class-link">
-        <xsl:with-param name="name" select="r:prop($end, 'End', $side)"/>
-        <xsl:with-param name="id" select="if ($side = 'baseline') then $end/@baselineClassId else $end/@modelClassId"/>
-      </xsl:call-template>
+      </xsl:choose>]</span></span>
       <xsl:if test="position() = 1"><xsl:text> → </xsl:text></xsl:if>
     </xsl:for-each>
     </xsl:otherwise>

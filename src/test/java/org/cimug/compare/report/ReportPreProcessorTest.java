@@ -181,6 +181,45 @@ public class ReportPreProcessorTest {
 		assertEquals("EAID_00000000_0000_0000_0000_000000000118", dg.getAttribute("eaid"));
 	}
 
+	// #37: highlight boxes for the diagram images
+
+	private static String highlight(Document d, String name, String side) throws Exception {
+		return str(d, "//Diagram[@name='CoreOverview']/Highlight[@name='" + name + "' and @side='" + side
+				+ "']/@kind");
+	}
+
+	@Test
+	public void diagramHighlightsFollowTheElementAndItsClass() throws Exception {
+		Document d = enrich(false, null);
+		// added and removed elements: destination and baseline only
+		assertEquals("added", highlight(d, "ACLineSegment", "destination"));
+		assertEquals("", highlight(d, "ACLineSegment", "baseline"));
+		assertEquals("removed", highlight(d, "Plant", "baseline"));
+		assertEquals("", highlight(d, "Plant", "destination"));
+		// box unchanged, but the class's attributes changed (class itself Identical)
+		assertEquals("changed", highlight(d, "PowerSystemResource", "destination"));
+		assertEquals("", highlight(d, "PowerSystemResource", "baseline"));
+		// nothing changed: no box
+		assertEquals("", highlight(d, "IdentifiedObject", "destination"));
+		// moved, and the class changed: changed wins
+		assertEquals("changed", highlight(d, "Equipment", "destination"));
+		// moved only: both sides, each in its own position
+		assertEquals("moved", highlight(d, "Switch", "baseline"));
+		assertEquals("moved", highlight(d, "Switch", "destination"));
+		assertEquals("260,40,380,90",
+				str(d, "//Diagram[@name='CoreOverview']/Highlight[@name='Switch' and @side='baseline']/@box"));
+		assertEquals("260,120,380,170",
+				str(d, "//Diagram[@name='CoreOverview']/Highlight[@name='Switch' and @side='destination']/@box"));
+		// style only
+		assertEquals("restyled", highlight(d, "Customer", "destination"));
+	}
+
+	@Test
+	public void layoutOnlyDiagramStaysHiddenAndUnhighlighted() throws Exception {
+		assertNull(one(enrich(false, null), "//Diagram[@name='CoreLayout']"));
+		assertNull(one(enrich(true, null), "//Diagram[@name='CoreLayout']/Highlight"));
+	}
+
 	@Test
 	public void layoutOnlyDiagramIsHidden() throws Exception {
 		Document d = enrich(false, null);

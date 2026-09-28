@@ -707,22 +707,43 @@
         <xsl:if test="$meta/*"><div class="sec"><div class="sec-h"><span class="ico">▤</span>Metadata</div><xsl:copy-of select="$meta"/></div></xsl:if>
         <xsl:if test="$st = 'identical'"><div class="empty">Diagram has no material changes made to it.</div></xsl:if>
         <div class="sec"><div class="sec-h"><span class="ico">▦</span>Diagram</div>
+          <xsl:if test="Highlight">
+            <xsl:variable name="kinds" select="distinct-values(Highlight/@kind)"/>
+            <div class="hl-legend">
+              <xsl:for-each select="('added', 'removed', 'changed', 'moved', 'restyled')[. = $kinds]">
+                <span class="hl-key"><span class="hl-sw hl-{.}"></span><xsl:value-of select="if (. = 'moved') then 'moved or resized' else ."/></span>
+              </xsl:for-each>
+            </div>
+          </xsl:if>
           <div class="diag">
             <div><div class="lbl">Baseline</div>
               <xsl:choose>
                 <xsl:when test="$st = 'added'"><div class="nx">Diagram does not exist in the baseline model.</div></xsl:when>
-                <xsl:otherwise><img loading="lazy" src="Images-baseline/{@eaid}.{$image-type}" alt="{@name} (baseline)"/></xsl:otherwise>
+                <xsl:otherwise><xsl:call-template name="r:diagram-image"><xsl:with-param name="side" select="'baseline'"/></xsl:call-template></xsl:otherwise>
               </xsl:choose>
             </div>
             <div><div class="lbl">Destination</div>
               <xsl:choose>
                 <xsl:when test="$st = 'deleted'"><div class="gone">Diagram was removed from the model.</div></xsl:when>
-                <xsl:otherwise><img loading="lazy" src="Images-destination/{@eaid}.{$image-type}" alt="{@name} (destination)"/></xsl:otherwise>
+                <xsl:otherwise><xsl:call-template name="r:diagram-image"><xsl:with-param name="side" select="'destination'"/></xsl:call-template></xsl:otherwise>
               </xsl:choose>
             </div>
           </div>
         </div>
       </div>
+    </div>
+  </xsl:template>
+
+  <!-- One diagram image with its #37 highlight boxes. The boxes are in the
+       image's own pixels (data-box); report.js places them once the image
+       has loaded and its natural size is known. -->
+  <xsl:template name="r:diagram-image">
+    <xsl:param name="side" as="xs:string"/>
+    <div class="dimg">
+      <img loading="lazy" src="Images-{$side}/{@eaid}.{$image-type}" alt="{@name} ({$side})"/>
+      <xsl:for-each select="Highlight[@side = $side]">
+        <span class="hl hl-{@kind}" data-box="{@box}" title="{if (@name != '') then concat(@name, ': ') else ''}{if (@kind = 'moved') then 'moved or resized' else @kind}"></span>
+      </xsl:for-each>
     </div>
   </xsl:template>
 

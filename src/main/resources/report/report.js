@@ -251,11 +251,35 @@
   document.addEventListener('keyup', scheduleSpy);
   scheduleSpy();
 
-  /* ---- lightbox ---- */
+  /* ---- diagram highlights (#37): boxes are in image pixels; place them as
+     percentages of the image's natural size, so they scale with it ---- */
+  var PAD = 4;   /* image pixels between an element and its highlight */
+  function placeBoxes(wrap) {
+    var img = $('img', wrap); if (!img || !img.naturalWidth) return;
+    var w = img.naturalWidth, h = img.naturalHeight;
+    [].forEach.call(wrap.querySelectorAll('.hl'), function (s) {
+      var b = s.getAttribute('data-box').split(',').map(Number);
+      var l = Math.max(0, b[0] - PAD), t = Math.max(0, b[1] - PAD);
+      var r = Math.min(w, b[2] + PAD), bt = Math.min(h, b[3] + PAD);
+      s.style.left = (100 * l / w) + '%'; s.style.top = (100 * t / h) + '%';
+      s.style.width = (100 * (r - l) / w) + '%'; s.style.height = (100 * (bt - t) / h) + '%';
+    });
+    wrap.classList.add('placed');
+  }
+  [].forEach.call(document.querySelectorAll('.diag .dimg'), function (wrap) {
+    if (!wrap.querySelector('.hl')) return;
+    var img = $('img', wrap);
+    if (img.complete && img.naturalWidth) placeBoxes(wrap);
+    else img.addEventListener('load', function () { placeBoxes(wrap); });
+  });
+
+  /* ---- lightbox: the image and its highlights ---- */
   var lb = $('#lightbox');
   document.addEventListener('click', function (e) {
-    var img = e.target.closest('.diag img'); if (!img) return;
-    $('img', lb).src = img.src; lb.classList.add('on');
+    var wrap = e.target.closest('.diag .dimg'); if (!wrap) return;
+    var copy = wrap.cloneNode(true);
+    copy.querySelector('img').removeAttribute('loading');
+    lb.replaceChildren(copy); lb.classList.add('on');
   });
   lb.addEventListener('click', function () { lb.classList.remove('on'); });
 })();

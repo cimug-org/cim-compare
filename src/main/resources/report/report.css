@@ -250,7 +250,21 @@ table.attrsB td.nt .side { font-size: 10px; text-transform: uppercase; letter-sp
 .diag .nx { color: var(--muted); font-style: italic; padding: 30px 0; }
 .lightbox { position: fixed; inset: 0; background: #000c; z-index: 50; display: none; align-items: center; justify-content: center; padding: 20px; cursor: zoom-out; }
 .lightbox.on { display: flex; }
-.lightbox img { max-width: 100%; max-height: 100%; background: #fff; }
+.lightbox img { max-width: calc(100vw - 40px); max-height: calc(100vh - 40px); background: #fff; display: block; }
+/* #37 diagram highlights: fixed colours, since diagram images are always white */
+.dimg { position: relative; display: inline-block; max-width: 100%; vertical-align: top; }
+.dimg img { display: block; }
+.hl { position: absolute; display: none; box-sizing: border-box; border: 2px solid; pointer-events: auto; cursor: zoom-in; }
+.dimg.placed .hl { display: block; }
+.lightbox .hl { border-width: 3px; cursor: zoom-out; }
+.hl-added    { border-color: #16963c; background: #16963c26; }
+.hl-removed  { border-color: #d22828; background: #d2282826; }
+.hl-changed  { border-color: #2864d2; background: #2864d226; }
+.hl-moved    { border-color: #e68c00; background: #e68c0026; }
+.hl-restyled { border-color: #8c46be; background: #8c46be26; }
+.hl-legend { display: flex; flex-wrap: wrap; gap: 4px 16px; font-size: var(--fs-s); color: var(--ink-2); margin: 0 0 6px; }
+.hl-key { display: inline-flex; align-items: center; gap: 6px; }
+.hl-sw { display: inline-block; width: 14px; height: 11px; border-width: 2px; border-style: solid; box-sizing: border-box; }
 
 /* popup (hover mode) */
 .pop { position: absolute; z-index: 40; background: var(--surface); color: var(--ink); border: 1px solid var(--rail); border-radius: var(--r);

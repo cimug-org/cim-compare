@@ -64,6 +64,8 @@ import org.w3c.dom.NodeList;
  *           Properties
  *     Diagram @name @guid @id @eaid @status [@renamedFrom]
  *       Notes, Properties
+ *       Highlight @kind (added|removed|moved|changed|restyled) @side (baseline|destination)
+ *                 @box (left,top,right,bottom in image pixels) @name
  * </pre>
  *
  * <p>
@@ -88,6 +90,8 @@ public class ReportPreProcessor {
 	private Document out;
 	/** class name → element id, for type / end-class links */
 	private final Map<String, String> classIdIndex = new HashMap<String, String>();
+	/** effective status of every class, by EAID (for diagram highlights) */
+	private final Map<String, String> classStatusIndex = new HashMap<String, String>();
 	private final Map<String, Integer> counts = new LinkedHashMap<String, Integer>();
 	private final Set<String> usedIds = new HashSet<String>();
 
@@ -332,8 +336,47 @@ public class ReportPreProcessor {
 		Element e = element("Diagram", d, status);
 		e.setAttribute("eaid", eaid(attr(d, "guid")));
 		copyNotesAndProperties(d, e);
+		if (!"identical".equals(status))
+			addHighlights(d, e);
 		count("diagram", status);
 		return e;
+	}
+
+	/**
+	 * #37: boxes to draw over the diagram images. Removed elements are marked
+	 * on the baseline image; added, changed and restyled ones on the destination
+	 * image; moved (or resized) ones on both. An element whose class changed is
+	 * marked "changed" whatever happened to its box.
+	 */
+	private void addHighlights(Element d, Element e) {
+		for (Element o : children(d, "CompareItem")) {
+			if (!"diagramobject".equals(kindOf(o)))
+				continue;
+			String layout = statusOf(o);
+			String kind = "added".equals(layout) ? "added"
+					: "deleted".equals(layout) ? "removed"
+					: "moved".equals(layout) ? "moved"
+					: "changed".equals(layout) ? "restyled" : null;
+			if (!"added".equals(kind) && !"removed".equals(kind)
+					&& "changed".equals(classStatusIndex.get(eaid(attr(o, "guid")))))
+				kind = "changed";
+			if (kind == null)
+				continue;
+			String b = prop(o, "Box", "baseline"), m = prop(o, "Box", "model");
+			if (("removed".equals(kind) || "moved".equals(kind)) && !b.isEmpty())
+				e.appendChild(highlight(kind, "baseline", b, o));
+			if (!"removed".equals(kind) && !m.isEmpty())
+				e.appendChild(highlight(kind, "destination", m, o));
+		}
+	}
+
+	private Element highlight(String kind, String side, String box, Element o) {
+		Element h = out.createElement("Highlight");
+		h.setAttribute("kind", kind);
+		h.setAttribute("side", side);
+		h.setAttribute("box", box);
+		h.setAttribute("name", attr(o, "name"));
+		return h;
 	}
 
 	// ------------------------------------------------------------ shared
@@ -427,6 +470,8 @@ public class ReportPreProcessor {
 			return "diagram";
 		if ("Links".equals(t))
 			return "links";
+		if ("DiagramObject".equals(t))
+			return "diagramobject";
 		if ("Src".equals(t) || "Dst".equals(t))
 			return "end";
 		Node parent = item.getParentNode();
@@ -505,6 +550,12 @@ public class ReportPreProcessor {
 				String guid = attr(c, "guid");
 				if (!name.isEmpty() && !guid.isEmpty() && !classIdIndex.containsKey(name))
 					classIdIndex.put(name, eaid(guid));
+				if (!guid.isEmpty()) {
+					String st = statusOf(c);
+					if ("identical".equals(st) && hasChanges(c))
+						st = "changed";
+					classStatusIndex.put(eaid(guid), st);
+				}
 			}
 		}
 	}

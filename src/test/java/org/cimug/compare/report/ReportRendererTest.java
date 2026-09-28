@@ -113,6 +113,19 @@ public class ReportRendererTest {
 	}
 
 	@Test
+	public void diagramHighlightsAreDrawnOverTheImages() throws Exception {
+		File xml = copyFixture();
+		File html = new File(tmp.getRoot(), "highlights.html");
+		new ReportRenderer(false, null, true, "png").render(xml, html);
+		String page = read(html);
+		assertTrue(page.contains("<span class=\"hl hl-added\" data-box=\"500,40,640,90\" title=\"ACLineSegment: added\"></span>"));
+		assertTrue(page.contains("<span class=\"hl hl-moved\" data-box=\"260,40,380,90\" title=\"Switch: moved or resized\"></span>"));
+		assertTrue("legend lists the kinds present, in order",
+				page.matches("(?s).*class=\"hl-legend\">.*hl-added.*hl-removed.*hl-changed.*hl-moved.*hl-restyled.*"));
+		assertTrue(page.contains("<div class=\"dimg\"><img loading=\"lazy\" src=\"Images-baseline/EAID_00000000_0000_0000_0000_000000000118.png\""));
+	}
+
+	@Test
 	public void scopeAppearsInTheReport() throws Exception {
 		File xml = copyFixture();
 		File html = new File(tmp.getRoot(), "grid.html");

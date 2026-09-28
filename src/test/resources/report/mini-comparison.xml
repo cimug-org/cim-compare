@@ -149,6 +149,28 @@
                   <Property name="Name" model="CoreOverview" baseline="CoreOverview" status="Identical"/>
                   <Property name="Notes" model="Main classes of Core." baseline="Core classes." status="Changed"/>
                 </Properties>
+                <!-- #37: element-level differences on the diagram -->
+                <CompareItem name="ACLineSegment" type="DiagramObject" guid="{00000000-0000-0000-0000-000000000121}" status="Model only">
+                  <Properties><Property name="Box" model="500,40,640,90" status="Model only"/></Properties>
+                </CompareItem>
+                <CompareItem name="Plant" type="DiagramObject" guid="{00000000-0000-0000-0000-000000000115}" status="Baseline only">
+                  <Properties><Property name="Box" baseline="300,200,420,260" status="Baseline only"/></Properties>
+                </CompareItem>
+                <CompareItem name="PowerSystemResource" type="DiagramObject" guid="{00000000-0000-0000-0000-000000000112}" status="Identical">
+                  <Properties><Property name="Box" baseline="40,120,200,200" model="40,120,200,200" status="Identical"/></Properties>
+                </CompareItem>
+                <CompareItem name="IdentifiedObject" type="DiagramObject" guid="{00000000-0000-0000-0000-000000000111}" status="Identical">
+                  <Properties><Property name="Box" baseline="40,20,200,80" model="40,20,200,80" status="Identical"/></Properties>
+                </CompareItem>
+                <CompareItem name="Equipment" type="DiagramObject" guid="{00000000-0000-0000-0000-000000000117}" status="Moved">
+                  <Properties><Property name="Box" baseline="40,240,200,300" model="60,260,220,320" status="Moved"/></Properties>
+                </CompareItem>
+                <CompareItem name="Switch" type="DiagramObject" guid="{00000000-0000-0000-0000-000000000122}" status="Moved">
+                  <Properties><Property name="Box" baseline="260,40,380,90" model="260,120,380,170" status="Moved"/></Properties>
+                </CompareItem>
+                <CompareItem name="Customer" type="DiagramObject" guid="{00000000-0000-0000-0000-000000000201}" status="Changed">
+                  <Properties><Property name="Box" baseline="420,300,560,340" model="420,300,560,340" status="Changed"/></Properties>
+                </CompareItem>
               </CompareItem>
 
               <CompareItem name="CoreLayout" type="Diagram" guid="{00000000-0000-0000-0000-000000000119}" status="Changed">
@@ -156,6 +178,9 @@
                   <Property name="DiagramType" model="ClassDiagram" baseline="ClassDiagram" status="Identical"/>
                   <Property name="Name" model="CoreLayout" baseline="CoreLayout" status="Identical"/>
                 </Properties>
+                <CompareItem name="IdentifiedObject" type="DiagramObject" guid="{00000000-0000-0000-0000-000000000111}" status="Moved">
+                  <Properties><Property name="Box" baseline="40,20,200,80" model="90,20,250,80" status="Moved"/></Properties>
+                </CompareItem>
               </CompareItem>
             </CompareItem>
 

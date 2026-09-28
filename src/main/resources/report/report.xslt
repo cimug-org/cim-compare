@@ -251,6 +251,7 @@
             <div class="search"><input id="q" type="search" placeholder="Find class, package, diagram or attribute…  (/)" autocomplete="off"/><div id="q-results" class="results"></div></div>
             <button type="button" onclick="expandAll()">Expand all</button>
             <button type="button" onclick="collapseAll()">Collapse all</button>
+            <label class="chk chk-rail"><input id="chk-rail" type="checkbox" checked="checked"/> Outline <kbd>o</kbd></label>
             <label class="chk"><input id="chk-guids" type="checkbox" checked="checked"/> GUIDs <kbd>g</kbd></label>
             <label class="chk"><input id="chk-clean" type="checkbox"/> Hide redline</label>
             <span class="seg" id="seg-meta" title="How ⓘ metadata is shown"><button type="button" class="on" data-mode="hover">ⓘ hover</button><button type="button" data-mode="inline">ⓘ inline</button></span>
@@ -274,8 +275,14 @@
             <span><i class="sw s-pkg"></i><b>Package</b> (unchanged itself)</span>
             <span><del>struck</del><ins>inserted</ins> — destination text with baseline wording struck; the ⓘ metadata view shows both texts verbatim</span>
           </div>
-          <div class="tree">
-            <xsl:apply-templates select="Package"/>
+          <div class="layout">
+            <nav id="rail" class="rail" aria-label="Package outline">
+              <div class="r-h"><span>Packages</span><span class="r-hn" title="changed classes and diagrams in each package, including sub-packages">changes</span></div>
+              <ul class="r-list"><xsl:apply-templates select="Package" mode="rail"/></ul>
+            </nav>
+            <div class="tree">
+              <xsl:apply-templates select="Package"/>
+            </div>
           </div>
         </div>
         <div id="lightbox" class="lightbox"><img alt=""/></div>
@@ -299,6 +306,34 @@
         </xsl:for-each>
       </div>
     </xsl:if>
+  </xsl:template>
+
+  <!-- ====================================================== package outline (left rail) -->
+
+  <!-- One entry per rendered package, nested as in the tree and opened to the
+       same depth as the tree on load. The number is the count of changed
+       classes and diagrams in the package's whole subtree. -->
+  <xsl:template match="Package" mode="rail">
+    <xsl:variable name="depth" select="count(ancestor::Package)"/>
+    <xsl:variable name="n" select="xs:integer(@changedClasses) + (if ($diagrams) then xs:integer(@changedDiagrams) else 0)"/>
+    <li class="r-item{if (Package) then ' r-kids' else ''}{if ($depth ge 2) then ' closed' else ''}" data-target="{@id}" data-status="{@status}">
+      <div class="r-row">
+        <span class="r-chev"><xsl:value-of select="if (Package) then '▸' else ''"/></span>
+        <a class="r-name" href="#{@id}">
+          <xsl:attribute name="title">
+            <xsl:value-of select="if (@renamedFrom) then concat(@renamedFrom, ' → ', @name) else @name"/>
+            <xsl:if test="not(@status = ('changed', 'identical'))"><xsl:value-of select="concat(' (', @status, ')')"/></xsl:if>
+          </xsl:attribute>
+          <xsl:value-of select="@name"/>
+        </a>
+        <xsl:if test="$n gt 0">
+          <span class="r-n" title="{@changedClasses} changed classes{if ($diagrams) then concat(', ', @changedDiagrams, ' changed diagrams') else ''}"><xsl:value-of select="$n"/></span>
+        </xsl:if>
+      </div>
+      <xsl:if test="Package">
+        <ul><xsl:apply-templates select="Package" mode="rail"/></ul>
+      </xsl:if>
+    </li>
   </xsl:template>
 
   <!-- ====================================================== packages -->

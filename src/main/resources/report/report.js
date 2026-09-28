@@ -174,6 +174,7 @@
     if (e.target.matches('input, textarea')) return;
     if (e.key === '/') { e.preventDefault(); inp.focus(); inp.select(); }
     else if (e.key === 'g') { toggleGuids(); }
+    else if (e.key === 'o') { toggleRail(); }
     else if (e.key === 'Escape') { hidePop(); $('#lightbox').classList.remove('on'); }
     else if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
       var rows = $$('.row').filter(function (r) { return r.offsetParent !== null; });
@@ -188,6 +189,58 @@
       if (r2 && !r2.classList.contains('leaf')) toggle(r2.parentElement);
     }
   });
+
+  /* ---- package outline (left rail) ---- */
+  var hdr = $('.hdr');
+  function setHeaderHeight() { document.documentElement.style.setProperty('--hdr-h', hdr.offsetHeight + 'px'); }
+  setHeaderHeight();
+  window.addEventListener('resize', setHeaderHeight);
+
+  var rail = $('#rail'), railChk = $('#chk-rail');
+  function applyRail() { body.classList.toggle('no-rail', !railChk.checked); if (!body.classList.contains('no-rail')) scheduleSpy(); }
+  function toggleRail() { railChk.checked = !railChk.checked; applyRail(); }
+  railChk.addEventListener('change', applyRail);
+
+  var railItems = {};
+  $$('.r-item', rail).forEach(function (li) { railItems[li.dataset.target] = li; });
+  rail.addEventListener('click', function (e) {
+    var chev = e.target.closest('.r-chev'); if (!chev) return;
+    var li = chev.closest('.r-item'); if (li.classList.contains('r-kids')) li.classList.toggle('closed');
+  });
+
+  /* Scroll-spy: the current package is the innermost package whose subtree
+     contains the line just below the sticky header. */
+  var pkgRows = $$('.node.pkg > .row'), curId = null, spyQueued = false;
+  function spy() {
+    spyQueued = false;
+    if (body.classList.contains('no-rail') || !rail.offsetParent) return;
+    var line = hdr.getBoundingClientRect().bottom + 20, best = null;   /* below the rows' 12px scroll-margin */
+    for (var i = 0; i < pkgRows.length; i++) {
+      var r = pkgRows[i]; if (!r.offsetParent) continue;       /* inside a collapsed package */
+      if (r.getBoundingClientRect().top <= line) best = r; else break;
+    }
+    var node = best ? best.parentElement : (pkgRows[0] && pkgRows[0].parentElement);
+    while (node && node.getBoundingClientRect().bottom < line) {  /* scrolled past this package's subtree */
+      node = node.parentElement ? node.parentElement.closest('.node.pkg') : null;
+    }
+    setCurrent(node ? node.id : null);
+  }
+  function setCurrent(id) {
+    if (id === curId) return;
+    if (curId && railItems[curId]) railItems[curId].classList.remove('cur');
+    curId = id;
+    var li = id && railItems[id]; if (!li) return;
+    li.classList.add('cur');
+    for (var p = li.parentElement.closest('.r-item'); p; p = p.parentElement.closest('.r-item')) p.classList.remove('closed');
+    var rr = rail.getBoundingClientRect(), lr = $('.r-row', li).getBoundingClientRect();
+    if (lr.top < rr.top + 30 || lr.bottom > rr.bottom - 10) rail.scrollTop += (lr.top - rr.top) - rr.height / 3;
+  }
+  function scheduleSpy() { if (!spyQueued) { spyQueued = true; requestAnimationFrame(spy); } }
+  window.addEventListener('scroll', scheduleSpy, { passive: true });
+  window.addEventListener('resize', scheduleSpy);
+  document.addEventListener('click', scheduleSpy);   /* expanding/collapsing changes the layout */
+  document.addEventListener('keyup', scheduleSpy);
+  scheduleSpy();
 
   /* ---- lightbox ---- */
   var lb = $('#lightbox');

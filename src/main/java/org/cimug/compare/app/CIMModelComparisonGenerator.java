@@ -141,6 +141,11 @@ public class CIMModelComparisonGenerator {
 				System.out.println(
 						"\nCIM model comparison report ZIP archive generated:  \n" + zipFile.getAbsolutePath());
 			}
+		} catch (IllegalArgumentException e) {
+			// A problem with the command line or the input (e.g. --package names a package
+			// that is not in the comparison): report it plainly, without a stack trace.
+			System.err.println("ERROR:  " + e.getMessage());
+			System.exit(1);
 		} catch (Exception e) {
 			e.printStackTrace();
 			System.exit(1);

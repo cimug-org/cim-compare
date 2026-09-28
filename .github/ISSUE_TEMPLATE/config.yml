@@ -1,0 +1,10 @@
+blank_issues_enabled: false
+
+contact_links:
+  - name: Report a security vulnerability
+    url: https://github.com/cimug-org/cim-compare/security/advisories/new
+    about: Do NOT open a public issue. Public disclosure exposes every cim-compare user before a fix exists. Report vulnerabilities privately here.
+
+  - name: Ask a question or discuss an idea
+    url: https://github.com/cimug-org/cim-compare/discussions
+    about: For usage questions, setup help (Java, Enterprise Architect, COM DLLs) and general discussion. Not for defects or feature requests.

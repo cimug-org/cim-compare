@@ -19,13 +19,18 @@
       │  │  ├ Plant                           baseline only (type="") → deleted class
       │  │  │   └ Links: Generalization        baseline only (type="") → deleted link
       │  │  ├ Equipment                       renamed class (was ConductingEquipmentBase)
-      │  │  ├ CoreOverview (diagram)          changed properties → shown
-      │  │  └ CoreLayout (diagram)            Changed, no changed properties → layout only, hidden
+      │  │  ├ CoreOverview (diagram)          changed properties → shown; #37 DiagramObjects (one
+      │  │  │                                 per highlight kind: added, removed, changed class,
+      │  │  │                                 unchanged, moved, restyled) and DiagramConnectors
+      │  │  │                                 (removed, labels moved)
+      │  │  └ CoreLayout (diagram)            Changed, no changed properties, a moved element →
+      │  │                                    shown with its highlight
       │  ├ Wires
       │  │  ├ ACLineSegment                   model only → added
-      │  │  └ Switch                          moved here from Core
-      │  ├ DER                                only a layout-only diagram → package hidden
-      │  │  └ DERLayout (diagram)
+      │  │  ├ Switch                          moved here from Core
+      │  │  └ WiresConnectors (diagram)       only a rerouted connector → shown
+      │  ├ DER                                only a diagram with nothing to highlight → package hidden
+      │  │  └ DERLayout (diagram)             Changed, no changed properties, nothing to highlight
       │  ├ Retired                            baseline only package (type="") → deleted
       │  └ GridCIMVersion                     version class used for the header labels
       └ IEC61968                              wholly identical → dropped unless full

@@ -234,7 +234,7 @@ table.attrsB td.nt .side { font-size: 10px; text-transform: uppercase; letter-sp
 
 /* diagrams */
 .diag { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-.diag > div { border: 1px solid var(--line); border-radius: var(--r); background: var(--ground); padding: 6px; text-align: center; }
+.diag > div { border: 1px solid var(--line); border-radius: var(--r); background: var(--surface); padding: 6px; text-align: center; }
 .diag .lbl { font-size: 10.5px; text-transform: uppercase; letter-spacing: .04em; color: var(--muted); margin-bottom: 4px; }
 .diag img { max-width: 100%; height: auto; background: #fff; border: 1px solid var(--line); cursor: zoom-in; }
 .diag .gone { color: var(--deleted-ink); font-weight: 600; padding: 30px 0; }

@@ -175,6 +175,15 @@
     if (e.key === '/') { e.preventDefault(); inp.focus(); inp.select(); }
     else if (e.key === 'g') { toggleGuids(); }
     else if (e.key === 'o') { toggleRail(); }
+    else if (e.key === 'Home') {
+      /* back to the top; a history entry lets Back return to where you were */
+      e.preventDefault();
+      if (location.hash) history.pushState(null, '', location.pathname + location.search);
+      $$('.target').forEach(function (x) { x.classList.remove('target'); });
+      window.scrollTo(0, 0);
+      var first = $$('.row').filter(function (r) { return r.offsetParent !== null; })[0];
+      if (first) first.focus({ preventScroll: true });
+    }
     else if (e.key === 'Escape') { hidePop(); $('#lightbox').classList.remove('on'); }
     else if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
       var rows = $$('.row').filter(function (r) { return r.offsetParent !== null; });

@@ -67,6 +67,8 @@ button { font: inherit; }
 .hdr .title .arrow { color: var(--head-muted); margin: 0 6px; }
 .hdr .title .lbl { color: var(--head-muted); font-weight: 400; font-size: var(--fs-s); }
 .hdr .sub { color: var(--head-muted); font-size: var(--fs-s); }
+.hdr .sub a.gen { color: inherit; text-decoration: underline dotted; text-underline-offset: 2px; }
+.hdr .sub a.gen:hover { text-decoration-style: solid; }
 .hdr .tools { margin-left: auto; display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
 .hdr .search { position: relative; }
 .hdr input[type=search] { width: 300px; max-width: 60vw; padding: 5px 8px 5px 26px; border: 1px solid #4a5563; border-radius: var(--r);

@@ -227,6 +227,14 @@ public class ReportPreProcessorTest {
 	}
 
 	@Test
+	public void renamedDiagramWithNothingChangedOnItHasNoHighlights() throws Exception {
+		Document d = enrich(false, null);
+		assertEquals("changed", str(d, "//Diagram[@name='DocWires']/@status"));
+		assertNull(one(d, "//Diagram[@name='DocWires']/Highlight"));
+		assertNull(one(d, "//Diagram[@name='DocWires']/Connector"));
+	}
+
+	@Test
 	public void diagramWhoseOnlyChangeIsAConnectorIsShown() throws Exception {
 		Document d = enrich(false, null);
 		assertEquals("changed", str(d, "//Diagram[@name='WiresConnectors']/@status"));
@@ -336,8 +344,8 @@ public class ReportPreProcessorTest {
 		assertEquals("1", str(d, "/ComparisonReport/Summary/Count[@kind='class'][@status='moved']/@n"));
 		// PowerSystemResource, Equipment, GridCIMVersion
 		assertEquals("3", str(d, "/ComparisonReport/Summary/Count[@kind='class'][@status='changed']/@n"));
-		// CoreOverview, CoreLayout (moved element), WiresConnectors (connector)
-		assertEquals("3", str(d, "/ComparisonReport/Summary/Count[@kind='diagram'][@status='changed']/@n"));
+		// CoreOverview, CoreLayout (moved element), DocWires (renamed), WiresConnectors (connector)
+		assertEquals("4", str(d, "/ComparisonReport/Summary/Count[@kind='diagram'][@status='changed']/@n"));
 		assertEquals("1", str(d, "/ComparisonReport/Summary/Count[@kind='package'][@status='deleted']/@n"));
 		assertEquals("", str(d, "/ComparisonReport/Summary/Count[@kind='class'][@status='identical']/@n"));
 	}
@@ -348,9 +356,9 @@ public class ReportPreProcessorTest {
 		Element grid = pkg(d, "Grid");
 		// Core: PowerSystemResource, Plant, Equipment; Wires: ACLineSegment, Switch; Grid: GridCIMVersion
 		assertEquals("6", grid.getAttribute("changedClasses"));
-		// CoreOverview (notes), CoreLayout (a moved element), WiresConnectors (a
-		// rerouted connector); not DERLayout
-		assertEquals("3", grid.getAttribute("changedDiagrams"));
+		// CoreOverview (notes), CoreLayout (a moved element), DocWires (renamed),
+		// WiresConnectors (a rerouted connector); not DERLayout
+		assertEquals("4", grid.getAttribute("changedDiagrams"));
 		Element core = pkg(d, "Core");
 		assertEquals("classes directly in Core, identical included", "4", core.getAttribute("classCount"));
 		assertEquals("2", core.getAttribute("diagramCount"));

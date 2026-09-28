@@ -28,6 +28,7 @@
       │  ├ Wires
       │  │  ├ ACLineSegment                   model only → added
       │  │  ├ Switch                          moved here from Core
+      │  │  ├ DocWires (diagram)              renamed, nothing on it changed → metadata only, no images
       │  │  └ WiresConnectors (diagram)       only a rerouted connector → shown
       │  ├ DER                                only a diagram with nothing to highlight → package hidden
       │  │  └ DERLayout (diagram)             Changed, no changed properties, nothing to highlight
@@ -221,6 +222,17 @@
                   <Property name="ParentPackage" model="Wires" baseline="Core" status="Changed"/>
                   <Property name="Type" model="Class" baseline="Class" status="Identical"/>
                 </Properties>
+              </CompareItem>
+
+              <!-- #37: a diagram whose only change is its name (nothing on it changed) -->
+              <CompareItem name="DocWires" type="Diagram" guid="{00000000-0000-0000-0000-000000000124}" status="Changed">
+                <Properties>
+                  <Property name="DiagramType" model="ClassDiagram" baseline="ClassDiagram" status="Identical"/>
+                  <Property name="Name" model="DocWires" baseline="Wires" status="Changed"/>
+                </Properties>
+                <CompareItem name="Customer" type="DiagramObject" guid="{00000000-0000-0000-0000-000000000201}" status="Identical">
+                  <Properties><Property name="Box" baseline="10,10,100,50" model="10,10,100,50" status="Identical"/></Properties>
+                </CompareItem>
               </CompareItem>
 
               <!-- #37: a diagram whose only change is a connector -->

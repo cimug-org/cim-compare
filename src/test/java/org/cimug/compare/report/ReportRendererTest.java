@@ -111,6 +111,11 @@ public class ReportRendererTest {
 		assertTrue(page.contains("CoreOverview"));
 		assertTrue("image file name from the diagram GUID", page.contains("EAID_00000000_0000_0000_0000_000000000118.png"));
 		assertFalse("layout-only diagram with nothing to highlight", page.contains("DERLayout"));
+		// a diagram whose only change is its name: listed, metadata only, no images
+		assertTrue(page.contains("DocWires"));
+		assertFalse(page.contains("EAID_00000000_0000_0000_0000_000000000124.png"));
+		assertTrue("a diagram connector change alone still shows the images",
+				page.contains("EAID_00000000_0000_0000_0000_000000000123.png"));
 		assertTrue("header toggle, on by default",
 				page.contains("<input id=\"chk-hl\" type=\"checkbox\" checked> Diagram highlights"));
 	}

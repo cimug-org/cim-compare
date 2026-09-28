@@ -282,22 +282,27 @@
 
   /* ---- connectors (#37): hovering (or focusing) a row outlines the two elements
      it joins on the image it belongs to; a click keeps the outline ---- */
-  var ENDPAD = 10;
+  /* drawn in the image's own pixels, so the outline scales with the image */
+  var ENDPAD = 14, ENDLINE = 5, ENDDASH = '16 10', SVGNS = 'http://www.w3.org/2000/svg';
   function showEnds(row) {
     var node = row.closest('.detail'); if (!node) return;
     var wrap = node.querySelector('.dimg[data-side="' + row.dataset.side + '"]'); if (!wrap) return;
     var img = $('img', wrap); if (!img || !img.naturalWidth) return;
     var w = img.naturalWidth, h = img.naturalHeight;
+    var svg = document.createElementNS(SVGNS, 'svg');
+    svg.setAttribute('class', 'cx-end');
+    svg.setAttribute('viewBox', '0 0 ' + w + ' ' + h);
+    svg.setAttribute('preserveAspectRatio', 'none');
     (row.dataset.ends || '').split(';').forEach(function (bx) {
       if (!bx) return;
-      var b = bx.split(',').map(Number), s = document.createElement('span');
-      var l = Math.max(0, b[0] - ENDPAD), t = Math.max(0, b[1] - ENDPAD);
-      var r = Math.min(w, b[2] + ENDPAD), bt = Math.min(h, b[3] + ENDPAD);
-      s.className = 'cx-end';
-      s.style.left = (100 * l / w) + '%'; s.style.top = (100 * t / h) + '%';
-      s.style.width = (100 * (r - l) / w) + '%'; s.style.height = (100 * (bt - t) / h) + '%';
-      wrap.appendChild(s);
+      var b = bx.split(',').map(Number), r = document.createElementNS(SVGNS, 'rect');
+      r.setAttribute('x', b[0] - ENDPAD); r.setAttribute('y', b[1] - ENDPAD);
+      r.setAttribute('width', b[2] - b[0] + 2 * ENDPAD); r.setAttribute('height', b[3] - b[1] + 2 * ENDPAD);
+      r.setAttribute('fill', 'none'); r.setAttribute('stroke', '#1f2933');
+      r.setAttribute('stroke-width', ENDLINE); r.setAttribute('stroke-dasharray', ENDDASH);
+      svg.appendChild(r);
     });
+    wrap.appendChild(svg);
   }
   function clearEnds(detail) { [].forEach.call(detail.querySelectorAll('.cx-end'), function (s) { s.remove(); }); }
   function refreshEnds(detail) {

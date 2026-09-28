@@ -142,7 +142,8 @@ body.hide-guids .guid { display: none; }
 .grp-h { font-weight: 700; font-size: 12px; color: var(--ink-2); padding: 8px 8px 2px; }
 .grp-h .n { color: var(--muted); font-weight: 400; }
 .empty { color: var(--muted); font-size: var(--fs-s); padding: 4px 10px; font-style: italic; }
-.row.target { box-shadow: 0 0 0 3px var(--hilite); }
+.row.target, tr.target > td, ul.plain li.target { box-shadow: 0 0 0 3px var(--hilite); }
+.row, ul.plain li, table.attrs tr { scroll-margin-top: 110px; }  /* clear the sticky header + summary when scrolled to */
 .filtered-out { display: none !important; }
 
 /* ---------- detail ---------- */

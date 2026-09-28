@@ -127,13 +127,8 @@
   }
   function go(h) {
     res.innerHTML = ''; inp.blur();
-    var row = h.el.classList.contains('row') ? h.el : h.el.closest('.row') || h.el;
-    expandAncestors(row);
-    if (row.classList.contains('meta-anchor')) { var tr = row.closest('tr'); if (tr) tr.classList.remove('filtered-out'); }
-    row.scrollIntoView({ block: 'center' });
-    $$('.target').forEach(function (x) { x.classList.remove('target'); });
-    row.classList.add('target');
-    if (row.id) history.replaceState(null, '', '#' + row.id);
+    var el = h.el.classList.contains('row') ? h.el.parentElement : h.el;   /* .node or <tr> or <li> */
+    if (el.id) { reveal(el.id); history.replaceState(null, '', '#' + el.id); }
   }
   inp.addEventListener('input', function () {
     var q = inp.value.trim().toLowerCase(); sel = -1;
@@ -150,14 +145,28 @@
   });
   inp.addEventListener('blur', function () { setTimeout(function () { res.innerHTML = ''; }, 150); });
 
-  /* ---- deep link ---- */
-  function openHash() {
-    var id = location.hash.replace(/^#/, ''); if (!id) return;
-    var el = document.getElementById(id); if (!el) return;
-    expandAncestors(el); el.scrollIntoView({ block: 'center' });
-    $$('.target').forEach(function (x) { x.classList.remove('target'); }); el.classList.add('target');
+  /* ---- deep links and in-page links (#EAID_...) ---- */
+  function reveal(id) {
+    var el = document.getElementById(id); if (!el) return false;
+    var node = el.classList.contains('node') ? el : el.closest('.node');
+    if (node) setOpen(node, true);           /* open the target itself ... */
+    expandAncestors(el);                     /* ... and everything above it */
+    var row = el.classList.contains('node') ? $(':scope > .row', el) : el;
+    if (row.tagName === 'TR') row.classList.remove('filtered-out');
+    $$('.target').forEach(function (x) { x.classList.remove('target'); });
+    row.classList.add('target');
+    row.scrollIntoView({ block: 'start' });
+    if (row.focus) row.focus({ preventScroll: true });
+    return true;
   }
+  function openHash() { var id = location.hash.replace(/^#/, ''); if (id) reveal(id); }
   window.addEventListener('hashchange', openHash);
+  document.addEventListener('click', function (e) {
+    var a = e.target.closest('a[href^="#"]'); if (!a) return;
+    var id = a.getAttribute('href').slice(1); if (!id) return;
+    e.preventDefault();
+    if (reveal(id) && location.hash !== '#' + id) history.pushState(null, '', '#' + id);
+  });
   openHash();
 
   /* ---- keyboard ---- */

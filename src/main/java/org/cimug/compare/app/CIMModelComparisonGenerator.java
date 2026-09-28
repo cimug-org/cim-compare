@@ -92,15 +92,33 @@ public class CIMModelComparisonGenerator {
 		}
 	}
 
+	/**
+	 * Removes Java's default XML processing limits, which the models and
+	 * comparison files cim-compare reads (the user's own files) easily exceed.
+	 * Setting a limit to 0 removes it. Must run before any XML parser, XPath or
+	 * XSLT processor is created.
+	 * <ul>
+	 * <li>XPath limits, introduced in Java 11 (#21).</li>
+	 * <li>Entity size limits, lowered in Java 24 (JDK-8343006) to 100,000:
+	 * reading a large comparison XML failed with JAXP00010003 / JAXP00010004
+	 * (#65).</li>
+	 * </ul>
+	 * Native access for EA's Java API (JEP 472, Java 24) is enabled by the
+	 * {@code Enable-Native-Access: ALL-UNNAMED} attribute in the jar manifest
+	 * (pom.xml), as it cannot be set from code.
+	 */
+	public static void removeXmlProcessingLimits() {
+		System.setProperty("jdk.xml.xpathExprGrpLimit", "0");
+		System.setProperty("jdk.xml.xpathExprOpLimit", "0");
+		System.setProperty("jdk.xml.xpathTotalOpLimit", "0");
+		System.setProperty("jdk.xml.totalEntitySizeLimit", "0");
+		System.setProperty("jdk.xml.maxGeneralEntitySizeLimit", "0");
+	}
+
 	public static void main(String[] args) {
 
-        // Set system properties for XPath limits. By setting to 0 we remove
-		// the default "ceilings" which was previously causing cim-compare to 
-		// crash at runtime.
-        System.setProperty("jdk.xml.xpathExprGrpLimit", "0");
-        System.setProperty("jdk.xml.xpathExprOpLimit", "0");
-        System.setProperty("jdk.xml.xpathTotalOpLimit", "0");
-        
+		removeXmlProcessingLimits();
+
 		
 		Map<String, String> options = parseCommandLineOptions(args);
 

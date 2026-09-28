@@ -12,6 +12,8 @@
       │  │  ├ IdentifiedObject                identical class → dropped unless full
       │  │  ├ PowerSystemResource             class "Identical", attribute changed → effective changed
       │  │  │   ├ name                         changed Notes → redline; Type links to IdentifiedObject
+      │  │  │   ├ ratedS                       changed Type and LowerBound → new type only (no redline),
+      │  │  │   │                              bound redlined
       │  │  │   └ Links: Generalization        identical → dropped unless full
       │  │  ├ Plant                           baseline only (type="") → deleted class
       │  │  │   └ Links: Generalization        baseline only (type="") → deleted link
@@ -70,6 +72,14 @@
                     <Property name="Name" model="name" baseline="name" status="Identical"/>
                     <Property name="Notes" model="The name is any free human readable string." baseline="The name is any free text string." status="Changed"/>
                     <Property name="Type" model="IdentifiedObject" baseline="IdentifiedObject" status="Identical"/>
+                    <Property name="UpperBound" model="1" baseline="1" status="Identical"/>
+                  </Properties>
+                </CompareItem>
+                <CompareItem name="ratedS" type="Attribute" guid="{00000000-0000-0000-0000-000000000160}" status="Changed">
+                  <Properties>
+                    <Property name="LowerBound" model="1" baseline="0" status="Changed"/>
+                    <Property name="Name" model="ratedS" baseline="ratedS" status="Identical"/>
+                    <Property name="Type" model="IdentifiedObject" baseline="Float" status="Changed"/>
                     <Property name="UpperBound" model="1" baseline="1" status="Identical"/>
                   </Properties>
                 </CompareItem>

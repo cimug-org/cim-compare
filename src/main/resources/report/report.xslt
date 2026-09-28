@@ -71,7 +71,7 @@
     </xsl:choose>
   </xsl:template>
 
-  <!-- a token (Type, bound, role, cardinality): destination side shows old→new when changed -->
+  <!-- a bound or cardinality: destination side shows old→new redlined when changed -->
   <xsl:template name="r:token">
     <xsl:param name="e" as="element()"/>
     <xsl:param name="name" as="xs:string"/>
@@ -273,7 +273,7 @@
             <span><i class="sw s-changed"></i><b>Changed</b> — same GUID and package; properties or members differ</span>
             <span><i class="sw s-identical"></i><b>Identical</b></span>
             <span><i class="sw s-pkg"></i><b>Package</b> (unchanged itself)</span>
-            <span><del>struck</del><ins>inserted</ins> — destination text with baseline wording struck; the ⓘ metadata view shows both texts verbatim</span>
+            <span><del>struck</del><ins>inserted</ins> — changes to descriptions, notes and multiplicities, with the baseline wording struck; the ⓘ metadata view shows both texts verbatim. <span class="chg">Blue</span> — a changed type or role name (new value)</span>
           </div>
           <div class="layout">
             <nav id="rail" class="rail" aria-label="Package outline">
@@ -544,8 +544,8 @@
           <td class="sig">
             <xsl:choose>
               <xsl:when test="r:pstatus(., 'Type') = 'changed'">
-                <del><xsl:value-of select="r:prop(., 'Type', 'baseline')"/></del>
-                <ins><xsl:call-template name="r:class-link"><xsl:with-param name="name" select="r:prop(., 'Type', 'model')"/><xsl:with-param name="id" select="@modelTypeId"/></xsl:call-template></ins>
+                <!-- a changed type shows only the new type (names are not redlined) -->
+                <span class="chg"><xsl:call-template name="r:class-link"><xsl:with-param name="name" select="r:prop(., 'Type', 'model')"/><xsl:with-param name="id" select="@modelTypeId"/></xsl:call-template></span>
               </xsl:when>
               <xsl:otherwise>
                 <xsl:call-template name="r:class-link"><xsl:with-param name="name" select="r:prop(., 'Type', 'model')"/><xsl:with-param name="id" select="@modelTypeId"/></xsl:call-template>
@@ -596,7 +596,8 @@
       <xsl:variable name="role" select="r:prop($end, $rolep, $side)"/>
       <xsl:choose>
         <xsl:when test="$rl and r:pstatus($end, $rolep) = 'changed'">
-          <del><xsl:value-of select="r:prop($end, $rolep, 'baseline')"/></del><ins><xsl:value-of select="r:prop($end, $rolep, 'model')"/></ins>
+          <!-- a changed role name shows only the new name (names are not redlined) -->
+          <span class="chg"><xsl:value-of select="r:prop($end, $rolep, 'model')"/></span>
         </xsl:when>
         <xsl:when test="$role = ''"><i>Role Unspecified</i></xsl:when>
         <xsl:otherwise><xsl:value-of select="$role"/></xsl:otherwise>

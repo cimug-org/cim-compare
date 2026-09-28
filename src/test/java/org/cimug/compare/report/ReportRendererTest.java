@@ -69,6 +69,22 @@ public class ReportRendererTest {
 	}
 
 	@Test
+	public void changedTypeShowsTheNewTypeAndBoundsAreRedlined() throws Exception {
+		File xml = copyFixture();
+		File html = new File(tmp.getRoot(), "types.html");
+		new ReportRenderer(false, null, false, "jpg").render(xml, html);
+		String page = read(html);
+		// ratedS: Float -> IdentifiedObject (a class, so a link), lower bound 0 -> 1
+		assertTrue("new type shown, marked as changed",
+				page.contains("<span class=\"chg\"><a href=\"#EAID_00000000_0000_0000_0000_000000000111\">IdentifiedObject</a></span>"));
+		assertFalse("old type not struck", page.contains("<del>Float</del>"));
+		assertTrue("changed bound redlined", page.contains("<del>0</del><ins>1</ins>"));
+		// renamed class: the tree row shows old -> new; no redline of the name anywhere
+		assertFalse(page.contains("<del>ConductingEquipmentBase</del>"));
+		assertFalse(page.contains("<del>IEC61970</del>"));
+	}
+
+	@Test
 	public void diagramsAreIncludedOnRequest() throws Exception {
 		File xml = copyFixture();
 		File html = new File(tmp.getRoot(), "with-diagrams.html");

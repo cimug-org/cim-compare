@@ -8,7 +8,7 @@ import org.w3c.dom.Element;
 
 /**
  * Word-level text comparison used to produce "redline" markup for changed text
- * properties (Notes, RoleNote, Alias, Name, ...).
+ * properties: descriptions (Notes, RoleNote). Names are not redlined.
  *
  * The result is a sequence of DOM nodes: plain text for unchanged runs,
  * {@code <del>} elements for text only in the baseline and {@code <ins>}

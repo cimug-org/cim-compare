@@ -218,6 +218,17 @@ public class ReportPreProcessorTest {
 	}
 
 	@Test
+	public void namesAndTypesAreNotRedlined() throws Exception {
+		// Redline is for descriptions only; a renamed element shows the new name.
+		Document d = enrich(false, null);
+		assertEquals("changed", str(d, "//Class[@name='Equipment']/Properties/Property[@name='Name']/@status"));
+		assertEquals(0, count(d, "//Class[@name='Equipment']/Properties/Property[@name='Name']/Redline"));
+		assertEquals(0, count(d, "//Package[@name='Grid']/Properties/Property[@name='Name']/Redline"));
+		assertEquals(0, count(d, "//Attribute[@name='ratedS']//Redline"));
+		assertEquals(0, count(d, "//Property[@name != 'Notes' and @name != 'RoleNote']/Redline"));
+	}
+
+	@Test
 	public void unchangedNotesHaveNoRedline() throws Exception {
 		Document d = enrich(true, null);
 		assertEquals("identical", str(d, "//Class[@name='IdentifiedObject']/Notes/@status"));

@@ -95,8 +95,8 @@ Open a class to see what changed in it, in this order:
 
 1. **Description** – the class notes. When they changed, the baseline text appears beside the destination text, and the destination is *redlined*: wording removed since the baseline is struck through in red and new wording is highlighted in green. When most of a text was rewritten, the whole old text is struck through and the whole new text inserted, which is easier to read than a word-by-word comparison.
 2. **Metadata** – the class properties that changed (stereotype, abstract, alias and so on), baseline beside destination.
-3. **Attributes** – one row per changed attribute: its type and multiplicity in the baseline and in the destination, and its notes, redlined. A new attribute shows "does not exist" in the baseline column; a deleted one shows "removed from model" in the destination column.
-4. **Links** – generalizations, associations and aggregations, each as a card showing both ends with their roles and multiplicities in the baseline and in the destination, followed by the changed properties of the source end and the target end.
+3. **Attributes** – one row per changed attribute: its type and multiplicity in the baseline and in the destination, and its notes, redlined. In the Destination column a changed type is shown as the new type in blue, and a changed multiplicity is redlined. A renamed attribute shows `old → new` in the Attribute column. A new attribute shows "does not exist" in the baseline column; a deleted one shows "removed from model" in the destination column.
+4. **Links** – generalizations, associations and aggregations, each as a card showing both ends with their roles and multiplicities in the baseline and in the destination, followed by the changed properties of the source end and the target end. On the destination line a changed role name is shown as the new name in blue, and a changed multiplicity is redlined.
 
 ![](media/Report_Class_Description_Attributes.png)
 
@@ -106,6 +106,8 @@ Other controls in the header:
 
 - **ⓘ hover / ⓘ inline** – the ⓘ next to a package, class or attribute shows all of its properties, with the baseline and destination values in full, including the unredlined baseline notes. In **hover** mode (the default) they appear in a pop-up when you point at the ⓘ; click it to keep the pop-up open. In **inline** mode they appear in the page.
 - **Hide redline** – shows the destination text without the struck and inserted markings.
+
+Redlining is used only for descriptions and notes (of classes, attributes, diagrams, packages and association ends) and for multiplicities. Names are never redlined: a renamed element shows `old → new` in its name, and a changed name in a property table (for example in the ⓘ pop-up) shows just the new name in the Destination column.
 - **GUIDs** – each package, class, attribute and link shows its GUID, in grey at the right. Turn them off with the checkbox or the `g` key. The GUID shows when an element was renamed rather than replaced: a renamed element keeps its GUID.
 
 ![](media/Report_Metadata_Popup.png)

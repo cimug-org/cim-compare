@@ -1,6 +1,38 @@
 
 ## Developer Notes
 
+### Building and Testing
+
+Build with Maven from the project directory:
+
+```
+mvn clean package
+```
+
+This compiles the code, runs the unit tests and produces the self-contained `target/cim-compare-<version>.jar`. Don't skip the tests (`-DskipTests` or `-Dmaven.test.skip=true`, which is what Eclipse's "Skip Tests" checkbox adds): they take a few seconds and need no Enterprise Architect installation. `mvn test` runs the tests alone.
+
+The tests are in `src/test/java`; Maven runs the classes whose names end in `Test`:
+
+- `WordDiffTest` – the word-level redlining of changed text.
+- `ReportPreProcessorTest` – the preparation of the comparison XML for the report (statuses, counts, links, `--full`, `--package`), over the small hand-written comparison `src/test/resources/report/mini-comparison.xml`. The comment at the top of that file says which case each element in it exercises.
+- `ReportRendererTest` – producing the HTML report and the enriched XML.
+- `CleanupTest` – `--zip --cleanup` never deletes the user's input files.
+
+`CIMModelComparisonGeneratorUTEST` runs the whole comparison over large XMI files in `src/test/resources`; Maven doesn't run it by default, so run it by hand when changing the XMI comparison.
+
+### The HTML Report
+
+The report is produced in three steps (`org.cimug.compare.report`):
+
+1. `ReportPreProcessor` turns the comparison XML (EA compare log format) into the *enriched* XML: element kinds and effective statuses resolved, identical items dropped unless `--full`, redlines computed (`WordDiff`), links between classes resolved, and summary counts added. The format is described in the class's Javadoc. It is written beside the report as `<name>-enriched.xml`.
+2. `ReportRenderer` runs `src/main/resources/report/report.xslt` (XSLT 3.0, run with Saxon-HE) over the enriched XML.
+3. The stylesheet copies `report.css` and `report.js` into the page, so the report is a single file that needs no network access.
+
+To change the look or behaviour of the report, edit those three files in `src/main/resources/report`; to change what the report knows about the comparison, change `ReportPreProcessor` (and its tests).
+
+
+### XMI 1.1 and EA Compare Log Schemas
+
 The background provided here may be useful in the future should the need arise to support a later version of the XMI format.  Currently, Enterprise Architect only supports **XMI 1.1** for its comparison utility and, correspondingly **cim-compare** as well.
 
 After investigation, an official **XMI_1.1.xsd** for **XMI 1.1** was unavailable for generating JAXB objects for the needed inputs to **cim-compare**. The same applied for the EA **CompareLog** XML input file format.

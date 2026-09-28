@@ -1,14 +1,9 @@
 package org.cimug.compare.app;
 
-import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStreamWriter;
-import java.io.Writer;
-import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -21,14 +16,8 @@ import java.util.zip.ZipOutputStream;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerException;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
-import javax.xml.transform.stream.StreamSource;
 
+import org.cimug.compare.report.ReportRenderer;
 import org.sparx.Collection;
 import org.sparx.EnumXMIType;
 import org.sparx.Package;
@@ -36,15 +25,27 @@ import org.sparx.Project;
 import org.sparx.Repository;
 import org.w3c.dom.Document;
 import org.xml.sax.InputSource;
-import org.xml.sax.SAXException;
 
 public class CIMModelComparisonGenerator {
 
 	private static final String PARAM_PACKAGE = "package";
-	private static final String PARAM_MINIMAL = "minimal";
+	private static final String PARAM_MINIMAL = "minimal"; // 1.x option; accepted and ignored (minimal is now the default)
+	private static final String PARAM_FULL = "full";
 	private static final String PARAM_INCLUDE_DIAGRAMS = "include-diagrams";
 	private static final String PARAM_ZIP = "zip";
+	/** The release, as in the jar name cim-compare-<VERSION>.jar. */
+	private static final String VERSION = "2.0.0";
+
 	private static final String PARAM_CLEANUP = "cleanup";
+
+	/**
+	 * Files and folders this run created before the report (the comparison XML when
+	 * it was generated, and the XMI files and image folders exported from EA
+	 * projects). With --zip, --cleanup deletes these plus the report and the
+	 * enriched XML, and nothing else: files the user supplied are never deleted
+	 * (issue #53).
+	 */
+	private static final List<File> createdByRun = new LinkedList<File>();
 	private static final String PARAM_IMAGE_TYPE = "image-type";
 	private static final String ANSI = "windows-1252";
 	private static final String UTF8 = "UTF-8";
@@ -56,7 +57,6 @@ public class CIMModelComparisonGenerator {
 	private static final Set<String> EA_PROJECT_EXT = new HashSet<String>(Arrays.asList(".eap", ".eapx", "qea", ".qeax", ".feap"));
 	private static final Set<String> HTML_EXT = new HashSet<String>(Arrays.asList(".htm", ".html"));
 	private static final String ZIP = ".zip";
-	private static final String CIM_MODEL_COMPARISON_XSLT = "CIM_Model_Comparison.xslt";
 
 	static enum DiagramXML {
 		NO_EXPORT(0), EXPORT_WITHOUT_IMAGES(1), EXPORT_WITH_IMAGES(2);
@@ -133,59 +133,19 @@ public class CIMModelComparisonGenerator {
 				}
 			}
 
-			TransformerFactory f = TransformerFactory.newInstance();
-			InputStream stylesheet = ClassLoader.getSystemResourceAsStream(CIM_MODEL_COMPARISON_XSLT);
-			StreamSource stylesource = new StreamSource(stylesheet);
-			Transformer transformer = f.newTransformer(stylesource);
-
 			/**
-			 * Set all XSLT parameters received on the command line. These are passed in as
-			 * various command line options with a leading "--". If the command line option
-			 * includes an equals sign ("=") in it then we know that it is an option that
-			 * has a value associated with it and which must be processed accordingly.
+			 * Stage 3: comparison XML -> enriched XML (written beside the report for
+			 * debugging and for other tooling) -> HTML. See ReportRenderer.
 			 */
-			for (String paramName : options.keySet()) {
-				transformer.setParameter(paramName, options.get(paramName));
+			ReportRenderer renderer = new ReportRenderer(options.containsKey(PARAM_FULL), options.get(PARAM_PACKAGE),
+					options.containsKey(PARAM_INCLUDE_DIAGRAMS), options.get(PARAM_IMAGE_TYPE));
+			File enrichedXMLFile = renderer.render(document, compareLogXMLFile, comparisonHTMLFile);
+			document = null;
+
+			if (comparisonHTMLFile != null) {
+				System.out.println("\nCIM model comparison report successfully generated:  \n" + comparisonHTMLFile.getAbsolutePath());
+				System.out.println("\nEnriched comparison XML (report input, for debugging):  \n" + enrichedXMLFile.getAbsolutePath());
 			}
-
-			if (!options.containsKey(PARAM_IMAGE_TYPE)) {
-				/**
-				 * Behind the scenes we set a default image type. will be overridden if one is
-				 * explicitly specified on the command line
-				 */
-				transformer.setParameter(PARAM_IMAGE_TYPE, DiagramImage.JPG.ext());
-			}
-
-			transformer.setParameter(PARAM_INCLUDE_DIAGRAMS, options.containsKey(PARAM_INCLUDE_DIAGRAMS));
-
-			DOMSource source = new DOMSource(document);
-
-			StreamResult result = null;
-			FileOutputStream fos = null;
-			Writer writer = null;
-			OutputStreamWriter osw = null;
-			try {
-				if (comparisonHTMLFile != null) {
-					fos = new FileOutputStream(comparisonHTMLFile);
-					osw = new OutputStreamWriter(fos, StandardCharsets.UTF_8);
-					writer = new BufferedWriter(osw);
-					result = new StreamResult(writer);
-				} else {
-					result = new StreamResult(System.out);
-				}
-				
-				transformer.transform(source, result);
-			} finally {
-				if (writer != null)
-					writer.close();
-				if (osw != null)
-					osw.close();
-				if (fos != null)
-					fos.close();
-			}
-
-			System.out.println(
-					"\nCIM model comparison report successfully generated:  \n" + comparisonHTMLFile.getAbsolutePath());
 
 			File zipFile = createZipArchive(fileArgs, options);
 
@@ -193,8 +153,14 @@ public class CIMModelComparisonGenerator {
 				System.out.println(
 						"\nCIM model comparison report ZIP archive generated:  \n" + zipFile.getAbsolutePath());
 			}
-		} catch (SAXException | TransformerException | ParserConfigurationException | IOException e) {
+		} catch (IllegalArgumentException e) {
+			// A problem with the command line or the input (e.g. --package names a package
+			// that is not in the comparison): report it plainly, without a stack trace.
+			System.err.println("ERROR:  " + e.getMessage());
+			System.exit(1);
+		} catch (Exception e) {
 			e.printStackTrace();
+			System.exit(1);
 		}
 	}
 
@@ -237,11 +203,12 @@ public class CIMModelComparisonGenerator {
 
 				switch (param.toLowerCase())
 					{
-					case PARAM_MINIMAL:
+					case PARAM_MINIMAL: // accepted for compatibility with 1.x; minimal output is the default
+					case PARAM_FULL:
 					case PARAM_INCLUDE_DIAGRAMS:
 					case PARAM_ZIP:
 					case PARAM_CLEANUP:
-						value = Boolean.TRUE.toString(); // All four must have a default value of "true"...
+						value = Boolean.TRUE.toString(); // flags carry no value...
 						break;
 					case PARAM_IMAGE_TYPE:
 						if ((value != null) && (!"".equals(value))) {
@@ -317,6 +284,7 @@ public class CIMModelComparisonGenerator {
 
 		File modelComparisonXMLFile = null;
 		File targetOutputHTMLFile = null;
+		createdByRun.clear();
 
 		List<File> fileArgs = new LinkedList<File>();
 
@@ -452,6 +420,8 @@ public class CIMModelComparisonGenerator {
 
 			modelComparisonXMLFile = new File(outputDir, defaultComparisonXMLFileName);
 			targetOutputHTMLFile = new File(outputDir, defaultComparisonHTMLFileName);
+			// Generated from the two models by this run (not an input).
+			createdByRun.add(modelComparisonXMLFile);
 
 			System.out.println("\nOutput directory confirmed:  \n" + outputDir.getAbsolutePath());
 
@@ -473,95 +443,62 @@ public class CIMModelComparisonGenerator {
 				String thePackageName = (options.containsKey(PARAM_PACKAGE) ? options.get(PARAM_PACKAGE) : null);
 
 				/**
-				 * Note that argument index 0 corresponds to the 'baseline' file on the command
-				 * line while argument index 1 is for the 'target' file.
+				 * Export the baseline (argument 0) and destination (argument 1) projects.
+				 *
+				 * When --package is given, the package is located by name in each project
+				 * (root nodes included). A package renamed between the two versions (e.g.
+				 * IEC61970 -> Grid) is found by name in only one of them; its counterpart in
+				 * the other is then located by GUID. If the package cannot be resolved on
+				 * both sides processing stops, rather than silently comparing the whole
+				 * model (see issue #49).
 				 */
-				for (int index = 0; index < 2; index++) {
+				File baselineXmi = new File(outputDir, baseName(arguments[0]) + XMI);
+				File destinationXmi = new File(outputDir, baseName(arguments[1]) + XMI);
 
-					Repository repository = null;
-					boolean eaProjectFailed = false;
+				String baselineGuid = exportProject(arguments[0], true, outputDir, baselineXmi, thePackageName, null,
+						diagramXML, diagramImage);
+				String destinationGuid = exportProject(arguments[1], false, outputDir, destinationXmi, thePackageName,
+						baselineGuid, diagramXML, diagramImage);
 
-					try {
-						String eaProjectFile = arguments[index].getAbsolutePath();
-						String eaProjectFileName = arguments[index].getName().substring(0,
-								arguments[index].getName().lastIndexOf("."));
-
-						repository = new Repository();
-						repository.OpenFile(eaProjectFile);
-
-						Collection<Package> packages = repository.GetModels();
-
-						Package rootModelPackage = packages.GetAt((short) 0);
-
-						Project project = repository.GetProjectInterface();
-
-						Package packageToCompare = null;
-
-						if (thePackageName == null) {
-							packageToCompare = rootModelPackage;
-						} else {
-							Collection<Package> childPackages = rootModelPackage.GetPackages();
-							packageToCompare = findPackage(thePackageName, childPackages);
-							if (packageToCompare == null) {
-								packageToCompare = rootModelPackage;
-							}
-						}
-
-						File xmiExportFile = new File(outputDir, eaProjectFileName + XMI);
-
-						if (index == 0) {
-							baselineXmiFile = xmiExportFile.getAbsolutePath();
-						} else {
-							destinationXmiFile = xmiExportFile.getAbsolutePath();
-						}
-
-						project.ExportPackageXMI(packageToCompare.GetPackageGUID(), EnumXMIType.xmiEA11,
-								diagramXML.code(), diagramImage.code(), 1, 0, xmiExportFile.getAbsolutePath());
-
-						if (diagramXML != DiagramXML.NO_EXPORT) {
-							File imagesDirectory = new File(outputDir, "Images");
-							if (imagesDirectory.exists()) {
-								File newImagesDirectory = new File(outputDir,
-										"Images" + (index == 0 ? "-baseline" : "-destination"));
-								imagesDirectory.renameTo(newImagesDirectory);
-
-								System.out.println("\n" + (index == 0 ? "Baseline" : "Destination")
-										+ " model diagrams successfuly exported as " + diagramImage.name()
-										+ " images to:  \n" + newImagesDirectory.getAbsolutePath());
-							} else {
-								System.err.println(
-										"ERROR:  Unable to export diagram images. Terminating EA .eap XMI export processing.");
-								System.exit(1);
-							}
-						}
-
-						System.out.println("\n" + (index == 0 ? "Baseline" : "Destination")
-								+ " model XMI export completed successfully:  \n" + xmiExportFile.getAbsolutePath());
-					} catch (Exception e) {
-						eaProjectFailed = true;
-						e.printStackTrace();
-					} finally {
-						// We must explicitly make a GC call. This is due to a 
-						// limitation in Sparx EA's Java API and memory...
-						System.gc();
-						if (repository != null) {
-							/**
-							 * The following is required by EA's automation API's and ensures that
-							 * everything properly terminates...
-							 */
-							repository.CloseFile();
-							repository.Exit();
-							repository = null;
-						}
-
-						// If an exception occurred we want to exit processing...
-						if (eaProjectFailed) {
-							System.err.println(
-									"ERROR:  Terminating XMI export processing for EA project file [" + arguments[index].getName() + "] due to an unexpected exception.");
-							System.err.println();
+				if (thePackageName != null) {
+					if (baselineGuid == null && destinationGuid == null) {
+						System.err.println("ERROR:  Package '" + thePackageName
+								+ "' was not found in either the baseline or the destination model.");
+						System.exit(1);
+					}
+					if (destinationGuid == null) {
+						System.err.println("ERROR:  Package '" + thePackageName + "' was found in the baseline model (GUID "
+								+ baselineGuid
+								+ ") but the destination model has no package with that name or GUID.");
+						System.exit(1);
+					}
+					if (baselineGuid == null) {
+						// Found in the destination only: export the baseline's package with the same GUID.
+						baselineGuid = exportProject(arguments[0], true, outputDir, baselineXmi, thePackageName,
+								destinationGuid, diagramXML, diagramImage);
+						if (baselineGuid == null) {
+							System.err.println("ERROR:  Package '" + thePackageName
+									+ "' was found in the destination model (GUID " + destinationGuid
+									+ ") but the baseline model has no package with that name or GUID.");
 							System.exit(1);
 						}
+					} else if (!baselineGuid.equals(destinationGuid)) {
+						System.out.println("\nWARNING:  The packages named '" + thePackageName
+								+ "' in the baseline and destination models have different GUIDs (" + baselineGuid + ", "
+								+ destinationGuid + "). They are compared as different packages.");
 					}
+				}
+
+				baselineXmiFile = baselineXmi.getAbsolutePath();
+				destinationXmiFile = destinationXmi.getAbsolutePath();
+
+				// Exported from the EA projects by this run. (With XMI files as input the
+				// XMI files and image folders are the user's own exports.)
+				createdByRun.add(baselineXmi);
+				createdByRun.add(destinationXmi);
+				if (options.containsKey(PARAM_INCLUDE_DIAGRAMS)) {
+					createdByRun.add(new File(outputDir, "Images-baseline"));
+					createdByRun.add(new File(outputDir, "Images-destination"));
 				}
 			} else {
 				// We have determined that the two input files are XMI files so we simply
@@ -639,6 +576,117 @@ public class CIMModelComparisonGenerator {
 		return results;
 	}
 
+	private static String baseName(File file) {
+		String name = file.getName();
+		int dot = name.lastIndexOf(".");
+		return dot > 0 ? name.substring(0, dot) : name;
+	}
+
+	/**
+	 * Opens an EA project and exports one package of it to XMI 1.1 (plus diagram
+	 * images when requested).
+	 *
+	 * <ul>
+	 * <li>No package name: the first root node is exported (with a warning when the
+	 * project has more than one).</li>
+	 * <li>A package name: the package of that name is exported, searching root nodes
+	 * and everything below them. If there is none and {@code guidHint} is given, the
+	 * package with that GUID is exported instead (a package renamed between versions).
+	 * If neither is found nothing is exported and null is returned.</li>
+	 * </ul>
+	 *
+	 * @return the GUID of the exported package, or null when nothing was exported
+	 */
+	private static String exportProject(File eaProject, boolean baseline, File outputDir, File xmiExportFile,
+			String packageName, String guidHint, DiagramXML diagramXML, DiagramImage diagramImage) {
+		String side = baseline ? "Baseline" : "Destination";
+		Repository repository = null;
+		boolean failed = false;
+		try {
+			repository = new Repository();
+			repository.OpenFile(eaProject.getAbsolutePath());
+
+			Collection<Package> models = repository.GetModels();
+			Package packageToCompare = null;
+
+			if (packageName == null) {
+				packageToCompare = models.GetAt((short) 0);
+				if (models.GetCount() > 1) {
+					StringBuilder names = new StringBuilder();
+					for (Package m : models)
+						names.append(names.length() > 0 ? ", " : "").append(m.GetName());
+					System.out.println("\nWARNING:  " + side + " project " + eaProject.getName() + " has "
+							+ models.GetCount() + " root nodes (" + names + "). Only the first, '"
+							+ packageToCompare.GetName() + "', is compared.");
+				}
+			} else {
+				for (Package m : models) {
+					packageToCompare = m.GetName().equals(packageName) ? m : findPackage(packageName, m.GetPackages());
+					if (packageToCompare != null)
+						break;
+				}
+				if (packageToCompare == null && guidHint != null) {
+					try {
+						packageToCompare = repository.GetPackageByGuid(guidHint);
+					} catch (Exception notFound) {
+						packageToCompare = null;
+					}
+					if (packageToCompare != null) {
+						System.out.println("\n" + side + " model: package '" + packageName + "' not found by name; matched by GUID "
+								+ guidHint + " as '" + packageToCompare.GetName() + "'.");
+					}
+				}
+				if (packageToCompare == null) {
+					if (guidHint == null && baseline) {
+						System.out.println("\n" + side + " model: package '" + packageName
+								+ "' not found by name; will look it up by GUID after the destination model is read.");
+					}
+					return null;
+				}
+			}
+
+			repository.GetProjectInterface().ExportPackageXMI(packageToCompare.GetPackageGUID(), EnumXMIType.xmiEA11, diagramXML.code(),
+					diagramImage.code(), 1, 0, xmiExportFile.getAbsolutePath());
+
+			if (diagramXML != DiagramXML.NO_EXPORT) {
+				File imagesDirectory = new File(outputDir, "Images");
+				if (imagesDirectory.exists()) {
+					File newImagesDirectory = new File(outputDir, "Images" + (baseline ? "-baseline" : "-destination"));
+					imagesDirectory.renameTo(newImagesDirectory);
+					System.out.println("\n" + side + " model diagrams successfully exported as " + diagramImage.name()
+							+ " images to:  \n" + newImagesDirectory.getAbsolutePath());
+				} else {
+					System.err.println("ERROR:  Unable to export diagram images. Terminating EA .eap XMI export processing.");
+					System.exit(1);
+				}
+			}
+
+			System.out.println("\n" + side + " model XMI export completed successfully (package '"
+					+ packageToCompare.GetName() + "'):  \n" + xmiExportFile.getAbsolutePath());
+			return packageToCompare.GetPackageGUID();
+		} catch (Exception e) {
+			failed = true;
+			e.printStackTrace();
+			return null;
+		} finally {
+			// We must explicitly make a GC call. This is due to a
+			// limitation in Sparx EA's Java API and memory...
+			System.gc();
+			if (repository != null) {
+				// Required by EA's automation API to ensure everything terminates properly.
+				repository.CloseFile();
+				repository.Exit();
+				repository = null;
+			}
+			if (failed) {
+				System.err.println("ERROR:  Terminating XMI export processing for EA project file [" + eaProject.getName()
+						+ "] due to an unexpected exception.");
+				System.err.println();
+				System.exit(1);
+			}
+		}
+	}
+
 	private static Package findPackage(String packageName, Collection<Package> packages) {
 		for (Package aPackage : packages) {
 			if (aPackage.GetName().equals(packageName)) {
@@ -665,8 +713,6 @@ public class CIMModelComparisonGenerator {
 			//
 			File compareLogXMLFile = fileArgs[1];
 			File comparisonHTMLFile = fileArgs[2];
-			File baselineXmiFile = (fileArgs.length == 5 ? fileArgs[3] : null);
-			File destinationXmiFile = (fileArgs.length == 5 ? fileArgs[4] : null);
 
 			zipFile = new File(outputDir, comparisonHTMLFile.getName().replace(HTML, "") + ZIP);
 			FileOutputStream fos = new FileOutputStream(zipFile);
@@ -687,11 +733,10 @@ public class CIMModelComparisonGenerator {
 			zipOut.close();
 			fos.close();
 			if (options.containsKey(PARAM_CLEANUP)) {
-				deleteDirectory(baselineImagesDir);
-				deleteDirectory(destinationImagesDir);
-				baselineXmiFile.delete();
-				destinationXmiFile.delete();
-				compareLogXMLFile.delete();
+				// Only what this run created (issue #53).
+				for (File created : createdByRun)
+					deleteDirectory(created);
+				ReportRenderer.enrichedFileFor(compareLogXMLFile, comparisonHTMLFile).delete();
 				comparisonHTMLFile.delete();
 			}
 		}
@@ -748,89 +793,56 @@ public class CIMModelComparisonGenerator {
 	}
 
 	private static void printUsage() {
-		System.err.println();
-		System.err.println("There are three possible command line usages for the CIM Model Comparison Report utility:");
-		System.err.println();
-		/**
-		 * XML Compare Log file as input...
-		 */
-		System.err.println(
-				"To generate an HTML report using the results file (*.xml) of an Enterprise Architect model comparison use the command line option.");
-		System.err.println(
-				"   Usage: java -jar cim-compare.jar <comparison-results-xml-file> [<output-directory-or-html-file>] [--package=<iec-package-name>] [--minimal] [--include-diagrams] [--image-type=<image-files-extension>] [--zip] [--cleanup]");
-		System.err.println();
-		System.err.println("   Examples: ");
-		System.err.println(
-				"          java -jar cim-compare.jar \"C:\\CIM XMI exports\\CIM15v33_CIM16v26a_EA_Comparison_Report.xml\" \"C:\\Comparison Reports\\\"");
-		System.err.println(
-				"          java -jar cim-compare.jar CIM15v33_CIM16v26a_EA_Comparison_Report.xml \"C:\\Comparison Reports\\\"");
-		System.err.println(
-				"          java -jar cim-compare.jar CIM15v33_CIM16v26a_EA_Comparison_Report.xml \"C:\\Comparison Reports\\\" --package=IEC61968");
-		System.err.println(
-				"          java -jar cim-compare.jar CIM15v33_CIM16v26a_EA_Comparison_Report.xml MyComparisonReport_CIM15v33_CIM16v26a.html");
-		System.err.println("          java -jar cim-compare.jar CIM15v33_CIM16v26a_EA_Comparison_Report.xml");
-		System.err.println(
-				"          java -jar cim-compare.jar CIM15v33_CIM16v26a_EA_Comparison_Report.xml --include-diagrams --image-type=gif --minimal");
-		System.err.println(
-				"          java -jar cim-compare.jar CIM15v33_CIM16v26a_EA_Comparison_Report.xml --package=IEC61970");
-		System.err.println(
-				"          java -jar cim-compare.jar CIM15v33_CIM16v26a_EA_Comparison_Report.xml --package=IEC61970 --include-diagrams --image-type=GIF --zip");
-		System.err.println(
-				"          java -jar cim-compare.jar CIM15v33_CIM16v26a_EA_Comparison_Report.xml --package=IEC61970 --include-diagrams --image-type=GIF --zip --cleanup");
-		System.err.println();
-		/**
-		 * XMI files as input...
-		 */
-		System.err.println(
-				"To generate a model comparison report directly from baseline and target models (XMI files) use the command line option.");
-		System.err.println(
-				"   Usage: java -jar cim-compare.jar <baseline-model-xmi-file> <target-model-xmi-file> [<output-directory-or-html-file>] [--package=<iec-package-name>] [--minimal] [--include-diagrams] [--image-type=<image-files-extension>] [--zip] [--cleanup]");
-		System.err.println();
-		System.err.println("   Examples: ");
-		System.err.println(
-				"          java -jar cim-compare.jar \"C:\\CIM XMI exports\\CIM15v33.xmi\" \"C:\\CIM XMI exports\\CIM16v26a.xmi\" \"C:\\Comparison Reports\\\"");
-		System.err
-				.println("          java -jar cim-compare.jar CIM15v33.xmi CIM16v26a.xmi \"C:\\Comparison Reports\\\"");
-		System.err.println(
-				"          java -jar cim-compare.jar CIM15v33.xmi CIM16v26a.xmi \"C:\\Comparison Reports\\CIM15v33_CIM16v26a_ComparisonReport.html\"");
-		System.err.println(
-				"          java -jar cim-compare.jar CIM15v33.xmi CIM16v26a.xmi CIM15v33_CIM16v26a_ComparisonReport.html");
-		System.err.println(
-				"          java -jar cim-compare.jar CIM15v33.xmi CIM16v26a.xmi CIM15v33_CIM16v26a_ComparisonReport.html --package=IEC62325");
-		System.err.println(
-				"          java -jar cim-compare.jar CIM15v33.xmi CIM16v26a.xmi CIM15v33_CIM16v26a_ComparisonReport.html --minimal");
-		System.err.println(
-				"          java -jar cim-compare.jar CIM15v33.xmi CIM16v26a.xmi --package=IEC62325 --minimal --include-diagrams --image-type=JPG --zip");
-		System.err.println(
-				"          java -jar cim-compare.jar CIM15v33.xmi CIM16v26a.xmi --package=IEC62325 --minimal --include-diagrams --image-type=JPG --zip --cleanup");
-		System.err.println();
-		/**
-		 * EAP files as input...
-		 */
-		System.err.println(
-				"To generate a model comparison report directly from Sparx Enterprise Architect baseline and target models (.eap files) use the command line option.");
-		System.err.println(
-				"   Usage: java -jar cim-compare.jar <baseline-model-file> <target-model-file> [<output-directory-or-html-file>] [--package=<iec-package-name>] [--minimal] [--include-diagrams] [--image-type=<image-files-extension>] [--zip] [--cleanup]");
-		System.err.println();
-		System.err.println("   Examples: ");
-		System.err.println(
-				"          java -jar cim-compare.jar \"C:\\CIM XMI exports\\CIM15v33.eap\" \"C:\\CIM XMI exports\\CIM16v26a.eapx\" \"C:\\Comparison Reports\\\"");
-		System.err
-				.println("          java -jar cim-compare.jar CIM15v33.xmi CIM16v26a.eap \"C:\\Comparison Reports\\\"");
-		System.err.println(
-				"          java -jar cim-compare.jar CIM15v33.eap CIM16v26a.eap \"C:\\Comparison Reports\\CIM15v33_CIM16v26a_ComparisonReport.html\"");
-		System.err.println(
-				"          java -jar cim-compare.jar CIM15v33.qea CIM16v26a.qea CIM15v33_CIM16v26a_ComparisonReport.html");
-		System.err.println(
-				"          java -jar cim-compare.jar CIM15v33.eap CIM16v26a.eap CIM15v33_CIM16v26a_ComparisonReport.html --package=IEC62325");
-		System.err.println(
-				"          java -jar cim-compare.jar CIM15v33.eapx CIM16v26a.eapx CIM15v33_CIM16v26a_ComparisonReport.html --minimal");
-		System.err.println(
-				"          java -jar cim-compare.jar CIM15v33.eap CIM16v26a.xmi --package=IEC62325 --include-diagrams --image-type=JPG --minimal");
-		System.err.println(
-				"          java -jar cim-compare.jar CIM15v33.eap CIM16v26a.xmi --package=IEC62325 --include-diagrams --image-type=JPG --minimal --zip");		
-		System.err.println(
-				"          java -jar cim-compare.jar CIM15v33.eap CIM16v26a.xmi --package=IEC62325 --include-diagrams --image-type=JPG --minimal --zip --cleanup");			
-		System.err.println();
+		String jar = "cim-compare-" + VERSION + ".jar";
+		String[] lines = {
+				"",
+				"There are three ways to run cim-compare " + VERSION + " (see https://cim-compare.ucaiug.io):",
+				"",
+				"1. From two Enterprise Architect project files (.eap/.eapx with 32-bit Java, .qea/.qeax with 64-bit Java).",
+				"   Requires a licensed EA installation; -Djava.library.path must name the folder holding SSJavaCOM.dll/SSJavaCOM64.dll.",
+				"",
+				"   Usage: java [<jvm-parameters>] -jar " + jar + " <baseline-model-file> <destination-model-file>",
+				"               [<output-directory-or-html-file>] [--package=<package-name>] [--full]",
+				"               [--include-diagrams] [--image-type=<image-file-extension>] [--zip] [--cleanup]",
+				"",
+				"   Examples:",
+				"      java -Xmx4G -Djava.library.path=\"C:\\cim-compare\\ea16\" -jar " + jar + " CIM17v40.qea CIM18v16.qea \"C:\\Comparison Reports\"",
+				"      java -Xmx4G -Djava.library.path=\"C:\\cim-compare\\ea16\" -jar " + jar + " CIM17v40.qea CIM18v16.qea --package=Grid --include-diagrams --zip",
+				"      java -Xmx1G -Djava.library.path=\"C:\\cim-compare\\ea15\" -jar " + jar + " CIM15v33.eap CIM16v26a.eap CIM15v33_CIM16v26a.html --full",
+				"",
+				"2. From two XMI 1.1 files exported from EA. Diagram images, if wanted, must already be in the",
+				"   Images-baseline and Images-destination folders of the output directory.",
+				"",
+				"   Usage: java [<jvm-parameters>] -jar " + jar + " <baseline-model-xmi-file> <destination-model-xmi-file>",
+				"               [<output-directory-or-html-file>] [--package=<package-name>] [--full]",
+				"               [--include-diagrams] [--image-type=<image-file-extension>] [--zip] [--cleanup]",
+				"",
+				"   Examples:",
+				"      java -Xmx2G -jar " + jar + " \"C:\\XMI exports\\CIM15v33.xmi\" \"C:\\XMI exports\\CIM16v26a.xmi\" \"C:\\Comparison Reports\"",
+				"      java -Xmx2G -jar " + jar + " CIM15v33.xmi CIM16v26a.xmi CIM15v33_CIM16v26a.html --package=IEC62325",
+				"      java -Xmx2G -jar " + jar + " CIM15v33.xmi CIM16v26a.xmi --include-diagrams --image-type=GIF --zip --cleanup",
+				"",
+				"3. From a compare log (.xml) exported from an Enterprise Architect model comparison. Diagrams are not supported.",
+				"",
+				"   Usage: java [<jvm-parameters>] -jar " + jar + " <comparison-results-xml-file>",
+				"               [<output-directory-or-html-file>] [--package=<package-name>] [--full] [--zip] [--cleanup]",
+				"",
+				"   Examples:",
+				"      java -Xmx2G -jar " + jar + " CIM15v33_CIM16v26a_EA_Comparison_Report.xml \"C:\\Comparison Reports\"",
+				"      java -Xmx2G -jar " + jar + " CIM15v33_CIM16v26a_EA_Comparison_Report.xml --package=IEC61970",
+				"      java -Xmx2G -jar " + jar + " CIM15v33_CIM16v26a_EA_Comparison_Report.xml --package=IEC61970 --zip --cleanup",
+				"",
+				"Options:",
+				"   --package=<name>     Compare (or report) only this package and everything below it. Either model's name",
+				"                        for a renamed package can be used (e.g. IEC61970 or Grid).",
+				"   --full               Include identical items in the report as well as the changes.",
+				"   --minimal            Accepted for 1.x command lines; no effect (only changes are reported by default).",
+				"   --include-diagrams   Include changed diagrams (options 1 and 2).",
+				"   --image-type=<ext>   JPG (default), GIF, PNG, BMP or EMF.",
+				"   --zip                Put the report and diagram images in a ZIP archive.",
+				"   --cleanup            With --zip: delete what this run created, leaving the ZIP. Input files are never deleted.",
+				"" };
+		for (String line : lines)
+			System.err.println(line);
 	}
 }

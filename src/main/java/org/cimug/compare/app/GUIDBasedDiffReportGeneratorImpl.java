@@ -146,7 +146,7 @@ class GUIDBasedDiffReportGeneratorImpl implements DiffReportGenerator {
 	}
 
 	private EACompareLog processDiffReport(XMIContentType theBaselineContentType, XMIContentType theTargetContentType) {
-		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd H:mm:ss");
+		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		String dateTime = formatter.format(new Date());
 
 		CompareResults compareResults = parseModelRootPackage(theBaselineContentType, theTargetContentType);

@@ -19,6 +19,7 @@
       │  │  ├ Plant                           baseline only (type="") → deleted class
       │  │  │   └ Links: Generalization        baseline only (type="") → deleted link
       │  │  ├ Equipment                       renamed class (was ConductingEquipmentBase)
+      │  │  │   └ Links: Association          role and multiplicity changed; the target role is unspecified
       │  │  ├ Location                        only an attribute description changed (curly quotes) →
       │  │  │                                 changed class, but not highlighted on a diagram
       │  │  ├ CoreOverview (diagram)          changed properties → shown; #37 DiagramObjects (one
@@ -149,6 +150,27 @@
                   <Property name="Name" model="Equipment" baseline="ConductingEquipmentBase" status="Changed"/>
                   <Property name="Type" model="Class" baseline="Class" status="Identical"/>
                 </Properties>
+                <CompareItem name="Links" type="Links" guid="{00000000-0000-0000-0000-000000000117}Links" status="Changed">
+                  <CompareItem name="Association" type="" guid="{00000000-0000-0000-0000-000000000180}" status="Changed">
+                    <Properties>
+                      <Property name="Type" model="Association" baseline="Association" status="Identical"/>
+                    </Properties>
+                    <CompareItem name="Source: (Equipment)" type="Src" guid="Src-{00000000-0000-0000-0000-000000000180}" status="Changed">
+                      <Properties>
+                        <Property name="Cardinality" model="0..*" baseline="0..*" status="Identical"/>
+                        <Property name="End" model="Equipment" baseline="ConductingEquipmentBase" status="Changed"/>
+                        <Property name="Role" model="Equipments" baseline="Equipment" status="Changed"/>
+                      </Properties>
+                    </CompareItem>
+                    <CompareItem name="Target: (IdentifiedObject)" type="Dst" guid="Dst-{00000000-0000-0000-0000-000000000180}" status="Changed">
+                      <Properties>
+                        <Property name="Cardinality" model="1" baseline="0..1" status="Changed"/>
+                        <Property name="End" model="IdentifiedObject" baseline="IdentifiedObject" status="Identical"/>
+                        <Property name="Role" model="" baseline="" status="Identical"/>
+                      </Properties>
+                    </CompareItem>
+                  </CompareItem>
+                </CompareItem>
               </CompareItem>
 
               <CompareItem name="Location" type="Class" guid="{00000000-0000-0000-0000-000000000170}" status="Identical">

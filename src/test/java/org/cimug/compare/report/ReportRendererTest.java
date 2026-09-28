@@ -85,6 +85,19 @@ public class ReportRendererTest {
 	}
 
 	@Test
+	public void associationEndsShowTheClassThenTheRole() throws Exception {
+		File xml = copyFixture();
+		File html = new File(tmp.getRoot(), "links.html");
+		new ReportRenderer(false, null, false, "jpg").render(xml, html);
+		String page = read(html);
+		// Equipment role Equipment(s) [0..*] → IdentifiedObject role unspecified [0..1 → 1]
+		assertTrue(page.contains("<span class=\"end-sig\"><a href=\"#EAID_00000000_0000_0000_0000_000000000117\">Equipment</a> <span class=\"role-part\"><span class=\"role-lbl\">role</span>&nbsp;"
+				+ "<del>Equipment</del><ins>Equipments</ins>&nbsp;<span class=\"card\">[0..*]</span>&nbsp;→</span></span> "));
+		assertTrue(page.contains("<a href=\"#EAID_00000000_0000_0000_0000_000000000111\">IdentifiedObject</a> <span class=\"role-part\"><span class=\"role-lbl\">role</span>&nbsp;"
+				+ "<i>unspecified</i>&nbsp;<span class=\"card\">[<del>0..1</del><ins>1</ins>]</span></span></span>"));
+	}
+
+	@Test
 	public void renamesShowTheNewNameAndRenamedFrom() throws Exception {
 		File xml = copyFixture();
 		File html = new File(tmp.getRoot(), "renames.html");

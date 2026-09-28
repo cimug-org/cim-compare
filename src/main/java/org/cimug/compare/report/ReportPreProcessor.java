@@ -469,6 +469,11 @@ public class ReportPreProcessor {
 
 	/** true when the item or anything beneath it is not identical */
 	private static boolean hasChanges(Element item) {
+		// A diagram reported as Changed with no changed properties differs only in
+		// layout; it is not rendered (see renderDiagram), so it must not make its
+		// package count as changed either.
+		if ("diagram".equals(kindOf(item)) && "changed".equals(statusOf(item)) && !hasChangedProperties(item))
+			return false;
 		if (!"identical".equals(statusOf(item)))
 			return true;
 		if (hasChangedProperties(item))

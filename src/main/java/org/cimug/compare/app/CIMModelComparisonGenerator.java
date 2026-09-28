@@ -629,7 +629,7 @@ public class CIMModelComparisonGenerator {
 				if (imagesDirectory.exists()) {
 					File newImagesDirectory = new File(outputDir, "Images" + (baseline ? "-baseline" : "-destination"));
 					imagesDirectory.renameTo(newImagesDirectory);
-					System.out.println("\n" + side + " model diagrams successfuly exported as " + diagramImage.name()
+					System.out.println("\n" + side + " model diagrams successfully exported as " + diagramImage.name()
 							+ " images to:  \n" + newImagesDirectory.getAbsolutePath());
 				} else {
 					System.err.println("ERROR:  Unable to export diagram images. Terminating EA .eap XMI export processing.");

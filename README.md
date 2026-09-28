@@ -49,6 +49,7 @@ To download this setup and usage guide as a standalone PDF click [here](cim-comp
 ### What's New in 2.0.1
 
 - **Runs on Java 24 and later without extra settings** ([#65](https://github.com/cimug-org/cim-compare/issues/65)). Java 24 lowered its XML entity size limits, and a large comparison stopped with `JAXP00010003` before the report was written; **cim-compare** now removes those limits itself. Its jar also lets EA's Java API load its native library without Java's "restricted method" warning. See [Java 24 and Later](#java-24-and-later).
+- **An attribute's ⓘ metadata shows its new name as it is** ([#67](https://github.com/cimug-org/cim-compare/issues/67)): the Name row of a renamed attribute shows the new name as plain text in the Destination column, like the old name in the Baseline column, instead of a redline.
 
 ### What's New in 2.0.0
 

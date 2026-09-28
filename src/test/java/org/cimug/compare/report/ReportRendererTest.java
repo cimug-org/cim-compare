@@ -139,6 +139,33 @@ public class ReportRendererTest {
 	}
 
 	@Test
+	public void imagesTheReportDoesNotShowAreDeleted() throws Exception {
+		File xml = copyFixture();
+		String[] shown = { "118", "119", "123" }; // CoreOverview, CoreLayout, WiresConnectors
+		String[] unshown = { "124", "131" }; // DocWires (renamed only), DERLayout (nothing to highlight)
+		File other = null;
+		for (String side : new String[] { "Images-baseline", "Images-destination" }) {
+			File dir = tmp.newFolder(side);
+			for (String n : shown)
+				new File(dir, "EAID_00000000_0000_0000_0000_000000000" + n + ".png").createNewFile();
+			for (String n : unshown)
+				new File(dir, "EAID_00000000_0000_0000_0000_000000000" + n + ".png").createNewFile();
+			other = new File(dir, "EAID_11111111_1111_1111_1111_111111111111.png");
+			other.createNewFile();
+		}
+		new ReportRenderer(false, null, true, "png").render(xml, new File(tmp.getRoot(), "comparison-report.html"));
+		for (String side : new String[] { "Images-baseline", "Images-destination" }) {
+			File dir = new File(tmp.getRoot(), side);
+			for (String n : shown)
+				assertTrue(side + " " + n + " kept", new File(dir, "EAID_00000000_0000_0000_0000_000000000" + n + ".png").isFile());
+			for (String n : unshown)
+				assertFalse(side + " " + n + " deleted", new File(dir, "EAID_00000000_0000_0000_0000_000000000" + n + ".png").exists());
+			assertTrue("a file not belonging to a diagram in the comparison is left alone",
+					new File(dir, "EAID_11111111_1111_1111_1111_111111111111.png").isFile());
+		}
+	}
+
+	@Test
 	public void scopeAppearsInTheReport() throws Exception {
 		File xml = copyFixture();
 		File html = new File(tmp.getRoot(), "grid.html");

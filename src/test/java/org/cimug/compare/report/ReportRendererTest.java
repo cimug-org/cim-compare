@@ -69,6 +69,39 @@ public class ReportRendererTest {
 	}
 
 	@Test
+	public void changedTypeShowsTheNewTypeAndBoundsAreRedlined() throws Exception {
+		File xml = copyFixture();
+		File html = new File(tmp.getRoot(), "types.html");
+		new ReportRenderer(false, null, false, "jpg").render(xml, html);
+		String page = read(html);
+		// ratedS: Float -> IdentifiedObject (a class, so a link), lower bound 0 -> 1
+		assertTrue("new type shown, marked as changed",
+				page.contains("<span class=\"chg\"><a href=\"#EAID_00000000_0000_0000_0000_000000000111\">IdentifiedObject</a></span>"));
+		assertFalse("old type not struck", page.contains("<del>Float</del>"));
+		assertTrue("changed bound redlined", page.contains("<del>0</del><ins>1</ins>"));
+		// renamed class: its Name property is redlined in the property table
+		assertTrue(page.contains("<del>ConductingEquipmentBase</del><ins>Equipment</ins>"));
+	}
+
+	@Test
+	public void renamesShowTheNewNameAndRenamedFrom() throws Exception {
+		File xml = copyFixture();
+		File html = new File(tmp.getRoot(), "renames.html");
+		new ReportRenderer(false, null, false, "jpg").render(xml, html);
+		String page = read(html);
+		// tree row: new name, then the old name in grey; no arrow
+		assertTrue(page.contains("Equipment<span class=\"renamed-from\">renamed from ConductingEquipmentBase</span>"));
+		assertTrue(page.contains("Grid<span class=\"renamed-from\">renamed from IEC61970</span>"));
+		assertFalse(page.contains("<span class=\"arrow\">→</span>Equipment"));
+		// package outline: the old name in brackets on the next line; tooltip reworded
+		assertTrue(page.contains("<span class=\"r-renamed\">[renamed from IEC61970]</span>"));
+		assertTrue(page.contains("title=\"Grid (renamed from IEC61970)\""));
+		// attribute whose only change is EA's «deprecated»: the new name shows it
+		assertTrue(page.contains("«deprecated» aliasName<span class=\"info\""));
+		assertTrue(page.contains("<span class=\"renamed-from\">renamed from aliasName</span>"));
+	}
+
+	@Test
 	public void diagramsAreIncludedOnRequest() throws Exception {
 		File xml = copyFixture();
 		File html = new File(tmp.getRoot(), "with-diagrams.html");

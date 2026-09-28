@@ -71,7 +71,7 @@
     </xsl:choose>
   </xsl:template>
 
-  <!-- a token (Type, bound, role, cardinality): destination side shows old→new when changed -->
+  <!-- a bound, role or cardinality: destination side shows old→new redlined when changed -->
   <xsl:template name="r:token">
     <xsl:param name="e" as="element()"/>
     <xsl:param name="name" as="xs:string"/>
@@ -190,12 +190,20 @@
     </div>
   </xsl:template>
 
-  <!-- name with rename / deprecated prefix -->
+  <!-- the element's current name: the destination Name property when there is
+       one (it carries a «deprecated» prefix that @name may not), else @name -->
+  <xsl:function name="r:new-name" as="xs:string">
+    <xsl:param name="e" as="element()"/>
+    <xsl:sequence select="(r:prop($e, 'Name', 'model')[. != ''], string($e/@name))[1]"/>
+  </xsl:function>
+
+  <!-- name with rename / deprecated prefix. A renamed element shows its new name
+       only, with "renamed from <old>" in grey beside it (Todd, 2026-09-28). -->
   <xsl:template name="r:display-name">
     <xsl:param name="e" as="element()"/>
     <xsl:choose>
       <xsl:when test="$e/@renamedFrom">
-        <xsl:value-of select="$e/@renamedFrom"/><span class="arrow">→</span><xsl:value-of select="$e/@name"/>
+        <xsl:value-of select="r:new-name($e)"/><span class="renamed-from">renamed from <xsl:value-of select="$e/@renamedFrom"/></span>
       </xsl:when>
       <xsl:when test="starts-with($e/@name, '«deprecated»')">
         <span class="stereo">«deprecated»</span><xsl:text> </xsl:text><xsl:value-of select="normalize-space(substring-after($e/@name, '»'))"/>
@@ -273,7 +281,8 @@
             <span><i class="sw s-changed"></i><b>Changed</b> — same GUID and package; properties or members differ</span>
             <span><i class="sw s-identical"></i><b>Identical</b></span>
             <span><i class="sw s-pkg"></i><b>Package</b> (unchanged itself)</span>
-            <span><del>struck</del><ins>inserted</ins> — destination text with baseline wording struck; the ⓘ metadata view shows both texts verbatim</span>
+            <span><del>struck</del><ins>inserted</ins> — destination text with baseline wording struck (descriptions, names, role names, multiplicities); the ⓘ metadata view shows both texts verbatim</span>
+            <span><b class="chg">Blue</b> — a changed attribute type (the new type)</span>
           </div>
           <div class="layout">
             <nav id="rail" class="rail" aria-label="Package outline">
@@ -321,10 +330,12 @@
         <span class="r-chev"><xsl:value-of select="if (Package) then '▸' else ''"/></span>
         <a class="r-name" href="#{@id}">
           <xsl:attribute name="title">
-            <xsl:value-of select="if (@renamedFrom) then concat(@renamedFrom, ' → ', @name) else @name"/>
+            <xsl:value-of select="if (@renamedFrom) then concat(@name, ' (renamed from ', @renamedFrom, ')') else @name"/>
             <xsl:if test="not(@status = ('changed', 'identical'))"><xsl:value-of select="concat(' (', @status, ')')"/></xsl:if>
           </xsl:attribute>
           <xsl:value-of select="@name"/>
+          <!-- a renamed package: "[renamed from <old>]" in grey on the next line (Todd, 2026-09-28, option D) -->
+          <xsl:if test="@renamedFrom"><span class="r-renamed">[renamed from <xsl:value-of select="@renamedFrom"/>]</span></xsl:if>
         </a>
         <xsl:if test="$n gt 0">
           <span class="r-n" title="{@changedClasses} changed classes{if ($diagrams) then concat(', ', @changedDiagrams, ' changed diagrams') else ''}"><xsl:value-of select="$n"/></span>
@@ -523,10 +534,11 @@
     <tr data-status="{$st}" id="{@id}" data-name="{@name}" data-kind="•" data-path="{r:path(.)}::{../@name}">
       <td class="nm c-{$st}">
         <xsl:choose>
-          <xsl:when test="@renamedFrom"><xsl:value-of select="@renamedFrom"/> <span class="arrow">→</span> <xsl:value-of select="@name"/></xsl:when>
+          <xsl:when test="@renamedFrom"><xsl:value-of select="r:new-name(.)"/></xsl:when>
           <xsl:otherwise><xsl:value-of select="@name"/></xsl:otherwise>
         </xsl:choose>
         <span class="info" data-id="{@guid}" title="attribute metadata">i</span>
+        <xsl:if test="@renamedFrom"><span class="renamed-from">renamed from <xsl:value-of select="@renamedFrom"/></span></xsl:if>
         <span class="guid"><xsl:value-of select="@guid"/></span>
       </td>
       <xsl:choose>
@@ -544,8 +556,8 @@
           <td class="sig">
             <xsl:choose>
               <xsl:when test="r:pstatus(., 'Type') = 'changed'">
-                <del><xsl:value-of select="r:prop(., 'Type', 'baseline')"/></del>
-                <ins><xsl:call-template name="r:class-link"><xsl:with-param name="name" select="r:prop(., 'Type', 'model')"/><xsl:with-param name="id" select="@modelTypeId"/></xsl:call-template></ins>
+                <!-- a changed type shows only the new type, in blue (not redlined) -->
+                <span class="chg"><xsl:call-template name="r:class-link"><xsl:with-param name="name" select="r:prop(., 'Type', 'model')"/><xsl:with-param name="id" select="@modelTypeId"/></xsl:call-template></span>
               </xsl:when>
               <xsl:otherwise>
                 <xsl:call-template name="r:class-link"><xsl:with-param name="name" select="r:prop(., 'Type', 'model')"/><xsl:with-param name="id" select="@modelTypeId"/></xsl:call-template>

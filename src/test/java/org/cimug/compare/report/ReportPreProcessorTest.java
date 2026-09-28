@@ -218,6 +218,19 @@ public class ReportPreProcessorTest {
 	}
 
 	@Test
+	public void changedNamesAreRedlinedButTypesAreNot() throws Exception {
+		// Names are redlined (Todd, 2026-09-28); a changed type is shown by the
+		// report as the new type in blue, so the pre-pass computes no redline for it.
+		Document d = enrich(false, null);
+		String name = "//Class[@name='Equipment']/Properties/Property[@name='Name']";
+		assertEquals("changed", str(d, name + "/@status"));
+		assertEquals("ConductingEquipmentBase", str(d, name + "/Redline/del"));
+		assertEquals("Equipment", str(d, name + "/Redline/ins"));
+		assertEquals(1, count(d, "//Package[@name='Grid']/Properties/Property[@name='Name']/Redline"));
+		assertEquals(0, count(d, "//Attribute[@name='ratedS']//Redline"));
+	}
+
+	@Test
 	public void unchangedNotesHaveNoRedline() throws Exception {
 		Document d = enrich(true, null);
 		assertEquals("identical", str(d, "//Class[@name='IdentifiedObject']/Notes/@status"));

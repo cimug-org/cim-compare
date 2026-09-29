@@ -23,6 +23,7 @@
 
   <xsl:param name="css" as="xs:string" select="''"/>
   <xsl:param name="js" as="xs:string" select="''"/>
+  <xsl:param name="logo" as="xs:string" select="''"/>
   <xsl:param name="include-diagrams" as="xs:string" select="'true'"/>
   <xsl:param name="image-type" as="xs:string" select="'jpg'"/>
 
@@ -250,6 +251,7 @@
       </head>
       <body>
         <header class="hdr">
+          <xsl:if test="$logo != ''"><a class="brand" href="https://github.com/cimug-org/cim-compare" target="_blank" rel="noopener" title="cim-compare on GitHub" aria-label="cim-compare on GitHub"><xsl:value-of select="$logo" disable-output-escaping="yes"/></a></xsl:if>
           <div>
             <div class="title">CIM Model Comparison <span class="arrow">·</span>
               <span class="ver"><xsl:value-of select="@baselineVersion"/></span><xsl:text> </xsl:text><span class="lbl">baseline</span>

@@ -2,7 +2,7 @@
 :root {
   --ink: #1f2933; --ink-2: #3e4c59; --muted: #6b7785; --faint: #9aa5b1;
   --ground: #f4f6f8; --surface: #ffffff; --rail: #d9dee5; --line: #e4e8ec;
-  --head: #2b3440; --head-ink: #f4f6f8; --head-muted: #b7c0cb;
+  --head: #000000; --head-ink: #f4f6f8; --head-muted: #b7c0cb;
   --link: #1a5fb4; --focus: #2f80ed;
   --added: #d4edda; --added-ink: #1e6b3a; --added-line: #b9dfc4;
   --deleted: #f8d7da; --deleted-ink: #9a2530; --deleted-line: #efc0c5;
@@ -62,6 +62,8 @@ button { font: inherit; }
 /* ---------- header ---------- */
 .hdr { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 20; background: var(--head); color: var(--head-ink);
   padding: 8px 16px; display: flex; flex-wrap: wrap; gap: 8px 20px; align-items: center; }
+.hdr .brand { display: flex; align-items: center; align-self: stretch; padding-right: 20px; border-right: 1px solid #4a5563; }
+.hdr .brand svg { display: block; width: 138px; height: 34px; }
 .hdr .title { font-size: var(--fs-l); font-weight: 600; white-space: nowrap; }
 .hdr .title .ver { font-family: var(--mono); font-weight: 600; }
 .hdr .title .arrow { color: var(--head-muted); margin: 0 6px; }
@@ -300,6 +302,7 @@ body.no-hl .hl, body.no-hl .hl-legend { display: none !important; }
   .sigs, .linkB .sigline { grid-template-columns: 1fr; }
   .sigs .mid, .linkB .sigline .mid { transform: rotate(90deg); }
   .hdr .tools { margin-left: 0; }
+  .hdr .brand { border-right: 0; padding-right: 0; }
 }
 @media print {
   .hdr, .summary .clear, .lightbox { display: none; }

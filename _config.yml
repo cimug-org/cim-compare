@@ -1,0 +1,4 @@
+# GitHub Pages site (cim-compare.ucaiug.io), built from README.md.
+# Primer is the theme GitHub Pages uses when none is named; it is named here
+# so that assets/css/style.scss can build on it.
+theme: jekyll-theme-primer

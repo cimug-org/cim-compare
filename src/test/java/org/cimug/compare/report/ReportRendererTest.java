@@ -70,6 +70,20 @@ public class ReportRendererTest {
 	}
 
 	@Test
+	public void headerShowsTheLogoInline() throws Exception {
+		File xml = copyFixture();
+		File html = new File(tmp.getRoot(), "logo.html");
+		new ReportRenderer(false, null, false, "jpg").render(xml, html);
+		String page = read(html);
+		int header = page.indexOf("<header class=\"hdr\">");
+		int brand = page.indexOf("<a class=\"brand\" href=\"https://github.com/cimug-org/cim-compare\"");
+		assertTrue("logo link opens the header", header >= 0 && brand > header && brand < page.indexOf("<div class=\"title\">"));
+		assertTrue("logo inlined as SVG, not escaped", page.contains("<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 253.04 62.40\""));
+		assertTrue("logo ids prefixed", page.contains("id=\"ccl-g1\"") && !page.contains("id=\"g1\""));
+		assertFalse("no external image", page.contains("<img src=\"logo"));
+	}
+
+	@Test
 	public void changedTypeShowsTheNewTypeAndBoundsAreRedlined() throws Exception {
 		File xml = copyFixture();
 		File html = new File(tmp.getRoot(), "types.html");

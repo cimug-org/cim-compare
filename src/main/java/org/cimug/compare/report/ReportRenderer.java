@@ -31,7 +31,8 @@ import org.w3c.dom.NodeList;
  *
  * The HTML layout lives in {@code report/report.xslt} (XSLT 3.0, run on
  * Saxon-HE). The stylesheet and script that make the report interactive live
- * in {@code report/report.css} and {@code report/report.js}; they are read
+ * in {@code report/report.css} and {@code report/report.js}, and the logo in
+ * the header in {@code report/logo.svg}; they are read
  * from the classpath here and passed to the stylesheet, which inlines them so
  * the generated report is a single self-contained file that needs no network
  * access.
@@ -43,6 +44,7 @@ public class ReportRenderer {
 	private static final String XSLT = "report/report.xslt";
 	private static final String CSS = "report/report.css";
 	private static final String JS = "report/report.js";
+	private static final String LOGO = "report/logo.svg";
 
 	private final boolean full;
 	private final String packageFilter;
@@ -84,6 +86,7 @@ public class ReportRenderer {
 		Transformer t = newTransformer();
 		t.setParameter("css", readResource(CSS));
 		t.setParameter("js", readResource(JS));
+		t.setParameter("logo", readResource(LOGO));
 		t.setParameter("include-diagrams", Boolean.toString(includeDiagrams));
 		t.setParameter("image-type", imageType);
 

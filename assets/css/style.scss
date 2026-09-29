@@ -1,0 +1,11 @@
+---
+---
+
+@import "{{ site.theme }}";
+
+// README.md shows two logos, one for GitHub's light theme and one for its
+// dark theme; github.com hides the one that doesn't match. This site is
+// light only, so hide the dark one here.
+img[src$="#gh-dark-mode-only"] {
+  display: none;
+}

@@ -84,6 +84,19 @@ public class ReportRendererTest {
 	}
 
 	@Test
+	public void summaryCountsFilterTheirOwnKind() throws Exception {
+		File xml = copyFixture();
+		File html = new File(tmp.getRoot(), "summary.html");
+		new ReportRenderer(false, null, false, "jpg").render(xml, html);
+		String page = read(html);
+		// #78: each count names its kind, so a Classes count filters classes only
+		assertTrue(page.matches("(?s).*<span class=\"cnt s-added\" data-kind=\"class\" data-status=\"added\" title=\"show only added classes\">.*"));
+		assertTrue(page.matches("(?s).*<span class=\"cnt s-changed\" data-kind=\"package\" data-status=\"changed\" title=\"show only changed packages\">.*"));
+		assertTrue("filter status line", page.contains("<span id=\"flt-status\" class=\"clear\">Click a count to show only those items</span>"));
+		assertFalse("counts without a kind", page.matches("(?s).*<span class=\"cnt [^\"]*\" data-status=.*"));
+	}
+
+	@Test
 	public void changedTypeShowsTheNewTypeAndBoundsAreRedlined() throws Exception {
 		File xml = copyFixture();
 		File html = new File(tmp.getRoot(), "types.html");

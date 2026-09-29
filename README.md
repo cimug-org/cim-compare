@@ -248,7 +248,7 @@ If you are looking to run comparisons of `.eap` files then you'll need 32-bit Ja
 
 #### Download 64-bit Java 17
 
-If you are looking to run comparisons of `.qea` files then you'll need 64-bit Java. To directly download a 64-bit Java 17 click the image below:
+If you are comparing `.qea` files with a 64-bit EA (EA 16 or later) then you'll need 64-bit Java. To directly download a 64-bit Java 17 click the image below:
 
 [![image](media/OpenJDK-64-bit.png)](https://www.azul.com/core-post-download/?endpoint=zulu&uuid=1523a07f-3c0b-4869-8eea-a4276f0ea944)
 
@@ -267,19 +267,19 @@ If you are looking to run comparisons of `.qea` files then you'll need 64-bit Ja
 > - Runtime Dependency:
 >    - When using the COM automation interface, **cim-compare** initializes and communicates with an EA process. The underlying API calls interact with the installed Enterprise Architect software to perform operations like exporting `.xmi` files from an `.eap` or `.qea` file.
 >   
-> The COM interface wrappers ship with each release of Sparx EA and are delivered in an installation directory similar to:
+> The COM interface wrappers ship with each release of Sparx EA in the "Java API" folder of the installation directory, similar to:
 >
 > `%WINDOWS_PROGRAM_FILES%\Sparx Systems\EAxx\Java API  (e.g. "C:\Program Files\Sparx Systems\EA16\Java API")`
 >
 > The purpose of each is:
 > 
-> - `SSJavaCOM.dll` - the 32-bit COM Module DLL (Dynamic Linked Library) that **cim-compare** will link to when a 32-bit Java JVM/JRE is used to run `cim-compare-2.0.1.jar` from the command line (i.e. required when processing 32-bit .EAP project files).
+> - `SSJavaCOM.dll` - the 32-bit COM Module DLL (Dynamic Linked Library) that **cim-compare** will link to when a 32-bit Java JVM/JRE is used to run `cim-compare-2.0.1.jar` from the command line (`.eap` project files need this path: they use Microsoft's Jet database engine, which is 32-bit only, so only 32-bit EA can open them).
 >
-> - `SSJavaCOM64.dll` - the 64-bit COM Module DLL that **cim-compare** will link to when a 64-bit Java JVM/JRE is used to run `cim-compare-2.0.1.jar` from the command line (i.e. required when processing 64-bit .QEA project files)
+> - `SSJavaCOM64.dll` - the 64-bit COM Module DLL that **cim-compare** will link to when a 64-bit Java JVM/JRE is used to run `cim-compare-2.0.1.jar` from the command line (the usual path for `.qea` project files with a 64-bit EA, EA 16 or later; `.qea` itself is not 64-bit-only, as Sparx states `.qea` files work in both 32-bit and 64-bit EA).
 >   	
-> **cim-compare** communicates to the appropriate COM Module DLL depending on the particular JVM (32-bit or 64-bit) being used on the command line. Which DLL COM interface wrapper to load and link to is determined at runtime. 
+> **cim-compare** communicates to the appropriate COM Module DLL depending on the particular JVM (32-bit or 64-bit) being used on the command line. Which DLL to load is decided at run time: EA's `eaapi.jar` loads `SSJavaCOM.dll` when Java reports its architecture as `x86` (32-bit Java) and `SSJavaCOM64.dll` otherwise.
 >
-> Another key requirement is that these two DLL COM interface wrappers must be available to Java at runtime. This is done on the command line by specifying their directory location using the `-Djava.library.path` JVM parameter.
+> Another key requirement is that these DLL COM interface wrappers must be where Java can find them at run time. Java looks in the folders listed in `java.library.path`, which on Windows defaults to the folders on the `PATH` (Sparx's own instructions copy `SSJavaCOM.dll` into a Windows system folder). For **cim-compare** we recommend naming the folder explicitly with the `-Djava.library.path` JVM parameter, as in the examples below; on a machine with more than one EA installation it is the way to choose which installation's DLLs are used.
 > 
 
 To use **cim-compare** on a system with a dual 32-bit and 64-bit Sparx EA installation (e.g. EA 15.x and EA 16.x) you will need to have a configuration similar to the following:
@@ -299,12 +299,12 @@ C:\
 │   ├── cim18v02.eap
 │   ├── cim18v12.qea
 │   └── cim18v13.qea
-├── Program Files (x86)         (32-bit JVM installation required for processing 32-bit .eap files)
+├── Program Files (x86)         (32-bit JVM installation, required for .eap files)
 │   └── Zulu
 │       └── zulu-17
 │           └── bin
 │               └── java.exe
-├── Program Files               (64-bit JVM installation required for processing 64-bit .qea files)
+├── Program Files               (64-bit JVM installation, for .qea files with the 64-bit EA16)
 │   └── Zulu
 │       └── zulu-17
 │           └── bin
@@ -313,7 +313,7 @@ C:\
 ```
 Of importance is that each EA installation's set of DLL files be located in their own directory. This will allow for the ability to isolate where Java looks for its COM Modules based on the specific release of Sparx EA. 
 
-Following is a set of command lines based on the above example configuration and file system structure. The first illustrates comparison report generation for 32-bit `.eap` files and the second for 64-bit `.qea` files. The command lines are split over several lines with `^`, the Windows command prompt's line-continuation character, so they can be pasted into a command prompt as shown.
+Following is a set of command lines based on the above example configuration and file system structure. The first compares `.eap` files with 32-bit Java and the 32-bit EA15 installation; the second compares `.qea` files with 64-bit Java and the 64-bit EA16 installation. The command lines are split over several lines with `^`, the Windows command prompt's line-continuation character, so they can be pasted into a command prompt as shown.
  
 ```
 "C:\Program Files (x86)\Zulu\zulu-17\bin\java.exe" -Xmx1G -Djava.library.path="C:\cim-compare\ea15" ^
@@ -325,8 +325,8 @@ The above 32-bit command line example uses:
  - a 32-bit Java 17 JRE/JVM  (i.e. `"C:\Program Files (x86)\Zulu\zulu-17\bin\java.exe"`)
  - a max heap size of 1G (i.e. 1GB specified via `-Xmx1G` or `-Xmx1024m`)
  - the 32-bit COM DLL loaded from the `C:\cim-compare\ea15` directory (i.e. via `-Djava.library.path="C:\cim-compare\ea15"`) 
- - `cim17v40.eap` as the input baseline model (i.e. a 32-bit EA project file indicated by the `.eap` extension)
- - `cim18v02.eap` as the input destination model (i.e. a 32-bit EA project file indicated by the `.eap` extension)
+ - `cim17v40.eap` as the input baseline model (an `.eap` project file, which only 32-bit EA can open)
+ - `cim18v02.eap` as the input destination model (an `.eap` project file, which only 32-bit EA can open)
  - `comparison-report.html` as the name of the generated report
  - the inclusion of changed diagrams in the report (i.e. `--include-diagrams`)
  - JPG for the type of diagrams (i.e. `--image-type=JPG`)
@@ -340,15 +340,15 @@ The above 64-bit command line example uses:
  - a 64-bit Java 17 JRE/JVM (i.e. `"C:\Program Files\Zulu\zulu-17\bin\java.exe"`)
  - a max heap size of 4G (i.e. 4GB specified via `-Xmx4G` or `-Xmx4096m`)
  - the 64-bit COM DLL loaded from the `C:\cim-compare\ea16` directory (i.e. via `-Djava.library.path="C:\cim-compare\ea16"`) 
- - `cim17v40.qea` as the input baseline model (i.e. a 64-bit EA project file indicated by the `.qea` extension)
- - `cim18v02.qea` as the input destination model (i.e. a 64-bit EA project file indicated by the `.qea` extension)
+ - `cim17v40.qea` as the input baseline model (a `.qea` project file, opened here by the 64-bit EA16)
+ - `cim18v02.qea` as the input destination model (a `.qea` project file, opened here by the 64-bit EA16)
  - `comparison-report.html` as the name of the generated report
  - the inclusion of changed diagrams in the report (i.e. `--include-diagrams`)
  - JPG for the type of diagrams (i.e. `--image-type=JPG`)
  
 ### Warning: Potential Configuration Pitfalls
 
-> A common "gotcha" that users run into is that when using `.eap` project files as input into **cim-compare**, they unknowingly use 64-bit Java instead of 32-bit Java (and vice versa). It is a hard requirement that when comparing two `.qea` files 64-bit Java **must** be used and, conversely, when comparing two `.eap` files 32-bit Java **must** be used. 
+> A common "gotcha" that users run into is that when using `.eap` project files as input into **cim-compare**, they unknowingly use 64-bit Java instead of 32-bit Java (and vice versa). When comparing two `.eap` files, 32-bit Java (and a 32-bit EA) **must** be used, because only 32-bit EA can open `.eap` files. `.qea` files can be opened by 32-bit and 64-bit EA alike, so for them use Java of the same bit-width as the EA installation that will open them: 64-bit Java with a 64-bit EA (EA 16 or later), which is the tested combination. 
 >
 > Noteworthy in the previous command line examples is that `java` has been expressly qualified as either `"C:\Program Files (x86)\Zulu\zulu-17\bin\java.exe"` or `"C:\Program Files\Zulu\zulu-17\bin\java.exe"` to ensure that the correct version of Java is used. This is not a requirement but rather one method to eliminate this as a pitfall.
 >
@@ -445,7 +445,7 @@ java -Xmx4G -Djava.library.path="C:\cim-compare\ea16" -jar cim-compare-2.0.1.jar
   CIM17v40.qea CIM18v16.qea --package=Grid --include-diagrams --zip --cleanup
 ```
 
-NOTE:  The above command line examples illustrate the use of both `.eap` and `.qea` EA files as input. Where `.eap` files appear as input on the command line it is assumed that 32-bit Java is being used to execute the `.jar` file. Likewise, for `.qea` files that 64-bit Java is executed.
+NOTE:  The above command line examples illustrate the use of both `.eap` and `.qea` EA files as input. Where `.eap` files appear as input on the command line it is assumed that 32-bit Java is being used to execute the `.jar` file. Likewise, for `.qea` files it is assumed that 64-bit Java and a 64-bit EA are used.
 
 ### Option \#2: XMI Baseline and Destination Models as Input
 

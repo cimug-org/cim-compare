@@ -1,9 +1,9 @@
 
-The **eaapi.jar** in this directory is Sparx EA's Java API, taken from EA 17 (the jar is dated 7 October 2024). It is meant to track a current EA release, so refresh it from a newer EA installation when one is available. It ships with Sparx EA in the "Java API" folder of the installation directory, similar to:
+The **eaapi.jar** in this directory is Sparx EA's Java API. It is dated 7 October 2024 and, as checked on 29 September 2026, is identical to the jar shipped with EA 17.1, the latest release. It is meant to track a current EA release, so refresh it from a newer EA installation when one is available. It ships with Sparx EA in the "Java API" folder of the installation directory, similar to:
 
 > `%WINDOWS_PROGRAM_FILES%\Sparx Systems\EAxx\Java API  (e.g. "C:\Program Files\Sparx Systems\EA17\Java API")`
 
-During the build of **cim-compare-x.x.x.jar** this file is extracted and packaged within it. In our testing this EA 17 jar works with both EA16 (64-bit) and EA15 (32-bit) installations (see `dual-installation-test-results.txt` in the repository root).
+During the build of **cim-compare-x.x.x.jar** this file is extracted and packaged within it. In our testing this jar works with both EA16 (64-bit) and EA15 (32-bit) installations (see `dual-installation-test-results.txt` in the repository root).
 
 Also shipped within the above directory are the **SSJavaCOM.dll** and **SSJavaCOM64.dll** COM Modules. The purpose of each of these files is as follows:
 

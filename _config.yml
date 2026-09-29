@@ -2,3 +2,13 @@
 # Primer is the theme GitHub Pages uses when none is named; it is named here
 # so that assets/css/style.scss can build on it.
 theme: jekyll-theme-primer
+title: cim-compare
+
+# Primer prints the site title above a page whose title differs from it.
+# README.md's first heading is the logo (HTML), which Pages does not read as
+# a title, so give the page its title here.
+defaults:
+  - scope:
+      path: "README.md"
+    values:
+      title: cim-compare

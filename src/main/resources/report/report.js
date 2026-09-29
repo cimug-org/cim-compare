@@ -99,24 +99,53 @@
     hlChk.addEventListener('change', function () { body.classList.toggle('no-hl', !this.checked); });
   }
 
-  /* ---- status filters (class & diagram rows) ---- */
-  var active = {};
+  /* ---- status filters: a summary count shows only the items of its own kind and status (#78) ---- */
+  var active = {};            // "class:added" -> true
+  var savedClosed = null;     // nodes closed before the first filter; restored when the filters are cleared
+  var NOUN = { 'package': ['package', 'packages'], 'class': ['class', 'classes'], 'diagram': ['diagram', 'diagrams'] };
+  function kindOf(n) { return n.classList.contains('cls') ? 'class' : n.classList.contains('dia') ? 'diagram' : 'package'; }
+  function statusOf(n) { var r = $(':scope > .row', n); return r ? r.dataset.status : ''; }
   function applyFilters() {
     var any = Object.keys(active).some(function (k) { return active[k]; });
-    $$('.node.cls, .node.dia').forEach(function (n) {
-      var s = $(':scope > .row', n).dataset.status;
-      n.classList.toggle('filtered-out', any && !active[s]);
+    var nodes = $$('.tree .node');
+    if (any && !savedClosed) savedClosed = nodes.filter(function (n) { return n.classList.contains('closed'); });
+    nodes.forEach(function (n) { n.classList.remove('filtered-out', 'flt-hit'); });
+    $$('.tree .grp, .tree .empty').forEach(function (g) { g.classList.remove('filtered-out'); });
+    if (any) {
+      var keep = [];
+      nodes.forEach(function (n) {
+        if (!active[kindOf(n) + ':' + statusOf(n)]) return;
+        n.classList.add('flt-hit'); keep.push(n);
+        for (var a = n.parentElement.closest('.node'); a; a = a.parentElement.closest('.node')) { keep.push(a); setOpen(a, true); }
+      });
+      // a matching package is shown with everything in it; anything else not on the way to a match is hidden
+      nodes.forEach(function (n) {
+        if (keep.indexOf(n) < 0 && !n.parentElement.closest('.node.pkg.flt-hit')) n.classList.add('filtered-out');
+      });
+      $$('.tree .empty').forEach(function (e) { e.classList.add('filtered-out'); });
+      $$('.tree .grp').forEach(function (g) {
+        if (!$$(':scope > .node', g).some(function (n) { return !n.classList.contains('filtered-out'); })) g.classList.add('filtered-out');
+      });
+    } else if (savedClosed) {
+      nodes.forEach(function (n) { setOpen(n, savedClosed.indexOf(n) < 0); });
+      savedClosed = null;
+    }
+    var parts = [];
+    $$('.summary .cnt').forEach(function (c) {
+      var on = !!active[c.dataset.kind + ':' + c.dataset.status];
+      c.classList.toggle('on', on);
+      if (on) { var n = parseInt(c.textContent, 10); parts.push(n + ' ' + c.dataset.status + ' ' + NOUN[c.dataset.kind][n === 1 ? 0 : 1]); }
     });
-    $$('.grp').forEach(function (g) {
-      var vis = $$('.node', g).some(function (n) { return !n.classList.contains('filtered-out'); });
-      g.classList.toggle('filtered-out', !vis);
-    });
-    $$('.summary .cnt').forEach(function (c) { c.classList.toggle('on', !!active[c.dataset.status]); });
+    var st = $('#flt-status');
+    st.classList.toggle('active', parts.length > 0);
+    st.innerHTML = parts.length ? 'Showing ' + parts.join(', ') + ' · <a href="#" id="flt-clear">clear filters</a>'
+                                : 'Click a count to show only those items';
+    var clr = $('#flt-clear');
+    if (clr) clr.addEventListener('click', function (e) { e.preventDefault(); active = {}; applyFilters(); });
   }
   $$('.summary .cnt').forEach(function (c) {
-    c.addEventListener('click', function () { active[c.dataset.status] = !active[c.dataset.status]; applyFilters(); });
+    c.addEventListener('click', function () { var k = c.dataset.kind + ':' + c.dataset.status; active[k] = !active[k]; applyFilters(); });
   });
-  $('#flt-clear').addEventListener('click', function () { active = {}; applyFilters(); });
 
   /* ---- search ---- */
   var index = $$('[data-name]').map(function (el) {
@@ -155,6 +184,7 @@
   /* ---- deep links and in-page links (#EAID_...) ---- */
   function reveal(id) {
     var el = document.getElementById(id); if (!el) return false;
+    if (el.closest('.tree .node.filtered-out, .tree .grp.filtered-out')) { active = {}; applyFilters(); }   /* a link to a filtered-out item clears the filters (#78) */
     var node = el.classList.contains('node') ? el : el.closest('.node');
     if (node) setOpen(node, true);           /* open the target itself ... */
     expandAncestors(el);                     /* ... and everything above it */

@@ -277,7 +277,7 @@
             <xsl:if test="$diagrams">
               <xsl:call-template name="r:summary-group"><xsl:with-param name="kind" select="'diagram'"/><xsl:with-param name="label" select="'Diagrams'"/></xsl:call-template>
             </xsl:if>
-            <span id="flt-clear" class="clear">clear filters</span>
+            <span id="flt-status" class="clear">Click a count to show only those items</span>
           </div>
           <div class="legend">
             <span><i class="sw s-added"></i><b>Added</b> — only in destination</span>
@@ -315,7 +315,7 @@
           <xsl:variable name="s" select="."/>
           <xsl:variable name="c" select="$cs[@status = $s]"/>
           <xsl:if test="$c and ($s != 'identical' or $full)">
-            <span class="cnt s-{$s}" data-status="{$s}" title="filter: {$s}"><xsl:value-of select="$c/@n"/><xsl:text> </xsl:text><xsl:value-of select="$s"/></span>
+            <span class="cnt s-{$s}" data-kind="{$kind}" data-status="{$s}" title="show only {$s} {if ($kind = 'class') then 'classes' else concat($kind, 's')}"><xsl:value-of select="$c/@n"/><xsl:text> </xsl:text><xsl:value-of select="$s"/></span>
           </xsl:if>
         </xsl:for-each>
       </div>

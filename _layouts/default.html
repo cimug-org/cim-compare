@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="{{ page.lang | default: site.lang | default: "en-US" }}">
+  <head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+{% seo %}
+    <link rel="stylesheet" href="{{ "/assets/css/style.css?v=" | append: site.github.build_revision | relative_url }}">
+    {% include head-custom.html %}
+  </head>
+  <body>
+    <div class="container-lg px-3 my-5 markdown-body">
+      {%- comment -%}
+        Website header (CIM Model Management branding). It lives here rather than in README.md
+        so the GitHub repository page, which also shows README.md, is unchanged.
+        The release number comes from cim_compare_version in _config.yml.
+      {%- endcomment -%}
+      {%- assign v = site.cim_compare_version -%}
+      <div class="cc-hero">
+        <img class="cc-hero-mark" src="{{ "/media/brand/CIMug_mark.svg" | relative_url }}" alt="">
+        <div class="cc-hero-inner">
+          <a class="cc-hero-home" href="{{ "/" | relative_url }}"><img class="cc-hero-logo" src="{{ "/media/logo/cim-compare-logo-dark.svg" | relative_url }}" alt="cim-compare"></a>
+          <span class="cc-hero-rule"></span>
+          <div class="cc-hero-text">
+            <div class="cc-hero-kicker">UCAIug open source tool · latest release {{ v }}</div>
+            <div class="cc-hero-tag">Command line tool for generating CIM model comparison reports</div>
+          </div>
+          <img class="cc-hero-cimmm" src="{{ "/media/brand/CIM_Model_Management_logo_white.svg" | relative_url }}" alt="CIM Model Management">
+        </div>
+        <div class="cc-hero-actions">
+          <a class="cc-btn primary" href="https://github.com/cimug-org/cim-compare/releases/download/{{ v }}/cim-compare-{{ v }}.jar">Download {{ v }} <small>(.jar)</small></a>
+          <a class="cc-btn" href="{{ "/cim-compare-" | append: v | append: "-users-guide.pdf" | relative_url }}">User’s Guide <small>(PDF)</small></a>
+          <a class="cc-btn" href="{{ "/example-comparison-report/comparison-report.html" | relative_url }}">Example report</a>
+          <a class="cc-btn" href="https://github.com/cimug-org/cim-compare">GitHub repo</a>
+        </div>
+      </div>
+
+      {{ content }}
+
+      {% if site.github.private != true and site.github.license %}
+      <div class="footer border-top border-gray-light mt-5 pt-3 text-right text-gray">
+        This site is open source. {% github_edit_link "Improve this page" %}.
+      </div>
+      {% endif %}
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/anchor-js/4.1.0/anchor.min.js" integrity="sha256-lZaRhKri35AyJSypXXs4o6OPFTbTmUoltBbDCbdzegg=" crossorigin="anonymous"></script>
+    <script>anchors.add();</script>
+  </body>
+</html>

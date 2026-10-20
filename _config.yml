@@ -5,9 +5,6 @@ theme: jekyll-theme-primer
 title: cim-compare
 description: Command-line tool for generating CIM model comparison reports.
 url: https://cim-compare.ucaiug.io
-# Primer prints the site title above a page whose title differs from it.
-# README.md's first heading is the logo (HTML), which Pages does not read as
-# a title, so give the page its title here.
 defaults:
   # Link-preview (Open Graph / X card) image for every page, emitted by {% seo %}
   # in the layout. jekyll-seo-tag only reads a page-level image, so it is set
@@ -20,6 +17,9 @@ defaults:
         width: 1280
         height: 640
         alt: "cim-compare: Command-line tool for generating CIM model comparison reports"
+  # Primer prints the site title above a page whose title differs from it.
+  # README.md's first heading is the logo (HTML), which Pages does not read as
+  # a title, so give the page its title here.
   - scope:
       path: "README.md"
     values:

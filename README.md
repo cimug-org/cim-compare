@@ -1,6 +1,6 @@
 <h1 id="cim-compare"><img src="media/logo/cim-compare-logo.svg#gh-light-mode-only" alt="cim-compare" height="64"><img src="media/logo/cim-compare-logo-dark.svg#gh-dark-mode-only" alt="cim-compare" height="64"></h1>
 
-**cim-compare** is an open-source command line tool from the UCA International Users Group (UCAIug) that generates readable comparison reports between two versions of a CIM UML model.
+**cim-compare** is an open-source command-line tool from the UCA International Users Group (UCAIug) that generates readable comparison reports between two versions of a CIM UML model.
 
 - **The need:** Enterprise Architect can compare two models, but only exports the result as XML that is hard to read. As the CIM evolves release by release, model managers, standards editors and implementers need a clear record of what changed.
 - **What it does:** given a "baseline" and a "destination" model (EA `.eap` / `.qea` project files, XMI 1.1 exports, or an EA model comparison log), it writes a single, self-contained HTML report of every added, deleted, moved and changed package, class and diagram. The report has search, filters, word-level redlines and highlighted diagram changes, and needs no server or internet connection.

@@ -3,7 +3,7 @@
 # so that assets/css/style.scss can build on it.
 theme: jekyll-theme-primer
 title: cim-compare
-description: Command line tool for generating CIM model comparison reports.
+description: Command-line tool for generating CIM model comparison reports.
 url: https://cim-compare.ucaiug.io
 # Link-preview (Open Graph / Twitter card) image, emitted by {% seo %} in _layouts/default.html.
 image: /media/logo/cim-compare-social-1280x640.png

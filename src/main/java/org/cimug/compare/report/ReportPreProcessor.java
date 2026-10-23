@@ -46,7 +46,7 @@ import org.w3c.dom.NodeList;
  * </p>
  *
  * <pre>
- * ComparisonReport @baselineVersion @destinationVersion @comparedOn @scope @full @generator
+ * ComparisonReport @baselineVersion @destinationVersion @comparedOn @scope @full @generator @releaseUrl
  *   Summary
  *     Count @kind (package|class|diagram) @status @n
  *   Package @name @guid @id @status @classCount @diagramCount
@@ -79,7 +79,7 @@ import org.w3c.dom.NodeList;
  */
 public class ReportPreProcessor {
 
-	public static final String GENERATOR = "cim-compare 2.0.1";
+	public static final String GENERATOR = "cim-compare " + org.cimug.compare.Version.VERSION;
 
 	private static final Set<String> TEXT_PROPS = new HashSet<String>(
 			Arrays.asList("Notes", "RoleNote", "Alias", "Name"));
@@ -171,6 +171,7 @@ public class ReportPreProcessor {
 		root.setAttribute("scope", scope);
 		root.setAttribute("full", Boolean.toString(full));
 		root.setAttribute("generator", GENERATOR);
+		root.setAttribute("releaseUrl", org.cimug.compare.Version.RELEASE_URL);
 
 		Element summary = out.createElement("Summary");
 		root.appendChild(summary);

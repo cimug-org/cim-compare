@@ -152,17 +152,17 @@
   function normGuid(s) {
     return s.trim().replace(/^["']+|["']+$/g, '').replace(/[{}]/g, '').replace(/^EAID_/i, '').replace(/[-_\s]/g, '').toLowerCase();
   }
-  function fmtGuid(n) { return '{' + n.slice(0, 8) + '-' + n.slice(8, 12) + '-' + n.slice(12, 16) + '-' + n.slice(16, 20) + '-' + n.slice(20) + '}'; }
   var index = $$('[data-name]').map(function (el) {
     var host = el.classList.contains('row') ? el.parentElement : el;   /* .node or <tr> or <li> carries the EAID */
     return { el: el, name: el.dataset.name, lower: el.dataset.name.toLowerCase(), path: el.dataset.path || '', kind: el.dataset.kind || '',
-             guid: /^EAID_/.test(host.id || '') ? normGuid(host.id) : '' };
+             guid: /^EAID_/.test(host.id || '') ? normGuid(host.id) : '',
+             shown: /^EAID_/.test(host.id || '') ? '{' + host.id.slice(5).replace(/_/g, '-') + '}' : '' };   /* as EA writes it */
   });
   /* links have a GUID but no name: searchable by GUID only, once for each class they are listed under */
   var links = $$('[data-link]').map(function (el) {
     var cls = el.closest('.node.cls'), crow = cls ? $(':scope > .row', cls) : null;
     return { el: el, link: el.dataset.link, name: el.dataset.ends, kind: el.dataset.link,
-             path: crow ? 'in ' + crow.dataset.name + ' · ' + crow.dataset.path : '', guid: normGuid(el.dataset.guid || '') };
+             path: crow ? 'in ' + crow.dataset.name + ' · ' + crow.dataset.path : '', guid: normGuid(el.dataset.guid || ''), shown: el.dataset.guid || '' };
   });
   var ICO_ASSOC = '<svg width="16" height="10" viewBox="0 0 16 10" aria-hidden="true"><line x1="1" y1="5" x2="15" y2="5" stroke="currentColor" stroke-width="1.4"/></svg>';
   var ICO_GEN = '<svg width="16" height="10" viewBox="0 0 16 10" aria-hidden="true"><line x1="1" y1="5" x2="9" y2="5" stroke="currentColor" stroke-width="1.4"/><path d="M9 1.5 L15 5 L9 8.5 Z" fill="var(--surface)" stroke="currentColor" stroke-width="1.2"/></svg>';
@@ -177,8 +177,8 @@
     hits.slice(0, 40).forEach(function (h, i) {
       var d = document.createElement('div'); d.className = (gq ? 'ghit' : '') + (i === sel ? ' sel' : '');
       if (gq) {
-        /* the GUID in its usual form, with the typed part in bold */
-        var full = fmtGuid(h.guid), cut = 0, k = 0;
+        /* the GUID as the report shows it (EA's mixed case), with the typed part in bold */
+        var full = h.shown, cut = 0, k = 0;
         for (; cut < full.length && k < gq.length; cut++) if (/[0-9a-f]/i.test(full[cut])) k++;
         d.innerHTML = '<span class="kind">' + kindIcon(h) + '</span><span class="gmain"><span class="gname">'
           + (h.link ? '<span class="lk">' + h.link + '</span> ' : '') + '<code>' + h.name + '</code></span>'
@@ -246,19 +246,22 @@
   function placeRing() {
     var tr = $('tr.target');
     if (!tr || !tr.offsetParent) { if (ring) ring.style.display = 'none'; return; }
-    var table = tr.closest('table'), host = table.parentElement;
+    /* the ring sits outside the table's scroll box (.tw scrolls sideways and would clip it), spans
+       the part of the table in view, and follows a sideways scroll */
+    var table = tr.closest('table'), box = table.parentElement, host = box.parentElement;
     if (getComputedStyle(host).position === 'static') host.style.position = 'relative';
     if (!ring) { ring = document.createElement('span'); ring.className = 'tr-ring'; ring.setAttribute('aria-hidden', 'true'); }
     if (ring.parentElement !== host) host.appendChild(ring);
-    var h = host.getBoundingClientRect(), t = table.getBoundingClientRect(), r = tr.getBoundingClientRect();
+    var h = host.getBoundingClientRect(), b = box.getBoundingClientRect(), r = tr.getBoundingClientRect();
     ring.style.display = 'block';
-    ring.style.left = (t.left - h.left + host.scrollLeft - 3) + 'px'; ring.style.width = (t.width + 2) + 'px';
-    ring.style.top = (r.top - h.top + host.scrollTop - 3) + 'px'; ring.style.height = (r.height + 2) + 'px';
+    ring.style.left = (b.left - h.left - 3) + 'px'; ring.style.width = (Math.min(b.width, table.offsetWidth) + 2) + 'px';
+    ring.style.top = (r.top - h.top - 3) + 'px'; ring.style.height = (r.height + 2) + 'px';
   }
   function queueRing() { if (!ringQueued) { ringQueued = true; requestAnimationFrame(function () { ringQueued = false; placeRing(); }); } }
   if (window.MutationObserver) new MutationObserver(function () { if (ring) queueRing(); })
     .observe(body, { subtree: true, attributes: true, attributeFilter: ['class', 'open'] });
   window.addEventListener('resize', function () { if (ring) queueRing(); });
+  document.addEventListener('scroll', function (e) { if (ring && e.target.classList && e.target.classList.contains('tw')) queueRing(); }, true);
   function openHash() { var id = location.hash.replace(/^#/, ''); if (id) reveal(id); }
   window.addEventListener('hashchange', openHash);
   document.addEventListener('click', function (e) {

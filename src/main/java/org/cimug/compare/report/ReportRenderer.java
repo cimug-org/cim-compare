@@ -80,6 +80,14 @@ public class ReportRenderer {
 
 	private boolean showEmptyValues;
 
+	/** #139 a note on the diagram images shown in the report header (e.g. SVG fell back to JPG). */
+	private String imageNote = "";
+
+	public ReportRenderer imageNote(String note) {
+		this.imageNote = note == null ? "" : note;
+		return this;
+	}
+
 	/** The {@code --show-empty-values} option (#126). */
 	public ReportRenderer showEmptyValues(boolean show) {
 		this.showEmptyValues = show;
@@ -118,6 +126,7 @@ public class ReportRenderer {
 		t.setParameter("logo", readResource(LOGO));
 		t.setParameter("include-diagrams", Boolean.toString(includeDiagrams));
 		t.setParameter("image-type", imageType);
+		t.setParameter("image-note", imageNote);
 
 		Writer w = null;
 		try {

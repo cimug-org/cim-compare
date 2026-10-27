@@ -10,6 +10,6 @@ public class ImageTypeOptionTest {
 	@Test
 	public void invalidImageTypeMessageListsTheValidValues() {
 		// building this list used to run one past the end of the values and crash
-		assertEquals("EMF, BMP, GIF, PNG, JPG", CIMModelComparisonGenerator.validImageTypes());
+		assertEquals("EMF, BMP, GIF, PNG, JPG, SVG", CIMModelComparisonGenerator.validImageTypes());
 	}
 }

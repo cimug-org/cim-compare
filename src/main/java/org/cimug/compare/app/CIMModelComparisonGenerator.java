@@ -17,6 +17,7 @@ import java.util.zip.ZipOutputStream;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
+import org.cimug.compare.PackageNames;
 import org.cimug.compare.report.ReportRenderer;
 import org.sparx.Collection;
 import org.sparx.EnumXMIType;
@@ -29,6 +30,8 @@ import org.xml.sax.InputSource;
 public class CIMModelComparisonGenerator {
 
 	private static final String PARAM_PACKAGE = "package";
+	/** The packages compared when several --package names were exported from EA projects (#94). */
+	private static List<String> selectedPackages = null;
 	private static final String PARAM_MINIMAL = "minimal"; // 1.x option; accepted and ignored (minimal is now the default)
 	private static final String PARAM_FULL = "full";
 	private static final String PARAM_INCLUDE_DIAGRAMS = "include-diagrams";
@@ -116,6 +119,7 @@ public class CIMModelComparisonGenerator {
 	}
 
 	public static void main(String[] args) {
+		selectedPackages = null;
 
 		removeXmlProcessingLimits();
 
@@ -155,8 +159,11 @@ public class CIMModelComparisonGenerator {
 			 * Stage 3: comparison XML -> enriched XML (written beside the report for
 			 * debugging and for other tooling) -> HTML. See ReportRenderer.
 			 */
-			ReportRenderer renderer = new ReportRenderer(options.containsKey(PARAM_FULL), options.get(PARAM_PACKAGE),
-					options.containsKey(PARAM_INCLUDE_DIAGRAMS), options.get(PARAM_IMAGE_TYPE));
+			ReportRenderer renderer = selectedPackages != null
+					? ReportRenderer.forPackages(options.containsKey(PARAM_FULL), selectedPackages,
+							options.containsKey(PARAM_INCLUDE_DIAGRAMS), options.get(PARAM_IMAGE_TYPE))
+					: new ReportRenderer(options.containsKey(PARAM_FULL), options.get(PARAM_PACKAGE),
+							options.containsKey(PARAM_INCLUDE_DIAGRAMS), options.get(PARAM_IMAGE_TYPE));
 			File enrichedXMLFile = renderer.render(document, compareLogXMLFile, comparisonHTMLFile);
 			document = null;
 
@@ -255,7 +262,7 @@ public class CIMModelComparisonGenerator {
 						}
 						break;
 					case PARAM_PACKAGE:
-						if ((value == null) || ("".equals(value))) {
+						if ((value == null) || PackageNames.parse(value).isEmpty()) {
 							exitOnInvalidParameter(arg);
 						}
 						break;
@@ -473,12 +480,30 @@ public class CIMModelComparisonGenerator {
 				File baselineXmi = new File(outputDir, baseName(arguments[0]) + XMI);
 				File destinationXmi = new File(outputDir, baseName(arguments[1]) + XMI);
 
-				String baselineGuid = exportProject(arguments[0], true, outputDir, baselineXmi, thePackageName, null,
-						diagramXML, diagramImage);
-				String destinationGuid = exportProject(arguments[1], false, outputDir, destinationXmi, thePackageName,
-						baselineGuid, diagramXML, diagramImage);
+				// Several --package names (#94); a single name keeps the path below.
+				List<String> packageList = thePackageName == null ? null : PackageNames.parse(thePackageName);
+				boolean listExported = false;
+				if (packageList != null && packageList.size() > 1) {
+					List<String> compared = exportPackageList(arguments, outputDir, baselineXmi, destinationXmi,
+							thePackageName.trim(), packageList, diagramXML, diagramImage);
+					if (compared != null) {
+						selectedPackages = compared;
+						listExported = true;
+					} else {
+						thePackageName = thePackageName.trim(); // the name of one package, containing a comma
+					}
+				} else if (packageList != null) {
+					thePackageName = packageList.get(0);
+				}
 
-				if (thePackageName != null) {
+				String baselineGuid = listExported ? null
+						: exportProject(arguments[0], true, outputDir, baselineXmi, thePackageName, null, diagramXML,
+								diagramImage);
+				String destinationGuid = listExported ? null
+						: exportProject(arguments[1], false, outputDir, destinationXmi, thePackageName, baselineGuid,
+								diagramXML, diagramImage);
+
+				if (thePackageName != null && !listExported) {
 					if (baselineGuid == null && destinationGuid == null) {
 						System.err.println("ERROR:  Package '" + thePackageName
 								+ "' was not found in either the baseline or the destination model.");
@@ -704,6 +729,214 @@ public class CIMModelComparisonGenerator {
 		}
 	}
 
+	/** The packages of one project that several --package names resolve to (#94). */
+	private static final class Selection {
+		/** The whole --package value is the name of one package: use the single-name path. */
+		boolean wholeName;
+		/** All names were found and the packages were exported. */
+		boolean exported;
+		/** Names kept after dropping packages nested in another listed package. */
+		List<String> names = new LinkedList<String>();
+		/** GUID of each name's package in this project, or null when not found. */
+		Map<String, String> guids = new java.util.LinkedHashMap<String, String>();
+	}
+
+	/**
+	 * Exports the packages named by several --package names from both projects
+	 * (issue #94). Each name is resolved as a single --package is: by name in each
+	 * project, and by GUID in the other project when the package was renamed
+	 * (#49). A name not found in both projects stops the run. A package inside
+	 * another listed package is dropped with a warning.
+	 *
+	 * @return the names compared, in the order given, or null when the whole value
+	 *         is the name of a single package (a name containing a comma)
+	 */
+	private static List<String> exportPackageList(File[] arguments, File outputDir, File baselineXmi,
+			File destinationXmi, String whole, List<String> names, DiagramXML diagramXML, DiagramImage diagramImage) {
+		Selection b = selectPackages(arguments[0], true, outputDir, baselineXmi, whole, names, null, diagramXML,
+				diagramImage);
+		if (b.wholeName)
+			return null;
+		Selection d = selectPackages(arguments[1], false, outputDir, destinationXmi, b.exported ? null : whole,
+				b.exported ? b.names : names, b.guids, diagramXML, diagramImage);
+		if (d.wholeName)
+			return null;
+		if (!d.exported) {
+			for (Map.Entry<String, String> e : d.guids.entrySet()) {
+				if (e.getValue() != null)
+					continue;
+				String bg = b.guids.get(e.getKey());
+				if (bg == null)
+					System.err.println("ERROR:  Package '" + e.getKey()
+							+ "' was not found in either the baseline or the destination model.");
+				else
+					System.err.println("ERROR:  Package '" + e.getKey() + "' was found in the baseline model (GUID " + bg
+							+ ") but the destination model has no package with that name or GUID.");
+			}
+			System.exit(1);
+		}
+		if (!b.exported) {
+			// Some names were found in the destination only: export the baseline's
+			// packages, using the destination's GUIDs for those.
+			Selection b2 = selectPackages(arguments[0], true, outputDir, baselineXmi, null, d.names, d.guids,
+					diagramXML, diagramImage);
+			if (!b2.exported) {
+				for (Map.Entry<String, String> e : b2.guids.entrySet())
+					if (e.getValue() == null)
+						System.err.println("ERROR:  Package '" + e.getKey() + "' was found in the destination model (GUID "
+								+ d.guids.get(e.getKey())
+								+ ") but the baseline model has no package with that name or GUID.");
+				System.exit(1);
+			}
+			b = b2;
+		}
+		for (String name : d.names) {
+			String bg = b.guids.get(name), dg = d.guids.get(name);
+			if (bg != null && dg != null && !bg.equals(dg))
+				System.out.println("\nWARNING:  The packages named '" + name
+						+ "' in the baseline and destination models have different GUIDs (" + bg + ", " + dg
+						+ "). They are compared as different packages.");
+		}
+		return d.names;
+	}
+
+	/**
+	 * Opens an EA project and finds the package for each name: by name (root nodes
+	 * included), else by the GUID {@code hints} gives for that name. When every
+	 * name is found, packages inside another listed package are dropped and the
+	 * rest are exported to {@code xmiExportFile} (merged when there are several).
+	 */
+	private static Selection selectPackages(File eaProject, boolean baseline, File outputDir, File xmiExportFile,
+			String whole, List<String> names, Map<String, String> hints, DiagramXML diagramXML,
+			DiagramImage diagramImage) {
+		String side = baseline ? "Baseline" : "Destination";
+		Selection sel = new Selection();
+		Repository repository = null;
+		boolean failed = false;
+		try {
+			repository = new Repository();
+			repository.OpenFile(eaProject.getAbsolutePath());
+			Collection<Package> models = repository.GetModels();
+
+			if (whole != null && findByName(models, whole) != null) {
+				sel.wholeName = true;
+				return sel;
+			}
+
+			Map<String, Package> found = new java.util.LinkedHashMap<String, Package>();
+			for (String name : names) {
+				Package p = findByName(models, name);
+				String hint = hints == null ? null : hints.get(name);
+				if (p == null && hint != null) {
+					try {
+						p = repository.GetPackageByGuid(hint);
+					} catch (Exception notFound) {
+						p = null;
+					}
+					if (p != null)
+						System.out.println("\n" + side + " model: package '" + name + "' not found by name; matched by GUID "
+								+ hint + " as '" + p.GetName() + "'.");
+				}
+				if (p == null && hints == null && baseline)
+					System.out.println("\n" + side + " model: package '" + name
+							+ "' not found by name; will look it up by GUID after the destination model is read.");
+				sel.guids.put(name, p == null ? null : p.GetPackageGUID());
+				if (p != null)
+					found.put(name, p);
+			}
+			if (found.size() < names.size())
+				return sel;
+
+			// A package inside another listed package is reported as part of it.
+			Set<String> listed = new HashSet<String>(sel.guids.values());
+			List<Package> packages = new LinkedList<Package>();
+			for (String name : names) {
+				Package p = found.get(name);
+				Package outer = listedAncestor(repository, p, listed);
+				if (outer != null) {
+					System.out.println("\nWARNING:  Package '" + name + "' is inside '" + outer.GetName()
+							+ "', which is also given with --package; it is reported as part of '" + outer.GetName()
+							+ "'.");
+					continue;
+				}
+				sel.names.add(name);
+				packages.add(p);
+			}
+
+			if (packages.size() == 1) {
+				repository.GetProjectInterface().ExportPackageXMI(packages.get(0).GetPackageGUID(),
+						EnumXMIType.xmiEA11, diagramXML.code(), diagramImage.code(), 1, 0,
+						xmiExportFile.getAbsolutePath());
+				File imagesDirectory = new File(outputDir, "Images");
+				File sideImages = new File(outputDir, "Images" + (baseline ? "-baseline" : "-destination"));
+				if (diagramXML != DiagramXML.NO_EXPORT) {
+					if (!imagesDirectory.exists()) {
+						System.err.println("ERROR:  Unable to export diagram images. Terminating EA .eap XMI export processing.");
+						System.exit(1);
+					}
+					moveImages(imagesDirectory, sideImages);
+					System.out.println("\n" + side + " model diagrams successfully exported as " + diagramImage.name()
+							+ " images to:  \n" + sideImages.getAbsolutePath());
+				}
+				System.out.println("\n" + side + " model XMI export completed successfully (package '"
+						+ packages.get(0).GetName() + "'):  \n" + xmiExportFile.getAbsolutePath());
+			} else {
+				exportMerged(repository, packages, "package", eaProject, side, baseline, outputDir, xmiExportFile,
+						diagramXML, diagramImage);
+				System.out.println("\n" + side + " model XMI export completed successfully (packages "
+						+ PackageNames.join(sel.names) + ", merged):  \n" + xmiExportFile.getAbsolutePath());
+			}
+			sel.exported = true;
+			return sel;
+		} catch (Exception e) {
+			failed = true;
+			e.printStackTrace();
+			return sel;
+		} finally {
+			System.gc();
+			if (repository != null) {
+				repository.CloseFile();
+				repository.Exit();
+				repository = null;
+			}
+			if (failed) {
+				System.err.println("ERROR:  Terminating XMI export processing for EA project file [" + eaProject.getName()
+						+ "] due to an unexpected exception.");
+				System.err.println();
+				System.exit(1);
+			}
+		}
+	}
+
+	/** The package's nearest ancestor whose GUID is in {@code listed}, or null. */
+	private static Package listedAncestor(Repository repository, Package p, Set<String> listed) {
+		int parent = p.GetParentID();
+		while (parent != 0) {
+			Package a;
+			try {
+				a = repository.GetPackageByID(parent);
+			} catch (Exception notFound) {
+				return null;
+			}
+			if (a == null)
+				return null;
+			if (listed.contains(a.GetPackageGUID()))
+				return a;
+			parent = a.GetParentID();
+		}
+		return null;
+	}
+
+	/** The package of that name among the root nodes or anywhere below them, or null. */
+	private static Package findByName(Collection<Package> models, String name) {
+		for (Package m : models) {
+			Package p = m.GetName().equals(name) ? m : findPackage(name, m.GetPackages());
+			if (p != null)
+				return p;
+		}
+		return null;
+	}
+
 	/**
 	 * Exports every root node of an open EA project and merges the exports into
 	 * {@code xmiExportFile} (issue #88). EA exports one package per XMI file, so
@@ -726,30 +959,49 @@ public class CIMModelComparisonGenerator {
 		System.out.println("\n" + side + " project " + eaProject.getName() + " has " + roots.size()
 				+ " root nodes (" + names + "). All are compared.");
 
+		exportMerged(repository, roots, "root node", eaProject, side, baseline, outputDir, xmiExportFile,
+				diagramXML, diagramImage);
+		System.out.println("\n" + side + " model XMI export completed successfully (root nodes " + names
+				+ ", merged):  \n" + xmiExportFile.getAbsolutePath());
+		return roots.get(0).GetPackageGUID();
+	}
+
+	/**
+	 * Exports each of {@code packages} of an open EA project to its own XMI file
+	 * and merges them into {@code xmiExportFile} with {@link XmiMerger} (issues #88,
+	 * #94). The per-package files are deleted after the merge; diagram images from
+	 * every export go to the side's images folder.
+	 *
+	 * @param kind
+	 *            what the packages are, for messages ("root node" or "package")
+	 */
+	private static void exportMerged(Repository repository, List<Package> packages, String kind, File eaProject,
+			String side, boolean baseline, File outputDir, File xmiExportFile, DiagramXML diagramXML,
+			DiagramImage diagramImage) throws Exception {
 		File imagesDirectory = new File(outputDir, "Images");
 		File sideImagesDirectory = new File(outputDir, "Images" + (baseline ? "-baseline" : "-destination"));
 		List<File> parts = new LinkedList<File>();
 		try {
 			int n = 0;
-			for (Package root : roots) {
-				File part = new File(outputDir, baseName(xmiExportFile) + "-root" + (++n) + XMI);
+			for (Package p : packages) {
+				File part = new File(outputDir, baseName(xmiExportFile) + "-part" + (++n) + XMI);
 				parts.add(part);
-				repository.GetProjectInterface().ExportPackageXMI(root.GetPackageGUID(), EnumXMIType.xmiEA11,
+				repository.GetProjectInterface().ExportPackageXMI(p.GetPackageGUID(), EnumXMIType.xmiEA11,
 						diagramXML.code(), diagramImage.code(), 1, 0, part.getAbsolutePath());
 				if (diagramXML != DiagramXML.NO_EXPORT && imagesDirectory.exists())
 					moveImages(imagesDirectory, sideImagesDirectory);
-				System.out.println(side + " model root node '" + root.GetName() + "' exported.");
+				System.out.println(side + " model " + kind + " '" + p.GetName() + "' exported.");
 			}
 
 			XmiMerger.Result merged = XmiMerger.merge(parts, xmiExportFile);
 			if (merged.identicalCopiesDropped > 0) {
-				System.out.println("\n" + merged.identicalCopiesDropped
-						+ " connector(s) between root nodes were exported with both roots they connect; each is kept once.");
+				System.out.println("\n" + merged.identicalCopiesDropped + " connector(s) between " + kind
+						+ "s were exported with both " + kind + "s they connect; each is kept once.");
 			}
 			if (merged.duplicateCount > 0) {
-				System.out.println("\nWARNING:  " + merged.duplicateCount
-						+ " element(s) are defined in more than one root node of " + eaProject.getName()
-						+ "; they may be reported twice. First few: " + merged.duplicateIds);
+				System.out.println("\nWARNING:  " + merged.duplicateCount + " element(s) are defined in more than one "
+						+ kind + " of " + eaProject.getName() + "; they may be reported twice. First few: "
+						+ merged.duplicateIds);
 			}
 		} finally {
 			for (File part : parts)
@@ -765,10 +1017,6 @@ public class CIMModelComparisonGenerator {
 				System.exit(1);
 			}
 		}
-
-		System.out.println("\n" + side + " model XMI export completed successfully (root nodes " + names
-				+ ", merged):  \n" + xmiExportFile.getAbsolutePath());
-		return roots.get(0).GetPackageGUID();
 	}
 
 	/**
@@ -907,7 +1155,7 @@ public class CIMModelComparisonGenerator {
 				"   Every root node of each project is compared unless --package is given.",
 				"",
 				"   Usage: java [<jvm-parameters>] -jar " + jar + " <baseline-model-file> <destination-model-file>",
-				"               [<output-directory-or-html-file>] [--package=<package-name>] [--full]",
+				"               [<output-directory-or-html-file>] [--package=<package-names>] [--full]",
 				"               [--include-diagrams] [--image-type=<image-file-extension>] [--zip] [--cleanup]",
 				"",
 				"   Examples:",
@@ -920,18 +1168,19 @@ public class CIMModelComparisonGenerator {
 				"   Images-baseline and Images-destination folders of the output directory.",
 				"",
 				"   Usage: java [<jvm-parameters>] -jar " + jar + " <baseline-model-xmi-file> <destination-model-xmi-file>",
-				"               [<output-directory-or-html-file>] [--package=<package-name>] [--full]",
+				"               [<output-directory-or-html-file>] [--package=<package-names>] [--full]",
 				"               [--include-diagrams] [--image-type=<image-file-extension>] [--zip] [--cleanup]",
 				"",
 				"   Examples:",
 				"      java -Xmx2G -jar " + jar + " \"C:\\XMI exports\\CIM15v33.xmi\" \"C:\\XMI exports\\CIM16v26a.xmi\" \"C:\\Comparison Reports\"",
 				"      java -Xmx2G -jar " + jar + " CIM15v33.xmi CIM16v26a.xmi CIM15v33_CIM16v26a.html --package=IEC62325",
+				"      java -Xmx2G -jar " + jar + " CIM16_Reference.xmi CIM16_Extended.xmi --package=\"Grid,European Standards\"",
 				"      java -Xmx2G -jar " + jar + " CIM15v33.xmi CIM16v26a.xmi --include-diagrams --image-type=GIF --zip --cleanup",
 				"",
 				"3. From a compare log (.xml) exported from an Enterprise Architect model comparison. Diagrams are not supported.",
 				"",
 				"   Usage: java [<jvm-parameters>] -jar " + jar + " <comparison-results-xml-file>",
-				"               [<output-directory-or-html-file>] [--package=<package-name>] [--full] [--zip] [--cleanup]",
+				"               [<output-directory-or-html-file>] [--package=<package-names>] [--full] [--zip] [--cleanup]",
 				"",
 				"   Examples:",
 				"      java -Xmx2G -jar " + jar + " CIM15v33_CIM16v26a_EA_Comparison_Report.xml \"C:\\Comparison Reports\"",
@@ -939,9 +1188,11 @@ public class CIMModelComparisonGenerator {
 				"      java -Xmx2G -jar " + jar + " CIM15v33_CIM16v26a_EA_Comparison_Report.xml --package=IEC61970 --zip --cleanup",
 				"",
 				"Options:",
-				"   --package=<name>     Compare (or report) only this package and everything below it. Either model's name",
-				"                        for a renamed package can be used (e.g. IEC61970 or Grid). Without it, every root",
-				"                        node of an EA project is compared (option 1).",
+				"   --package=<names>    Compare (or report) only these packages and everything below them: one name, or",
+				"                        several separated by commas, shown in that order. Quote the value when a name",
+				"                        contains a space (--package=\"Grid,European Standards\"). Either model's name can be",
+				"                        used for a renamed package (e.g. IEC61970 or Grid). Without it, every root node of",
+				"                        an EA project is compared (option 1).",
 				"   --full               Include identical items in the report as well as the changes.",
 				"   --minimal            Accepted for 1.x command lines; no effect (only changes are reported by default).",
 				"   --include-diagrams   Include changed diagrams (options 1 and 2).",

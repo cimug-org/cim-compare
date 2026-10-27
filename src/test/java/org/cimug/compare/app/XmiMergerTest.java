@@ -234,6 +234,25 @@ public class XmiMergerTest {
 		assertTrue(r.duplicateIds.containsKey("EAID_E0C07000_0000_0000_0000_000000000004"));
 	}
 
+	/**
+	 * Several --package names on XMI input (#94): the report shows the packages in
+	 * the order given, and the scope line lists them.
+	 */
+	@Test
+	public void packageListOnXmiInput() throws Exception {
+		File baseline = fixture("rootA-Model.xmi");
+		File destination = merged();
+		File html = new File(tmp.getRoot(), "list-report.html");
+		CIMModelComparisonGenerator.main(new String[] { baseline.getAbsolutePath(), destination.getAbsolutePath(),
+				html.getAbsolutePath(), "--package=ERCOT, Model" });
+		Element report = parse(new File(tmp.getRoot(), "list-report-enriched.xml")).getDocumentElement();
+		assertEquals("ERCOT, Model", report.getAttribute("scope"));
+		List<String> top = new ArrayList<String>();
+		for (Element p : children(report, null, "Package"))
+			top.add(p.getAttribute("name"));
+		assertEquals(Arrays.asList("ERCOT", "Model"), top);
+	}
+
 	/** Each root's export writes an Images folder; all end up in the side's folder. */
 	@Test
 	public void imagesFromEveryRootEndUpInOneFolder() throws Exception {

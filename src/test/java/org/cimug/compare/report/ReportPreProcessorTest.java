@@ -402,6 +402,66 @@ public class ReportPreProcessorTest {
 		assertEquals("", str(d, "/ComparisonReport/Summary/Count[@kind='class'][@status='deleted']/@n"));
 	}
 
+	// ------------------------------------------------------------ --package list (#94)
+
+	@Test
+	public void packageListInTheOrderGiven() throws Exception {
+		Document d = enrich(true, "Wires, Core");
+		assertEquals("Wires, Core", d.getDocumentElement().getAttribute("scope"));
+		assertEquals(2, count(d, "/ComparisonReport/Package"));
+		assertEquals("Wires", str(d, "/ComparisonReport/Package[1]/@name"));
+		assertEquals("Core", str(d, "/ComparisonReport/Package[2]/@name"));
+		assertNull(pkg(d, "DER"));
+	}
+
+	@Test
+	public void packageListWithARenamedPackage() throws Exception {
+		Document d = enrich(true, "IEC61970,IEC61968");
+		assertEquals("IEC61970 → Grid, IEC61968", d.getDocumentElement().getAttribute("scope"));
+		assertEquals("Grid", str(d, "/ComparisonReport/Package[1]/@name"));
+		assertEquals("IEC61968", str(d, "/ComparisonReport/Package[2]/@name"));
+	}
+
+	@Test
+	public void packageInsideAnotherListedPackageIsDropped() throws Exception {
+		Document d = enrich(true, "Wires,Grid");
+		assertEquals("IEC61970 → Grid", d.getDocumentElement().getAttribute("scope"));
+		assertEquals(1, count(d, "/ComparisonReport/Package"));
+		assertEquals("Grid", str(d, "/ComparisonReport/Package/@name"));
+		assertNotNull("Wires still reported, inside Grid", pkg(d, "Wires"));
+	}
+
+	@Test
+	public void packageListNamesTheMissingPackage() throws Exception {
+		try {
+			enrich(false, "Grid, Wirez");
+			fail("expected an error for the missing package");
+		} catch (IllegalArgumentException e) {
+			assertTrue(e.getMessage(), e.getMessage().contains("'Wirez'"));
+		}
+	}
+
+	@Test
+	public void wholeValueNamingOnePackageWinsOverTheList() throws Exception {
+		Document in = fixture();
+		NodeList items = in.getElementsByTagName("CompareItem");
+		for (int i = 0; i < items.getLength(); i++) {
+			Element e = (Element) items.item(i);
+			if ("Core".equals(e.getAttribute("name")))
+				e.setAttribute("name", "Core, Extended");
+		}
+		// Only the name attribute is changed here, so the package also reads as renamed from Core.
+		Document d = new ReportPreProcessor(true, "Core, Extended").process(in);
+		assertEquals(1, count(d, "/ComparisonReport/Package"));
+		assertEquals("Core, Extended", str(d, "/ComparisonReport/Package/@name"));
+	}
+
+	@Test
+	public void resolvedPackageNames() throws Exception {
+		Document d = ReportPreProcessor.forPackages(true, java.util.Arrays.asList("IEC61968", "Core")).process(fixture());
+		assertEquals("IEC61968, Core", d.getDocumentElement().getAttribute("scope"));
+	}
+
 	@Test
 	public void blankPackageFilterMeansTheWholeModel() throws Exception {
 		assertEquals("TC57CIM (full model)", enrich(false, "  ").getDocumentElement().getAttribute("scope"));

@@ -172,25 +172,11 @@ public class AttributeProperties {
 											: null)) //
 			));
 			properties.getProperty().add(new Property("Const", //
-					(baselineAttribute.getAttributeInitialValue() != null
-							&& baselineAttribute.getAttributeInitialValue().getExpression() != null
-							&& baselineAttribute.getAttributeInitialValue().getExpression().getBody() != null ? "true"
-									: "false"), //
-					(targetAttribute.getAttributeInitialValue() != null
-							&& targetAttribute.getAttributeInitialValue().getExpression() != null
-							&& targetAttribute.getAttributeInitialValue().getExpression().getBody() != null ? "true"
-									: "false"), //
+					isConst(baselineAttribute), //
+					isConst(targetAttribute), //
 					getStatus(
-							(baselineAttribute.getAttributeInitialValue() != null
-									&& baselineAttribute.getAttributeInitialValue().getExpression() != null
-									&& baselineAttribute.getAttributeInitialValue().getExpression().getBody() != null
-											? "true"
-											: "false"),
-							(targetAttribute.getAttributeInitialValue() != null
-									&& targetAttribute.getAttributeInitialValue().getExpression() != null
-									&& targetAttribute.getAttributeInitialValue().getExpression().getBody() != null
-											? "true"
-											: "false")) //
+							isConst(baselineAttribute),
+							isConst(targetAttribute)) //
 			));
 			properties.getProperty().add(new Property("Stereotype", //
 					stereotypes(baselineAttribute, baselineTaggedValues), //
@@ -245,15 +231,9 @@ public class AttributeProperties {
 							null) //
 			));
 			properties.getProperty().add(new Property("Const", //
-					(baselineAttribute.getAttributeInitialValue() != null
-							&& baselineAttribute.getAttributeInitialValue().getExpression() != null
-							&& baselineAttribute.getAttributeInitialValue().getExpression().getBody() != null ? "true"
-									: "false"), //
+					isConst(baselineAttribute), //
 					null, // null model
-					getStatus((baselineAttribute.getAttributeInitialValue() != null
-							&& baselineAttribute.getAttributeInitialValue().getExpression() != null
-							&& baselineAttribute.getAttributeInitialValue().getExpression().getBody() != null ? "true"
-									: "false"),
+					getStatus(isConst(baselineAttribute),
 							null) //
 			));
 			properties.getProperty().add(new Property("Stereotype", //
@@ -309,16 +289,9 @@ public class AttributeProperties {
 			));
 			properties.getProperty().add(new Property("Const", //
 					null, // null baseline
-					(targetAttribute.getAttributeInitialValue() != null
-							&& targetAttribute.getAttributeInitialValue().getExpression() != null
-							&& targetAttribute.getAttributeInitialValue().getExpression().getBody() != null ? "true"
-									: "false"), //
+					isConst(targetAttribute), //
 					getStatus(null,
-							(targetAttribute.getAttributeInitialValue() != null
-									&& targetAttribute.getAttributeInitialValue().getExpression() != null
-									&& targetAttribute.getAttributeInitialValue().getExpression().getBody() != null
-											? "true"
-											: "false")) //
+							isConst(targetAttribute)) //
 			));
 			properties.getProperty().add(new Property("Stereotype", //
 					null, // null baseline
@@ -443,6 +416,11 @@ public class AttributeProperties {
 		return status.toString();
 	}
 
+
+	/** EA's Const is the attribute's changeable="frozen" (#122), not whether it has an initial value. */
+	static String isConst(AttributeType attribute) {
+		return "frozen".equals(attribute.getChangeable()) ? "true" : "false";
+	}
 
 	/** The attribute's full stereotype list, or its UML:Stereotype (#118). */
 	private static String stereotypes(AttributeType attribute, List<TaggedValueType> taggedValues) {

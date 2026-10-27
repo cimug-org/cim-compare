@@ -246,19 +246,22 @@
   function placeRing() {
     var tr = $('tr.target');
     if (!tr || !tr.offsetParent) { if (ring) ring.style.display = 'none'; return; }
-    var table = tr.closest('table'), host = table.parentElement;
+    /* the ring sits outside the table's scroll box (.tw scrolls sideways and would clip it), spans
+       the part of the table in view, and follows a sideways scroll */
+    var table = tr.closest('table'), box = table.parentElement, host = box.parentElement;
     if (getComputedStyle(host).position === 'static') host.style.position = 'relative';
     if (!ring) { ring = document.createElement('span'); ring.className = 'tr-ring'; ring.setAttribute('aria-hidden', 'true'); }
     if (ring.parentElement !== host) host.appendChild(ring);
-    var h = host.getBoundingClientRect(), t = table.getBoundingClientRect(), r = tr.getBoundingClientRect();
+    var h = host.getBoundingClientRect(), b = box.getBoundingClientRect(), r = tr.getBoundingClientRect();
     ring.style.display = 'block';
-    ring.style.left = (t.left - h.left + host.scrollLeft - 3) + 'px'; ring.style.width = (t.width + 2) + 'px';
-    ring.style.top = (r.top - h.top + host.scrollTop - 3) + 'px'; ring.style.height = (r.height + 2) + 'px';
+    ring.style.left = (b.left - h.left - 3) + 'px'; ring.style.width = (Math.min(b.width, table.offsetWidth) + 2) + 'px';
+    ring.style.top = (r.top - h.top - 3) + 'px'; ring.style.height = (r.height + 2) + 'px';
   }
   function queueRing() { if (!ringQueued) { ringQueued = true; requestAnimationFrame(function () { ringQueued = false; placeRing(); }); } }
   if (window.MutationObserver) new MutationObserver(function () { if (ring) queueRing(); })
     .observe(body, { subtree: true, attributes: true, attributeFilter: ['class', 'open'] });
   window.addEventListener('resize', function () { if (ring) queueRing(); });
+  document.addEventListener('scroll', function (e) { if (ring && e.target.classList && e.target.classList.contains('tw')) queueRing(); }, true);
   function openHash() { var id = location.hash.replace(/^#/, ''); if (id) reveal(id); }
   window.addEventListener('hashchange', openHash);
   document.addEventListener('click', function (e) {

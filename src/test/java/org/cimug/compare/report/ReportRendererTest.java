@@ -404,6 +404,8 @@ public class ReportRendererTest {
 		// a hit shows the GUID as written in the report (EA's mixed case), not lower-cased
 		assertTrue(page.contains("shown: /^EAID_/.test(host.id || '') ? '{' + host.id.slice(5).replace(/_/g, '-') + '}' : ''"));
 		assertTrue(page.contains("var full = h.shown,"));
+		// the attribute-row ring is placed outside the table's sideways-scrolling box, which would clip its left edge
+		assertTrue(page.contains("var table = tr.closest('table'), box = table.parentElement, host = box.parentElement;"));
 		// one rounded ring for every target; attribute rows get the laid-over ring, not a box-shadow on each cell
 		assertTrue(page.contains("ul.plain li.target, ul.plain li:target, .linkB.target { outline: 2px solid var(--focus);"));
 		assertTrue(page.contains(".tr-ring { position: absolute;"));

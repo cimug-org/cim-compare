@@ -84,6 +84,16 @@ button { font: inherit; }
 .hdr .results div:hover, .hdr .results div.sel { background: var(--changed); }
 .hdr .results .path { color: var(--muted); font-size: var(--fs-s); margin-left: auto; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 55%; }
 .hdr .results .kind { color: var(--faint); font-size: var(--fs-s); width: 16px; }
+/* #133 a GUID hit: the GUID under the name, the typed part in bold; links get a line icon */
+.hdr .results { min-width: min(560px, 90vw); }
+.hdr .results div.ghit { align-items: center; }
+.hdr .results .kind svg { color: var(--muted); vertical-align: middle; }
+.hdr .results .gmain { display: flex; flex-direction: column; min-width: 0; }
+.hdr .results .gname .lk { color: var(--muted); font-size: var(--fs-s); }
+.hdr .results .gid { font: 11px/1.4 var(--mono); color: var(--faint); white-space: nowrap; }
+.hdr .results .gid b { color: var(--muted); font-weight: 600; }
+.hdr .results div.gnone { color: var(--muted); font-style: italic; cursor: default; }
+.hdr .results div.gnone:hover { background: none; }
 /* #131 packages: a drawn folder (SVG), the same on every system and in print; sized in em so it
    scales with the text at any zoom. (The 📁 emoji looked different everywhere, and Edge and Chrome
    put it into a PDF as a Type 3 font that Acrobat warns about.) */
@@ -176,8 +186,12 @@ body.hide-guids .guid { display: none; }
 .grp-h { font-weight: 700; font-size: 12px; color: var(--ink-2); padding: 8px 8px 2px; }
 .grp-h .n { color: var(--muted); font-weight: 400; }
 .empty { color: var(--muted); font-size: var(--fs-s); padding: 4px 10px; font-style: italic; }
-.row.target, tr.target > td, ul.plain li.target { box-shadow: 0 0 0 3px var(--hilite); }
-.row, ul.plain li, table.attrs tr { scroll-margin-top: calc(var(--hdr-h, 96px) + 12px); }  /* clear the sticky header when scrolled to */
+.row.target { box-shadow: 0 0 0 3px var(--hilite); }
+/* #133 a link or list entry jumped to gets the same rounded blue ring as a row; a table row cannot
+   have rounded corners, so report.js lays a ring (.tr-ring) over an attribute row instead */
+ul.plain li.target, ul.plain li:target, .linkB.target { outline: 2px solid var(--focus); outline-offset: 1px; border-radius: var(--r); }
+.tr-ring { position: absolute; pointer-events: none; z-index: 2; border: 2px solid var(--focus); border-radius: var(--r); }
+.row, ul.plain li, table.attrs tr, .linkB { scroll-margin-top: calc(var(--hdr-h, 96px) + 12px); }  /* clear the sticky header when scrolled to */
 .filtered-out { display: none !important; }
 
 /* ---------- detail ---------- */
@@ -373,7 +387,6 @@ ul.plain .card { color: var(--ink-2); font-family: var(--mono); }
 ul.plain .kind { font-size: var(--fs-s); color: var(--muted); min-width: 96px; }
 ul.plain .nt { color: var(--ink-2); flex: 1 1 100%; padding-left: 12px; font-size: var(--fs-s); }
 ul.plain .guid { margin-left: auto; font-family: var(--mono); font-size: 10px; color: var(--faint); user-select: all; }
-ul.plain li:target { box-shadow: 0 0 0 3px var(--hilite); }
 details.more { margin-top: 8px; }
 details.more > summary { cursor: pointer; color: var(--link); font-size: var(--fs-s); }
 details.more > summary:hover { text-decoration: underline; }
@@ -427,4 +440,5 @@ body.no-rail .rail { display: none; }
   /* keep a diagram's baseline and destination panels on one page with their images */
   .diag { break-inside: avoid; }
   .sec-h { break-after: avoid; }
+  .tr-ring { display: none; }
 }

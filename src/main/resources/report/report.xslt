@@ -304,7 +304,7 @@
           </div>
           <!-- #126: what was left out, as the last line under the legend -->
           <xsl:if test="@emptyValuesNotShown">
-            <div class="empty-note">ⓘ <xsl:value-of select="@emptyValuesNotShown"/><xsl:value-of select="if (@emptyValuesNotShown = '1') then ' difference is' else ' differences are'"/> not shown where one side is empty in a field EA fills in automatically (Complexity, Phase, Version, GenType, Containment, IsLiteral, Derived, Const, Static); they do not change the model’s definitions. Run with <code>--show-empty-values</code> to include them.</div>
+            <div class="empty-note">ⓘ <xsl:value-of select="@emptyValuesNotShown"/><xsl:value-of select="if (@emptyValuesNotShown = '1') then ' difference is' else ' differences are'"/> not shown where one side is empty in <span class="tipwrap" tabindex="0">a metadata field EA fills in automatically<span class="tip"><b>Metadata fields affected</b><span class="tl">Complexity, Phase, Version, GenType: any value</span><span class="tl">Containment: “Not Specified” / “Unspecified”</span><span class="tl">IsLiteral, Derived, Const, Static: false</span><span class="tip-n">Any other difference is always shown.</span></span></span>; they do not change the model’s definitions. Run with <code>--show-empty-values</code> to include them.</div>
           </xsl:if>
           <div class="layout">
             <nav id="rail" class="rail" aria-label="Package outline">

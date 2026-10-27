@@ -195,6 +195,18 @@ public class CIMModelComparisonGenerator {
 	 * @param option
 	 *            The command line option that was invalid.
 	 */
+	/**
+	 * The --image-type values, e.g. "EMF, BMP, GIF, PNG, JPG" (#139: the loop that built this list
+	 * used to run one past the end and crash on an invalid value instead of printing it).
+	 */
+	static String validImageTypes() {
+		String valid = "";
+		for (DiagramImage type : DiagramImage.values())
+			if (type != DiagramImage.NONE)
+				valid += (valid.isEmpty() ? "" : ", ") + type.name();
+		return valid;
+	}
+
 	private static void exitOnInvalidParameter(String option) {
 		System.err.print("Invalid or missing command line option: " + (option.startsWith("-") ? "" : "--") + option);
 		System.err.println();
@@ -245,18 +257,7 @@ public class CIMModelComparisonGenerator {
 								// extensions on images must be lower case...
 								value = value.toLowerCase(); 
 							} catch (Exception e) {
-								String validValues = "";
-
-								DiagramImage[] diagramImageTypes = DiagramImage.values();
-
-								for (int index = 0; index <= diagramImageTypes.length; index++) {
-									validValues += (diagramImageTypes[index] != DiagramImage.NONE
-											? diagramImageTypes[index].name()
-													+ (index <= diagramImageTypes.length - 2 ? ", " : "")
-											: "");
-								}
-
-								System.err.print(PARAM_IMAGE_TYPE + " must be one of: " + validValues);
+								System.err.println(PARAM_IMAGE_TYPE + " must be one of: " + validImageTypes());
 
 								exitOnInvalidParameter(arg);
 							}

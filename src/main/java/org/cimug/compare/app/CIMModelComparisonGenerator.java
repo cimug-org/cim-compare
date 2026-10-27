@@ -33,8 +33,8 @@ public class CIMModelComparisonGenerator {
 	private static final String PARAM_FULL = "full";
 	private static final String PARAM_INCLUDE_DIAGRAMS = "include-diagrams";
 	private static final String PARAM_ZIP = "zip";
-	/** The release, as in the jar name cim-compare-<VERSION>.jar. */
-	private static final String VERSION = "2.0.1";
+	/** The release, as in the jar name cim-compare-<VERSION>.jar (from the pom, #87). */
+	private static final String VERSION = org.cimug.compare.Version.VERSION;
 
 	private static final String PARAM_CLEANUP = "cleanup";
 

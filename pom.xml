@@ -77,6 +77,14 @@
                 </includes>
                 <filtering>false</filtering>
             </resource>
+            <resource>
+                <!-- #87: the release version for the report header and usage text -->
+                <directory>src/main/resources</directory>
+                <includes>
+                    <include>cim-compare-version.properties</include>
+                </includes>
+                <filtering>true</filtering>
+            </resource>
         </resources>
         <pluginManagement>
             <plugins>

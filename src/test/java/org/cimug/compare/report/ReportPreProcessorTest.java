@@ -79,6 +79,8 @@ public class ReportPreProcessorTest {
 		assertEquals("TC57CIM (full model)", r.getAttribute("scope"));
 		assertEquals("false", r.getAttribute("full"));
 		assertEquals(ReportPreProcessor.GENERATOR, r.getAttribute("generator"));
+		assertEquals("https://github.com/cimug-org/cim-compare/releases/tag/" + org.cimug.compare.Version.VERSION,
+				r.getAttribute("releaseUrl"));
 	}
 
 	@Test

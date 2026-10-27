@@ -133,11 +133,20 @@
                       <xsl:when test="@status = 'deleted'"><td><xsl:value-of select="@baseline"/></td><td class="void">—</td></xsl:when>
                       <xsl:when test="@status = 'added'"><td class="void">—</td><td><xsl:value-of select="@model"/></td></xsl:when>
                       <xsl:otherwise>
-                        <td><xsl:value-of select="@baseline"/></td>
-                        <td><xsl:choose>
-                          <xsl:when test="@status = 'changed' and Redline and not(@name = $plain)"><xsl:copy-of select="Redline/node()"/></xsl:when>
-                          <xsl:otherwise><xsl:value-of select="@model"/></xsl:otherwise>
-                        </xsl:choose></td>
+                        <!-- a value cleared or filled in is a change; the empty side says so (#107) -->
+                        <xsl:variable name="empty" select="@status = 'changed' and (string(@baseline) = '' or string(@model) = '')"/>
+                        <xsl:choose>
+                          <xsl:when test="$empty and string(@baseline) = ''"><td class="nil">(empty)</td></xsl:when>
+                          <xsl:otherwise><td><xsl:value-of select="@baseline"/></td></xsl:otherwise>
+                        </xsl:choose>
+                        <xsl:choose>
+                          <xsl:when test="$empty and string(@model) = ''"><td class="nil">(empty)</td></xsl:when>
+                          <xsl:when test="$empty"><td><xsl:value-of select="@model"/></td></xsl:when>
+                          <xsl:otherwise><td><xsl:choose>
+                            <xsl:when test="@status = 'changed' and Redline and not(@name = $plain)"><xsl:copy-of select="Redline/node()"/></xsl:when>
+                            <xsl:otherwise><xsl:value-of select="@model"/></xsl:otherwise>
+                          </xsl:choose></td></xsl:otherwise>
+                        </xsl:choose>
                       </xsl:otherwise>
                     </xsl:choose>
                   </tr>

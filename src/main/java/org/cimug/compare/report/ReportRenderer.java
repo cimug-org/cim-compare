@@ -48,15 +48,35 @@ public class ReportRenderer {
 
 	private final boolean full;
 	private final String packageFilter;
+	private final java.util.List<String> packageNames;
 	private final boolean includeDiagrams;
 	private final String imageType;
 
 	public ReportRenderer(boolean full, String packageFilter, boolean includeDiagrams, String imageType) {
 		this.full = full;
 		this.packageFilter = packageFilter;
+		this.packageNames = null;
 		this.includeDiagrams = includeDiagrams;
 		this.imageType = imageType == null ? "jpg" : imageType;
 	}
+	/**
+	 * Variant taking the package names already resolved (several --package names,
+	 * #94); null or empty for the whole model.
+	 */
+	public static ReportRenderer forPackages(boolean full, java.util.List<String> packageNames,
+			boolean includeDiagrams, String imageType) {
+		return new ReportRenderer(full, packageNames, includeDiagrams, imageType, true);
+	}
+
+	private ReportRenderer(boolean full, java.util.List<String> packageNames, boolean includeDiagrams,
+			String imageType, boolean resolved) {
+		this.full = full;
+		this.packageFilter = null;
+		this.packageNames = packageNames;
+		this.includeDiagrams = includeDiagrams;
+		this.imageType = imageType == null ? "jpg" : imageType;
+	}
+
 
 	/**
 	 * @param comparisonXml
@@ -77,7 +97,8 @@ public class ReportRenderer {
 	 */
 	public File render(Document in, File comparisonXml, File html) throws Exception {
 		Set<String> diagrams = includeDiagrams ? diagramIds(in) : null;
-		Document enriched = new ReportPreProcessor(full, packageFilter).process(in);
+		Document enriched = (packageNames != null ? ReportPreProcessor.forPackages(full, packageNames)
+				: new ReportPreProcessor(full, packageFilter)).process(in);
 		in = null; // let the (large) input go
 
 		File enrichedFile = enrichedFileFor(comparisonXml, html);

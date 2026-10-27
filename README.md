@@ -51,6 +51,7 @@ See an [example report](https://cim-compare.ucaiug.io/example-comparison-report/
 ### What's New in 2.1.0
 
 - **Every root node of an EA project is compared** ([#88](https://github.com/cimug-org/cim-compare/issues/88)). Without `--package`, earlier releases compared only a project's first root node and left the others out of the report. Now each root node is exported and compared, so a project that keeps extension packages in root nodes of their own beside the CIM (for example `Model`, `UtilityExtensions` and `VendorExtensions`) is reported in full. Each root node appears as a top-level package in the report and the package outline, and a reference from one root node to another, such as an extension class that specializes a CIM class, is reported like any other. `--package=Model` compares a single root node as before. See [Option #1](#option-1-enterprise-architect-eap-or-qea-project-files-as-input).
+- **`--package` takes several packages** ([#94](https://github.com/cimug-org/cim-compare/issues/94)), separated by commas, for example `--package=Grid,UtilityExtensions` or, when a name contains a space, `--package="Grid,European Standards"`. The report shows them in the order given, and references between them are reported like any others. A package found in only one of the two models, such as a new extension root, is now reported as added or deleted, also for a single `--package`; before, **cim-compare** stopped with an error. A name found in neither model still stops it. See [Option #1](#option-1-enterprise-architect-eap-or-qea-project-files-as-input).
 - **The report header links to the website and the release** ([#87](https://github.com/cimug-org/cim-compare/issues/87)): the logo links to [cim-compare.ucaiug.io](https://cim-compare.ucaiug.io), and the "cim-compare 2.1.0" line to the GitHub release that produced the report.
 - **Fix:** with `--include-diagrams`, the baseline's diagram images could end up in `Images-destination`, and the report then showed the destination image on both sides of a changed diagram ([#91](https://github.com/cimug-org/cim-compare/issues/91)). This happened when Windows could not rename the folder EA exported the images to while EA still had the project open. The images are now moved file by file when the folder cannot be renamed, and **cim-compare** stops with an error if they cannot be moved.
 
@@ -401,7 +402,7 @@ The command-line usage for this option takes the following form:
 ```
 java [<jvm-parameter-1>]...[<jvm-parameter-n>] -jar cim-compare-2.1.0.jar
      <baseline-model-file> <destination-model-file> [<output-directory-or-html-file>]
-     [--package=<package-name>] [--full] [--include-diagrams] [--image-type=<image-file-extension>]
+     [--package=<package-name>,...] [--full] [--include-diagrams] [--image-type=<image-file-extension>]
      [--zip] [--cleanup]
 ```
 
@@ -415,7 +416,7 @@ java [<jvm-parameter-1>]...[<jvm-parameter-n>] -jar cim-compare-2.1.0.jar
 
 `[<output-directory-or-html-file>]` **(Optional)**: An output directory or an output HTML file. In the case where a directory is specified but does not exist it will be created. The same is true for the parent directory of a specified HTML file if it does not exist. When an HTML file is provided it may be specified as an absolute file path or as the simple name of an HTML file to be generated. If this command line option is not specified then **cim-compare** will generate an HTML file whose name is derived from the two input files.
 
-`[--package=<package-name>]` **(Optional)**: The package to compare, together with everything below it (e.g. `--package=Grid`, `--package=IEC61970`, `--package=IEC61968`, `--package=IEC62325`). The package is looked up by name in both models, root nodes included. If it was renamed between the two versions, either name can be given: for example, comparing CIM17 (where the package is `IEC61970`) with CIM18 (where it is `Grid`), **cim-compare** finds the package by name in one model and by its GUID in the other. If the package can't be found in both models, **cim-compare** stops with an error. When `--package` is not given, the whole model is compared: every root node of each EA project. A project with several root nodes, such as a CIM model alongside extension packages, is compared in full, and each root node appears as a top-level package in the report; references from one root node to another (e.g. an extension class that specializes a CIM class) are reported like any others. To compare a single root node, give its name, e.g. `--package=Model`.
+`[--package=<package-name>,...]` **(Optional)**: The package to compare, together with everything below it (e.g. `--package=Grid`, `--package=IEC61970`, `--package=IEC61968`, `--package=IEC62325`). Several packages can be given, separated by commas (e.g. `--package=Grid,UtilityExtensions`): the report shows them in that order, and references between them, such as an extension class that specializes a CIM class, are reported like any others. Put the value in quotes when a package name contains a space (e.g. `--package="Grid,European Standards"`). Each package is looked up by name in both models, root nodes included. If it was renamed between the two versions, either name can be given: for example, comparing CIM17 (where the package is `IEC61970`) with CIM18 (where it is `Grid`), **cim-compare** finds the package by name in one model and by its GUID in the other. A package found in only one of the models (for example a new extension root) is reported as added or deleted. If a name is found in neither model, **cim-compare** stops with an error naming it. If one listed package is inside another (e.g. `--package=TC57CIM,IEC61970`), it is reported as part of the outer package and a warning says so. When `--package` is not given, the whole model is compared: every root node of each EA project. A project with several root nodes, such as a CIM model alongside extension packages, is compared in full, and each root node appears as a top-level package in the report; references from one root node to another (e.g. an extension class that specializes a CIM class) are reported like any others. To compare a single root node, give its name, e.g. `--package=Model`.
 
 `[--full]` **(Optional)**: Include identical packages, classes, attributes, links and diagrams in the report as well as the changes. They are shown collapsed and in grey. Without `--full` the report contains only what changed.
 
@@ -440,6 +441,9 @@ java -Xmx4G -Djava.library.path="C:\cim-compare\ea16" -jar cim-compare-2.1.0.jar
 
 java -Xmx1G -Djava.library.path="C:\cim-compare\ea15" -jar cim-compare-2.1.0.jar ^
   "C:\exports\15v33.eap" "C:\exports\CIM16v26a.eap" --package=IEC61970
+
+java -Xmx4G -Djava.library.path="C:\cim-compare\ea16" -jar cim-compare-2.1.0.jar ^
+  CIM16_Reference.qea CIM16_Extended.qeax --package="Grid,European Standards,UtilityExtensions"
 
 java -Xmx1G -Djava.library.path="C:\cim-compare\ea15" -jar cim-compare-2.1.0.jar ^
   CIM15v33.eap CIM16v26a.eap C:\reports --include-diagrams --zip
@@ -466,7 +470,7 @@ The second usage is to directly specify two XMI 1.1 compliant files representing
 ```
 java [<jvm-parameter-1>]...[<jvm-parameter-n>] -jar cim-compare-2.1.0.jar
      <baseline-model-xmi-file> <destination-model-xmi-file> [<output-directory-or-html-file>]
-     [--package=<package-name>] [--full] [--include-diagrams] [--image-type=<image-file-extension>]
+     [--package=<package-name>,...] [--full] [--include-diagrams] [--image-type=<image-file-extension>]
      [--zip] [--cleanup]
 ```
 
@@ -480,7 +484,7 @@ java [<jvm-parameter-1>]...[<jvm-parameter-n>] -jar cim-compare-2.1.0.jar
 
 `[<output-directory-or-html-file>]` **(Optional)**: An output directory or an output HTML file. In the case where a directory is specified but does not exist it will be created. The same is true for the parent directory of a specified HTML file if it does not exist. When an HTML file is provided it may be specified as an absolute file path or as the simple name of an HTML file to be generated. If this command line option is not specified then **cim-compare** will generate an HTML file whose name is derived from the two input files.
 
-`[--package=<package-name>]` **(Optional)**: The package the report starts from, together with everything below it (e.g. `--package=Grid`, `--package=IEC61970`, `--package=IEC61968`, `--package=IEC62325`). The name can be the package's name in either model, so a package renamed between the two versions (e.g. `IEC61970` → `Grid`) can be given by either name. If no package of that name is in the comparison, **cim-compare** stops with an error. When `--package` is not given, the report covers the whole model.
+`[--package=<package-name>,...]` **(Optional)**: The package the report starts from, together with everything below it (e.g. `--package=Grid`, `--package=IEC61970`, `--package=IEC61968`, `--package=IEC62325`). Several packages can be given, separated by commas (e.g. `--package=Grid,UtilityExtensions`), and the report shows them in that order; put the value in quotes when a package name contains a space (e.g. `--package="Grid,European Standards"`). A name can be the package's name in either model, so a package renamed between the two versions (e.g. `IEC61970` → `Grid`) can be given by either name. If no package of a given name is in the comparison, **cim-compare** stops with an error naming it. If one listed package is inside another, it is reported as part of the outer package and a warning says so. When `--package` is not given, the report covers the whole model.
 
 `[--full]` **(Optional)**: Include identical packages, classes, attributes, links and diagrams in the report as well as the changes. They are shown collapsed and in grey. Without `--full` the report contains only what changed.
 
@@ -503,6 +507,8 @@ java -Xmx2G -jar cim-compare-2.1.0.jar "C:\XMI exports\15v33.xmi" "C:\XMI export
 
 java -Xmx2G -jar cim-compare-2.1.0.jar "C:\XMI exports\15v33.xmi" "C:\XMI exports\CIM16v26a.xmi" --package=IEC61970
 
+java -Xmx2G -jar cim-compare-2.1.0.jar CIM16_Reference.xmi CIM16_Extended.xmi --package=Grid,UtilityExtensions
+
 java -Xmx2G -jar cim-compare-2.1.0.jar CIM15v33.xmi CIM16v26a.xmi C:\reports --full
 
 java -Xmx2G -jar cim-compare-2.1.0.jar CIM15v33.xmi CIM16v26a.xmi C:\reports ^
@@ -523,7 +529,7 @@ This particular usage takes the following form:
 ```
 java [<jvm-parameter-1>]...[<jvm-parameter-n>] -jar cim-compare-2.1.0.jar
      <comparison-results-xml-file> [<output-directory-or-html-file>]
-     [--package=<package-name>] [--full] [--zip] [--cleanup]
+     [--package=<package-name>,...] [--full] [--zip] [--cleanup]
 ```
 
 *Parameter Details*:
@@ -534,7 +540,7 @@ java [<jvm-parameter-1>]...[<jvm-parameter-n>] -jar cim-compare-2.1.0.jar
 
 `[<output-directory-or-html-file>]` **(Optional)**: An output directory or an output HTML file. In the case where a directory is specified but does not exist it will be created. The same is true for the parent directory of a specified HTML file if it does not exist. When an HTML file is provided it may be specified as an absolute file path or as the simple name of an HTML file to be generated. If this command line option is not specified then **cim-compare** will generate an HTML file whose name is derived from the comparison file's name.
 
-`[--package=<package-name>]` **(Optional)**: The package the report starts from, together with everything below it (e.g. `--package=Grid`, `--package=IEC61970`, `--package=IEC61968`, `--package=IEC62325`). The name can be the package's name in either model, so a package renamed between the two versions (e.g. `IEC61970` → `Grid`) can be given by either name. If no package of that name is in the comparison, **cim-compare** stops with an error. When `--package` is not given, the report covers the whole model.
+`[--package=<package-name>,...]` **(Optional)**: The package the report starts from, together with everything below it (e.g. `--package=Grid`, `--package=IEC61970`, `--package=IEC61968`, `--package=IEC62325`). Several packages can be given, separated by commas (e.g. `--package=Grid,UtilityExtensions`), and the report shows them in that order; put the value in quotes when a package name contains a space (e.g. `--package="Grid,European Standards"`). A name can be the package's name in either model, so a package renamed between the two versions (e.g. `IEC61970` → `Grid`) can be given by either name. If no package of a given name is in the comparison, **cim-compare** stops with an error naming it. If one listed package is inside another, it is reported as part of the outer package and a warning says so. When `--package` is not given, the report covers the whole model.
 
 `[--full]` **(Optional)**: Include identical packages, classes, attributes, links and diagrams in the report as well as the changes. They are shown collapsed and in grey. Without `--full` the report contains only what changed.
 

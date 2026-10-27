@@ -190,6 +190,25 @@ public final class XmiMerger {
 	}
 
 	/**
+	 * Writes an XMI 1.1 file holding an empty model, in the shape EA exports: the
+	 * side of a comparison where none of the --package packages exists (#94), so
+	 * they are reported as added or deleted.
+	 */
+	public static void writeEmpty(File output) throws IOException {
+		String xml = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
+				+ "<XMI xmi.version=\"1.1\" xmlns:UML=\"" + UML_NS + "\">\n"
+				+ "\t<XMI.header>\n\t\t<XMI.documentation>\n\t\t\t<XMI.exporter>Enterprise Architect</XMI.exporter>\n"
+				+ "\t\t\t<XMI.exporterVersion>2.5</XMI.exporterVersion>\n\t\t</XMI.documentation>\n\t</XMI.header>\n"
+				+ "\t<XMI.content>\n\t\t<UML:Model name=\"EA Model\" xmi.id=\"MX_EAID_00000000_0000_0000_0000_000000000000\">\n"
+				+ "\t\t\t<UML:Namespace.ownedElement>\n"
+				+ "\t\t\t\t<UML:Class name=\"" + EA_ROOT_CLASS
+				+ "\" xmi.id=\"EAID_11111111_5487_4080_A7F4_41526CB0AA00\" isRoot=\"true\" isLeaf=\"false\" isAbstract=\"false\"/>\n"
+				+ "\t\t\t</UML:Namespace.ownedElement>\n\t\t</UML:Model>\n\t</XMI.content>\n"
+				+ "\t<XMI.difference/>\n\t<XMI.extensions xmi.extender=\"Enterprise Architect 2.5\"/>\n</XMI>\n";
+		Files.write(output.toPath(), xml.getBytes(StandardCharsets.UTF_8));
+	}
+
+	/**
 	 * Writes the stubs of one section (content or extensions) once each, leaving
 	 * out those for elements an input defines.
 	 *

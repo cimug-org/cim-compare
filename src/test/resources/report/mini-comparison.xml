@@ -20,7 +20,8 @@
       │  │  │   └ Links: Generalization        baseline only (type="") → deleted link
       │  │  ├ Equipment                       renamed class (was ConductingEquipmentBase)
       │  │  │   └ Links: Association          role and multiplicity changed; the target role is unspecified;
-      │  │  │                                 source multiplicity 0..* → * is notation only (#109)
+      │  │  │                                 source multiplicity 0..* → * is notation only (#109);
+      │  │  │                                 stereotype util removed (#118)
       │  │  ├ Location                        only an attribute description changed (curly quotes) →
       │  │  │                                 changed class, but not highlighted on a diagram
       │  │  ├ CoreOverview (diagram)          changed properties → shown; #37 DiagramObjects (one
@@ -32,7 +33,8 @@
       │  ├ Wires
       │  │  ├ ACLineSegment                   model only → added
       │  │  ├ Switch                          moved here from Core; Phase cleared and Complexity
-      │  │  │                                 filled in (value on one side only) → changed (#107)
+      │  │  │                                 filled in (value on one side only) → changed (#107);
+      │  │  │                                 stereotypes reordered → order only (#118)
       │  │  ├ DocWires (diagram)              renamed, nothing on it changed → metadata only, no images
       │  │  └ WiresConnectors (diagram)       only a rerouted connector → shown
       │  ├ DER                                only a diagram with nothing to highlight → package hidden
@@ -150,6 +152,7 @@
               <CompareItem name="Equipment" type="Class" guid="{00000000-0000-0000-0000-000000000117}" status="Changed">
                 <Properties>
                   <Property name="Name" model="Equipment" baseline="ConductingEquipmentBase" status="Changed"/>
+                  <Property name="Stereotype" model="ShadowExtension" baseline="ShadowExtension, util" status="Changed"/>
                   <Property name="Type" model="Class" baseline="Class" status="Identical"/>
                 </Properties>
                 <CompareItem name="Links" type="Links" guid="{00000000-0000-0000-0000-000000000117}Links" status="Changed">
@@ -264,6 +267,7 @@
                 <Properties>
                   <Property name="Name" model="Switch" baseline="Switch" status="Identical"/>
                   <Property name="Complexity" model="2" status="Model only"/>
+                  <Property name="Stereotype" model="util, ShadowExtension" baseline="ShadowExtension, util" status="Changed"/>
                   <Property name="ParentPackage" model="Wires" baseline="Core" status="Changed"/>
                   <Property name="Phase" baseline="1.0" status="Baseline only"/>
                   <Property name="Type" model="Class" baseline="Class" status="Identical"/>

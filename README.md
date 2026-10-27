@@ -292,7 +292,7 @@ If you are comparing `.qea` files with a 64-bit EA (EA 16 or later) then you'll 
 >
 > The purpose of each is:
 > 
-> - `SSJavaCOM.dll` - the 32-bit COM Module DLL (Dynamic Linked Library) that **cim-compare** will link to when a 32-bit Java JVM/JRE is used to run `cim-compare-2.1.0.jar` from the command line (`.eap` project files need this path: they use Microsoft's Jet database engine, which is 32-bit only, so only 32-bit EA can open them).
+> - `SSJavaCOM.dll` - the 32-bit COM Module DLL (Dynamic Linked Library) that **cim-compare** will link to when a 32-bit Java JVM/JRE is used to run `cim-compare-2.1.0.jar` from the command line (the usual path for `.eap` project files with a 32-bit EA; `.eap` files use Microsoft's Jet database engine, which is 32-bit only, so only a 32-bit EA can open them, though 64-bit Java with `SSJavaCOM64.dll` can also drive a 32-bit EA, as in the tested mixed comparison under [Warning: Potential Configuration Pitfalls](#warning-potential-configuration-pitfalls)).
 >
 > - `SSJavaCOM64.dll` - the 64-bit COM Module DLL that **cim-compare** will link to when a 64-bit Java JVM/JRE is used to run `cim-compare-2.1.0.jar` from the command line (the usual path for `.qea` project files with a 64-bit EA, EA 16 or later; `.qea` itself is not 64-bit-only, as Sparx states `.qea` files work in both 32-bit and 64-bit EA).
 >   	
@@ -367,7 +367,15 @@ The above 64-bit command line example uses:
  
 ### Warning: Potential Configuration Pitfalls
 
-> A common "gotcha" that users run into is that when using `.eap` project files as input into **cim-compare**, they unknowingly use 64-bit Java instead of 32-bit Java (and vice versa). When comparing two `.eap` files, 32-bit Java (and a 32-bit EA) **must** be used, because only 32-bit EA can open `.eap` files. `.qea` files can be opened by 32-bit and 64-bit EA alike, so for them use Java of the same bit-width as the EA installation that will open them: 64-bit Java with a 64-bit EA (EA 16 or later), which is the tested combination. 
+> A common "gotcha" is a mismatch between the project files, the EA installation and Java. The EA installation decides which files can be opened: `.eap` and `.eapx` files only by a 32-bit EA, because they use Microsoft's Jet database engine, which is 32-bit only; `.qea` and `.qeax` files by 32-bit and 64-bit EA alike. Java's bit-width decides which of EA's COM DLLs is loaded, `SSJavaCOM.dll` for 32-bit Java or `SSJavaCOM64.dll` for 64-bit Java, and that DLL must be in the folder given with `-Djava.library.path`. These combinations have been tested:
+>
+> | Input | EA | Java |
+> |---|---|---|
+> | two `.eap` files | 32-bit | 32-bit (`SSJavaCOM.dll`) |
+> | two `.qea` files | 64-bit (EA 16 or later) | 64-bit (`SSJavaCOM64.dll`) |
+> | one `.eap` and one `.qea` / `.qeax` (2.1.0 and later) | 32-bit (EA 17.2) | 64-bit Java 25 (`SSJavaCOM64.dll`) |
+>
+> A mixed pair needs an EA that opens both files, which means a 32-bit EA. 
 >
 > Noteworthy in the previous command line examples is that `java` has been expressly qualified as either `"C:\Program Files (x86)\Zulu\zulu-17\bin\java.exe"` or `"C:\Program Files\Zulu\zulu-17\bin\java.exe"` to ensure that the correct version of Java is used. This is not a requirement but rather one method to eliminate this as a pitfall.
 >
@@ -404,7 +412,7 @@ The **cim-compare** utility has three possible command-line options to produce c
 
 ### Option \#1: Enterprise Architect .EAP or .QEA Project Files as Input
 
-The preferred usage is to provide two Enterprise Architect `*.eap` or `*.qea` files for the "baseline" and "destination" input files.  Using these file types eliminates the need to manually export XMI and diagrams from EA as described later in the [Enterprise Architect XMI Export Procedures](#enterprise-architect-xmi-export-procedures) section. The baseline and destination can be of different types, one `.eap` and one `.qea`, when the EA installation in use opens both (a 32-bit EA does); since 2.1.0 such a comparison reports the same changes as one between two files of the same type ([#86](https://github.com/cimug-org/cim-compare/issues/86)). Note that the processing of 64-bit `*.qea` files is more performant.
+The preferred usage is to provide two Enterprise Architect `*.eap` or `*.qea` files for the "baseline" and "destination" input files.  Using these file types eliminates the need to manually export XMI and diagrams from EA as described later in the [Enterprise Architect XMI Export Procedures](#enterprise-architect-xmi-export-procedures) section. `.eapx` and `.qeax` files are accepted like `.eap` and `.qea` files. The baseline and destination can be of different types, for example one `.eap` and one `.qeax`, when the EA installation in use opens both (a 32-bit EA does); since 2.1.0 such a comparison reports the same changes as one between two files of the same type ([#86](https://github.com/cimug-org/cim-compare/issues/86)). Which EA and Java to use for each kind of file is described under [Warning: Potential Configuration Pitfalls](#warning-potential-configuration-pitfalls). Note that the processing of 64-bit `*.qea` files is more performant.
 
 The command-line usage for this option takes the following form:
 
@@ -468,9 +476,12 @@ java -Xmx4G -Djava.library.path="C:\cim-compare\ea16" -jar cim-compare-2.1.0.jar
 
 java -Xmx4G -Djava.library.path="C:\cim-compare\ea16" -jar cim-compare-2.1.0.jar ^
   CIM16_Reference.qea CIM16_Extended.qeax --package=Model
+
+java -Xmx4G -Djava.library.path="C:\cim-compare\ea16" -jar cim-compare-2.1.0.jar ^
+  CIM_Grid18v13.eap CIM_Grid18v14.qeax --package=Grid --include-diagrams
 ```
 
-NOTE:  The above command line examples illustrate the use of both `.eap` and `.qea` EA files as input. Where `.eap` files appear as input on the command line it is assumed that 32-bit Java is being used to execute the `.jar` file. Likewise, for `.qea` files it is assumed that 64-bit Java and a 64-bit EA are used.
+NOTE:  The above command line examples use both `.eap` and `.qea` EA files as input. An example with two `.eap` files assumes 32-bit Java and a 32-bit EA, and one with two `.qea` files 64-bit Java and a 64-bit EA. The last example compares an `.eap` with a `.qeax` file: it needs a 32-bit EA, which opens both, and was tested with 64-bit Java (see [Warning: Potential Configuration Pitfalls](#warning-potential-configuration-pitfalls)).
 
 ### Option \#2: XMI Baseline and Destination Models as Input
 

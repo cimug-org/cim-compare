@@ -286,7 +286,19 @@ public class ReportRendererTest {
 		// #109: still a change, tagged in the end table and the signature line
 		assertTrue(page.contains("<tr data-status=\"changed\"><th class=\"k\">Cardinality</th><td>0..*</td><td>*<span class=\"notation\">notation only</span></td></tr>"));
 		assertTrue(page.contains("<span class=\"card\">[<del>0..*</del><ins>*</ins>]</span><span class=\"notation\">notation only</span>"));
-		assertEquals(2, page.split("class=\"notation\"").length - 1);
+		assertEquals(3, page.split("class=\"notation\"").length - 1); // two for the multiplicity, one for #118
+	}
+
+	@Test
+	public void allStereotypesAreShownAndOrderChangesTagged() throws Exception {
+		File xml = copyFixture();
+		File html = new File(tmp.getRoot(), "stereo.html");
+		new ReportRenderer(false, null, false, "jpg").render(xml, html);
+		String page = read(html);
+		// #118: one pair of guillemets around the whole list (UML 2.5.1)
+		assertTrue(page.contains("<span class=\"stereo\">«util, ShadowExtension»</span>"));
+		assertTrue(page.contains("<tr data-status=\"changed\"><th class=\"k\">Stereotype</th><td>ShadowExtension, util</td><td>util, ShadowExtension<span class=\"notation\">order only</span></td></tr>"));
+		assertTrue(page.contains("<tr data-status=\"changed\"><th class=\"k\">Stereotype</th><td>ShadowExtension, util</td><td>ShadowExtension</td></tr>"));
 	}
 
 	@Test

@@ -145,7 +145,7 @@
                           <xsl:otherwise><td><xsl:choose>
                             <xsl:when test="@status = 'changed' and Redline and not(@name = $plain)"><xsl:copy-of select="Redline/node()"/></xsl:when>
                             <xsl:otherwise><xsl:value-of select="@model"/></xsl:otherwise>
-                          </xsl:choose><xsl:if test="@notation = 'true'"><span class="notation">notation only</span></xsl:if></td></xsl:otherwise>
+                          </xsl:choose><xsl:if test="@tag"><span class="notation"><xsl:value-of select="@tag"/></span></xsl:if></td></xsl:otherwise>
                         </xsl:choose>
                       </xsl:otherwise>
                     </xsl:choose>
@@ -235,7 +235,9 @@
       <span class="chev"><xsl:value-of select="if ($leaf) then '' else '▶'"/></span>
       <span class="ico"><xsl:value-of select="$ico"/></span>
       <span class="name"><xsl:call-template name="r:display-name"><xsl:with-param name="e" select="$e"/></xsl:call-template></span>
-      <xsl:if test="$e/@stereotype and $e/@stereotype != 'deprecated'"><span class="stereo">«<xsl:value-of select="$e/@stereotype"/>»</span></xsl:if>
+      <!-- all stereotypes in one pair of guillemets, as UML 2.5.1 shows them (#118); «deprecated» is shown with the name -->
+      <xsl:variable name="stereos" select="tokenize(string($e/@stereotype), ',\s*')[normalize-space() != '' and . != 'deprecated']"/>
+      <xsl:if test="exists($stereos)"><span class="stereo">«<xsl:value-of select="$stereos" separator=", "/>»</span></xsl:if>
       <xsl:if test="$e/Properties/Property[@name = 'Notes']">
         <!-- #123: the description behind this ⓘ changed -->
         <xsl:variable name="chg" select="($st = 'changed' or $st = 'moved') and r:pstatus($e, 'Notes') = 'changed'"/>
@@ -647,7 +649,7 @@
       <xsl:text>&#160;</xsl:text><span class="cardw"><span class="card">[<xsl:choose>
         <xsl:when test="$rl"><xsl:call-template name="r:token"><xsl:with-param name="e" select="$end"/><xsl:with-param name="name" select="'Cardinality'"/><xsl:with-param name="side" select="'model'"/></xsl:call-template></xsl:when>
         <xsl:otherwise><xsl:value-of select="r:prop($end, 'Cardinality', $side)"/></xsl:otherwise>
-      </xsl:choose>]</span><xsl:if test="$rl and $end/Properties/Property[@name = 'Cardinality']/@notation = 'true'"><span class="notation">notation only</span></xsl:if></span><xsl:if test="position() = 1"><xsl:text>&#160;→</xsl:text></xsl:if></span></span>
+      </xsl:choose>]</span><xsl:if test="$rl and $end/Properties/Property[@name = 'Cardinality']/@tag"><span class="notation"><xsl:value-of select="$end/Properties/Property[@name = 'Cardinality']/@tag"/></span></xsl:if></span><xsl:if test="position() = 1"><xsl:text>&#160;→</xsl:text></xsl:if></span></span>
       <xsl:if test="position() = 1"><xsl:text> </xsl:text></xsl:if>
     </xsl:for-each>
     </xsl:otherwise>

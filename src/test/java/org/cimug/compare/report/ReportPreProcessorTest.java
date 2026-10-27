@@ -504,8 +504,26 @@ public class ReportPreProcessorTest {
 		Document d = enrich(false, null);
 		String src = "//Class[@name='Equipment']/Link/End[@side='source']/Properties/Property[@name='Cardinality']";
 		assertEquals("changed", str(d, src + "/@status"));
-		assertEquals("true", str(d, src + "/@notation"));
+		assertEquals("notation only", str(d, src + "/@tag"));
 		// a real change is not marked
-		assertEquals("", str(d, "//Class[@name='Equipment']/Link/End[@side='target']/Properties/Property[@name='Cardinality']/@notation"));
+		assertEquals("", str(d, "//Class[@name='Equipment']/Link/End[@side='target']/Properties/Property[@name='Cardinality']/@tag"));
+	}
+
+	@Test
+	public void stereotypeListChanges() throws Exception {
+		// #118
+		assertEquals("order only", ReportPreProcessor.stereotypeTag("ShadowExtension, util", "util, ShadowExtension"));
+		assertEquals("case only", ReportPreProcessor.stereotypeTag("GE", "ge"));
+		assertEquals("case only", ReportPreProcessor.stereotypeTag("enumeration, X", "Enumeration, X"));
+		assertEquals("order and case only", ReportPreProcessor.stereotypeTag("A, b", "B, a"));
+		assertNull(ReportPreProcessor.stereotypeTag("ShadowExtension, util", "ShadowExtension"));
+		assertNull(ReportPreProcessor.stereotypeTag("ERCOT", "etx"));
+		assertNull(ReportPreProcessor.stereotypeTag("", "util"));
+		Document d = enrich(false, null);
+		assertEquals("ShadowExtension", str(d, "//Class[@name='Equipment']/@stereotype"));
+		assertEquals("", str(d, "//Class[@name='Equipment']/Properties/Property[@name='Stereotype']/@tag"));
+		assertEquals("changed", str(d, "//Class[@name='Equipment']/Properties/Property[@name='Stereotype']/@status"));
+		assertEquals("util, ShadowExtension", str(d, "//Class[@name='Switch']/@stereotype"));
+		assertEquals("order only", str(d, "//Class[@name='Switch']/Properties/Property[@name='Stereotype']/@tag"));
 	}
 }

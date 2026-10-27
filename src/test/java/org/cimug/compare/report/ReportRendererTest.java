@@ -345,7 +345,7 @@ public class ReportRendererTest {
 		// #126: the note follows the legend
 		int legend = page.indexOf("<div class=\"legend\">"), note = page.indexOf("<div class=\"empty-note\">");
 		assertTrue(legend > 0 && note > legend);
-		assertTrue(page.contains("6 differences between a value and an empty value"));
+		assertTrue(page.contains("6 differences are not shown where one side is empty in a field EA fills in automatically (Complexity, Phase, Version, GenType, Containment, IsLiteral, Derived, Const, Static); they do not change the model’s definitions."));
 		assertTrue(page.contains("<code>--show-empty-values</code>"));
 
 		File all = new File(tmp.getRoot(), "empty-all.html");

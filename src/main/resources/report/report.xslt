@@ -304,7 +304,7 @@
           </div>
           <!-- #126: what was left out, as the last line under the legend -->
           <xsl:if test="@emptyValuesNotShown">
-            <div class="empty-note">ⓘ <xsl:value-of select="@emptyValuesNotShown"/> difference<xsl:if test="@emptyValuesNotShown != '1'">s</xsl:if> between a value and an empty value (EA housekeeping such as Phase, GenType, Containment “Not Specified”) <xsl:value-of select="if (@emptyValuesNotShown = '1') then 'is' else 'are'"/> not shown. Run with <code>--show-empty-values</code> to include them.</div>
+            <div class="empty-note">ⓘ <xsl:value-of select="@emptyValuesNotShown"/><xsl:value-of select="if (@emptyValuesNotShown = '1') then ' difference is' else ' differences are'"/> not shown where one side is empty in a field EA fills in automatically (Complexity, Phase, Version, GenType, Containment, IsLiteral, Derived, Const, Static); they do not change the model’s definitions. Run with <code>--show-empty-values</code> to include them.</div>
           </xsl:if>
           <div class="layout">
             <nav id="rail" class="rail" aria-label="Package outline">

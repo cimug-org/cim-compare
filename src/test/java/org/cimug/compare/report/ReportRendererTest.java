@@ -253,4 +253,16 @@ public class ReportRendererTest {
 		assertEquals("comparison-report-enriched.xml",
 				ReportRenderer.enrichedFileFor(new File("/x/comparison-report.XML"), null).getName());
 	}
+
+	@Test
+	public void emptyValueIsAChangeShownAsEmpty() throws Exception {
+		File xml = copyFixture();
+		File html = new File(tmp.getRoot(), "empty.html");
+		new ReportRenderer(false, null, false, "jpg").render(xml, html);
+		String page = read(html);
+		// #107: a cleared or filled-in value is a changed row, with (empty) on the empty side
+		assertTrue(page.contains("<tr data-status=\"changed\"><th class=\"k\">Phase</th><td>1.0</td><td class=\"nil\">(empty)</td></tr>"));
+		assertTrue(page.contains("<tr data-status=\"changed\"><th class=\"k\">Complexity</th><td class=\"nil\">(empty)</td><td>2</td></tr>"));
+		assertTrue(page.contains("<td>instance</td><td class=\"nil\">(empty)</td>"));
+	}
 }

@@ -476,4 +476,18 @@ public class ReportPreProcessorTest {
 			assertTrue(expected.getMessage(), expected.getMessage().contains("'NoSuchPackage'"));
 		}
 	}
+
+	@Test
+	public void valueOnOneSideOfAnElementOnBothSidesIsAChange() throws Exception {
+		Document d = enrich(false, null);
+		// #107: Switch exists on both sides; Phase was cleared and Complexity filled in
+		assertEquals("changed", str(d, "//Class[@name='Switch']/Properties/Property[@name='Phase']/@status"));
+		assertEquals("1.0", str(d, "//Class[@name='Switch']/Properties/Property[@name='Phase']/@baseline"));
+		assertEquals("changed", str(d, "//Class[@name='Switch']/Properties/Property[@name='Complexity']/@status"));
+		// the same on a link end
+		assertEquals("changed", str(d, "//Link/End[@side='target']/Properties/Property[@name='TargetScope']/@status"));
+		// an element that exists on one side only keeps its added/deleted properties
+		assertEquals("deleted", str(d, "//Class[@name='Plant']/Properties/Property[@name='Notes']/@status"));
+		assertEquals("deleted", str(d, "//Class[@name='Plant']/Link/End[@side='source']/Properties/Property[@name='End']/@status"));
+	}
 }

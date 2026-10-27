@@ -30,7 +30,8 @@
       │  │                                    shown with its highlight
       │  ├ Wires
       │  │  ├ ACLineSegment                   model only → added
-      │  │  ├ Switch                          moved here from Core
+      │  │  ├ Switch                          moved here from Core; Phase cleared and Complexity
+      │  │  │                                 filled in (value on one side only) → changed (#107)
       │  │  ├ DocWires (diagram)              renamed, nothing on it changed → metadata only, no images
       │  │  └ WiresConnectors (diagram)       only a rerouted connector → shown
       │  ├ DER                                only a diagram with nothing to highlight → package hidden
@@ -167,6 +168,7 @@
                         <Property name="Cardinality" model="1" baseline="0..1" status="Changed"/>
                         <Property name="End" model="IdentifiedObject" baseline="IdentifiedObject" status="Identical"/>
                         <Property name="Role" model="" baseline="" status="Identical"/>
+                        <Property name="TargetScope" baseline="instance" status="Baseline only"/>
                       </Properties>
                     </CompareItem>
                   </CompareItem>
@@ -260,7 +262,9 @@
               <CompareItem name="Switch" type="Class" guid="{00000000-0000-0000-0000-000000000122}" status="Moved">
                 <Properties>
                   <Property name="Name" model="Switch" baseline="Switch" status="Identical"/>
+                  <Property name="Complexity" model="2" status="Model only"/>
                   <Property name="ParentPackage" model="Wires" baseline="Core" status="Changed"/>
+                  <Property name="Phase" baseline="1.0" status="Baseline only"/>
                   <Property name="Type" model="Class" baseline="Class" status="Identical"/>
                 </Properties>
               </CompareItem>

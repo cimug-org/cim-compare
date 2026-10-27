@@ -181,6 +181,53 @@ public class XmiMergerTest {
 		assertEquals("2.5", xmi.getXMIHeader().getXMIDocumentation().getXMIExporterVersion());
 	}
 
+	/**
+	 * EA writes a connector between classes in two roots into both roots' exports
+	 * (seen on a real four-root project: 644 generalizations, associations and
+	 * note links, every pair identical). Root A here also carries ErcotLine's
+	 * generalization, as EA's export of Model would.
+	 */
+	private File rootAWithGeneralizationCopy(boolean altered) throws Exception {
+		java.nio.charset.Charset cp1252 = java.nio.charset.Charset.forName("windows-1252");
+		String b = new String(Files.readAllBytes(fixture("rootB-ERCOT.xmi").toPath()), cp1252);
+		java.util.regex.Matcher m = java.util.regex.Pattern
+				.compile("<UML:Generalization .*?</UML:Generalization>", java.util.regex.Pattern.DOTALL).matcher(b);
+		assertTrue(m.find());
+		String copy = m.group().replace("\n", "\n\t\t\t\t\t"); // different indentation, as in EA
+		if (altered)
+			copy = copy.replace("tag=\"seqno\" value=\"0\"", "tag=\"seqno\" value=\"7\"");
+		String a = new String(Files.readAllBytes(fixture("rootA-Model.xmi").toPath()), cp1252);
+		int at = a.indexOf("</UML:Class>") + "</UML:Class>".length();
+		File f = new File(tmp.getRoot(), altered ? "rootA-altered.xmi" : "rootA-copy.xmi");
+		Files.write(f.toPath(), (a.substring(0, at) + "\n" + copy + a.substring(at)).getBytes(cp1252));
+		return f;
+	}
+
+	@Test
+	public void identicalConnectorInTwoRootsIsKeptOnce() throws Exception {
+		File out = new File(tmp.getRoot(), "merged.xmi");
+		XmiMerger.Result r = XmiMerger.merge(Arrays.asList(rootAWithGeneralizationCopy(false), fixture("rootB-ERCOT.xmi")),
+				out);
+		assertEquals(1, r.identicalCopiesDropped);
+		assertEquals("no duplicate warning", 0, r.duplicateCount);
+		NodeList gens = parse(out).getElementsByTagNameNS(UML, "Generalization");
+		int n = 0;
+		for (int i = 0; i < gens.getLength(); i++)
+			if ("EAID_E0C07000_0000_0000_0000_000000000004".equals(((Element) gens.item(i)).getAttribute("xmi.id")))
+				n++;
+		assertEquals(1, n);
+	}
+
+	@Test
+	public void differingCopiesOfAConnectorAreReported() throws Exception {
+		XmiMerger.Result r = XmiMerger.merge(
+				Arrays.asList(rootAWithGeneralizationCopy(true), fixture("rootB-ERCOT.xmi")),
+				new File(tmp.getRoot(), "merged.xmi"));
+		assertEquals(0, r.identicalCopiesDropped);
+		assertEquals(1, r.duplicateCount);
+		assertTrue(r.duplicateIds.containsKey("EAID_E0C07000_0000_0000_0000_000000000004"));
+	}
+
 	/** Each root's export writes an Images folder; all end up in the side's folder. */
 	@Test
 	public void imagesFromEveryRootEndUpInOneFolder() throws Exception {

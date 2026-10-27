@@ -740,6 +740,10 @@ public class CIMModelComparisonGenerator {
 			}
 
 			XmiMerger.Result merged = XmiMerger.merge(parts, xmiExportFile);
+			if (merged.identicalCopiesDropped > 0) {
+				System.out.println("\n" + merged.identicalCopiesDropped
+						+ " connector(s) between root nodes were exported with both roots they connect; each is kept once.");
+			}
 			if (merged.duplicateCount > 0) {
 				System.out.println("\nWARNING:  " + merged.duplicateCount
 						+ " element(s) are defined in more than one root node of " + eaProject.getName()

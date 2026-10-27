@@ -57,7 +57,10 @@ import javax.xml.stream.events.XMLEvent;
  * <li>An {@code EAStub} (EA's placeholder for an element outside the exported
  * package) is dropped when another input defines that element; other stubs are
  * kept once.</li>
- * <li>An xmi.id defined by more than one input is reported, since the
+ * <li>A connector between elements in two roots (a generalization, an
+ * association, a note link, ...) is written by EA into both roots' exports. A
+ * later copy identical to an earlier one is dropped, so it is kept once.</li>
+ * <li>Any other xmi.id defined by more than one input is reported, since the
  * comparison expects each element once.</li>
  * </ul>
  *
@@ -72,6 +75,9 @@ public final class XmiMerger {
 	private static final String EA_ROOT_CLASS = "EARootClass";
 	private static final String EA_STUB = "EAStub";
 	private static final String XMI_ID = "xmi.id";
+	/** Elements EA writes into the export of each root they connect. */
+	private static final Set<String> CONNECTORS = new HashSet<String>(java.util.Arrays.asList("Generalization",
+			"Association", "AssociationRole", "Dependency", "EANoteLink"));
 
 	/** What a merge found; see {@link #merge(List, File)}. */
 	public static final class Result {
@@ -81,11 +87,15 @@ public final class XmiMerger {
 		public final int duplicateCount;
 		/** Stubs dropped because another input defines the element. */
 		public final int stubsResolved;
+		/** Connectors dropped because an earlier input has an identical copy. */
+		public final int identicalCopiesDropped;
 
-		Result(Map<String, List<String>> duplicateIds, int duplicateCount, int stubsResolved) {
+		Result(Map<String, List<String>> duplicateIds, int duplicateCount, int stubsResolved,
+				int identicalCopiesDropped) {
 			this.duplicateIds = duplicateIds;
 			this.duplicateCount = duplicateCount;
 			this.stubsResolved = stubsResolved;
+			this.identicalCopiesDropped = identicalCopiesDropped;
 		}
 	}
 
@@ -104,13 +114,16 @@ public final class XmiMerger {
 		List<File> temps = new ArrayList<File>();
 		try {
 			List<Part> parts = new ArrayList<Part>();
+			Map<String, String> connectors = new HashMap<String, String>(); // id -> canonical form digest
+			int identicalCopiesDropped = 0;
 			for (int k = 0; k < inputs.size(); k++) {
-				Part part = new Part(inputs.get(k), k, workDir);
+				Part part = new Part(inputs.get(k), k, workDir, connectors);
 				temps.add(part.owned);
 				temps.add(part.content);
 				temps.add(part.extensions);
 				part.read();
 				parts.add(part);
+				identicalCopiesDropped += part.identicalDropped;
 			}
 
 			// Which input defines each id (stubs excluded).
@@ -174,7 +187,7 @@ public final class XmiMerger {
 				w.write("\n\t</XMI.extensions>\n</XMI>\n");
 				w.flush();
 			}
-			return new Result(duplicates, duplicateCount, stubsResolved);
+			return new Result(duplicates, duplicateCount, stubsResolved, identicalCopiesDropped);
 		} finally {
 			for (File t : temps)
 				if (t != null)
@@ -225,6 +238,57 @@ public final class XmiMerger {
 		}
 	}
 
+	/** A connector's text, held until it is known whether an earlier input wrote it. */
+	private static final class Pending {
+		final String id;
+		final int depth;
+		final Writer out;
+		final String indent;
+		final StringBuilder raw = new StringBuilder();
+		/** The same without layout whitespace, for comparing copies. */
+		final StringBuilder canonical = new StringBuilder();
+		final List<String> ids = new ArrayList<String>();
+
+		Pending(String id, int depth, Writer out, String indent) {
+			this.id = id;
+			this.depth = depth;
+			this.out = out;
+			this.indent = indent;
+		}
+
+		void start(StartElement se, String nestedId) {
+			String tag = Part.startTag(se);
+			raw.append(tag);
+			canonical.append(tag);
+			if (nestedId != null)
+				ids.add(nestedId);
+		}
+
+		void end(String qname) {
+			raw.append("</").append(qname).append('>');
+			canonical.append("</").append(qname).append('>');
+		}
+
+		void text(String data) {
+			raw.append(Part.escapeText(data));
+			if (!data.trim().isEmpty())
+				canonical.append(Part.escapeText(data.trim()));
+		}
+
+		String digest() {
+			try {
+				byte[] d = java.security.MessageDigest.getInstance("SHA-1")
+						.digest(canonical.toString().getBytes(StandardCharsets.UTF_8));
+				StringBuilder b = new StringBuilder();
+				for (byte x : d)
+					b.append(String.format("%02x", x));
+				return b.toString();
+			} catch (java.security.NoSuchAlgorithmException e) {
+				return canonical.toString();
+			}
+		}
+	}
+
 	/** One input, read once and split into fragment files. */
 	private static final class Part {
 		final File source;
@@ -238,11 +302,15 @@ public final class XmiMerger {
 		final Map<String, String> modelAttributes = new LinkedHashMap<String, String>();
 		final Map<String, String> extensionsAttributes = new LinkedHashMap<String, String>();
 
+		final Map<String, String> connectors;
+		int identicalDropped;
+
 		private final XMLEventFactory events = XMLEventFactory.newInstance();
 
-		Part(File source, int index, File workDir) throws IOException {
+		Part(File source, int index, File workDir, Map<String, String> connectors) throws IOException {
 			this.source = source;
 			this.index = index;
+			this.connectors = connectors;
 			this.owned = File.createTempFile("xmi-merge-owned-", ".part", workDir);
 			this.content = File.createTempFile("xmi-merge-content-", ".part", workDir);
 			this.extensions = File.createTempFile("xmi-merge-ext-", ".part", workDir);
@@ -275,6 +343,7 @@ public final class XmiMerger {
 				StringBuilder captured = null; // header / difference / stub text
 				int captureDepth = 0;
 				String captureKind = null;
+				Pending pending = null; // a connector held back until it is known to be new
 
 				while (r.hasNext()) {
 					XMLEvent e = r.nextEvent();
@@ -286,9 +355,6 @@ public final class XmiMerger {
 						int depth = path.size();
 
 						String id = attr(se, XMI_ID);
-						if (id != null && !inStub && !EA_STUB.equals(name) && !skipping
-								&& !(depth == 5 && EA_ROOT_CLASS.equals(attr(se, "name"))))
-							definedIds.add(id);
 
 						if (skipping) {
 							continue;
@@ -297,8 +363,19 @@ public final class XmiMerger {
 							appendStart(captured, se);
 							continue;
 						}
+						if (pending != null) {
+							pending.start(se, id);
+							continue;
+						}
 						if (target != null) {
-							target.write(startTag(se));
+							if (isConnector(name, id)) {
+								pending = new Pending(id, depth, target, "");
+								pending.start(se, null);
+							} else {
+								target.write(startTag(se));
+								if (id != null)
+									definedIds.add(id);
+							}
 							continue;
 						}
 
@@ -323,13 +400,11 @@ public final class XmiMerger {
 						} else if (depth == 3 && "XMI.content".equals(path.get(1))) {
 							target = contentW;
 							targetDepth = depth;
-							contentW.write("\n\t\t");
-							contentW.write(startTag(se));
+							pending = open(se, name, id, depth, contentW, "\n\t\t");
 						} else if (depth == 3 && "XMI.extensions".equals(path.get(1))) {
 							target = extW;
 							targetDepth = depth;
-							extW.write("\n\t\t");
-							extW.write(startTag(se));
+							pending = open(se, name, id, depth, extW, "\n\t\t");
 						} else if (depth == 5 && "Namespace.ownedElement".equals(path.get(3))
 								&& "Model".equals(path.get(2))) {
 							if (index > 0 && EA_ROOT_CLASS.equals(attr(se, "name"))) {
@@ -338,8 +413,9 @@ public final class XmiMerger {
 							} else {
 								target = ownedW;
 								targetDepth = depth;
-								ownedW.write("\n\t\t\t\t");
-								ownedW.write(startTag(se));
+								if (EA_ROOT_CLASS.equals(attr(se, "name")))
+									id = null; // the same in every export; kept once
+								pending = open(se, name, id, depth, ownedW, "\n\t\t\t\t");
 							}
 						}
 					} else if (e.isEndElement()) {
@@ -365,6 +441,16 @@ public final class XmiMerger {
 							}
 							continue;
 						}
+						if (pending != null) {
+							pending.end(qname(e.asEndElement().getName()));
+							if (depth == pending.depth) {
+								finish(pending);
+								pending = null;
+							}
+							if (depth == targetDepth)
+								target = null;
+							continue;
+						}
 						if (target != null) {
 							target.write("</" + qname(e.asEndElement().getName()) + ">");
 							if (depth == targetDepth)
@@ -375,9 +461,11 @@ public final class XmiMerger {
 							continue;
 						if (captured != null)
 							captured.append(escapeText(e.asCharacters().getData()));
+						else if (pending != null)
+							pending.text(e.asCharacters().getData());
 						else if (target != null)
 							target.write(escapeText(e.asCharacters().getData()));
-					} else if (target != null && !skipping && captured == null
+					} else if (target != null && !skipping && captured == null && pending == null
 							&& e.getEventType() == XMLEvent.COMMENT) {
 						target.write("<!--" + ((javax.xml.stream.events.Comment) e).getText() + "-->");
 					}
@@ -387,6 +475,48 @@ public final class XmiMerger {
 				contentW.flush();
 				extW.flush();
 			}
+		}
+
+		private static boolean isConnector(String name, String id) {
+			return id != null && CONNECTORS.contains(name);
+		}
+
+		/**
+		 * Starts copying a top-level subtree: a connector is held back (returned as
+		 * pending), anything else is written straight away.
+		 */
+		private Pending open(StartElement se, String name, String id, int depth, Writer out, String indent)
+				throws IOException {
+			if (isConnector(name, id)) {
+				Pending p = new Pending(id, depth, out, indent);
+				p.start(se, null);
+				return p;
+			}
+			out.write(indent);
+			out.write(startTag(se));
+			if (id != null)
+				definedIds.add(id);
+			return null;
+		}
+
+		/**
+		 * Writes a held-back connector unless an earlier input already wrote an
+		 * identical copy. A copy that differs is written and so reported as a
+		 * duplicate id.
+		 */
+		private void finish(Pending p) throws IOException {
+			String digest = p.digest();
+			String earlier = connectors.get(p.id);
+			if (earlier != null && earlier.equals(digest)) {
+				identicalDropped++;
+				return;
+			}
+			if (earlier == null)
+				connectors.put(p.id, digest);
+			p.out.write(p.indent);
+			p.out.write(p.raw.toString());
+			definedIds.add(p.id);
+			definedIds.addAll(p.ids);
 		}
 
 		/** Renames anonymous eaxmiid ids from the second input on. */

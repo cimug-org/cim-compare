@@ -406,5 +406,10 @@ body.no-rail .rail { display: none; }
 }
 @media print {
   .rail { display: none; }
-  .layout { grid-template-columns: minmax(0, 1fr); }
+  /* #128 a block, not a one-column grid: Firefox does not split a grid item across pages, so it
+     pushed the whole tree to page 2 */
+  .layout { display: block; }
+  /* keep a diagram's baseline and destination panels on one page with their images */
+  .diag { break-inside: avoid; }
+  .sec-h { break-after: avoid; }
 }

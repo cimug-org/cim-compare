@@ -348,6 +348,8 @@ public class ReportRendererTest {
 		assertFalse(page.contains(".hdr, .summary .clear, .lightbox { display: none; }"));
 		assertFalse(page.contains(".tree, .row { break-inside: avoid; }"));
 		assertTrue(page.contains("@page { size: landscape; margin: 0.4in; }"));
+		assertTrue(page.contains("  .layout { display: block; }"));
+		assertTrue(page.contains("  .diag { break-inside: avoid; }"));
 		assertTrue(page.contains("window.addEventListener('beforeprint'"));
 	}
 

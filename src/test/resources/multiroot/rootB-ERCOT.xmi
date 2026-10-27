@@ -1,0 +1,113 @@
+<?xml version='1.0' encoding='windows-1252'?>
+<XMI xmlns:UML="omg.org/UML1.3" xmi.version="1.1" timestamp="2026-10-26 20:00:00"><XMI.header>
+		<XMI.documentation>
+			<XMI.exporter>Enterprise Architect</XMI.exporter>
+			<XMI.exporterVersion>2.5</XMI.exporterVersion>
+		</XMI.documentation>
+	</XMI.header>
+	<XMI.content><UML:Model name="EA Model" xmi.id="MX_EAID_E0C07000_0000_0000_0000_000000000001"><UML:Namespace.ownedElement><UML:Class name="EARootClass" xmi.id="EAID_11111111_5487_4080_A7F4_41526CB0AA00" isRoot="true" isLeaf="false" isAbstract="false" />
+				<UML:Package name="ERCOT" xmi.id="EAPK_E0C07000_0000_0000_0000_000000000001" isRoot="true" isLeaf="false" isAbstract="false" visibility="public"><UML:ModelElement.taggedValue><UML:TaggedValue tag="packageFlags" value="CRC=0;isModel=1;" /></UML:ModelElement.taggedValue><UML:Namespace.ownedElement><UML:Package name="ErcotExtensions" xmi.id="EAPK_E0C07000_0000_0000_0000_000000000002" isRoot="false" isLeaf="false" isAbstract="false" visibility="public" namespace="EAPK_E0C07000_0000_0000_0000_000000000001"><UML:ModelElement.taggedValue>
+														<UML:TaggedValue tag="documentation" value="ERCOT extensions.&#10;" />
+														<UML:TaggedValue tag="parent" value="EAPK_E0C07000_0000_0000_0000_000000000001" />
+														<UML:TaggedValue tag="created" value="2008-06-15 21:38:57" />
+														<UML:TaggedValue tag="modified" value="2008-06-15 21:38:57" />
+														<UML:TaggedValue tag="iscontrolled" value="FALSE" />
+														<UML:TaggedValue tag="lastloaddate" value="2008-06-15 21:38:57" />
+														<UML:TaggedValue tag="lastsavedate" value="2008-06-15 21:38:57" />
+														<UML:TaggedValue tag="isprotected" value="FALSE" />
+														<UML:TaggedValue tag="usedtd" value="FALSE" />
+														<UML:TaggedValue tag="logxml" value="FALSE" />
+														<UML:TaggedValue tag="tpos" value="3" />
+														<UML:TaggedValue tag="batchsave" value="0" />
+														<UML:TaggedValue tag="batchload" value="0" />
+														<UML:TaggedValue tag="status" value="Proposed" />
+														<UML:TaggedValue tag="complexity" value="1" />
+														<UML:TaggedValue tag="ea_stype" value="Public" />
+													</UML:ModelElement.taggedValue>
+													<UML:Namespace.ownedElement><UML:Class name="ErcotLine" xmi.id="EAID_E0C07000_0000_0000_0000_000000000003" visibility="public" namespace="EAPK_E0C07000_0000_0000_0000_000000000002" isRoot="false" isLeaf="false" isAbstract="false" isActive="false">
+											<UML:ModelElement.taggedValue>
+												<UML:TaggedValue tag="documentation" value="An ERCOT line.&#10;Second line.&#10;" />
+												<UML:TaggedValue tag="isSpecification" value="false" />
+												<UML:TaggedValue tag="ea_stype" value="Class" />
+												<UML:TaggedValue tag="ea_ntype" value="0" />
+												<UML:TaggedValue tag="package" value="EAPK_E0C07000_0000_0000_0000_000000000002" />
+												<UML:TaggedValue tag="date_created" value="2008-05-08 14:13:15" />
+												<UML:TaggedValue tag="date_modified" value="2014-01-26 12:24:53" />
+												<UML:TaggedValue tag="tagged" value="0" />
+												<UML:TaggedValue tag="package_name" value="ErcotExtensions" />
+												<UML:TaggedValue tag="complexity" value="1" />
+												<UML:TaggedValue tag="status" value="Proposed" />
+												<UML:TaggedValue tag="tpos" value="0" />
+												<UML:TaggedValue tag="ea_localid" value="90001" />
+												<UML:TaggedValue tag="ea_eleType" value="element" />
+												<UML:TaggedValue tag="style" value="BackColor=-1;BorderColor=-1;BorderWidth=-1;FontColor=-1;VSwimLanes=1;HSwimLanes=1;BorderStyle=0;" />
+												<UML:TaggedValue tag="$ea_xref_property" value="$XREFPROP=$XID={32F789D2-C23B-4173-8069-91A2CA237CCD}$XID;$NAM=CustomProperties$NAM;$TYP=element property$TYP;$VIS=Public$VIS;$DES=@PROP=@NAME=isActive@ENDNAME;@TYPE=Boolean@ENDTYPE;@VALU=@ENDVALU;@PRMT=@ENDPRMT;@ENDPROP;$DES;$CLT={990AB50C-5CF8-46d2-B5FF-887BBBD3346F}$CLT;$SUP=&lt;none&gt;$SUP;$ENDXREF;" />
+											</UML:ModelElement.taggedValue>
+											<UML:Classifier.feature>
+												<UML:Attribute name="ratingMVA" changeable="none" visibility="public" ownerScope="instance" targetScope="instance">
+													<UML:StructuralFeature.type>
+														<UML:Classifier xmi.idref="eaxmiid1" />
+													</UML:StructuralFeature.type>
+													<UML:ModelElement.taggedValue>
+														<UML:TaggedValue tag="description" value="Rating.&#10;" />
+														<UML:TaggedValue tag="type" value="String" />
+														<UML:TaggedValue tag="derived" value="0" />
+														<UML:TaggedValue tag="containment" value="Not Specified" />
+														<UML:TaggedValue tag="length" value="0" />
+														<UML:TaggedValue tag="ordered" value="0" />
+														<UML:TaggedValue tag="precision" value="0" />
+														<UML:TaggedValue tag="scale" value="0" />
+														<UML:TaggedValue tag="static" value="0" />
+														<UML:TaggedValue tag="collection" value="false" />
+														<UML:TaggedValue tag="position" value="0" />
+														<UML:TaggedValue tag="lowerBound" value="0" />
+														<UML:TaggedValue tag="upperBound" value="1" />
+														<UML:TaggedValue tag="duplicates" value="0" />
+														<UML:TaggedValue tag="ea_guid" value="{E0C07000-0000-0000-0000-000000000006}" />
+														<UML:TaggedValue tag="ea_localid" value="91579" />
+														<UML:TaggedValue tag="styleex" value="volatile=0;IsLiteral=0;" />
+													</UML:ModelElement.taggedValue>
+												</UML:Attribute>
+												</UML:Classifier.feature>
+										</UML:Class>
+										<UML:Generalization subtype="EAID_E0C07000_0000_0000_0000_000000000003" supertype="EAID_055C5806_E9D8_4a7a_9307_DAF7C31763C7" xmi.id="EAID_E0C07000_0000_0000_0000_000000000004" visibility="public">
+															<UML:ModelElement.taggedValue>
+																<UML:TaggedValue tag="style" value="3" />
+																<UML:TaggedValue tag="ea_type" value="Generalization" />
+																<UML:TaggedValue tag="direction" value="Source -&gt; Destination" />
+																<UML:TaggedValue tag="linemode" value="3" />
+																<UML:TaggedValue tag="linecolor" value="-1" />
+																<UML:TaggedValue tag="linewidth" value="0" />
+																<UML:TaggedValue tag="seqno" value="0" />
+																<UML:TaggedValue tag="headStyle" value="0" />
+																<UML:TaggedValue tag="lineStyle" value="0" />
+																<UML:TaggedValue tag="ea_localid" value="90002" />
+																<UML:TaggedValue tag="ea_sourceName" value="ErcotLine" />
+																<UML:TaggedValue tag="ea_targetName" value="IdentifiedObject" />
+																<UML:TaggedValue tag="ea_sourceType" value="Class" />
+																<UML:TaggedValue tag="ea_targetType" value="Class" />
+																<UML:TaggedValue tag="ea_sourceID" value="20262" />
+																<UML:TaggedValue tag="ea_targetID" value="20258" />
+																<UML:TaggedValue tag="src_visibility" value="Public" />
+																<UML:TaggedValue tag="src_aggregation" value="0" />
+																<UML:TaggedValue tag="src_isOrdered" value="false" />
+																<UML:TaggedValue tag="src_targetScope" value="instance" />
+																<UML:TaggedValue tag="src_changeable" value="none" />
+																<UML:TaggedValue tag="src_isNavigable" value="false" />
+																<UML:TaggedValue tag="src_containment" value="Unspecified" />
+																<UML:TaggedValue tag="src_style" value="Union=0;Derived=0;AllowDuplicates=0;" />
+																<UML:TaggedValue tag="dst_visibility" value="Public" />
+																<UML:TaggedValue tag="dst_aggregation" value="0" />
+																<UML:TaggedValue tag="dst_isOrdered" value="false" />
+																<UML:TaggedValue tag="dst_targetScope" value="instance" />
+																<UML:TaggedValue tag="dst_changeable" value="none" />
+																<UML:TaggedValue tag="dst_isNavigable" value="true" />
+																<UML:TaggedValue tag="dst_containment" value="Unspecified" />
+																<UML:TaggedValue tag="dst_style" value="Union=0;Derived=0;AllowDuplicates=0;" />
+																<UML:TaggedValue tag="privatedata5" value="SX=0;SY=0;EX=4;EY=0;EDGE=1;" />
+																<UML:TaggedValue tag="virtualInheritance" value="0" />
+															</UML:ModelElement.taggedValue>
+														</UML:Generalization>
+														</UML:Namespace.ownedElement></UML:Package></UML:Namespace.ownedElement></UML:Package><UML:DataType xmi.id="eaxmiid1" name="String" visibility="private" isRoot="false" isLeaf="false" isAbstract="false" />
+				<UML:DataType xmi.id="eaxmiid0" visibility="private" isRoot="false" isLeaf="false" isAbstract="false" />
+				</UML:Namespace.ownedElement></UML:Model><UML:Diagram name="ErcotLines" xmi.id="EAID_E0C07000_0000_0000_0000_000000000005" diagramType="ClassDiagram" owner="EAPK_E0C07000_0000_0000_0000_000000000002" toolName="Enterprise Architect 2.5"><UML:ModelElement.taggedValue><UML:TaggedValue tag="documentation" value="ERCOT line extensions.&#10;" /><UML:TaggedValue tag="author" value="tviegut" /><UML:TaggedValue tag="created_date" value="2026-10-16 00:00:00" /><UML:TaggedValue tag="modified_date" value="2026-10-16 00:00:00" /><UML:TaggedValue tag="package" value="EAPK_E0C07000_0000_0000_0000_000000000002" /><UML:TaggedValue tag="type" value="Logical" /><UML:TaggedValue tag="ea_localid" value="9003" /></UML:ModelElement.taggedValue><UML:Diagram.element><UML:DiagramElement geometry="100,100,300,200," subject="EAID_E0C07000_0000_0000_0000_000000000003" seqno="1" style="DUID=AAAAAAA1;" /><UML:DiagramElement geometry="100,300,300,400," subject="EAID_055C5806_E9D8_4a7a_9307_DAF7C31763C7" seqno="2" style="DUID=AAAAAAA2;" /></UML:Diagram.element></UML:Diagram><EAStub xmi.id="EAID_055C5806_E9D8_4a7a_9307_DAF7C31763C7" name="IdentifiedObject" UMLType="Class" /><EAStub xmi.id="EAID_5D0B0000_0000_0000_0000_00000000000F" name="Elsewhere" UMLType="Class" /></XMI.content><XMI.difference /><XMI.extensions xmi.extender="Enterprise Architect 2.5"><EANoteLink xmi.id="EAID_B0000000_0000_0000_0000_00000000000B" source="EAID_E0C07000_0000_0000_0000_000000000003" target="EAID_E0C07000_0000_0000_0000_000000000003" /></XMI.extensions></XMI>

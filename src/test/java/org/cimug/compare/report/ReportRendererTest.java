@@ -387,4 +387,23 @@ public class ReportRendererTest {
 		assertFalse(page.contains("<span class=\"ico\">📁</span>"));
 		assertFalse(page.contains(">ⓘ hover<"));
 	}
+	@Test
+	public void searchFindsElementsAndLinksByGuid() throws Exception {
+		File xml = copyFixture();
+		File html = new File(tmp.getRoot(), "guid.html");
+		new ReportRenderer(false, null, false, "jpg").render(xml, html);
+		String page = read(html);
+		// #133 links carry their GUID and end classes for the search index: a link card in a changed class ...
+		assertTrue(page.contains("<div class=\"linkB\" data-status=\"changed\" data-link=\"Association\" data-guid=\"{00000000-0000-0000-0000-000000000180}\" data-ends=\"Equipment — IdentifiedObject\">"));
+		// ... and a list entry in a deleted class (baseline names)
+		assertTrue(page.contains("<li data-link=\"Generalization\" data-guid=\"{00000000-0000-0000-0000-000000000116}\" data-ends=\"Plant ▷ PowerSystemResource\">"));
+		// any common GUID form, case ignored; 8+ hex digits counts as a GUID; a message when nothing matches
+		assertTrue(page.contains(".replace(/[{}]/g, '').replace(/^EAID_/i, '').replace(/[-_\\s]/g, '').toLowerCase()"));
+		assertTrue(page.contains("if (g.length >= 8 && /^[0-9a-f]+$/.test(g))"));
+		assertTrue(page.contains("No element with this GUID in this report"));
+		// one rounded ring for every target; attribute rows get the laid-over ring, not a box-shadow on each cell
+		assertTrue(page.contains("ul.plain li.target, ul.plain li:target, .linkB.target { outline: 2px solid var(--focus);"));
+		assertTrue(page.contains(".tr-ring { position: absolute;"));
+		assertFalse(page.contains("tr.target > td"));
+	}
 }

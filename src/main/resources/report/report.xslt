@@ -52,6 +52,16 @@
     <xsl:sequence select="string($e/Properties/Property[@name = $name]/@*[local-name() = $side])"/>
   </xsl:function>
 
+  <!-- #133 a link's two end classes for the search list, e.g. "Plant ▷ PowerSystemResource" -->
+  <xsl:function name="r:link-ends" as="xs:string">
+    <xsl:param name="link" as="element()"/>
+    <xsl:param name="side" as="xs:string"/>
+    <xsl:variable name="end" select="$link/End/Properties/Property[@name = 'End']"/>
+    <xsl:sequence select="concat(string(($end[../../@side = 'source']/@*[local-name() = $side])[1]),
+                                 if ($link/@kind = 'Generalization') then ' ▷ ' else ' — ',
+                                 string(($end[../../@side = 'target']/@*[local-name() = $side])[1]))"/>
+  </xsl:function>
+
   <xsl:function name="r:pstatus" as="xs:string">
     <xsl:param name="e" as="element()"/>
     <xsl:param name="name" as="xs:string"/>
@@ -515,7 +525,7 @@
             <xsl:sort select="index-of($link-order, string(@kind))[1]" data-type="number"/>
             <xsl:variable name="src" select="End[@side = 'source']"/>
             <xsl:variable name="dst" select="End[@side = 'target']"/>
-            <li>
+            <li data-link="{@kind}" data-guid="{@guid}" data-ends="{r:link-ends(., $side)}">
               <span class="kind"><xsl:value-of select="@kind"/></span><xsl:text> </xsl:text>
               <xsl:call-template name="r:sig-compact"><xsl:with-param name="link" select="."/><xsl:with-param name="side" select="$side"/><xsl:with-param name="redline" select="false()"/></xsl:call-template>
               <span class="guid"><xsl:value-of select="@guid"/></span>
@@ -669,7 +679,7 @@
     <xsl:variable name="st" select="string(@status)"/>
     <xsl:variable name="src" select="End[@side = 'source']"/>
     <xsl:variable name="dst" select="End[@side = 'target']"/>
-    <div class="linkB" data-status="{$st}">
+    <div class="linkB" data-status="{$st}" data-link="{@kind}" data-guid="{@guid}" data-ends="{r:link-ends(., if ($st = 'deleted') then 'baseline' else 'model')}">
       <div class="link-h"><span class="badge" data-status="{$st}"><xsl:value-of select="$badge($st)"/></span><xsl:value-of select="@kind"/><span class="guid"><xsl:value-of select="@guid"/></span></div>
       <div class="sigline">
         <div><span class="lbl">Baseline</span>

@@ -412,4 +412,9 @@ body.no-rail .rail { display: none; }
   /* keep a diagram's baseline and destination panels on one page with their images */
   .diag { break-inside: avoid; }
   .sec-h { break-after: avoid; }
+  /* the package icon is an emoji; Edge and Chrome put colour emoji into a PDF as a Type 3 font,
+     which Acrobat warns about ("Cannot extract the embedded font"). Print a drawn folder instead. */
+  .row[data-kind="📁"] .ico { font-size: 0; }
+  .row[data-kind="📁"] .ico::before { content: ""; display: inline-block; width: 13px; height: 10px; margin-top: 2px;
+    background: #E8B84A; border: 1px solid #C9952B; border-radius: 1px 3px 2px 2px; }
 }

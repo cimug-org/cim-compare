@@ -142,10 +142,25 @@ public class ReportPreProcessor {
 				: new ArrayList<String>(packageNames);
 	}
 
+	private boolean showEmptyValues;
+
+	/**
+	 * Report differences between a value and an empty value in EA's housekeeping
+	 * fields too (the {@code --show-empty-values} option, #126); by default they
+	 * are left out and counted.
+	 */
+	public ReportPreProcessor showEmptyValues(boolean show) {
+		this.showEmptyValues = show;
+		return this;
+	}
+
 	public Document process(Document in) throws ParserConfigurationException {
+		int emptyValues = showEmptyValues ? 0 : EmptyValues.apply(in.getDocumentElement());
 		out = DocumentBuilderFactory.newInstance().newDocumentBuilder().newDocument();
 		Element root = out.createElement("ComparisonReport");
 		out.appendChild(root);
+		if (emptyValues > 0)
+			root.setAttribute("emptyValuesNotShown", String.valueOf(emptyValues));
 
 		Element compareResults = firstChild(firstChild(in.getDocumentElement(), "ComparePackage"), "CompareResults");
 		Element comparePackage = firstChild(in.getDocumentElement(), "ComparePackage");

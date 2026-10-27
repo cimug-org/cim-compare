@@ -34,6 +34,7 @@ public class CIMModelComparisonGenerator {
 	private static List<String> selectedPackages = null;
 	private static final String PARAM_MINIMAL = "minimal"; // 1.x option; accepted and ignored (minimal is now the default)
 	private static final String PARAM_FULL = "full";
+	private static final String PARAM_SHOW_EMPTY_VALUES = "show-empty-values";
 	private static final String PARAM_INCLUDE_DIAGRAMS = "include-diagrams";
 	private static final String PARAM_ZIP = "zip";
 	/** The release, as in the jar name cim-compare-<VERSION>.jar (from the pom, #87). */
@@ -164,6 +165,7 @@ public class CIMModelComparisonGenerator {
 							options.containsKey(PARAM_INCLUDE_DIAGRAMS), options.get(PARAM_IMAGE_TYPE))
 					: new ReportRenderer(options.containsKey(PARAM_FULL), options.get(PARAM_PACKAGE),
 							options.containsKey(PARAM_INCLUDE_DIAGRAMS), options.get(PARAM_IMAGE_TYPE));
+			renderer.showEmptyValues(options.containsKey(PARAM_SHOW_EMPTY_VALUES));
 			File enrichedXMLFile = renderer.render(document, compareLogXMLFile, comparisonHTMLFile);
 			document = null;
 
@@ -230,6 +232,7 @@ public class CIMModelComparisonGenerator {
 					{
 					case PARAM_MINIMAL: // accepted for compatibility with 1.x; minimal output is the default
 					case PARAM_FULL:
+					case PARAM_SHOW_EMPTY_VALUES:
 					case PARAM_INCLUDE_DIAGRAMS:
 					case PARAM_ZIP:
 					case PARAM_CLEANUP:
@@ -1092,7 +1095,7 @@ public class CIMModelComparisonGenerator {
 				"   Every root node of each project is compared unless --package is given.",
 				"",
 				"   Usage: java [<jvm-parameters>] -jar " + jar + " <baseline-model-file> <destination-model-file>",
-				"               [<output-directory-or-html-file>] [--package=<package-names>] [--full]",
+				"               [<output-directory-or-html-file>] [--package=<package-names>] [--full] [--show-empty-values]",
 				"               [--include-diagrams] [--image-type=<image-file-extension>] [--zip] [--cleanup]",
 				"",
 				"   Examples:",
@@ -1105,7 +1108,7 @@ public class CIMModelComparisonGenerator {
 				"   Images-baseline and Images-destination folders of the output directory.",
 				"",
 				"   Usage: java [<jvm-parameters>] -jar " + jar + " <baseline-model-xmi-file> <destination-model-xmi-file>",
-				"               [<output-directory-or-html-file>] [--package=<package-names>] [--full]",
+				"               [<output-directory-or-html-file>] [--package=<package-names>] [--full] [--show-empty-values]",
 				"               [--include-diagrams] [--image-type=<image-file-extension>] [--zip] [--cleanup]",
 				"",
 				"   Examples:",
@@ -1117,7 +1120,7 @@ public class CIMModelComparisonGenerator {
 				"3. From a compare log (.xml) exported from an Enterprise Architect model comparison. Diagrams are not supported.",
 				"",
 				"   Usage: java [<jvm-parameters>] -jar " + jar + " <comparison-results-xml-file>",
-				"               [<output-directory-or-html-file>] [--package=<package-names>] [--full] [--zip] [--cleanup]",
+				"               [<output-directory-or-html-file>] [--package=<package-names>] [--full] [--show-empty-values] [--zip] [--cleanup]",
 				"",
 				"   Examples:",
 				"      java -Xmx2G -jar " + jar + " CIM15v33_CIM16v26a_EA_Comparison_Report.xml \"C:\\Comparison Reports\"",
@@ -1131,6 +1134,9 @@ public class CIMModelComparisonGenerator {
 				"                        used for a renamed package (e.g. IEC61970 or Grid). Without it, every root node of",
 				"                        an EA project is compared (option 1).",
 				"   --full               Include identical items in the report as well as the changes.",
+				"   --show-empty-values  Also report a value that is empty on one side in EA housekeeping fields (Complexity,",
+				"                        Phase, Version, GenType; Containment \"Not Specified\"; IsLiteral, Derived, Const,",
+				"                        Static false). Left out by default; the report says how many.",
 				"   --minimal            Accepted for 1.x command lines; no effect (only changes are reported by default).",
 				"   --include-diagrams   Include changed diagrams (options 1 and 2).",
 				"   --image-type=<ext>   JPG (default), GIF, PNG, BMP or EMF.",

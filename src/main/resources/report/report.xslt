@@ -239,7 +239,9 @@
       <xsl:variable name="stereos" select="tokenize(string($e/@stereotype), ',\s*')[normalize-space() != '' and . != 'deprecated']"/>
       <xsl:if test="exists($stereos)"><span class="stereo">«<xsl:value-of select="$stereos" separator=", "/>»</span></xsl:if>
       <xsl:if test="$e/Properties/Property[@name = 'Notes']">
-        <span class="info" data-id="{$e/@id}" title="notes">i</span>
+        <!-- #123: the description behind this ⓘ changed -->
+        <xsl:variable name="chg" select="($st = 'changed' or $st = 'moved') and r:pstatus($e, 'Notes') = 'changed'"/>
+        <span class="info{if ($chg) then ' info-chg' else ''}" data-id="{$e/@id}" title="notes">i</span>
         <xsl:call-template name="r:notes-src"><xsl:with-param name="e" select="$e"/></xsl:call-template>
       </xsl:if>
       <xsl:if test="$st != 'identical'"><span class="badge" data-status="{$st}"><xsl:value-of select="$badge($st)"/></span></xsl:if>
@@ -543,6 +545,9 @@
 
   <!-- ====================================================== attributes (variant B rows) -->
 
+  <!-- attribute properties an Attributes row shows itself (name, type, multiplicity, notes) -->
+  <xsl:variable name="row-shown" as="xs:string*" select="('Name', 'Type', 'LowerBound', 'UpperBound', 'Notes')"/>
+
   <xsl:template match="Attribute" mode="row">
     <xsl:variable name="st" select="string(@status)"/>
     <xsl:variable name="nb" select="r:prop(., 'Name', 'baseline')"/>
@@ -553,7 +558,10 @@
           <xsl:when test="@renamedFrom"><xsl:value-of select="r:new-name(.)"/></xsl:when>
           <xsl:otherwise><xsl:value-of select="@name"/></xsl:otherwise>
         </xsl:choose>
-        <span class="info" data-id="{@guid}" title="attribute metadata">i</span>
+        <!-- #123: a change the row does not show (e.g. Default, Const, Stereotype) marks the ⓘ and adds a note -->
+        <xsl:variable name="hidden" select="$st = 'changed' and exists(Properties/Property[@status != 'identical' and not(@name = $row-shown)])"/>
+        <span class="info{if ($hidden) then ' info-chg' else ''}" data-id="{@guid}" title="attribute metadata">i</span>
+        <xsl:if test="$hidden"><span class="mnote"><span class="m-hover">metadata changed - hover <span class="m-i">ⓘ</span></span><span class="m-inline">metadata changed - see below</span></span></xsl:if>
         <xsl:if test="@renamedFrom"><span class="renamed-from">renamed from <xsl:value-of select="@renamedFrom"/></span></xsl:if>
         <span class="guid"><xsl:value-of select="@guid"/></span>
       </td>

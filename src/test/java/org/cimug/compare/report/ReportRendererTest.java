@@ -300,4 +300,39 @@ public class ReportRendererTest {
 		assertTrue(page.contains("<tr data-status=\"changed\"><th class=\"k\">Stereotype</th><td>ShadowExtension, util</td><td>util, ShadowExtension<span class=\"notation\">order only</span></td></tr>"));
 		assertTrue(page.contains("<tr data-status=\"changed\"><th class=\"k\">Stereotype</th><td>ShadowExtension, util</td><td>ShadowExtension</td></tr>"));
 	}
+
+	@Test
+	public void attributesWithChangesOnlyInTheirMetadataAreMarked() throws Exception {
+		File xml = copyFixture();
+		File html = new File(tmp.getRoot(), "mnote.html");
+		new ReportRenderer(false, null, false, "jpg").render(xml, html);
+		String page = read(html);
+		// #123: phaseCode changed only its Default, which its row does not show
+		int row = page.indexOf("data-name=\"phaseCode\"");
+		assertTrue(row > 0);
+		String cell = page.substring(row, page.indexOf("</td>", row));
+		assertTrue(cell, cell.contains("<span class=\"info info-chg\""));
+		assertTrue(cell, cell.contains("metadata changed - hover"));
+		assertTrue(cell, cell.contains("metadata changed - see below"));
+		// ratedS changed its type and multiplicity, which its row shows: plain ⓘ, no note
+		row = page.indexOf("data-name=\"ratedS\"");
+		cell = page.substring(row, page.indexOf("</td>", row));
+		assertTrue(cell, cell.contains("<span class=\"info\""));
+		assertFalse(cell, cell.contains("metadata changed"));
+	}
+
+	@Test
+	public void rowInfoIconIsMarkedWhenTheDescriptionChanged() throws Exception {
+		File xml = copyFixture();
+		File html = new File(tmp.getRoot(), "rowinfo.html");
+		new ReportRenderer(false, null, false, "jpg").render(xml, html);
+		String page = read(html);
+		// #123: the moved class Switch's description changed: its row ⓘ is marked, with no note
+		int row = page.indexOf("data-name=\"Switch\" data-kind=\"⚙\"");
+		assertTrue(row > 0);
+		String r = page.substring(row, page.indexOf("class=\"guid\"", row));
+		assertTrue(r, r.contains("<span class=\"info info-chg\""));
+		assertFalse(r, r.contains("metadata changed"));
+		assertFalse(page.contains("<span class=\"info info-chg\" data-id=\"EAID_00000000_0000_0000_0000_000000000115\""));
+	}
 }

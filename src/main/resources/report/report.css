@@ -207,6 +207,12 @@ table.attrs td.gone { text-align: center; color: var(--deleted-ink); font-weight
 table.attrs td.nx { text-align: center; color: var(--muted); font-size: var(--fs-s); vertical-align: middle; background: repeating-linear-gradient(135deg, transparent 0 8px, #0000000a 8px 10px); }
 table.attrs .info { display: inline-block; color: var(--muted); font-size: 11px; border: 1px solid var(--faint); border-radius: 50%; width: 14px; height: 14px; line-height: 12px; text-align: center; font-family: serif; font-style: italic; cursor: pointer; margin-left: 5px; vertical-align: 1px; }
 table.attrs .info:hover { color: var(--ink); border-color: var(--ink); }
+/* #123 metadata changed that the row does not show: a blue ⓘ with a dot, and a grey note */
+.info.info-chg { position: relative; color: var(--changed-ink); border-color: var(--changed-ink); }
+.info.info-chg::after { content: ""; position: absolute; top: -3px; right: -4px; width: 6px; height: 6px; border-radius: 50%; background: #2864d2; }
+table.attrs .mnote { margin-left: 6px; font: italic 400 11px var(--sans); color: var(--muted); white-space: nowrap; }
+table.attrs .mnote .m-i { font-style: normal; font-family: serif; }
+body.meta-inline table.attrs .mnote .m-hover, body:not(.meta-inline) table.attrs .mnote .m-inline { display: none; }
 tr.meta { display: none; }
 tr.meta.open { display: table-row; }
 tr.meta > td { background: var(--ground); padding: 6px 10px; }

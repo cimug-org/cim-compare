@@ -1,0 +1,169 @@
+<?xml version='1.0' encoding='windows-1252'?>
+<XMI xmlns:UML="omg.org/UML1.3" xmi.version="1.1" timestamp="2026-10-26 20:00:00"><XMI.header>
+		<XMI.documentation>
+			<XMI.exporter>Enterprise Architect</XMI.exporter>
+			<XMI.exporterVersion>2.5</XMI.exporterVersion>
+		</XMI.documentation>
+	</XMI.header>
+	<XMI.content><UML:Model name="EA Model" xmi.id="MX_EAID_6952FF0A_7BCE_4b37_88F7_399320BB07D0"><UML:Namespace.ownedElement><UML:Class name="EARootClass" xmi.id="EAID_11111111_5487_4080_A7F4_41526CB0AA00" isRoot="true" isLeaf="false" isAbstract="false" />
+				<UML:Package name="Model" xmi.id="EAPK_6952FF0A_7BCE_4b37_88F7_399320BB07D0" isRoot="true" isLeaf="false" isAbstract="false" visibility="public"><UML:ModelElement.taggedValue>
+						<UML:TaggedValue tag="iscontrolled" value="FALSE" />
+						<UML:TaggedValue tag="lastloaddate" value="2013-10-04 08:37:04" />
+						<UML:TaggedValue tag="isprotected" value="FALSE" />
+						<UML:TaggedValue tag="usedtd" value="FALSE" />
+						<UML:TaggedValue tag="logxml" value="FALSE" />
+						<UML:TaggedValue tag="packageFlags" value="CRC=0;isModel=1;" />
+					</UML:ModelElement.taggedValue>
+					<UML:Namespace.ownedElement><UML:Package name="Core" xmi.id="EAPK_6A503B72_6E15_4cd1_B92D_DDF6D14DBE29" isRoot="false" isLeaf="false" isAbstract="false" visibility="public" namespace="EAPK_6952FF0A_7BCE_4b37_88F7_399320BB07D0"><UML:ModelElement.taggedValue>
+														<UML:TaggedValue tag="documentation" value="Contains the core PowerSystemResource and ConductingEquipment entities shared by all applications plus common collections of those entities. Not all applications require all the Core entities.  This package does not depend on any other package except the Domain package, but most of the other packages have associations and generalizations that depend on it." />
+														<UML:TaggedValue tag="parent" value="EAPK_6952FF0A_7BCE_4b37_88F7_399320BB07D0" />
+														<UML:TaggedValue tag="created" value="2008-06-15 21:38:57" />
+														<UML:TaggedValue tag="modified" value="2008-06-15 21:38:57" />
+														<UML:TaggedValue tag="iscontrolled" value="FALSE" />
+														<UML:TaggedValue tag="lastloaddate" value="2008-06-15 21:38:57" />
+														<UML:TaggedValue tag="lastsavedate" value="2008-06-15 21:38:57" />
+														<UML:TaggedValue tag="isprotected" value="FALSE" />
+														<UML:TaggedValue tag="usedtd" value="FALSE" />
+														<UML:TaggedValue tag="logxml" value="FALSE" />
+														<UML:TaggedValue tag="tpos" value="3" />
+														<UML:TaggedValue tag="batchsave" value="0" />
+														<UML:TaggedValue tag="batchload" value="0" />
+														<UML:TaggedValue tag="status" value="Proposed" />
+														<UML:TaggedValue tag="complexity" value="1" />
+														<UML:TaggedValue tag="ea_stype" value="Public" />
+													</UML:ModelElement.taggedValue>
+													<UML:Namespace.ownedElement><UML:Class name="IdentifiedObject" xmi.id="EAID_055C5806_E9D8_4a7a_9307_DAF7C31763C7" visibility="public" namespace="EAPK_6A503B72_6E15_4cd1_B92D_DDF6D14DBE29" isRoot="false" isLeaf="false" isAbstract="false" isActive="false">
+															<UML:ModelElement.taggedValue>
+																<UML:TaggedValue tag="documentation" value="This is a root class to provide common identification for all classes needing identification and naming attributes." />
+																<UML:TaggedValue tag="isSpecification" value="false" />
+																<UML:TaggedValue tag="ea_stype" value="Class" />
+																<UML:TaggedValue tag="ea_ntype" value="0" />
+																<UML:TaggedValue tag="package" value="EAPK_6A503B72_6E15_4cd1_B92D_DDF6D14DBE29" />
+																<UML:TaggedValue tag="date_created" value="2008-05-08 14:13:15" />
+																<UML:TaggedValue tag="date_modified" value="2012-12-06 13:50:17" />
+																<UML:TaggedValue tag="tagged" value="0" />
+																<UML:TaggedValue tag="package_name" value="Core" />
+																<UML:TaggedValue tag="complexity" value="1" />
+																<UML:TaggedValue tag="status" value="Proposed" />
+																<UML:TaggedValue tag="tpos" value="18" />
+																<UML:TaggedValue tag="ea_localid" value="13136" />
+																<UML:TaggedValue tag="ea_eleType" value="element" />
+																<UML:TaggedValue tag="style" value="BackColor=-1;BorderColor=-1;BorderWidth=-1;FontColor=-1;VSwimLanes=1;HSwimLanes=1;BorderStyle=0;" />
+																<UML:TaggedValue tag="$ea_xref_property" value="$XREFPROP=$XID={77AEF5E3-C63C-4465-B4C4-26B354D56953}$XID;$NAM=CustomProperties$NAM;$TYP=element property$TYP;$VIS=Public$VIS;$DES=@PROP=@NAME=isActive@ENDNAME;@TYPE=Boolean@ENDTYPE;@VALU=@ENDVALU;@PRMT=@ENDPRMT;@ENDPROP;$DES;$CLT={055C5806-E9D8-4a7a-9307-DAF7C31763C7}$CLT;$SUP=&lt;none&gt;$SUP;$ENDXREF;" />
+															</UML:ModelElement.taggedValue>
+															<UML:Classifier.feature>
+																<UML:Attribute name="aliasName" changeable="none" visibility="public" ownerScope="instance" targetScope="instance">
+																	<UML:Attribute.initialValue>
+																		<UML:Expression />
+																	</UML:Attribute.initialValue>
+																	<UML:StructuralFeature.type>
+																		<UML:Classifier xmi.idref="EAID_E50DF78B_84CE_42e9_A275_A956DEF45490" />
+																	</UML:StructuralFeature.type>
+																	<UML:ModelElement.taggedValue>
+																		<UML:TaggedValue tag="description" value="The aliasName is free text human readable name of the object alternative to IdentifiedObject.name. It may be non unique and may not correlate to a naming hierarchy.&#10;The attribute aliasName is retained because of backwards compatibility between CIM relases. It is however recommended to replace aliasName with the Name class as aliasName is planned for retirement at a future time.&#10;&#10;" />
+																		<UML:TaggedValue tag="type" value="String" />
+																		<UML:TaggedValue tag="derived" value="0" />
+																		<UML:TaggedValue tag="containment" value="Not Specified" />
+																		<UML:TaggedValue tag="length" value="0" />
+																		<UML:TaggedValue tag="ordered" value="0" />
+																		<UML:TaggedValue tag="precision" value="0" />
+																		<UML:TaggedValue tag="scale" value="0" />
+																		<UML:TaggedValue tag="static" value="0" />
+																		<UML:TaggedValue tag="collection" value="false" />
+																		<UML:TaggedValue tag="position" value="0" />
+																		<UML:TaggedValue tag="lowerBound" value="0" />
+																		<UML:TaggedValue tag="upperBound" value="1" />
+																		<UML:TaggedValue tag="duplicates" value="0" />
+																		<UML:TaggedValue tag="ea_guid" value="{D4F8B75D-CDAD-4440-8092-1425101E5ABC}" />
+																		<UML:TaggedValue tag="ea_localid" value="39805" />
+																		<UML:TaggedValue tag="styleex" value="IsLiteral=0;volatile=0;" />
+																	</UML:ModelElement.taggedValue>
+																</UML:Attribute>
+																<UML:Attribute name="description" changeable="none" visibility="public" ownerScope="instance" targetScope="instance">
+																	<UML:Attribute.initialValue>
+																		<UML:Expression />
+																	</UML:Attribute.initialValue>
+																	<UML:StructuralFeature.type>
+																		<UML:Classifier xmi.idref="EAID_E50DF78B_84CE_42e9_A275_A956DEF45490" />
+																	</UML:StructuralFeature.type>
+																	<UML:ModelElement.taggedValue>
+																		<UML:TaggedValue tag="description" value="The description is a free human readable text describing or naming the object. It may be non unique and may not correlate to a naming hierarchy." />
+																		<UML:TaggedValue tag="type" value="String" />
+																		<UML:TaggedValue tag="derived" value="0" />
+																		<UML:TaggedValue tag="length" value="0" />
+																		<UML:TaggedValue tag="ordered" value="0" />
+																		<UML:TaggedValue tag="precision" value="0" />
+																		<UML:TaggedValue tag="scale" value="0" />
+																		<UML:TaggedValue tag="static" value="0" />
+																		<UML:TaggedValue tag="collection" value="false" />
+																		<UML:TaggedValue tag="position" value="1" />
+																		<UML:TaggedValue tag="lowerBound" value="0" />
+																		<UML:TaggedValue tag="upperBound" value="1" />
+																		<UML:TaggedValue tag="duplicates" value="0" />
+																		<UML:TaggedValue tag="ea_guid" value="{13104BE9-CB1E-4dde-9A52-D7EE95DF7B65}" />
+																		<UML:TaggedValue tag="ea_localid" value="71452" />
+																		<UML:TaggedValue tag="styleex" value="IsLiteral=0;volatile=0;" />
+																	</UML:ModelElement.taggedValue>
+																</UML:Attribute>
+																<UML:Attribute name="mRID" changeable="none" visibility="public" ownerScope="instance" targetScope="instance">
+																	<UML:Attribute.initialValue>
+																		<UML:Expression />
+																	</UML:Attribute.initialValue>
+																	<UML:StructuralFeature.type>
+																		<UML:Classifier xmi.idref="EAID_E50DF78B_84CE_42e9_A275_A956DEF45490" />
+																	</UML:StructuralFeature.type>
+																	<UML:ModelElement.taggedValue>
+																		<UML:TaggedValue tag="description" value="Master resource identifier issued by a model authority. The mRID is globally unique within an exchange context. Global uniqueness is easily achieved by using a UUID,  as specified in RFC 4122, for the mRID.  The use of UUID is strongly recommended.&#10;For CIMXML data files in RDF syntax conforming to IEC 61970-552 Edition 1, the mRID is mapped to rdf:ID or rdf:about attributes that identify CIM object elements." />
+																		<UML:TaggedValue tag="type" value="String" />
+																		<UML:TaggedValue tag="derived" value="0" />
+																		<UML:TaggedValue tag="containment" value="Not Specified" />
+																		<UML:TaggedValue tag="length" value="0" />
+																		<UML:TaggedValue tag="ordered" value="0" />
+																		<UML:TaggedValue tag="precision" value="0" />
+																		<UML:TaggedValue tag="scale" value="0" />
+																		<UML:TaggedValue tag="static" value="0" />
+																		<UML:TaggedValue tag="collection" value="false" />
+																		<UML:TaggedValue tag="position" value="2" />
+																		<UML:TaggedValue tag="lowerBound" value="0" />
+																		<UML:TaggedValue tag="upperBound" value="1" />
+																		<UML:TaggedValue tag="duplicates" value="0" />
+																		<UML:TaggedValue tag="ea_guid" value="{C775F80A-A23D-4f38-AB9D-49D1FA882337}" />
+																		<UML:TaggedValue tag="ea_localid" value="39806" />
+																		<UML:TaggedValue tag="styleex" value="volatile=0;IsLiteral=0;" />
+																	</UML:ModelElement.taggedValue>
+																</UML:Attribute>
+																<UML:Attribute name="name" changeable="none" visibility="public" ownerScope="instance" targetScope="instance">
+																	<UML:Attribute.initialValue>
+																		<UML:Expression />
+																	</UML:Attribute.initialValue>
+																	<UML:StructuralFeature.type>
+																		<UML:Classifier xmi.idref="EAID_E50DF78B_84CE_42e9_A275_A956DEF45490" />
+																	</UML:StructuralFeature.type>
+																	<UML:ModelElement.taggedValue>
+																		<UML:TaggedValue tag="description" value="The name is any free human readable and possibly non unique text naming the object.&#10;" />
+																		<UML:TaggedValue tag="type" value="String" />
+																		<UML:TaggedValue tag="derived" value="0" />
+																		<UML:TaggedValue tag="containment" value="Not Specified" />
+																		<UML:TaggedValue tag="length" value="0" />
+																		<UML:TaggedValue tag="ordered" value="0" />
+																		<UML:TaggedValue tag="precision" value="0" />
+																		<UML:TaggedValue tag="scale" value="0" />
+																		<UML:TaggedValue tag="static" value="0" />
+																		<UML:TaggedValue tag="collection" value="false" />
+																		<UML:TaggedValue tag="position" value="3" />
+																		<UML:TaggedValue tag="lowerBound" value="0" />
+																		<UML:TaggedValue tag="upperBound" value="1" />
+																		<UML:TaggedValue tag="duplicates" value="0" />
+																		<UML:TaggedValue tag="ea_guid" value="{870F033B-EDA6-4a32-A5AD-47DCBBFE2997}" />
+																		<UML:TaggedValue tag="ea_localid" value="39807" />
+																		<UML:TaggedValue tag="styleex" value="IsLiteral=0;volatile=0;" />
+																	</UML:ModelElement.taggedValue>
+																</UML:Attribute>
+															</UML:Classifier.feature>
+														</UML:Class>
+														</UML:Namespace.ownedElement></UML:Package></UML:Namespace.ownedElement></UML:Package><UML:DataType xmi.id="eaxmiid1" name="String" visibility="private" isRoot="false" isLeaf="false" isAbstract="false" />
+				<UML:DataType xmi.id="eaxmiid0" visibility="private" isRoot="false" isLeaf="false" isAbstract="false" />
+				<UML:DataType xmi.id="eaxmiid2" name="DateTime" visibility="private" isRoot="false" isLeaf="false" isAbstract="false" />
+				<UML:DataType xmi.id="eaxmiid4" name="Integer" visibility="private" isRoot="false" isLeaf="false" isAbstract="false" />
+				<UML:DataType xmi.id="eaxmiid3" name="URI" visibility="private" isRoot="false" isLeaf="false" isAbstract="false" />
+			</UML:Namespace.ownedElement></UML:Model></XMI.content><XMI.difference /><XMI.extensions xmi.extender="Enterprise Architect 2.5"><EANoteLink xmi.id="EAID_A0000000_0000_0000_0000_00000000000A" source="EAID_055C5806_E9D8_4a7a_9307_DAF7C31763C7" target="EAID_055C5806_E9D8_4a7a_9307_DAF7C31763C7" /></XMI.extensions></XMI>

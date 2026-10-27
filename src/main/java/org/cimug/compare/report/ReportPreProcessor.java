@@ -366,7 +366,7 @@ public class ReportPreProcessor {
 				ee.setAttribute("baselineClassId", bc);
 			if (mc != null)
 				ee.setAttribute("modelClassId", mc);
-			copyNotesAndProperties(end, ee);
+			copyNotesAndProperties(end, ee, "added".equals(status) || "deleted".equals(status) ? status : statusOf(end));
 			e.appendChild(ee);
 		}
 		return e;
@@ -484,6 +484,18 @@ public class ReportPreProcessor {
 	}
 
 	private void copyNotesAndProperties(Element src, Element dst) {
+		copyNotesAndProperties(src, dst, dst.getAttribute("status"));
+	}
+
+	/**
+	 * @param owner the status of the element the properties belong to. When it
+	 *              exists on both sides (anything but added or deleted), a
+	 *              property with a value on one side only is changed, not added
+	 *              or deleted: EA leaves an empty value out of its export, but
+	 *              the element still has the property (#107).
+	 */
+	private void copyNotesAndProperties(Element src, Element dst, String owner) {
+		boolean bothSides = !"added".equals(owner) && !"deleted".equals(owner);
 		Element props = firstChild(src, "Properties");
 		if (props == null)
 			return;
@@ -492,6 +504,8 @@ public class ReportPreProcessor {
 		for (Element p : children(props, "Property")) {
 			String name = attr(p, "name");
 			String st = normalize(attr(p, "status"));
+			if (bothSides && ("added".equals(st) || "deleted".equals(st)))
+				st = "changed";
 			String b = p.hasAttribute("baseline") ? p.getAttribute("baseline") : null;
 			String m = p.hasAttribute("model") ? p.getAttribute("model") : null;
 			Element po = out.createElement("Property");

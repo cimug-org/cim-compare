@@ -189,6 +189,7 @@ table.t tr[data-status="moved"] > th.k, td.c-moved { background: var(--moved); c
 table.t tr[data-status="changed"] > th.k, td.c-changed { background: var(--changed); color: var(--changed-ink); }
 table.t tr[data-status="identical"] > th.k { background: var(--identical); color: var(--identical-ink); }
 table.t td.void { color: var(--faint); text-align: center; }
+table.t td.nil { color: var(--faint); font-style: italic; }
 .tw { overflow-x: auto; }
 
 /* attributes (two-sided) */

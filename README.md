@@ -11,7 +11,6 @@ See an [example report](https://cim-compare.ucaiug.io/example-comparison-report/
 ## Table of Contents
 - [Home](#cim-compare)
 - [Latest Release](#latest-release)
-  - [Earlier Releases](#earlier-releases)
 - [Overview: CIM Model Comparison Reports](#overview-cim-model-comparison-reports)
 - [Reading a Comparison Report](#reading-a-comparison-report)
   - [Report Layout](#report-layout)
@@ -56,8 +55,6 @@ See an [example report](https://cim-compare.ucaiug.io/example-comparison-report/
 - **Fix:** with `--include-diagrams`, the baseline's diagram images could end up in `Images-destination`, and the report then showed the destination image on both sides of a changed diagram ([#91](https://github.com/cimug-org/cim-compare/issues/91)). This happened when Windows could not rename the folder EA exported the images to while EA still had the project open. The images are now moved file by file when the folder cannot be renamed, and **cim-compare** stops with an error if they cannot be moved.
 
 </details>
-
-### Earlier Releases
 
 <details markdown="1">
 <summary>What's New in 2.0.1</summary>

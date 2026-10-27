@@ -105,6 +105,9 @@ button { font: inherit; }
 .summary .clear.active { color: var(--ink); }
 .summary .clear a { color: var(--link); }
 .legend { display: flex; flex-wrap: wrap; gap: 6px 16px; font-size: var(--fs-s); color: var(--ink-2); padding: 0 4px 10px; }
+/* #126 the "not shown" note: tight under the legend, space before the outline */
+.empty-note { margin: -6px 0 10px; padding: 0 4px; font: italic 11.5px var(--sans); color: var(--muted); }
+.empty-note code { font-style: normal; }
 .legend span { display: inline-flex; align-items: center; gap: 5px; }
 .sw { display: inline-block; width: 12px; height: 12px; border-radius: 3px; border: 1px solid #0002; }
 .s-added { background: var(--added); border-color: var(--added-line); }

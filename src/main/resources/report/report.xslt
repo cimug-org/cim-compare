@@ -302,6 +302,10 @@
             <span><del>struck</del><ins>inserted</ins> — destination text with baseline wording struck (descriptions, names, role names, multiplicities); the ⓘ metadata view shows both texts verbatim</span>
             <span><b class="chg">Blue</b> — a changed attribute type (the new type)</span>
           </div>
+          <!-- #126: what was left out, as the last line under the legend -->
+          <xsl:if test="@emptyValuesNotShown">
+            <div class="empty-note">ⓘ <xsl:value-of select="@emptyValuesNotShown"/> difference<xsl:if test="@emptyValuesNotShown != '1'">s</xsl:if> between a value and an empty value (EA housekeeping such as Phase, GenType, Containment “Not Specified”) <xsl:value-of select="if (@emptyValuesNotShown = '1') then 'is' else 'are'"/> not shown. Run with <code>--show-empty-values</code> to include them.</div>
+          </xsl:if>
           <div class="layout">
             <nav id="rail" class="rail" aria-label="Package outline">
               <div class="r-h"><span>Packages</span><span class="r-hn" title="changed classes and diagrams in each package, including sub-packages">changes</span></div>

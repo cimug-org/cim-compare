@@ -172,6 +172,10 @@ del { background: var(--del-bg); color: var(--del-ink); text-decoration: line-th
 ins { background: var(--ins-bg); color: var(--ins-ink); text-decoration: none; }
 /* a changed attribute type: the new type only, in blue (not redlined) */
 .chg, .chg a { color: var(--link); }
+/* #110 in signature lines (association ends, attribute bounds) keep the struck and
+   inserted parts apart, so 0..1 → 1 does not read as 0..11 */
+.sigline del + ins, td.sig del + ins { margin-left: .3em; }
+body.clean .sigline del + ins, body.clean td.sig del + ins { margin-left: 0; }
 body.clean del { display: none; }
 body.clean ins { background: none; color: inherit; }
 

@@ -253,4 +253,15 @@ public class ReportRendererTest {
 		assertEquals("comparison-report-enriched.xml",
 				ReportRenderer.enrichedFileFor(new File("/x/comparison-report.XML"), null).getName());
 	}
+
+	@Test
+	public void signatureLinesSpaceTheStruckAndInsertedParts() throws Exception {
+		File xml = copyFixture();
+		File html = new File(tmp.getRoot(), "sig.html");
+		new ReportRenderer(false, null, false, "jpg").render(xml, html);
+		String page = read(html);
+		// #110: the gap comes from the stylesheet, scoped to signature lines
+		assertTrue(page.contains(".sigline del + ins, td.sig del + ins { margin-left: .3em; }"));
+		assertTrue(page.contains("<span class=\"card\">[<del>0..1</del><ins>1</ins>]</span>"));
+	}
 }

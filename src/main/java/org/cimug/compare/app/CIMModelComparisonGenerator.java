@@ -605,15 +605,17 @@ public class CIMModelComparisonGenerator {
 	 * images when requested).
 	 *
 	 * <ul>
-	 * <li>No package name: the first root node is exported (with a warning when the
-	 * project has more than one).</li>
+	 * <li>No package name: the project's root node is exported. When the project has
+	 * more than one root node, each is exported and the exports are merged into one
+	 * XMI file (see {@link #exportAllRoots}, issue #88).</li>
 	 * <li>A package name: the package of that name is exported, searching root nodes
 	 * and everything below them. If there is none and {@code guidHint} is given, the
 	 * package with that GUID is exported instead (a package renamed between versions).
 	 * If neither is found nothing is exported and null is returned.</li>
 	 * </ul>
 	 *
-	 * @return the GUID of the exported package, or null when nothing was exported
+	 * @return the GUID of the exported package (the first root node when several
+	 *         are merged), or null when nothing was exported
 	 */
 	private static String exportProject(File eaProject, boolean baseline, File outputDir, File xmiExportFile,
 			String packageName, String guidHint, DiagramXML diagramXML, DiagramImage diagramImage) {
@@ -628,15 +630,10 @@ public class CIMModelComparisonGenerator {
 			Package packageToCompare = null;
 
 			if (packageName == null) {
+				if (models.GetCount() > 1)
+					return exportAllRoots(repository, models, eaProject, side, baseline, outputDir, xmiExportFile,
+							diagramXML, diagramImage);
 				packageToCompare = models.GetAt((short) 0);
-				if (models.GetCount() > 1) {
-					StringBuilder names = new StringBuilder();
-					for (Package m : models)
-						names.append(names.length() > 0 ? ", " : "").append(m.GetName());
-					System.out.println("\nWARNING:  " + side + " project " + eaProject.getName() + " has "
-							+ models.GetCount() + " root nodes (" + names + "). Only the first, '"
-							+ packageToCompare.GetName() + "', is compared.");
-				}
 			} else {
 				for (Package m : models) {
 					packageToCompare = m.GetName().equals(packageName) ? m : findPackage(packageName, m.GetPackages());
@@ -703,6 +700,87 @@ public class CIMModelComparisonGenerator {
 				System.exit(1);
 			}
 		}
+	}
+
+	/**
+	 * Exports every root node of an open EA project and merges the exports into
+	 * {@code xmiExportFile} (issue #88). EA exports one package per XMI file, so
+	 * each root goes to its own file first; {@link XmiMerger} then puts them under
+	 * one model, where references from one root to another resolve like any other.
+	 * The per-root files are deleted after the merge. Diagram images from all roots
+	 * go to the side's images folder.
+	 *
+	 * @return the GUID of the first root node
+	 */
+	private static String exportAllRoots(Repository repository, Collection<Package> models, File eaProject,
+			String side, boolean baseline, File outputDir, File xmiExportFile, DiagramXML diagramXML,
+			DiagramImage diagramImage) throws Exception {
+		List<Package> roots = new LinkedList<Package>();
+		StringBuilder names = new StringBuilder();
+		for (Package m : models) {
+			roots.add(m);
+			names.append(names.length() > 0 ? ", " : "").append(m.GetName());
+		}
+		System.out.println("\n" + side + " project " + eaProject.getName() + " has " + roots.size()
+				+ " root nodes (" + names + "). All are compared.");
+
+		File imagesDirectory = new File(outputDir, "Images");
+		File sideImagesDirectory = new File(outputDir, "Images" + (baseline ? "-baseline" : "-destination"));
+		List<File> parts = new LinkedList<File>();
+		try {
+			int n = 0;
+			for (Package root : roots) {
+				File part = new File(outputDir, baseName(xmiExportFile) + "-root" + (++n) + XMI);
+				parts.add(part);
+				repository.GetProjectInterface().ExportPackageXMI(root.GetPackageGUID(), EnumXMIType.xmiEA11,
+						diagramXML.code(), diagramImage.code(), 1, 0, part.getAbsolutePath());
+				if (diagramXML != DiagramXML.NO_EXPORT && imagesDirectory.exists())
+					moveImages(imagesDirectory, sideImagesDirectory);
+				System.out.println(side + " model root node '" + root.GetName() + "' exported.");
+			}
+
+			XmiMerger.Result merged = XmiMerger.merge(parts, xmiExportFile);
+			if (merged.duplicateCount > 0) {
+				System.out.println("\nWARNING:  " + merged.duplicateCount
+						+ " element(s) are defined in more than one root node of " + eaProject.getName()
+						+ "; they may be reported twice. First few: " + merged.duplicateIds);
+			}
+		} finally {
+			for (File part : parts)
+				part.delete();
+		}
+
+		if (diagramXML != DiagramXML.NO_EXPORT) {
+			if (sideImagesDirectory.exists()) {
+				System.out.println("\n" + side + " model diagrams successfully exported as " + diagramImage.name()
+						+ " images to:  \n" + sideImagesDirectory.getAbsolutePath());
+			} else {
+				System.err.println("ERROR:  Unable to export diagram images. Terminating EA .eap XMI export processing.");
+				System.exit(1);
+			}
+		}
+
+		System.out.println("\n" + side + " model XMI export completed successfully (root nodes " + names
+				+ ", merged):  \n" + xmiExportFile.getAbsolutePath());
+		return roots.get(0).GetPackageGUID();
+	}
+
+	/**
+	 * Moves the images EA wrote to {@code from} into {@code to}: a rename when
+	 * {@code to} does not exist yet, otherwise file by file (replacing files of the
+	 * same name), after which {@code from} is removed.
+	 */
+	static void moveImages(File from, File to) throws IOException {
+		if (!to.exists() && from.renameTo(to))
+			return;
+		if (!to.exists() && !to.mkdirs())
+			throw new IOException("Unable to create " + to.getAbsolutePath());
+		File[] files = from.listFiles();
+		if (files != null)
+			for (File f : files)
+				java.nio.file.Files.move(f.toPath(), new File(to, f.getName()).toPath(),
+						java.nio.file.StandardCopyOption.REPLACE_EXISTING);
+		from.delete();
 	}
 
 	private static Package findPackage(String packageName, Collection<Package> packages) {
@@ -852,7 +930,8 @@ public class CIMModelComparisonGenerator {
 				"",
 				"Options:",
 				"   --package=<name>     Compare (or report) only this package and everything below it. Either model's name",
-				"                        for a renamed package can be used (e.g. IEC61970 or Grid).",
+				"                        for a renamed package can be used (e.g. IEC61970 or Grid). Without it, every root",
+				"                        node of an EA project is compared (option 1).",
 				"   --full               Include identical items in the report as well as the changes.",
 				"   --minimal            Accepted for 1.x command lines; no effect (only changes are reported by default).",
 				"   --include-diagrams   Include changed diagrams (options 1 and 2).",

@@ -19,7 +19,8 @@
       │  │  ├ Plant                           baseline only (type="") → deleted class
       │  │  │   └ Links: Generalization        baseline only (type="") → deleted link
       │  │  ├ Equipment                       renamed class (was ConductingEquipmentBase)
-      │  │  │   └ Links: Association          role and multiplicity changed; the target role is unspecified
+      │  │  │   └ Links: Association          role and multiplicity changed; the target role is unspecified;
+      │  │  │                                 source multiplicity 0..* → * is notation only (#109)
       │  │  ├ Location                        only an attribute description changed (curly quotes) →
       │  │  │                                 changed class, but not highlighted on a diagram
       │  │  ├ CoreOverview (diagram)          changed properties → shown; #37 DiagramObjects (one
@@ -158,7 +159,7 @@
                     </Properties>
                     <CompareItem name="Source: (Equipment)" type="Src" guid="Src-{00000000-0000-0000-0000-000000000180}" status="Changed">
                       <Properties>
-                        <Property name="Cardinality" model="0..*" baseline="0..*" status="Identical"/>
+                        <Property name="Cardinality" model="*" baseline="0..*" status="Changed"/>
                         <Property name="End" model="Equipment" baseline="ConductingEquipmentBase" status="Changed"/>
                         <Property name="Role" model="Equipments" baseline="Equipment" status="Changed"/>
                       </Properties>

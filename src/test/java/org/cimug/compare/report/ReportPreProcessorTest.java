@@ -490,4 +490,22 @@ public class ReportPreProcessorTest {
 		assertEquals("deleted", str(d, "//Class[@name='Plant']/Properties/Property[@name='Notes']/@status"));
 		assertEquals("deleted", str(d, "//Class[@name='Plant']/Link/End[@side='source']/Properties/Property[@name='End']/@status"));
 	}
+
+	@Test
+	public void multiplicityNotationOnly() throws Exception {
+		// #109
+		assertTrue(ReportPreProcessor.sameMultiplicity("1..1", "1"));
+		assertTrue(ReportPreProcessor.sameMultiplicity("0..*", "*"));
+		assertTrue(ReportPreProcessor.sameMultiplicity("2 .. 2", "2"));
+		assertFalse(ReportPreProcessor.sameMultiplicity("0..1", "1"));
+		assertFalse(ReportPreProcessor.sameMultiplicity("1..*", "*"));
+		assertFalse(ReportPreProcessor.sameMultiplicity("", "1"));
+		assertFalse(ReportPreProcessor.sameMultiplicity(null, "1"));
+		Document d = enrich(false, null);
+		String src = "//Class[@name='Equipment']/Link/End[@side='source']/Properties/Property[@name='Cardinality']";
+		assertEquals("changed", str(d, src + "/@status"));
+		assertEquals("true", str(d, src + "/@notation"));
+		// a real change is not marked
+		assertEquals("", str(d, "//Class[@name='Equipment']/Link/End[@side='target']/Properties/Property[@name='Cardinality']/@notation"));
+	}
 }

@@ -322,10 +322,20 @@ body.no-hl .hl, body.no-hl .hl-legend { display: none !important; }
   .hdr .brand { border-right: 0; padding-right: 0; }
 }
 @media print {
-  .hdr, .summary .clear, .lightbox { display: none; }
+  /* #128 keep the status colours and redline highlights: browsers drop backgrounds unless asked */
+  html, body, * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+  /* the header prints with its title and information; the search box and buttons do not */
+  .hdr { position: static; }
+  .hdr .tools, .summary .clear, .lightbox { display: none; }
   .node.closed > .kids, .node.closed > .detail { display: block; }
-  .tree, .row { break-inside: avoid; }
+  /* the tree flows across pages (it used to be pushed whole to page 2); a row stays with its details */
+  .row { break-inside: avoid; break-after: avoid; }
+  /* expanded for printing, so the arrows show open */
+  .node > .row .chev:not(:empty) { font-size: 0; }
+  .node > .row .chev:not(:empty)::before { content: "▼"; font-size: 9px; }
 }
+/* #128 wide tables read better across the page: ask for landscape (the paper size stays the reader's) */
+@page { size: landscape; margin: 0.4in; }
 @media (prefers-reduced-motion: no-preference) {
   .row { transition: filter .12s; }
 }

@@ -335,4 +335,19 @@ public class ReportRendererTest {
 		assertFalse(r, r.contains("metadata changed"));
 		assertFalse(page.contains("<span class=\"info info-chg\" data-id=\"EAID_00000000_0000_0000_0000_000000000115\""));
 	}
+
+	@Test
+	public void printKeepsColoursAndTheHeader() throws Exception {
+		File xml = copyFixture();
+		File html = new File(tmp.getRoot(), "print.html");
+		new ReportRenderer(false, null, false, "jpg").render(xml, html);
+		String page = read(html);
+		// #128
+		assertTrue(page.contains("print-color-adjust: exact !important;"));
+		assertTrue(page.contains(".hdr .tools, .summary .clear, .lightbox { display: none; }"));
+		assertFalse(page.contains(".hdr, .summary .clear, .lightbox { display: none; }"));
+		assertFalse(page.contains(".tree, .row { break-inside: avoid; }"));
+		assertTrue(page.contains("@page { size: landscape; margin: 0.4in; }"));
+		assertTrue(page.contains("window.addEventListener('beforeprint'"));
+	}
 }

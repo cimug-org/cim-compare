@@ -401,6 +401,9 @@ public class ReportRendererTest {
 		assertTrue(page.contains(".replace(/[{}]/g, '').replace(/^EAID_/i, '').replace(/[-_\\s]/g, '').toLowerCase()"));
 		assertTrue(page.contains("if (g.length >= 8 && /^[0-9a-f]+$/.test(g))"));
 		assertTrue(page.contains("No element with this GUID in this report"));
+		// a hit shows the GUID as written in the report (EA's mixed case), not lower-cased
+		assertTrue(page.contains("shown: /^EAID_/.test(host.id || '') ? '{' + host.id.slice(5).replace(/_/g, '-') + '}' : ''"));
+		assertTrue(page.contains("var full = h.shown,"));
 		// one rounded ring for every target; attribute rows get the laid-over ring, not a box-shadow on each cell
 		assertTrue(page.contains("ul.plain li.target, ul.plain li:target, .linkB.target { outline: 2px solid var(--focus);"));
 		assertTrue(page.contains(".tr-ring { position: absolute;"));

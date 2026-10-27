@@ -49,5 +49,22 @@
     </div>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/anchor-js/4.1.0/anchor.min.js" integrity="sha256-lZaRhKri35AyJSypXXs4o6OPFTbTmUoltBbDCbdzegg=" crossorigin="anonymous"></script>
     <script>anchors.add();</script>
+    <script>
+      // Print the collapsed rows ("Earlier Releases") open, so a PDF printed from the
+      // site includes them; close them again afterwards. On screen nothing changes.
+      (function () {
+        var opened = [];
+        window.addEventListener("beforeprint", function () {
+          document.querySelectorAll("details:not([open])").forEach(function (d) {
+            d.open = true;
+            opened.push(d);
+          });
+        });
+        window.addEventListener("afterprint", function () {
+          opened.forEach(function (d) { d.open = false; });
+          opened = [];
+        });
+      })();
+    </script>
   </body>
 </html>

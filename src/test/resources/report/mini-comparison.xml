@@ -33,10 +33,14 @@
       │  │                                    shown with its highlight
       │  ├ Wires
       │  │  ├ ACLineSegment                   model only → added
-      │  │  ├ Switch                          moved here from Core; Phase cleared and Complexity
+      │  │  ├ Switch                          moved here from Core; Author cleared and Alias
       │  │  │                                 filled in (value on one side only) → changed (#107);
       │  │  │                                 stereotypes reordered → order only (#118);
       │  │  │                                 description changed → marked row ⓘ (#123)
+      │  │  ├ Breaker                         EA housekeeping cleared (Phase, GenType; attribute open:
+      │  │  │                                 Containment, Derived) → not reported (#126); attribute
+      │  │  │                                 normalOpen IsLiteral true → empty is still reported
+      │  │  ├ Fuse                            only Complexity and Version cleared → identical, dropped (#126)
       │  │  ├ DocWires (diagram)              renamed, nothing on it changed → metadata only, no images
       │  │  └ WiresConnectors (diagram)       only a rerouted connector → shown
       │  ├ DER                                only a diagram with nothing to highlight → package hidden
@@ -279,11 +283,42 @@
                 <Properties>
                   <Property name="Name" model="Switch" baseline="Switch" status="Identical"/>
                   <Property name="Notes" model="A switch, opened or closed." baseline="A switch." status="Changed"/>
-                  <Property name="Complexity" model="2" status="Model only"/>
+                  <Property name="Alias" model="SW-1" status="Model only"/>
                   <Property name="Stereotype" model="util, ShadowExtension" baseline="ShadowExtension, util" status="Changed"/>
                   <Property name="ParentPackage" model="Wires" baseline="Core" status="Changed"/>
+                  <Property name="Author" baseline="toddv" status="Baseline only"/>
+                  <Property name="Type" model="Class" baseline="Class" status="Identical"/>
+                </Properties>
+              </CompareItem>
+
+              <!-- #126: EA housekeeping values cleared on one side -->
+              <CompareItem name="Breaker" type="Class" guid="{00000000-0000-0000-0000-000000000126}" status="Changed">
+                <Properties>
+                  <Property name="GenType" baseline="Java" status="Baseline only"/>
+                  <Property name="Name" model="Breaker" baseline="Breaker" status="Identical"/>
                   <Property name="Phase" baseline="1.0" status="Baseline only"/>
                   <Property name="Type" model="Class" baseline="Class" status="Identical"/>
+                </Properties>
+                <CompareItem name="open" type="Attribute" guid="{00000000-0000-0000-0000-000000000127}" status="Changed">
+                  <Properties>
+                    <Property name="Containment" baseline="Not Specified" status="Changed"/>
+                    <Property name="Derived" baseline="0" status="Changed"/>
+                    <Property name="Name" model="open" baseline="open" status="Identical"/>
+                  </Properties>
+                </CompareItem>
+                <CompareItem name="normalOpen" type="Attribute" guid="{00000000-0000-0000-0000-000000000128}" status="Changed">
+                  <Properties>
+                    <Property name="IsLiteral" baseline="true" status="Changed"/>
+                    <Property name="Name" model="normalOpen" baseline="normalOpen" status="Identical"/>
+                  </Properties>
+                </CompareItem>
+              </CompareItem>
+              <CompareItem name="Fuse" type="Class" guid="{00000000-0000-0000-0000-000000000129}" status="Changed">
+                <Properties>
+                  <Property name="Complexity" model="1" status="Model only"/>
+                  <Property name="Name" model="Fuse" baseline="Fuse" status="Identical"/>
+                  <Property name="Type" model="Class" baseline="Class" status="Identical"/>
+                  <Property name="Version" baseline="1.0" model="" status="Changed"/>
                 </Properties>
               </CompareItem>
 

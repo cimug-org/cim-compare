@@ -78,6 +78,14 @@ public class ReportRenderer {
 	}
 
 
+	private boolean showEmptyValues;
+
+	/** The {@code --show-empty-values} option (#126). */
+	public ReportRenderer showEmptyValues(boolean show) {
+		this.showEmptyValues = show;
+		return this;
+	}
+
 	/**
 	 * @param comparisonXml
 	 *            the comparison XML produced by the diff (or an EA compare log)
@@ -98,7 +106,7 @@ public class ReportRenderer {
 	public File render(Document in, File comparisonXml, File html) throws Exception {
 		Set<String> diagrams = includeDiagrams ? diagramIds(in) : null;
 		Document enriched = (packageNames != null ? ReportPreProcessor.forPackages(full, packageNames)
-				: new ReportPreProcessor(full, packageFilter)).process(in);
+				: new ReportPreProcessor(full, packageFilter)).showEmptyValues(showEmptyValues).process(in);
 		in = null; // let the (large) input go
 
 		File enrichedFile = enrichedFileFor(comparisonXml, html);

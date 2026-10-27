@@ -351,8 +351,9 @@ public class ReportPreProcessorTest {
 		assertEquals("1", str(d, "/ComparisonReport/Summary/Count[@kind='class'][@status='added']/@n"));
 		assertEquals("1", str(d, "/ComparisonReport/Summary/Count[@kind='class'][@status='deleted']/@n"));
 		assertEquals("1", str(d, "/ComparisonReport/Summary/Count[@kind='class'][@status='moved']/@n"));
-		// PowerSystemResource, Location, Equipment, GridCIMVersion
-		assertEquals("4", str(d, "/ComparisonReport/Summary/Count[@kind='class'][@status='changed']/@n"));
+		// PowerSystemResource, Location, Equipment, GridCIMVersion, Breaker (#126: Fuse, whose only
+		// differences were empty EA housekeeping values, is not counted)
+		assertEquals("5", str(d, "/ComparisonReport/Summary/Count[@kind='class'][@status='changed']/@n"));
 		// CoreOverview, CoreLayout (moved element), DocWires (renamed), WiresConnectors (connector)
 		assertEquals("4", str(d, "/ComparisonReport/Summary/Count[@kind='diagram'][@status='changed']/@n"));
 		assertEquals("1", str(d, "/ComparisonReport/Summary/Count[@kind='package'][@status='deleted']/@n"));
@@ -363,9 +364,9 @@ public class ReportPreProcessorTest {
 	public void packageCountsCoverTheWholeSubtree() throws Exception {
 		Document d = enrich(false, null);
 		Element grid = pkg(d, "Grid");
-		// Core: PowerSystemResource, Plant, Location, Equipment; Wires: ACLineSegment, Switch;
-		// Grid: GridCIMVersion
-		assertEquals("7", grid.getAttribute("changedClasses"));
+		// Core: PowerSystemResource, Plant, Location, Equipment; Wires: ACLineSegment, Switch, Breaker
+		// (not Fuse, #126); Grid: GridCIMVersion
+		assertEquals("8", grid.getAttribute("changedClasses"));
 		// CoreOverview (notes), CoreLayout (a moved element), DocWires (renamed),
 		// WiresConnectors (a rerouted connector); not DERLayout
 		assertEquals("4", grid.getAttribute("changedDiagrams"));
@@ -480,10 +481,10 @@ public class ReportPreProcessorTest {
 	@Test
 	public void valueOnOneSideOfAnElementOnBothSidesIsAChange() throws Exception {
 		Document d = enrich(false, null);
-		// #107: Switch exists on both sides; Phase was cleared and Complexity filled in
-		assertEquals("changed", str(d, "//Class[@name='Switch']/Properties/Property[@name='Phase']/@status"));
-		assertEquals("1.0", str(d, "//Class[@name='Switch']/Properties/Property[@name='Phase']/@baseline"));
-		assertEquals("changed", str(d, "//Class[@name='Switch']/Properties/Property[@name='Complexity']/@status"));
+		// #107: Switch exists on both sides; Author was cleared and Alias filled in
+		assertEquals("changed", str(d, "//Class[@name='Switch']/Properties/Property[@name='Author']/@status"));
+		assertEquals("toddv", str(d, "//Class[@name='Switch']/Properties/Property[@name='Author']/@baseline"));
+		assertEquals("changed", str(d, "//Class[@name='Switch']/Properties/Property[@name='Alias']/@status"));
 		// the same on a link end
 		assertEquals("changed", str(d, "//Link/End[@side='target']/Properties/Property[@name='TargetScope']/@status"));
 		// an element that exists on one side only keeps its added/deleted properties
@@ -525,5 +526,38 @@ public class ReportPreProcessorTest {
 		assertEquals("changed", str(d, "//Class[@name='Equipment']/Properties/Property[@name='Stereotype']/@status"));
 		assertEquals("util, ShadowExtension", str(d, "//Class[@name='Switch']/@stereotype"));
 		assertEquals("order only", str(d, "//Class[@name='Switch']/Properties/Property[@name='Stereotype']/@tag"));
+	}
+
+	@Test
+	public void emptyValuesInEaHousekeepingAreNotReported() throws Exception {
+		// #126
+		assertTrue(EmptyValues.neutral("Phase", "1.0"));
+		assertTrue(EmptyValues.neutral("GenType", "Java"));
+		assertTrue(EmptyValues.neutral("Containment", "Not Specified"));
+		assertTrue(EmptyValues.neutral("Containment", "Unspecified"));
+		assertTrue(EmptyValues.neutral("Derived", "0"));
+		assertTrue(EmptyValues.neutral("Const", "false"));
+		assertFalse(EmptyValues.neutral("IsLiteral", "true"));
+		assertFalse(EmptyValues.neutral("Containment", "By Reference"));
+		assertFalse(EmptyValues.neutral("Default", "3"));
+		assertFalse(EmptyValues.neutral("Author", "toddv"));
+
+		Document d = enrich(false, null);
+		assertEquals("6", d.getDocumentElement().getAttribute("emptyValuesNotShown"));
+		// Breaker stays changed for normalOpen (IsLiteral true -> empty), without its housekeeping rows
+		assertEquals("changed", str(d, "//Class[@name='Breaker']/@status"));
+		assertEquals("identical", str(d, "//Class[@name='Breaker']/Properties/Property[@name='Phase']/@status"));
+		assertEquals(0, count(d, "//Class[@name='Breaker']/Attribute[@name='open']"));
+		assertEquals("changed", str(d, "//Attribute[@name='normalOpen']/Properties/Property[@name='IsLiteral']/@status"));
+		// Fuse differed only in housekeeping: identical, so left out
+		assertEquals(0, count(d, "//Class[@name='Fuse']"));
+		// the #107 rows that are not housekeeping are still reported
+		assertEquals("changed", str(d, "//Class[@name='Switch']/Properties/Property[@name='Author']/@status"));
+
+		Document all = new ReportPreProcessor(false, null).showEmptyValues(true).process(fixture());
+		assertEquals("", all.getDocumentElement().getAttribute("emptyValuesNotShown"));
+		assertEquals("changed", str(all, "//Class[@name='Fuse']/@status"));
+		assertEquals("changed", str(all, "//Class[@name='Breaker']/Properties/Property[@name='Phase']/@status"));
+		assertEquals(1, count(all, "//Class[@name='Breaker']/Attribute[@name='open']"));
 	}
 }

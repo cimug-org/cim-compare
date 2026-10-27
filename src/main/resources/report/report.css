@@ -105,6 +105,15 @@ button { font: inherit; }
 .summary .clear.active { color: var(--ink); }
 .summary .clear a { color: var(--link); }
 .legend { display: flex; flex-wrap: wrap; gap: 6px 16px; font-size: var(--fs-s); color: var(--ink-2); padding: 0 4px 10px; }
+/* #126 the "not shown" note: tight under the legend, space before the outline */
+.empty-note { margin: -6px 0 10px; padding: 0 4px; font: italic 11.5px var(--sans); color: var(--muted); }
+.empty-note code { font-style: normal; }
+.empty-note .tipwrap { position: relative; border-bottom: 1px dotted var(--muted); cursor: help; outline: none; }
+.empty-note .tip { display: none; position: absolute; left: 0; top: 1.6em; z-index: 50; width: 330px; padding: 8px 10px; background: var(--surface); color: var(--ink); border: 1px solid var(--line); border-radius: var(--r); box-shadow: 0 4px 14px #0002; font: normal 12px/1.55 var(--sans); }
+.empty-note .tip b, .empty-note .tip .tl, .empty-note .tip .tip-n { display: block; }
+.empty-note .tip .tip-n { color: var(--muted); }
+.empty-note .tipwrap:hover .tip, .empty-note .tipwrap:focus .tip { display: block; }
+ @media print { .empty-note .tip { display: inline; position: static; box-shadow: none; border: 0; padding: 0; width: auto; font: inherit; color: inherit; } .empty-note .tip b, .empty-note .tip .tip-n { display: none; } .empty-note .tip .tl { display: inline; } .empty-note .tip .tl + .tl::before { content: "; "; } .empty-note .tip::before { content: " ("; } .empty-note .tip::after { content: ")"; } }
 .legend span { display: inline-flex; align-items: center; gap: 5px; }
 .sw { display: inline-block; width: 12px; height: 12px; border-radius: 3px; border: 1px solid #0002; }
 .s-added { background: var(--added); border-color: var(--added-line); }

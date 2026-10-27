@@ -272,8 +272,8 @@ public class ReportRendererTest {
 		new ReportRenderer(false, null, false, "jpg").render(xml, html);
 		String page = read(html);
 		// #107: a cleared or filled-in value is a changed row, with (empty) on the empty side
-		assertTrue(page.contains("<tr data-status=\"changed\"><th class=\"k\">Phase</th><td>1.0</td><td class=\"nil\">(empty)</td></tr>"));
-		assertTrue(page.contains("<tr data-status=\"changed\"><th class=\"k\">Complexity</th><td class=\"nil\">(empty)</td><td>2</td></tr>"));
+		assertTrue(page.contains("<tr data-status=\"changed\"><th class=\"k\">Author</th><td>toddv</td><td class=\"nil\">(empty)</td></tr>"));
+		assertTrue(page.contains("<tr data-status=\"changed\"><th class=\"k\">Alias</th><td class=\"nil\">(empty)</td><td>SW-1</td></tr>"));
 		assertTrue(page.contains("<td>instance</td><td class=\"nil\">(empty)</td>"));
 	}
 
@@ -349,5 +349,24 @@ public class ReportRendererTest {
 		assertFalse(page.contains(".tree, .row { break-inside: avoid; }"));
 		assertTrue(page.contains("@page { size: landscape; margin: 0.4in; }"));
 		assertTrue(page.contains("window.addEventListener('beforeprint'"));
+	}
+
+	@Test
+	public void theReportSaysHowManyEmptyValuesAreNotShown() throws Exception {
+		File xml = copyFixture();
+		File html = new File(tmp.getRoot(), "empty-note.html");
+		new ReportRenderer(false, null, false, "jpg").render(xml, html);
+		String page = read(html);
+		// #126: the note follows the legend
+		int legend = page.indexOf("<div class=\"legend\">"), note = page.indexOf("<div class=\"empty-note\">");
+		assertTrue(legend > 0 && note > legend);
+		assertTrue(page.contains("6 differences are not shown where one side is empty in <span class=\"tipwrap\" tabindex=\"0\">a metadata field EA fills in automatically<span class=\"tip\"><b>Metadata fields affected</b><span class=\"tl\">"));
+		assertTrue(page.contains("IsLiteral, Derived, Const, Static: false"));
+		assertTrue(page.contains("; they do not change the model’s definitions."));
+		assertTrue(page.contains("<code>--show-empty-values</code>"));
+
+		File all = new File(tmp.getRoot(), "empty-all.html");
+		new ReportRenderer(false, null, false, "jpg").showEmptyValues(true).render(xml, all);
+		assertFalse(read(all).contains("<div class=\"empty-note\">"));
 	}
 }

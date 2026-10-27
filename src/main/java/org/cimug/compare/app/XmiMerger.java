@@ -40,7 +40,8 @@ import javax.xml.stream.events.XMLEvent;
  * EA exports a root node as {@code XMI.content › UML:Model name="EA Model"
  * xmi.id="MX_EAID_<root>" › UML:Namespace.ownedElement › (EARootClass, the root
  * UML:Package, model-level DataTypes ...)}, followed by the diagrams and any
- * stubs at the {@code XMI.content} level and the {@code XMI.extensions}. The
+ * stubs at the {@code XMI.content} level and the {@code XMI.extensions}, where
+ * EA writes its {@code EAStub} placeholders. The
  * merged file keeps that shape: one {@code EA Model} whose owned elements are
  * those of every input in order, then every input's diagrams, then every input's
  * extensions. The {@code EA Model}'s name and xmi.id, the header and
@@ -164,15 +165,7 @@ public final class XmiMerger {
 				w.flush();
 				for (Part p : parts)
 					append(p.content, os);
-				for (Part p : parts)
-					for (Stub s : p.stubs) {
-						if (definedBy.containsKey(s.id)) {
-							stubsResolved++;
-						} else if (stubsWritten.add(s.id)) {
-							w.write("\n\t\t");
-							w.write(s.xml);
-						}
-					}
+				stubsResolved += writeStubs(w, parts, false, definedBy, stubsWritten);
 				w.write("\n\t</XMI.content>");
 				if (first.differenceXml != null) {
 					w.write("\n\t");
@@ -184,6 +177,7 @@ public final class XmiMerger {
 				w.flush();
 				for (Part p : parts)
 					append(p.extensions, os);
+				stubsResolved += writeStubs(w, parts, true, definedBy, stubsWritten);
 				w.write("\n\t</XMI.extensions>\n</XMI>\n");
 				w.flush();
 			}
@@ -193,6 +187,30 @@ public final class XmiMerger {
 				if (t != null)
 					t.delete();
 		}
+	}
+
+	/**
+	 * Writes the stubs of one section (content or extensions) once each, leaving
+	 * out those for elements an input defines.
+	 *
+	 * @return the number of stubs left out because the element is defined
+	 */
+	private static int writeStubs(Writer w, List<Part> parts, boolean extensions,
+			Map<String, List<String>> definedBy, Set<String> written) throws IOException {
+		int resolved = 0;
+		for (Part p : parts)
+			for (Stub s : p.stubs) {
+				if (s.inExtensions != extensions)
+					continue;
+				if (definedBy.containsKey(s.id))
+					resolved++;
+				else if (written.add(s.id)) {
+					w.write("\n\t\t");
+					w.write(s.xml);
+				}
+			}
+		w.flush();
+		return resolved;
 	}
 
 	private static void writeAttributes(Writer w, Map<String, String> attributes) throws IOException {
@@ -231,10 +249,13 @@ public final class XmiMerger {
 	private static final class Stub {
 		final String id;
 		final String xml;
+		/** Found under XMI.extensions (where EA writes them) rather than XMI.content. */
+		final boolean inExtensions;
 
-		Stub(String id, String xml) {
+		Stub(String id, String xml, boolean inExtensions) {
 			this.id = id;
 			this.xml = xml;
+			this.inExtensions = inExtensions;
 		}
 	}
 
@@ -339,6 +360,7 @@ public final class XmiMerger {
 				boolean skipping = false; // inside an EARootClass from a later input
 				int skipDepth = 0;
 				boolean inStub = false;
+				boolean stubInExtensions = false;
 				String stubId = null;
 				StringBuilder captured = null; // header / difference / stub text
 				int captureDepth = 0;
@@ -390,7 +412,9 @@ public final class XmiMerger {
 							copyAttributes(se, extensionsAttributes);
 						} else if (depth == 3 && "XMI.content".equals(path.get(1)) && "Model".equals(name)) {
 							copyAttributes(se, modelAttributes);
-						} else if (depth == 3 && "XMI.content".equals(path.get(1)) && EA_STUB.equals(name)) {
+						} else if (depth == 3 && EA_STUB.equals(name)
+								&& ("XMI.content".equals(path.get(1)) || "XMI.extensions".equals(path.get(1)))) {
+							stubInExtensions = "XMI.extensions".equals(path.get(1));
 							inStub = true;
 							stubId = attr(se, XMI_ID);
 							captured = new StringBuilder();
@@ -434,7 +458,7 @@ public final class XmiMerger {
 								else if ("XMI.difference".equals(captureKind))
 									differenceXml = captured.toString();
 								else {
-									stubs.add(new Stub(stubId, captured.toString()));
+									stubs.add(new Stub(stubId, captured.toString(), stubInExtensions));
 									inStub = false;
 								}
 								captured = null;

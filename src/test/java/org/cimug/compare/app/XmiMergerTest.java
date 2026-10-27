@@ -32,7 +32,8 @@ import org.w3c.dom.NodeList;
  * (issue #88). The fixtures are two small exports built from real EA XMI 1.1
  * elements: root {@code Model} (Core › IdentifiedObject) and root {@code ERCOT}
  * (ErcotExtensions › ErcotLine, which generalizes IdentifiedObject in the other
- * root, with a diagram, EA stubs and anonymous {@code eaxmiid} data types).
+ * root, with a diagram, EA stubs under XMI.extensions as EA writes them, and
+ * anonymous {@code eaxmiid} data types).
  */
 public class XmiMergerTest {
 
@@ -131,11 +132,15 @@ public class XmiMergerTest {
 		assertEquals(1, r.stubsResolved);
 		assertEquals(0, r.duplicateCount);
 
-		Element content = only(parse(out).getDocumentElement(), null, "XMI.content");
+		// EA writes its stubs under XMI.extensions.
+		Document d = parse(out);
+		Element content = only(d.getDocumentElement(), null, "XMI.content");
+		Element ext = only(d.getDocumentElement(), null, "XMI.extensions");
 		List<String> stubs = new ArrayList<String>();
-		for (Element s : children(content, null, "EAStub"))
+		for (Element s : children(ext, null, "EAStub"))
 			stubs.add(s.getAttribute("name"));
 		assertEquals(Arrays.asList("Elsewhere"), stubs);
+		assertEquals(0, children(content, null, "EAStub").size());
 		assertEquals("diagram kept", 1, children(content, UML, "Diagram").size());
 	}
 
@@ -144,6 +149,7 @@ public class XmiMergerTest {
 		Element ext = only(parse(merged()).getDocumentElement(), null, "XMI.extensions");
 		assertEquals("Enterprise Architect 2.5", ext.getAttribute("xmi.extender"));
 		assertEquals(2, children(ext, null, "EANoteLink").size());
+		assertEquals("stub resolved by root A left out", 1, children(ext, null, "EAStub").size());
 	}
 
 	@Test

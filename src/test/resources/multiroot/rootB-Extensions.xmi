@@ -6,8 +6,8 @@
 		</XMI.documentation>
 	</XMI.header>
 	<XMI.content><UML:Model name="EA Model" xmi.id="MX_EAID_E0C07000_0000_0000_0000_000000000001"><UML:Namespace.ownedElement><UML:Class name="EARootClass" xmi.id="EAID_11111111_5487_4080_A7F4_41526CB0AA00" isRoot="true" isLeaf="false" isAbstract="false" />
-				<UML:Package name="ERCOT" xmi.id="EAPK_E0C07000_0000_0000_0000_000000000001" isRoot="true" isLeaf="false" isAbstract="false" visibility="public"><UML:ModelElement.taggedValue><UML:TaggedValue tag="packageFlags" value="CRC=0;isModel=1;" /></UML:ModelElement.taggedValue><UML:Namespace.ownedElement><UML:Package name="ErcotExtensions" xmi.id="EAPK_E0C07000_0000_0000_0000_000000000002" isRoot="false" isLeaf="false" isAbstract="false" visibility="public" namespace="EAPK_E0C07000_0000_0000_0000_000000000001"><UML:ModelElement.taggedValue>
-														<UML:TaggedValue tag="documentation" value="ERCOT extensions.&#10;" />
+				<UML:Package name="UtilityExtensions" xmi.id="EAPK_E0C07000_0000_0000_0000_000000000001" isRoot="true" isLeaf="false" isAbstract="false" visibility="public"><UML:ModelElement.taggedValue><UML:TaggedValue tag="packageFlags" value="CRC=0;isModel=1;" /></UML:ModelElement.taggedValue><UML:Namespace.ownedElement><UML:Package name="LineExtensions" xmi.id="EAPK_E0C07000_0000_0000_0000_000000000002" isRoot="false" isLeaf="false" isAbstract="false" visibility="public" namespace="EAPK_E0C07000_0000_0000_0000_000000000001"><UML:ModelElement.taggedValue>
+														<UML:TaggedValue tag="documentation" value="Line extensions.&#10;" />
 														<UML:TaggedValue tag="parent" value="EAPK_E0C07000_0000_0000_0000_000000000001" />
 														<UML:TaggedValue tag="created" value="2008-06-15 21:38:57" />
 														<UML:TaggedValue tag="modified" value="2008-06-15 21:38:57" />
@@ -24,9 +24,9 @@
 														<UML:TaggedValue tag="complexity" value="1" />
 														<UML:TaggedValue tag="ea_stype" value="Public" />
 													</UML:ModelElement.taggedValue>
-													<UML:Namespace.ownedElement><UML:Class name="ErcotLine" xmi.id="EAID_E0C07000_0000_0000_0000_000000000003" visibility="public" namespace="EAPK_E0C07000_0000_0000_0000_000000000002" isRoot="false" isLeaf="false" isAbstract="false" isActive="false">
+													<UML:Namespace.ownedElement><UML:Class name="ExtLine" xmi.id="EAID_E0C07000_0000_0000_0000_000000000003" visibility="public" namespace="EAPK_E0C07000_0000_0000_0000_000000000002" isRoot="false" isLeaf="false" isAbstract="false" isActive="false">
 											<UML:ModelElement.taggedValue>
-												<UML:TaggedValue tag="documentation" value="An ERCOT line.&#10;Second line.&#10;" />
+												<UML:TaggedValue tag="documentation" value="An extension line.&#10;Second line.&#10;" />
 												<UML:TaggedValue tag="isSpecification" value="false" />
 												<UML:TaggedValue tag="ea_stype" value="Class" />
 												<UML:TaggedValue tag="ea_ntype" value="0" />
@@ -34,7 +34,7 @@
 												<UML:TaggedValue tag="date_created" value="2008-05-08 14:13:15" />
 												<UML:TaggedValue tag="date_modified" value="2014-01-26 12:24:53" />
 												<UML:TaggedValue tag="tagged" value="0" />
-												<UML:TaggedValue tag="package_name" value="ErcotExtensions" />
+												<UML:TaggedValue tag="package_name" value="LineExtensions" />
 												<UML:TaggedValue tag="complexity" value="1" />
 												<UML:TaggedValue tag="status" value="Proposed" />
 												<UML:TaggedValue tag="tpos" value="0" />
@@ -82,7 +82,7 @@
 																<UML:TaggedValue tag="headStyle" value="0" />
 																<UML:TaggedValue tag="lineStyle" value="0" />
 																<UML:TaggedValue tag="ea_localid" value="90002" />
-																<UML:TaggedValue tag="ea_sourceName" value="ErcotLine" />
+																<UML:TaggedValue tag="ea_sourceName" value="ExtLine" />
 																<UML:TaggedValue tag="ea_targetName" value="IdentifiedObject" />
 																<UML:TaggedValue tag="ea_sourceType" value="Class" />
 																<UML:TaggedValue tag="ea_targetType" value="Class" />
@@ -110,4 +110,4 @@
 														</UML:Generalization>
 														</UML:Namespace.ownedElement></UML:Package></UML:Namespace.ownedElement></UML:Package><UML:DataType xmi.id="eaxmiid1" name="String" visibility="private" isRoot="false" isLeaf="false" isAbstract="false" />
 				<UML:DataType xmi.id="eaxmiid0" visibility="private" isRoot="false" isLeaf="false" isAbstract="false" />
-				</UML:Namespace.ownedElement></UML:Model><UML:Diagram name="ErcotLines" xmi.id="EAID_E0C07000_0000_0000_0000_000000000005" diagramType="ClassDiagram" owner="EAPK_E0C07000_0000_0000_0000_000000000002" toolName="Enterprise Architect 2.5"><UML:ModelElement.taggedValue><UML:TaggedValue tag="documentation" value="ERCOT line extensions.&#10;" /><UML:TaggedValue tag="author" value="tviegut" /><UML:TaggedValue tag="created_date" value="2026-10-16 00:00:00" /><UML:TaggedValue tag="modified_date" value="2026-10-16 00:00:00" /><UML:TaggedValue tag="package" value="EAPK_E0C07000_0000_0000_0000_000000000002" /><UML:TaggedValue tag="type" value="Logical" /><UML:TaggedValue tag="ea_localid" value="9003" /></UML:ModelElement.taggedValue><UML:Diagram.element><UML:DiagramElement geometry="100,100,300,200," subject="EAID_E0C07000_0000_0000_0000_000000000003" seqno="1" style="DUID=AAAAAAA1;" /><UML:DiagramElement geometry="100,300,300,400," subject="EAID_055C5806_E9D8_4a7a_9307_DAF7C31763C7" seqno="2" style="DUID=AAAAAAA2;" /></UML:Diagram.element></UML:Diagram></XMI.content><XMI.difference /><XMI.extensions xmi.extender="Enterprise Architect 2.5"><EANoteLink xmi.id="EAID_B0000000_0000_0000_0000_00000000000B" source="EAID_E0C07000_0000_0000_0000_000000000003" target="EAID_E0C07000_0000_0000_0000_000000000003" /><EAStub xmi.id="EAID_055C5806_E9D8_4a7a_9307_DAF7C31763C7" name="IdentifiedObject" UMLType="Class" /><EAStub xmi.id="EAID_5D0B0000_0000_0000_0000_00000000000F" name="Elsewhere" UMLType="Class" /></XMI.extensions></XMI>
+				</UML:Namespace.ownedElement></UML:Model><UML:Diagram name="ExtLines" xmi.id="EAID_E0C07000_0000_0000_0000_000000000005" diagramType="ClassDiagram" owner="EAPK_E0C07000_0000_0000_0000_000000000002" toolName="Enterprise Architect 2.5"><UML:ModelElement.taggedValue><UML:TaggedValue tag="documentation" value="Line extensions.&#10;" /><UML:TaggedValue tag="author" value="tviegut" /><UML:TaggedValue tag="created_date" value="2026-10-16 00:00:00" /><UML:TaggedValue tag="modified_date" value="2026-10-16 00:00:00" /><UML:TaggedValue tag="package" value="EAPK_E0C07000_0000_0000_0000_000000000002" /><UML:TaggedValue tag="type" value="Logical" /><UML:TaggedValue tag="ea_localid" value="9003" /></UML:ModelElement.taggedValue><UML:Diagram.element><UML:DiagramElement geometry="100,100,300,200," subject="EAID_E0C07000_0000_0000_0000_000000000003" seqno="1" style="DUID=AAAAAAA1;" /><UML:DiagramElement geometry="100,300,300,400," subject="EAID_055C5806_E9D8_4a7a_9307_DAF7C31763C7" seqno="2" style="DUID=AAAAAAA2;" /></UML:Diagram.element></UML:Diagram></XMI.content><XMI.difference /><XMI.extensions xmi.extender="Enterprise Architect 2.5"><EANoteLink xmi.id="EAID_B0000000_0000_0000_0000_00000000000B" source="EAID_E0C07000_0000_0000_0000_000000000003" target="EAID_E0C07000_0000_0000_0000_000000000003" /><EAStub xmi.id="EAID_055C5806_E9D8_4a7a_9307_DAF7C31763C7" name="IdentifiedObject" UMLType="Class" /><EAStub xmi.id="EAID_5D0B0000_0000_0000_0000_00000000000F" name="Elsewhere" UMLType="Class" /></XMI.extensions></XMI>

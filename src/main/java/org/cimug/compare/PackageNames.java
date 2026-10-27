@@ -6,7 +6,7 @@ import java.util.List;
 
 /**
  * The value of {@code --package}: one package name, or several separated by
- * commas (issue #94), e.g. {@code Model,ERCOT} or, quoted on the command line
+ * commas (issue #94), e.g. {@code Model,UtilityExtensions} or, quoted on the command line
  * because a name contains a space, {@code "Grid, European Standards"}.
  *
  * <p>
@@ -42,7 +42,7 @@ public final class PackageNames {
 		return new ArrayList<String>(names);
 	}
 
-	/** The names as one value, for messages: {@code Model, ERCOT}. */
+	/** The names as one value, for messages: {@code Model, UtilityExtensions}. */
 	public static String join(List<String> names) {
 		StringBuilder b = new StringBuilder();
 		for (String n : names)

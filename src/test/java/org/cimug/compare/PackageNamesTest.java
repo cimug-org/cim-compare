@@ -20,20 +20,20 @@ public class PackageNamesTest {
 
 	@Test
 	public void commaListKeepsOrderAndSpacesInsideNames() {
-		assertEquals(Arrays.asList("Grid", "European Standards", "ERCOT"),
-				PackageNames.parse(" Grid, European Standards ,ERCOT"));
-		assertTrue(PackageNames.isList("Model,ERCOT"));
+		assertEquals(Arrays.asList("Grid", "European Standards", "UtilityExtensions"),
+				PackageNames.parse(" Grid, European Standards ,UtilityExtensions"));
+		assertTrue(PackageNames.isList("Model,UtilityExtensions"));
 	}
 
 	@Test
 	public void emptyEntriesAndRepeatsAreDropped() {
-		assertEquals(Arrays.asList("Model", "ERCOT"), PackageNames.parse("Model,,ERCOT, Model,"));
+		assertEquals(Arrays.asList("Model", "UtilityExtensions"), PackageNames.parse("Model,,UtilityExtensions, Model,"));
 		assertEquals(Collections.emptyList(), PackageNames.parse(" , "));
 		assertEquals(Collections.emptyList(), PackageNames.parse(null));
 	}
 
 	@Test
 	public void joinForMessages() {
-		assertEquals("Model, ERCOT", PackageNames.join(Arrays.asList("Model", "ERCOT")));
+		assertEquals("Model, UtilityExtensions", PackageNames.join(Arrays.asList("Model", "UtilityExtensions")));
 	}
 }

@@ -30,8 +30,8 @@ import org.w3c.dom.NodeList;
 /**
  * Merging the per-root XMI exports of an EA project with several root nodes
  * (issue #88). The fixtures are two small exports built from real EA XMI 1.1
- * elements: root {@code Model} (Core › IdentifiedObject) and root {@code ERCOT}
- * (ErcotExtensions › ErcotLine, which generalizes IdentifiedObject in the other
+ * elements: root {@code Model} (Core › IdentifiedObject) and root {@code UtilityExtensions}
+ * (LineExtensions › ExtLine, which generalizes IdentifiedObject in the other
  * root, with a diagram, EA stubs under XMI.extensions as EA writes them, and
  * anonymous {@code eaxmiid} data types).
  */
@@ -56,7 +56,7 @@ public class XmiMergerTest {
 
 	private File merged() throws Exception {
 		File out = new File(tmp.getRoot(), "merged.xmi");
-		XmiMerger.merge(Arrays.asList(fixture("rootA-Model.xmi"), fixture("rootB-ERCOT.xmi")), out);
+		XmiMerger.merge(Arrays.asList(fixture("rootA-Model.xmi"), fixture("rootB-Extensions.xmi")), out);
 		return out;
 	}
 
@@ -102,7 +102,7 @@ public class XmiMergerTest {
 		for (Element e : children(ownedElement(d), UML, "Class"))
 			if ("EARootClass".equals(e.getAttribute("name")))
 				rootClasses++;
-		assertEquals(Arrays.asList("Model", "ERCOT"), packages);
+		assertEquals(Arrays.asList("Model", "UtilityExtensions"), packages);
 		assertEquals("EARootClass kept once", 1, rootClasses);
 	}
 
@@ -121,13 +121,13 @@ public class XmiMergerTest {
 		for (int i = 0; i < refs.getLength(); i++)
 			if ("eaxmiid1_1".equals(((Element) refs.item(i)).getAttribute("xmi.idref")))
 				renamedRef = true;
-		assertTrue("ErcotLine.ratingMVA's type reference follows the rename", renamedRef);
+		assertTrue("ExtLine.ratingMVA's type reference follows the rename", renamedRef);
 	}
 
 	@Test
 	public void stubsForElementsInAnotherRootAreDropped() throws Exception {
 		File out = new File(tmp.getRoot(), "merged.xmi");
-		XmiMerger.Result r = XmiMerger.merge(Arrays.asList(fixture("rootA-Model.xmi"), fixture("rootB-ERCOT.xmi")),
+		XmiMerger.Result r = XmiMerger.merge(Arrays.asList(fixture("rootA-Model.xmi"), fixture("rootB-Extensions.xmi")),
 				out);
 		assertEquals(1, r.stubsResolved);
 		assertEquals(0, r.duplicateCount);
@@ -159,10 +159,10 @@ public class XmiMergerTest {
 		for (int i = 0; i < classes.getLength(); i++) {
 			Element tv = (Element) classes.item(i);
 			if ("documentation".equals(tv.getAttribute("tag"))
-					&& tv.getAttribute("value").startsWith("An ERCOT line."))
+					&& tv.getAttribute("value").startsWith("An extension line."))
 				doc = tv.getAttribute("value");
 		}
-		assertEquals("An ERCOT line.\nSecond line.\n", doc);
+		assertEquals("An extension line.\nSecond line.\n", doc);
 	}
 
 	@Test
@@ -182,7 +182,7 @@ public class XmiMergerTest {
 		List<String> names = new ArrayList<String>();
 		for (PackageType p : xmi.getXMIContent().getModel().getPackages())
 			names.add(p.getName());
-		assertEquals(Arrays.asList("Model", "ERCOT"), names);
+		assertEquals(Arrays.asList("Model", "UtilityExtensions"), names);
 		assertEquals(1, xmi.getXMIContent().getDiagrams().size());
 		assertEquals("2.5", xmi.getXMIHeader().getXMIDocumentation().getXMIExporterVersion());
 	}
@@ -190,12 +190,12 @@ public class XmiMergerTest {
 	/**
 	 * EA writes a connector between classes in two roots into both roots' exports
 	 * (seen on a real four-root project: 644 generalizations, associations and
-	 * note links, every pair identical). Root A here also carries ErcotLine's
+	 * note links, every pair identical). Root A here also carries ExtLine's
 	 * generalization, as EA's export of Model would.
 	 */
 	private File rootAWithGeneralizationCopy(boolean altered) throws Exception {
 		java.nio.charset.Charset cp1252 = java.nio.charset.Charset.forName("windows-1252");
-		String b = new String(Files.readAllBytes(fixture("rootB-ERCOT.xmi").toPath()), cp1252);
+		String b = new String(Files.readAllBytes(fixture("rootB-Extensions.xmi").toPath()), cp1252);
 		java.util.regex.Matcher m = java.util.regex.Pattern
 				.compile("<UML:Generalization .*?</UML:Generalization>", java.util.regex.Pattern.DOTALL).matcher(b);
 		assertTrue(m.find());
@@ -212,7 +212,7 @@ public class XmiMergerTest {
 	@Test
 	public void identicalConnectorInTwoRootsIsKeptOnce() throws Exception {
 		File out = new File(tmp.getRoot(), "merged.xmi");
-		XmiMerger.Result r = XmiMerger.merge(Arrays.asList(rootAWithGeneralizationCopy(false), fixture("rootB-ERCOT.xmi")),
+		XmiMerger.Result r = XmiMerger.merge(Arrays.asList(rootAWithGeneralizationCopy(false), fixture("rootB-Extensions.xmi")),
 				out);
 		assertEquals(1, r.identicalCopiesDropped);
 		assertEquals("no duplicate warning", 0, r.duplicateCount);
@@ -227,7 +227,7 @@ public class XmiMergerTest {
 	@Test
 	public void differingCopiesOfAConnectorAreReported() throws Exception {
 		XmiMerger.Result r = XmiMerger.merge(
-				Arrays.asList(rootAWithGeneralizationCopy(true), fixture("rootB-ERCOT.xmi")),
+				Arrays.asList(rootAWithGeneralizationCopy(true), fixture("rootB-Extensions.xmi")),
 				new File(tmp.getRoot(), "merged.xmi"));
 		assertEquals(0, r.identicalCopiesDropped);
 		assertEquals(1, r.duplicateCount);
@@ -244,13 +244,13 @@ public class XmiMergerTest {
 		File destination = merged();
 		File html = new File(tmp.getRoot(), "list-report.html");
 		CIMModelComparisonGenerator.main(new String[] { baseline.getAbsolutePath(), destination.getAbsolutePath(),
-				html.getAbsolutePath(), "--package=ERCOT, Model" });
+				html.getAbsolutePath(), "--package=UtilityExtensions, Model" });
 		Element report = parse(new File(tmp.getRoot(), "list-report-enriched.xml")).getDocumentElement();
-		assertEquals("ERCOT, Model", report.getAttribute("scope"));
+		assertEquals("UtilityExtensions, Model", report.getAttribute("scope"));
 		List<String> top = new ArrayList<String>();
 		for (Element p : children(report, null, "Package"))
 			top.add(p.getAttribute("name"));
-		assertEquals(Arrays.asList("ERCOT", "Model"), top);
+		assertEquals(Arrays.asList("UtilityExtensions", "Model"), top);
 	}
 
 	/**
@@ -260,12 +260,12 @@ public class XmiMergerTest {
 	private Element compareWithEmpty(boolean emptyIsBaseline) throws Exception {
 		File empty = new File(tmp.getRoot(), "empty.xmi");
 		XmiMerger.writeEmpty(empty);
-		File ercot = fixture("rootB-ERCOT.xmi");
+		File extensions = fixture("rootB-Extensions.xmi");
 		File comparison = new File(tmp.getRoot(), "one-sided.xml");
-		DiffXMLGenerator.main(new String[] { (emptyIsBaseline ? empty : ercot).getAbsolutePath(),
-				(emptyIsBaseline ? ercot : empty).getAbsolutePath(), comparison.getAbsolutePath(), "JPG" });
+		DiffXMLGenerator.main(new String[] { (emptyIsBaseline ? empty : extensions).getAbsolutePath(),
+				(emptyIsBaseline ? extensions : empty).getAbsolutePath(), comparison.getAbsolutePath(), "JPG" });
 		File enriched = org.cimug.compare.report.ReportRenderer
-				.forPackages(false, Arrays.asList("ERCOT"), false, "jpg")
+				.forPackages(false, Arrays.asList("UtilityExtensions"), false, "jpg")
 				.render(comparison, new File(tmp.getRoot(), "one-sided.html"));
 		return parse(enriched).getDocumentElement();
 	}
@@ -280,7 +280,7 @@ public class XmiMergerTest {
 	@Test
 	public void packageOnlyInTheDestinationIsReportedAsAdded() throws Exception {
 		Element report = compareWithEmpty(true);
-		assertEquals("ERCOT", report.getAttribute("scope"));
+		assertEquals("UtilityExtensions", report.getAttribute("scope"));
 		assertEquals("added", only(report, null, "Package").getAttribute("status"));
 		assertEquals("1", status(report, "class", "added"));
 	}
@@ -316,7 +316,7 @@ public class XmiMergerTest {
 
 	/**
 	 * End to end: the single-root project compared with the same project after an
-	 * ERCOT root was added. ERCOT is reported as added, its generalization to
+	 * UtilityExtensions root was added. UtilityExtensions is reported as added, its generalization to
 	 * IdentifiedObject (in the other root) resolves, and nothing in Model changes.
 	 */
 	@Test
@@ -333,25 +333,25 @@ public class XmiMergerTest {
 		File html = new File(tmp.getRoot(), "comparison-report.html");
 		File enriched = new ReportRenderer(false, null, false, "jpg").render(comparison, html);
 		Element report = parse(enriched).getDocumentElement();
-		assertEquals("Model, ERCOT (full model)", report.getAttribute("scope"));
+		assertEquals("Model, UtilityExtensions (full model)", report.getAttribute("scope"));
 
-		Element ercot = null;
+		Element extensions = null;
 		for (Element p : children(report, null, "Package"))
-			if ("ERCOT".equals(p.getAttribute("name")))
-				ercot = p;
-		assertNotNull("ERCOT is a top-level package in the report", ercot);
+			if ("UtilityExtensions".equals(p.getAttribute("name")))
+				extensions = p;
+		assertNotNull("UtilityExtensions is a top-level package in the report", extensions);
 
-		// ErcotLine is added; IdentifiedObject (in Model) is changed only because it
-		// gains ErcotLine's generalization, i.e. the link resolves at both ends.
+		// ExtLine is added; IdentifiedObject (in Model) is changed only because it
+		// gains ExtLine's generalization, i.e. the link resolves at both ends.
 		Element summary = only(report, null, "Summary");
 		java.util.Map<String, String> classes = new java.util.HashMap<String, String>();
 		for (Element c : children(summary, null, "Count"))
 			if ("class".equals(c.getAttribute("kind")))
 				classes.put(c.getAttribute("status"), c.getAttribute("n"));
 		assertEquals("{added=1, changed=1}", new java.util.TreeMap<String, String>(classes).toString());
-		assertTrue(xml.contains("Source: (ErcotLine)"));
+		assertTrue(xml.contains("Source: (ExtLine)"));
 		String page = new String(Files.readAllBytes(html.toPath()), "UTF-8");
-		assertTrue(page.contains("ErcotLine"));
+		assertTrue(page.contains("ExtLine"));
 		assertFalse("the synthetic model is not shown", page.contains(">EA Model<"));
 	}
 }

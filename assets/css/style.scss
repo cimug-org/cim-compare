@@ -203,6 +203,28 @@ html { overflow-x: hidden; }
 }
 
 // ---- notes (block quotes) and code ----------------------------------------
+// Earlier releases in "Latest Release": one collapsed row per release
+// (<details markdown="1"> in README.md).
+.markdown-body details {
+  margin: 0 0 8px;
+  border: 1px solid $cimmm-frame;
+  border-radius: 4px;
+  background: #fff;
+
+  &[open] { background: #F6F9FB; padding-bottom: 4px; }
+
+  > :not(summary) { margin-left: 16px; margin-right: 16px; }
+}
+
+.markdown-body summary {
+  padding: 10px 16px;
+  color: $cimmm-navy;
+  font: 700 17px/1.3 $cimmm-heading-font;
+  cursor: pointer;
+
+  &:hover { background: $cimmm-band; }
+}
+
 .markdown-body blockquote {
   padding: 10px 16px;
   border-left: 4px solid $cimmm-teal;

@@ -12,8 +12,7 @@ See an [example report](https://cim-compare.ucaiug.io/example-comparison-report/
 - [Home](#cim-compare)
 - [Latest Release](#latest-release)
   - [What's New in 2.1.0](#whats-new-in-210)
-  - [What's New in 2.0.1](#whats-new-in-201)
-  - [What's New in 2.0.0](#whats-new-in-200)
+  - [Earlier Releases](#earlier-releases)
 - [Overview: CIM Model Comparison Reports](#overview-cim-model-comparison-reports)
 - [Reading a Comparison Report](#reading-a-comparison-report)
   - [Report Layout](#report-layout)
@@ -56,14 +55,20 @@ See an [example report](https://cim-compare.ucaiug.io/example-comparison-report/
 - **The report header links to the website and the release** ([#87](https://github.com/cimug-org/cim-compare/issues/87)): the logo links to [cim-compare.ucaiug.io](https://cim-compare.ucaiug.io), and the "cim-compare 2.1.0" line to the GitHub release that produced the report.
 - **Fix:** with `--include-diagrams`, the baseline's diagram images could end up in `Images-destination`, and the report then showed the destination image on both sides of a changed diagram ([#91](https://github.com/cimug-org/cim-compare/issues/91)). This happened when Windows could not rename the folder EA exported the images to while EA still had the project open. The images are now moved file by file when the folder cannot be renamed, and **cim-compare** stops with an error if they cannot be moved.
 
-### What's New in 2.0.1
+### Earlier Releases
+
+<details markdown="1">
+<summary>What's New in 2.0.1</summary>
 
 - **Runs on Java 24 and later without extra settings** ([#65](https://github.com/cimug-org/cim-compare/issues/65)). Java 24 lowered its XML entity size limits, and a large comparison stopped with `JAXP00010003` before the report was written; **cim-compare** now removes those limits itself. Its jar also lets EA's Java API load its native library without Java's "restricted method" warning. See [Java 24 and Later](#java-24-and-later).
 - **An attribute's ⓘ metadata shows its new name as it is** ([#67](https://github.com/cimug-org/cim-compare/issues/67)): the Name row of a renamed attribute shows the new name as plain text in the Destination column, like the old name in the Baseline column, instead of a redline.
 - **The summary counts filter the report** ([#78](https://github.com/cimug-org/cim-compare/issues/78)). Clicking a count, such as **Classes › 9 added**, now shows just those items with their packages opened; before, the matches stayed inside collapsed packages, the counts disappeared, and Classes and Diagrams counts affected each other.
 - **The cim-compare logo in the report header.** The top left of the header shows the cim-compare logo, linked to this repository, and in the light theme the header is now black. The logo is part of the report file, so the report still needs no network access.
 
-### What's New in 2.0.0
+</details>
+
+<details markdown="1">
+<summary>What's New in 2.0.0</summary>
 
 - **A redesigned HTML report** ([#38](https://github.com/cimug-org/cim-compare/issues/38)): a package outline, search, status filters, links between classes, GUIDs, word-level redlines of changed descriptions, and keyboard shortcuts. Reports are much smaller: the example report is under 1 MB, down from 5.9 MB. See [Reading a Comparison Report](#reading-a-comparison-report).
 - **Diagram differences are highlighted** ([#37](https://github.com/cimug-org/cim-compare/issues/37)): with `--include-diagrams`, added, removed, changed, moved and restyled elements are outlined on the diagram images, and changed connectors are listed under them. Every diagram that changed is listed, including one where only the layout or a connector changed. See [Diagrams](#diagrams).
@@ -71,6 +76,10 @@ See an [example report](https://cim-compare.ucaiug.io/example-comparison-report/
 - **`--package` works across renamed packages** ([#49](https://github.com/cimug-org/cim-compare/issues/49)): for example `--package=Grid` when comparing CIM17 (where the package is `IEC61970`) with CIM18. If the package can't be found, **cim-compare** now stops with an error instead of comparing the whole model.
 - **Fixes:** reports are no longer empty when the model's root package isn't named "Model" ([#43](https://github.com/cimug-org/cim-compare/issues/43)); `--cleanup` no longer deletes your own input files ([#53](https://github.com/cimug-org/cim-compare/issues/53)).
 - **A new output file**, `<name>-enriched.xml`, written beside the report. See [Output Files](#output-files).
+
+</details>
+
+Releases before 2.0.0 (1.3.0 and earlier) are described on the [GitHub Releases](https://github.com/cimug-org/cim-compare/releases) page.
 
 
 ## Overview: CIM Model Comparison Reports

@@ -406,5 +406,15 @@ body.no-rail .rail { display: none; }
 }
 @media print {
   .rail { display: none; }
-  .layout { grid-template-columns: minmax(0, 1fr); }
+  /* #128 a block, not a one-column grid: Firefox does not split a grid item across pages, so it
+     pushed the whole tree to page 2 */
+  .layout { display: block; }
+  /* keep a diagram's baseline and destination panels on one page with their images */
+  .diag { break-inside: avoid; }
+  .sec-h { break-after: avoid; }
+  /* the package icon is an emoji; Edge and Chrome put colour emoji into a PDF as a Type 3 font,
+     which Acrobat warns about ("Cannot extract the embedded font"). Print a drawn folder instead. */
+  .row[data-kind="📁"] .ico { font-size: 0; }
+  .row[data-kind="📁"] .ico::before { content: ""; display: inline-block; width: 15px; height: 12px; margin-top: 1px;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 13'%3E%3Cpath d='M1 2.2C1 1.5 1.5 1 2.2 1h3.6l1.6 1.6h6.4c.7 0 1.2.5 1.2 1.2v7c0 .7-.5 1.2-1.2 1.2H2.2C1.5 12 1 11.5 1 10.8z' fill='%23D9A43A' stroke='%23B5841F' stroke-width='.8'/%3E%3Cpath d='M1 4.4h14' stroke='%23B5841F' stroke-width='.8'/%3E%3Crect x='1.4' y='4.8' width='13.2' height='6.8' rx='.6' fill='%23F0C35A'/%3E%3C/svg%3E") no-repeat center / contain; }
 }

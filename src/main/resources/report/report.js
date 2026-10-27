@@ -366,14 +366,9 @@
   });
   lb.addEventListener('click', function () { lb.classList.remove('on'); });
 
-  /* ---- #128 printing: open every <details> (full metadata of added/removed classes) and load
-     every diagram image, then put the <details> back as they were ---- */
-  var reopened = [];
+  /* ---- #128 printing: load every diagram image first (images not yet scrolled into view
+     would otherwise print blank). "Show full metadata" sections print as they are on screen. ---- */
   window.addEventListener('beforeprint', function () {
-    $$('details:not([open])').forEach(function (d) { d.open = true; reopened.push(d); });
     $$('img[loading="lazy"]').forEach(function (i) { i.loading = 'eager'; });
-  });
-  window.addEventListener('afterprint', function () {
-    reopened.forEach(function (d) { d.open = false; }); reopened = [];
   });
 })();

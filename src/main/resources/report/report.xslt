@@ -36,6 +36,9 @@
       select="map { 'identical': 'Identical', 'deleted': 'Deleted', 'added': 'Added', 'moved': 'Moved', 'changed': 'Changed' }"/>
   <xsl:variable name="badge" as="map(xs:string, xs:string)"
       select="map { 'identical': 'IDENTICAL', 'deleted': 'DELETED', 'added': 'ADDED', 'moved': 'MOVED', 'changed': 'CHANGED' }"/>
+  <!-- #137 the ⓘ in running text: drawn, so it sits on the line the same in every browser and font
+       (the Unicode ⓘ came out small and below the line); sized to the text by .ii in report.css -->
+  <xsl:variable name="ii"><svg class="ii" viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="7.1" fill="none" stroke="currentColor" stroke-width="1.1"/><circle cx="8.9" cy="4.5" r="1.05" fill="currentColor"/><path d="M8.3 6.9 L7.2 11.3 Q7 12.1 7.8 11.8 L8.6 11.3" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg></xsl:variable>
   <xsl:variable name="link-order" as="xs:string*" select="('Generalization', 'Association', 'Aggregation')"/>
 
   <!-- ====================================================== helpers -->
@@ -314,12 +317,12 @@
             <span><i class="sw s-changed"></i><b>Changed</b> — same GUID and package; properties or members differ</span>
             <span><i class="sw s-identical"></i><b>Identical</b></span>
             <span><i class="sw s-pkg"></i><b>Package</b> (unchanged itself)</span>
-            <span><del>struck</del><ins>inserted</ins> — destination text with baseline wording struck (descriptions, names, role names, multiplicities); the ⓘ metadata view shows both texts verbatim</span>
+            <span><del>struck</del><ins>inserted</ins> — destination text with baseline wording struck (descriptions, names, role names, multiplicities); the <xsl:copy-of select="$ii"/>metadata view shows both texts verbatim</span>
             <span><b class="chg">Blue</b> — a changed attribute type (the new type)</span>
           </div>
           <!-- #126: what was left out, as the last line under the legend -->
           <xsl:if test="@emptyValuesNotShown">
-            <div class="empty-note">ⓘ <xsl:value-of select="@emptyValuesNotShown"/><xsl:value-of select="if (@emptyValuesNotShown = '1') then ' difference is' else ' differences are'"/> not shown where one side is empty in <span class="tipwrap" tabindex="0">a metadata field EA fills in automatically<span class="tip"><b>Metadata fields affected</b><span class="tl">Complexity, Phase, Version, GenType: any value</span><span class="tl">Containment: “Not Specified” / “Unspecified”</span><span class="tl">IsLiteral, Derived, Const, Static: false</span><span class="tip-n">Any other difference is always shown.</span></span></span>; they do not change the model’s definitions. Run with <code>--show-empty-values</code> to include them.</div>
+            <div class="empty-note"><xsl:copy-of select="$ii"/><xsl:value-of select="@emptyValuesNotShown"/><xsl:value-of select="if (@emptyValuesNotShown = '1') then ' difference is' else ' differences are'"/> not shown where one side is empty in <span class="tipwrap" tabindex="0">a metadata field EA fills in automatically<span class="tip"><b>Metadata fields affected</b><span class="tl">Complexity, Phase, Version, GenType: any value</span><span class="tl">Containment: “Not Specified” / “Unspecified”</span><span class="tl">IsLiteral, Derived, Const, Static: false</span><span class="tip-n">Any other difference is always shown.</span></span></span>; they do not change the model’s definitions. Run with <code>--show-empty-values</code> to include them.</div>
           </xsl:if>
           <div class="layout">
             <nav id="rail" class="rail" aria-label="Package outline">
@@ -580,7 +583,7 @@
         <!-- #123: a change the row does not show (e.g. Default, Const, Stereotype) marks the ⓘ and adds a note -->
         <xsl:variable name="hidden" select="$st = 'changed' and exists(Properties/Property[@status != 'identical' and not(@name = $row-shown)])"/>
         <span class="info{if ($hidden) then ' info-chg' else ''}" data-id="{@guid}" title="attribute metadata">i</span>
-        <xsl:if test="$hidden"><span class="mnote"><span class="m-hover">metadata changed - hover <span class="m-i">ⓘ</span></span><span class="m-inline">metadata changed - see below</span></span></xsl:if>
+        <xsl:if test="$hidden"><span class="mnote"><span class="m-hover">metadata changed - hover<xsl:copy-of select="$ii"/></span><span class="m-inline">metadata changed - see below</span></span></xsl:if>
         <xsl:if test="@renamedFrom"><span class="renamed-from">renamed from <xsl:value-of select="@renamedFrom"/></span></xsl:if>
         <span class="guid"><xsl:value-of select="@guid"/></span>
       </td>

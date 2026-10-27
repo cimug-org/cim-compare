@@ -411,4 +411,22 @@ public class ReportRendererTest {
 		assertTrue(page.contains(".tr-ring { position: absolute;"));
 		assertFalse(page.contains("tr.target > td"));
 	}
+	@Test
+	public void infoSymbolInTextIsDrawnNotAFontCharacter() throws Exception {
+		File xml = copyFixture();
+		File html = new File(tmp.getRoot(), "ii.html");
+		new ReportRenderer(false, null, false, "jpg").render(xml, html);
+		String page = read(html);
+		// #137 the legend, the "not shown" note and "metadata changed - hover" use the drawn ⓘ
+		assertTrue(page.contains("the <svg class=\"ii\""));
+		assertTrue(page.contains("<div class=\"empty-note\"><svg class=\"ii\""));
+		assertTrue(page.contains("metadata changed - hover<svg class=\"ii\""));
+		assertTrue(page.contains("svg.ii { width: 1.1em; height: 1.1em; vertical-align: -0.2em;"));
+		// no Unicode ⓘ is left in the page's text
+		assertFalse(page.contains("the ⓘ metadata view"));
+		assertFalse(page.contains("<div class=\"empty-note\">ⓘ"));
+		assertFalse(page.contains("<span class=\"m-i\">"));
+		// the package folder sits 1px higher than in #131, level with the name
+		assertTrue(page.contains(".fold { display: inline-block; width: 1.15em; height: .92em; position: relative; top: calc(.08em - 1px);"));
+	}
 }

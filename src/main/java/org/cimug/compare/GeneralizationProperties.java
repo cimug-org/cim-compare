@@ -128,6 +128,8 @@ public class GeneralizationProperties {
 	}
 
 	private String getValue(String name, List<TaggedValueType> taggedValues) {
+		if ("stereotype".equals(name))
+			return Stereotypes.of(taggedValues); // the full list (#118)
 		if (taggedValues != null) {
 			for (TaggedValueType tv : taggedValues) {
 				if (tv.getTag().equals(name)) {

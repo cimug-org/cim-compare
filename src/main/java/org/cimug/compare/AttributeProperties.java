@@ -179,27 +179,11 @@ public class AttributeProperties {
 							isConst(targetAttribute)) //
 			));
 			properties.getProperty().add(new Property("Stereotype", //
-					(baselineAttribute.getModelElementStereotype() != null
-							&& baselineAttribute.getModelElementStereotype().getStereotype() != null
-							&& baselineAttribute.getModelElementStereotype().getStereotype().getName() != null
-									? baselineAttribute.getModelElementStereotype().getStereotype().getName()
-									: null), //
-					(targetAttribute.getModelElementStereotype() != null
-							&& targetAttribute.getModelElementStereotype().getStereotype() != null
-							&& targetAttribute.getModelElementStereotype().getStereotype().getName() != null
-									? targetAttribute.getModelElementStereotype().getStereotype().getName()
-									: null), //
+					stereotypes(baselineAttribute, baselineTaggedValues), //
+					stereotypes(targetAttribute, targetTaggedValues), //
 					getStatus(
-							(baselineAttribute.getModelElementStereotype() != null
-									&& baselineAttribute.getModelElementStereotype().getStereotype() != null
-									&& baselineAttribute.getModelElementStereotype().getStereotype().getName() != null
-											? baselineAttribute.getModelElementStereotype().getStereotype().getName()
-											: null),
-							(targetAttribute.getModelElementStereotype() != null
-									&& targetAttribute.getModelElementStereotype().getStereotype() != null
-									&& targetAttribute.getModelElementStereotype().getStereotype().getName() != null
-											? targetAttribute.getModelElementStereotype().getStereotype().getName()
-											: null)) //
+							stereotypes(baselineAttribute, baselineTaggedValues),
+							stereotypes(targetAttribute, targetTaggedValues)) //
 			));
 		} else if (baselineAttribute != null) {
 			// Baseline only
@@ -253,17 +237,9 @@ public class AttributeProperties {
 							null) //
 			));
 			properties.getProperty().add(new Property("Stereotype", //
-					(baselineAttribute.getModelElementStereotype() != null
-							&& baselineAttribute.getModelElementStereotype().getStereotype() != null
-							&& baselineAttribute.getModelElementStereotype().getStereotype().getName() != null
-									? baselineAttribute.getModelElementStereotype().getStereotype().getName()
-									: null), //
+					stereotypes(baselineAttribute, baselineTaggedValues), //
 					null, // null model
-					getStatus((baselineAttribute.getModelElementStereotype() != null
-							&& baselineAttribute.getModelElementStereotype().getStereotype() != null
-							&& baselineAttribute.getModelElementStereotype().getStereotype().getName() != null
-									? baselineAttribute.getModelElementStereotype().getStereotype().getName()
-									: null),
+					getStatus(stereotypes(baselineAttribute, baselineTaggedValues),
 							null) //
 			));
 		} else {
@@ -319,17 +295,9 @@ public class AttributeProperties {
 			));
 			properties.getProperty().add(new Property("Stereotype", //
 					null, // null baseline
-					(targetAttribute.getModelElementStereotype() != null
-							&& targetAttribute.getModelElementStereotype().getStereotype() != null
-							&& targetAttribute.getModelElementStereotype().getStereotype().getName() != null
-									? targetAttribute.getModelElementStereotype().getStereotype().getName()
-									: null), //
+					stereotypes(targetAttribute, targetTaggedValues), //
 					getStatus(null,
-							(targetAttribute.getModelElementStereotype() != null
-									&& targetAttribute.getModelElementStereotype().getStereotype() != null
-									&& targetAttribute.getModelElementStereotype().getStereotype().getName() != null
-											? targetAttribute.getModelElementStereotype().getStereotype().getName()
-											: null)) //
+							stereotypes(targetAttribute, targetTaggedValues)) //
 			));
 		}
 
@@ -452,5 +420,14 @@ public class AttributeProperties {
 	/** EA's Const is the attribute's changeable="frozen" (#122), not whether it has an initial value. */
 	static String isConst(AttributeType attribute) {
 		return "frozen".equals(attribute.getChangeable()) ? "true" : "false";
+	}
+
+	/** The attribute's full stereotype list, or its UML:Stereotype (#118). */
+	private static String stereotypes(AttributeType attribute, List<TaggedValueType> taggedValues) {
+		String single = attribute.getModelElementStereotype() != null
+				&& attribute.getModelElementStereotype().getStereotype() != null
+						? attribute.getModelElementStereotype().getStereotype().getName()
+						: null;
+		return Stereotypes.of(taggedValues, single);
 	}
 }

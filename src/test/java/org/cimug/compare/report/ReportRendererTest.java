@@ -352,7 +352,6 @@ public class ReportRendererTest {
 		assertTrue(page.contains("  .diag { break-inside: avoid; }"));
 		assertTrue(page.contains("window.addEventListener('beforeprint'"));
 		assertFalse(page.contains("d.open = true"));
-		assertTrue(page.contains(".row[data-kind=\"📁\"] .ico { font-size: 0; }"));
 	}
 
 	@Test

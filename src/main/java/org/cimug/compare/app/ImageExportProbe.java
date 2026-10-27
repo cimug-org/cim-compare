@@ -21,7 +21,7 @@ import org.sparx.Repository;
  *
  * <pre>
  * java -Djava.library.path=C:\cim-compare\ea17-32 -cp cim-compare-2.2.0.jar org.cimug.compare.app.ImageExportProbe
- *      &lt;project.eap|.qea&gt; &lt;output-folder&gt; [&lt;package GUID or name&gt;] [&lt;codes, e.g. -1,0,1,2,3,4,5,6,7&gt;]
+ *      &lt;project.eap|.qea&gt; &lt;output-folder&gt; [&lt;package GUID or name&gt;] [&lt;codes, e.g. -1,0,1,2,3,4,5,6,7, or none&gt;]
  * </pre>
  *
  * Pick a small package with a few diagrams: each code is a full export of it. Results are printed
@@ -59,7 +59,7 @@ public class ImageExportProbe {
 				int diagrams = countDiagrams(pkg);
 				line(log, "Package: " + pkg.GetName() + " " + pkg.GetPackageGUID() + " (" + diagrams + " diagrams in it and below)");
 				line(log, "");
-				for (String c : codes.split(",")) {
+				for (String c : "none".equalsIgnoreCase(codes) ? new String[0] : codes.split(",")) {
 					int code = Integer.parseInt(c.trim());
 					File dir = new File(out, "code_" + code);
 					dir.mkdirs();
@@ -92,6 +92,39 @@ public class ImageExportProbe {
 						int i = head.indexOf("<svg");
 						line(log, "   SVG root: " + (i < 0 ? "(no <svg> element)" : head.substring(i, Math.min(head.length(), head.indexOf('>', i) + 1))));
 					}
+				}
+				// Phase 2: one diagram image at a time with Project.PutDiagramImageToFile, which takes
+				// the format from the file name's extension (Type 1); does EA write .svg this way?
+				line(log, "");
+				line(log, "PutDiagramImageToFile, per diagram (Type 1 = format from the file extension):");
+				File per = new File(out, "per_diagram");
+				per.mkdirs();
+				int tried = 0;
+				for (org.sparx.Diagram d : diagramsOf(pkg)) {
+					if (tried++ == 2) break;
+					String guid = d.GetDiagramGUID();
+					String xmlGuid = safe(() -> repo.GetProjectInterface().GUIDtoXML(guid));
+					line(log, "Diagram '" + d.GetName() + "' " + guid + " (XML form " + xmlGuid + ")");
+					for (String ext : new String[] { "svg", "png", "jpg" })
+						for (String g : new String[] { guid, xmlGuid }) {
+							for (int type : new int[] { 1, 0 }) {
+								File f = new File(per, xmlGuid + (g.equals(guid) ? "-raw" : "-xml") + "-type" + type + "." + ext);
+								long t0 = System.currentTimeMillis();
+								String ok = safe(() -> String.valueOf(repo.GetProjectInterface().PutDiagramImageToFile(g, f.getPath(), type)));
+								long ms = System.currentTimeMillis() - t0;
+								String err = safe(() -> repo.GetProjectInterface().GetLastError());
+								String head = "";
+								if (f.exists() && f.length() > 0) {
+									byte[] b = Files.readAllBytes(f.toPath());
+									String start = new String(b, 0, Math.min(b.length, 4000), StandardCharsets.ISO_8859_1);
+									int i = start.indexOf("<svg");
+									head = i >= 0 ? " SVG root: " + start.substring(i, Math.min(start.length(), start.indexOf('>', i) + 1))
+											: " starts with: " + start.substring(0, Math.min(8, start.length())).replaceAll("[^\\x20-\\x7e]", ".");
+								}
+								line(log, "   ." + ext + " " + (g.equals(guid) ? "raw GUID" : "XML GUID") + " type " + type + ": returned " + ok + ", " + ms + " ms, "
+										+ (f.exists() ? f.length() + " bytes" : "no file") + ", GetLastError [" + err + "]" + head);
+							}
+						}
 				}
 			} catch (Throwable e) {
 				line(log, "ERROR: " + e);
@@ -145,6 +178,15 @@ public class ImageExportProbe {
 			if (f != null) return f;
 		}
 		return null;
+	}
+
+	private static java.util.List<org.sparx.Diagram> diagramsOf(Package p) {
+		java.util.List<org.sparx.Diagram> all = new java.util.ArrayList<>();
+		Collection<org.sparx.Diagram> ds = p.GetDiagrams();
+		for (short i = 0; i < ds.GetCount(); i++) all.add(ds.GetAt(i));
+		Collection<Package> kids = p.GetPackages();
+		for (short i = 0; i < kids.GetCount(); i++) all.addAll(diagramsOf(kids.GetAt(i)));
+		return all;
 	}
 
 	private static int countDiagrams(Package p) {

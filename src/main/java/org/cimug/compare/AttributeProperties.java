@@ -27,6 +27,18 @@ public class AttributeProperties {
 
 	private static final Map<String, String> TAG_NAME_MAP = new HashMap<String, String>();
 
+	/**
+	 * Values a tag takes when the attribute does not set it. EA writes these tags
+	 * blank (or not at all) in .eap projects and as the default in .qea projects;
+	 * comparing them as given reported every such attribute of a mixed .eap/.qea
+	 * comparison as changed (issue #86).
+	 */
+	private static final Map<String, String> TAG_DEFAULTS = new HashMap<String, String>();
+	static {
+		TAG_DEFAULTS.put("duplicates", "false");
+		TAG_DEFAULTS.put("scale", "0");
+	}
+
 	{
 		/**
 		 * We have intentionally commenting out the "position", "precision", "derived", and "length" 
@@ -389,6 +401,9 @@ public class AttributeProperties {
 		if (taggedValues != null) {
 			for (TaggedValueType tv : taggedValues) {
 				if (tv.getTag().equals(name)) {
+					if (TAG_DEFAULTS.containsKey(name)
+							&& (tv.getTheValue() == null || tv.getTheValue().trim().isEmpty()))
+						return TAG_DEFAULTS.get(name); // blank: unset (#86)
 					switch (name)
 						{
 						case "derived":
@@ -412,6 +427,8 @@ public class AttributeProperties {
 						}
 				}
 			}
+			// The attribute exists but does not carry the tag: its default, if it has one (#86).
+			return TAG_DEFAULTS.get(name);
 		}
 		return null;
 	}

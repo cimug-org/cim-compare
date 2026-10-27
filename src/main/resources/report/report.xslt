@@ -251,13 +251,13 @@
       </head>
       <body>
         <header class="hdr">
-          <xsl:if test="$logo != ''"><a class="brand" href="https://github.com/cimug-org/cim-compare" target="_blank" rel="noopener" title="cim-compare on GitHub" aria-label="cim-compare on GitHub"><xsl:value-of select="$logo" disable-output-escaping="yes"/></a></xsl:if>
+          <xsl:if test="$logo != ''"><a class="brand" href="https://cim-compare.ucaiug.io" target="_blank" rel="noopener" title="cim-compare website" aria-label="cim-compare website"><xsl:value-of select="$logo" disable-output-escaping="yes"/></a></xsl:if>
           <div>
             <div class="title">CIM Model Comparison <span class="arrow">·</span>
               <span class="ver"><xsl:value-of select="@baselineVersion"/></span><xsl:text> </xsl:text><span class="lbl">baseline</span>
               <xsl:text> </xsl:text><span class="arrow">→</span><xsl:text> </xsl:text>
               <span class="ver"><xsl:value-of select="@destinationVersion"/></span><xsl:text> </xsl:text><span class="lbl">destination</span></div>
-            <div class="sub">Scope: <xsl:value-of select="@scope"/> · compared <xsl:value-of select="@comparedOn"/> · <a class="gen" href="https://github.com/cimug-org/cim-compare" target="_blank" rel="noopener"><xsl:value-of select="@generator"/></a><xsl:if test="$full"> · full (identical items included)</xsl:if></div>
+            <div class="sub">Scope: <xsl:value-of select="@scope"/> · compared <xsl:value-of select="@comparedOn"/> · <a class="gen" href="{@releaseUrl}" target="_blank" rel="noopener" title="{@generator} release"><xsl:value-of select="@generator"/></a><xsl:if test="$full"> · full (identical items included)</xsl:if></div>
           </div>
           <div class="tools">
             <div class="search"><input id="q" type="search" placeholder="Find class, package, diagram or attribute…  (/)" autocomplete="off"/><div id="q-results" class="results"></div></div>

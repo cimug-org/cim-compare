@@ -1,6 +1,7 @@
 package org.cimug.compare.report;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -12,6 +13,7 @@ import java.util.Set;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
+import org.cimug.compare.PackageNames;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -46,7 +48,7 @@ import org.w3c.dom.NodeList;
  * </p>
  *
  * <pre>
- * ComparisonReport @baselineVersion @destinationVersion @comparedOn @scope @full @generator
+ * ComparisonReport @baselineVersion @destinationVersion @comparedOn @scope @full @generator @releaseUrl
  *   Summary
  *     Count @kind (package|class|diagram) @status @n
  *   Package @name @guid @id @status @classCount @diagramCount
@@ -79,7 +81,7 @@ import org.w3c.dom.NodeList;
  */
 public class ReportPreProcessor {
 
-	public static final String GENERATOR = "cim-compare 2.0.1";
+	public static final String GENERATOR = "cim-compare " + org.cimug.compare.Version.VERSION;
 
 	private static final Set<String> TEXT_PROPS = new HashSet<String>(
 			Arrays.asList("Notes", "RoleNote", "Alias", "Name"));
@@ -87,7 +89,10 @@ public class ReportPreProcessor {
 			Arrays.asList("Generalization", "Association", "Aggregation"));
 
 	private final boolean full;
+	/** The --package value as given (one name or a comma list), or null. */
 	private final String packageFilter;
+	/** Package names already split by the caller, or null to split packageFilter. */
+	private final List<String> packageNames;
 
 	private Document out;
 	/** class name → element id, for type / end-class links */
@@ -111,11 +116,30 @@ public class ReportPreProcessor {
 	 * @param full
 	 *            include identical elements (the {@code --full} option)
 	 * @param packageFilter
-	 *            restrict to this package and below ({@code --package}), or null
+	 *            restrict to this package and below ({@code --package}), or to
+	 *            several packages given as a comma list (#94); null for the whole
+	 *            model
 	 */
 	public ReportPreProcessor(boolean full, String packageFilter) {
 		this.full = full;
 		this.packageFilter = (packageFilter == null || packageFilter.trim().isEmpty()) ? null : packageFilter.trim();
+		this.packageNames = null;
+	}
+
+	/**
+	 * @param packageNames
+	 *            restrict to these packages, in this order; null or empty for the
+	 *            whole model
+	 */
+	public static ReportPreProcessor forPackages(boolean full, List<String> packageNames) {
+		return new ReportPreProcessor(full, packageNames, true);
+	}
+
+	private ReportPreProcessor(boolean full, List<String> packageNames, boolean resolved) {
+		this.full = full;
+		this.packageFilter = null;
+		this.packageNames = (packageNames == null || packageNames.isEmpty()) ? null
+				: new ArrayList<String>(packageNames);
 	}
 
 	public Document process(Document in) throws ParserConfigurationException {
@@ -143,17 +167,29 @@ public class ReportPreProcessor {
 			roots.add(eaModel);
 
 		String scope;
-		if (packageFilter != null) {
+		List<String> names = selectedNames(roots);
+		if (names != null) {
 			List<Element> filtered = new ArrayList<Element>();
-			for (Element r : roots)
-				collectPackagesNamed(r, packageFilter, filtered);
-			if (filtered.isEmpty())
-				throw new IllegalArgumentException("Package '" + packageFilter
-						+ "' does not occur in the comparison (checked destination and baseline names).");
-			roots = filtered;
-			Element first = filtered.get(0);
-			String was = prop(first, "Name", "baseline"), now = attr(first, "name");
-			scope = (!was.isEmpty() && !was.equals(now)) ? was + " → " + now : now;
+			StringBuilder labels = new StringBuilder();
+			for (String name : names) {
+				List<Element> found = new ArrayList<Element>();
+				for (Element r : roots)
+					collectPackagesNamed(r, name, found);
+				if (found.isEmpty())
+					throw new IllegalArgumentException("Package '" + name
+							+ "' does not occur in the comparison (checked destination and baseline names).");
+				for (Element f : found)
+					if (!filtered.contains(f))
+						filtered.add(f);
+				Element first = found.get(0);
+				String was = prop(first, "Name", "baseline"), now = attr(first, "name");
+				labels.append(labels.length() > 0 ? ", " : "")
+						.append((!was.isEmpty() && !was.equals(now)) ? was + " → " + now : now);
+			}
+			roots = withoutNested(filtered);
+			scope = labels.toString();
+			if (roots.size() < filtered.size())
+				scope = scopeOf(roots);
 		} else {
 			StringBuilder sb = new StringBuilder();
 			for (Element r : roots) {
@@ -171,6 +207,7 @@ public class ReportPreProcessor {
 		root.setAttribute("scope", scope);
 		root.setAttribute("full", Boolean.toString(full));
 		root.setAttribute("generator", GENERATOR);
+		root.setAttribute("releaseUrl", org.cimug.compare.Version.RELEASE_URL);
 
 		Element summary = out.createElement("Summary");
 		root.appendChild(summary);
@@ -689,6 +726,57 @@ public class ReportPreProcessor {
 			id = base + "_" + (++n);
 		usedIds.add(id);
 		return id;
+	}
+
+	/**
+	 * The --package names: null for the whole model. A value with commas is a list
+	 * (#94), unless the whole value is itself the name of a package.
+	 */
+	private List<String> selectedNames(List<Element> roots) {
+		if (packageNames != null)
+			return packageNames;
+		if (packageFilter == null)
+			return null;
+		if (PackageNames.isList(packageFilter)) {
+			List<Element> whole = new ArrayList<Element>();
+			for (Element r : roots)
+				collectPackagesNamed(r, packageFilter, whole);
+			if (!whole.isEmpty())
+				return Collections.singletonList(packageFilter);
+		}
+		List<String> names = PackageNames.parse(packageFilter);
+		return names.isEmpty() ? null : names;
+	}
+
+	/**
+	 * Drops a selected package that lies inside another selected package; it is
+	 * reported as part of the outer one (#94).
+	 */
+	private List<Element> withoutNested(List<Element> selected) {
+		List<Element> kept = new ArrayList<Element>();
+		for (Element p : selected) {
+			Element outer = null;
+			for (org.w3c.dom.Node a = p.getParentNode(); a instanceof Element && outer == null; a = a.getParentNode())
+				if (selected.contains(a))
+					outer = (Element) a;
+			if (outer == null)
+				kept.add(p);
+			else
+				System.out.println("\nWARNING:  Package '" + attr(p, "name") + "' is inside '" + attr(outer, "name")
+						+ "', which is also given with --package; it is reported as part of '" + attr(outer, "name")
+						+ "'.");
+		}
+		return kept;
+	}
+
+	private String scopeOf(List<Element> packages) {
+		StringBuilder labels = new StringBuilder();
+		for (Element p : packages) {
+			String was = prop(p, "Name", "baseline"), now = attr(p, "name");
+			labels.append(labels.length() > 0 ? ", " : "")
+					.append((!was.isEmpty() && !was.equals(now)) ? was + " → " + now : now);
+		}
+		return labels.toString();
 	}
 
 	/**

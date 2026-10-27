@@ -11,7 +11,6 @@ See an [example report](https://cim-compare.ucaiug.io/example-comparison-report/
 ## Table of Contents
 - [Home](#cim-compare)
 - [Latest Release](#latest-release)
-  - [What's New in 2.1.0](#whats-new-in-210)
   - [Earlier Releases](#earlier-releases)
 - [Overview: CIM Model Comparison Reports](#overview-cim-model-comparison-reports)
 - [Reading a Comparison Report](#reading-a-comparison-report)
@@ -47,13 +46,16 @@ See an [example report](https://cim-compare.ucaiug.io/example-comparison-report/
  - For release notes describing the latest features and/or fixes visit [latest release](https://github.com/cimug-org/cim-compare/releases).
  - To directly download the latest release of the cim-compare command-line application click [cim-compare-2.1.0.jar](https://github.com/cimug-org/cim-compare/releases/download/2.1.0/cim-compare-2.1.0.jar).
 
-### What's New in 2.1.0
+<details markdown="1">
+<summary>What's New in 2.1.0</summary>
 
 - **Every root node of an EA project is compared** ([#88](https://github.com/cimug-org/cim-compare/issues/88)). Without `--package`, earlier releases compared only a project's first root node and left the others out of the report. Now each root node is exported and compared, so a project that keeps extension packages in root nodes of their own beside the CIM (for example `Model`, `UtilityExtensions` and `VendorExtensions`) is reported in full. Each root node appears as a top-level package in the report and the package outline, and a reference from one root node to another, such as an extension class that specializes a CIM class, is reported like any other. `--package=Model` compares a single root node as before. See [Option #1](#option-1-enterprise-architect-eap-or-qea-project-files-as-input).
 - **`--package` takes several packages** ([#94](https://github.com/cimug-org/cim-compare/issues/94)), separated by commas, for example `--package=Grid,UtilityExtensions` or, when a name contains a space, `--package="Grid,European Standards"`. The report shows them in the order given, and references between them are reported like any others. A package found in only one of the two models, such as a new extension root, is now reported as added or deleted, also for a single `--package`; before, **cim-compare** stopped with an error. A name found in neither model still stops it. See [Option #1](#option-1-enterprise-architect-eap-or-qea-project-files-as-input).
 - **Mixed `.eap` / `.qea` comparisons report only real changes** ([#86](https://github.com/cimug-org/cim-compare/issues/86)). EA leaves an attribute's AllowDuplicates and Scale blank in an `.eap` project and stores `false` and `0` in a `.qea`, so comparing one of each reported every such attribute, and its class, as changed. A blank value now counts as the default.
 - **The report header links to the website and the release** ([#87](https://github.com/cimug-org/cim-compare/issues/87)): the logo links to [cim-compare.ucaiug.io](https://cim-compare.ucaiug.io), and the "cim-compare 2.1.0" line to the GitHub release that produced the report.
 - **Fix:** with `--include-diagrams`, the baseline's diagram images could end up in `Images-destination`, and the report then showed the destination image on both sides of a changed diagram ([#91](https://github.com/cimug-org/cim-compare/issues/91)). This happened when Windows could not rename the folder EA exported the images to while EA still had the project open. The images are now moved file by file when the folder cannot be renamed, and **cim-compare** stops with an error if they cannot be moved.
+
+</details>
 
 ### Earlier Releases
 

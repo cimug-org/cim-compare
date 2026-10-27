@@ -14,6 +14,7 @@
       │  │  │   ├ name                         changed Notes → redline; Type links to IdentifiedObject
       │  │  │   ├ ratedS                       changed Type and LowerBound → new type only (no redline),
       │  │  │   │                              bound redlined
+      │  │  │   ├ phaseCode                    only Default changed → marked ⓘ, "metadata changed" (#123)
       │  │  │   ├ aliasName                    EA deprecation: Name gains «deprecated» (@name unchanged)
       │  │  │   └ Links: Generalization        identical → dropped unless full
       │  │  ├ Plant                           baseline only (type="") → deleted class
@@ -32,7 +33,8 @@
       │  ├ Wires
       │  │  ├ ACLineSegment                   model only → added
       │  │  ├ Switch                          moved here from Core; Phase cleared and Complexity
-      │  │  │                                 filled in (value on one side only) → changed (#107)
+      │  │  │                                 filled in (value on one side only) → changed (#107);
+      │  │  │                                 description changed → marked row ⓘ (#123)
       │  │  ├ DocWires (diagram)              renamed, nothing on it changed → metadata only, no images
       │  │  └ WiresConnectors (diagram)       only a rerouted connector → shown
       │  ├ DER                                only a diagram with nothing to highlight → package hidden
@@ -92,6 +94,16 @@
                     <Property name="LowerBound" model="1" baseline="0" status="Changed"/>
                     <Property name="Name" model="ratedS" baseline="ratedS" status="Identical"/>
                     <Property name="Type" model="IdentifiedObject" baseline="Float" status="Changed"/>
+                    <Property name="UpperBound" model="1" baseline="1" status="Identical"/>
+                  </Properties>
+                </CompareItem>
+                <!-- #123: only a property the row does not show changed (a value given) -->
+                <CompareItem name="phaseCode" type="Attribute" guid="{00000000-0000-0000-0000-000000000163}" status="Changed">
+                  <Properties>
+                    <Property name="Const" model="false" baseline="false" status="Identical"/>
+                    <Property name="Default" model="3" status="Changed"/>
+                    <Property name="LowerBound" model="1" baseline="1" status="Identical"/>
+                    <Property name="Name" model="phaseCode" baseline="phaseCode" status="Identical"/>
                     <Property name="UpperBound" model="1" baseline="1" status="Identical"/>
                   </Properties>
                 </CompareItem>
@@ -263,6 +275,7 @@
               <CompareItem name="Switch" type="Class" guid="{00000000-0000-0000-0000-000000000122}" status="Moved">
                 <Properties>
                   <Property name="Name" model="Switch" baseline="Switch" status="Identical"/>
+                  <Property name="Notes" model="A switch, opened or closed." baseline="A switch." status="Changed"/>
                   <Property name="Complexity" model="2" status="Model only"/>
                   <Property name="ParentPackage" model="Wires" baseline="Core" status="Changed"/>
                   <Property name="Phase" baseline="1.0" status="Baseline only"/>

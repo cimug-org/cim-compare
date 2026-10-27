@@ -515,8 +515,12 @@ public class ReportPreProcessor {
 				po.setAttribute("baseline", b);
 			if (m != null)
 				po.setAttribute("model", m);
-			if ("changed".equals(st) && "Cardinality".equals(name) && sameMultiplicity(b, m))
-				po.setAttribute("notation", "true");
+			if ("changed".equals(st)) {
+				String tag = "Cardinality".equals(name) && sameMultiplicity(b, m) ? "notation only" // #109
+						: "Stereotype".equals(name) ? stereotypeTag(b, m) : null; // #118
+				if (tag != null)
+					po.setAttribute("tag", tag);
+			}
 			if ("changed".equals(st) && TEXT_PROPS.contains(name)) {
 				Element r = out.createElement("Redline");
 				WordDiff.appendRedline(out, r, b, m);
@@ -642,6 +646,35 @@ public class ReportPreProcessor {
 				return true;
 		}
 		return false;
+	}
+
+	/**
+	 * How two stereotype lists that differ are alike (#118): "order only" when
+	 * they hold the same stereotypes in another order, "case only" when only the
+	 * case of a name changed, "order and case only" for both; null when a
+	 * stereotype was added, removed or renamed.
+	 */
+	static String stereotypeTag(String a, String b) {
+		java.util.List<String> x = org.cimug.compare.Stereotypes.split(a), y = org.cimug.compare.Stereotypes.split(b);
+		if (x.isEmpty() || x.size() != y.size())
+			return null;
+		if (sorted(x, false).equals(sorted(y, false)))
+			return x.equals(y) ? null : "order only";
+		boolean sameOrder = true;
+		for (int i = 0; i < x.size(); i++)
+			if (!x.get(i).equalsIgnoreCase(y.get(i)))
+				sameOrder = false;
+		if (sameOrder)
+			return "case only";
+		return sorted(x, true).equals(sorted(y, true)) ? "order and case only" : null;
+	}
+
+	private static java.util.List<String> sorted(java.util.List<String> names, boolean ignoreCase) {
+		java.util.List<String> l = new java.util.ArrayList<String>();
+		for (String n : names)
+			l.add(ignoreCase ? n.toLowerCase(java.util.Locale.ROOT) : n);
+		java.util.Collections.sort(l);
+		return l;
 	}
 
 	/**

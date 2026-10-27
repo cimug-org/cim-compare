@@ -129,11 +129,11 @@ public class ReportRendererTest {
 		File html = new File(tmp.getRoot(), "links.html");
 		new ReportRenderer(false, null, false, "jpg").render(xml, html);
 		String page = read(html);
-		// Equipment role Equipment(s) [0..*] → IdentifiedObject role unspecified [0..1 → 1]
+		// Equipment role Equipment(s) [0..* → *, notation only] → IdentifiedObject role unspecified [0..1 → 1]
 		assertTrue(page.contains("<span class=\"end-sig\"><a href=\"#EAID_00000000_0000_0000_0000_000000000117\">Equipment</a> <span class=\"role-part\"><span class=\"role-lbl\">role</span>&nbsp;"
-				+ "<del>Equipment</del><ins>Equipments</ins>&nbsp;<span class=\"card\">[0..*]</span>&nbsp;→</span></span> "));
+				+ "<del>Equipment</del><ins>Equipments</ins>&nbsp;<span class=\"cardw\"><span class=\"card\">[<del>0..*</del><ins>*</ins>]</span><span class=\"notation\">notation only</span></span>&nbsp;→</span></span> "));
 		assertTrue(page.contains("<a href=\"#EAID_00000000_0000_0000_0000_000000000111\">IdentifiedObject</a> <span class=\"role-part\"><span class=\"role-lbl\">role</span>&nbsp;"
-				+ "<i>unspecified</i>&nbsp;<span class=\"card\">[<del>0..1</del><ins>1</ins>]</span></span></span>"));
+				+ "<i>unspecified</i>&nbsp;<span class=\"cardw\"><span class=\"card\">[<del>0..1</del><ins>1</ins>]</span></span></span></span>"));
 	}
 
 	@Test
@@ -252,5 +252,40 @@ public class ReportRendererTest {
 				ReportRenderer.enrichedFileFor(xml, null).getAbsoluteFile());
 		assertEquals("comparison-report-enriched.xml",
 				ReportRenderer.enrichedFileFor(new File("/x/comparison-report.XML"), null).getName());
+	}
+
+	@Test
+	public void signatureLinesSpaceTheStruckAndInsertedParts() throws Exception {
+		File xml = copyFixture();
+		File html = new File(tmp.getRoot(), "sig.html");
+		new ReportRenderer(false, null, false, "jpg").render(xml, html);
+		String page = read(html);
+		// #110: the gap comes from the stylesheet, scoped to signature lines
+		assertTrue(page.contains(".sigline del + ins, td.sig del + ins { margin-left: .3em; }"));
+		assertTrue(page.contains("<span class=\"card\">[<del>0..1</del><ins>1</ins>]</span>"));
+	}
+
+	@Test
+	public void emptyValueIsAChangeShownAsEmpty() throws Exception {
+		File xml = copyFixture();
+		File html = new File(tmp.getRoot(), "empty.html");
+		new ReportRenderer(false, null, false, "jpg").render(xml, html);
+		String page = read(html);
+		// #107: a cleared or filled-in value is a changed row, with (empty) on the empty side
+		assertTrue(page.contains("<tr data-status=\"changed\"><th class=\"k\">Phase</th><td>1.0</td><td class=\"nil\">(empty)</td></tr>"));
+		assertTrue(page.contains("<tr data-status=\"changed\"><th class=\"k\">Complexity</th><td class=\"nil\">(empty)</td><td>2</td></tr>"));
+		assertTrue(page.contains("<td>instance</td><td class=\"nil\">(empty)</td>"));
+	}
+
+	@Test
+	public void notationOnlyMultiplicityIsTagged() throws Exception {
+		File xml = copyFixture();
+		File html = new File(tmp.getRoot(), "notation.html");
+		new ReportRenderer(false, null, false, "jpg").render(xml, html);
+		String page = read(html);
+		// #109: still a change, tagged in the end table and the signature line
+		assertTrue(page.contains("<tr data-status=\"changed\"><th class=\"k\">Cardinality</th><td>0..*</td><td>*<span class=\"notation\">notation only</span></td></tr>"));
+		assertTrue(page.contains("<span class=\"card\">[<del>0..*</del><ins>*</ins>]</span><span class=\"notation\">notation only</span>"));
+		assertEquals(2, page.split("class=\"notation\"").length - 1);
 	}
 }

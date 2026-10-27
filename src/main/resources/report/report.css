@@ -172,6 +172,10 @@ del { background: var(--del-bg); color: var(--del-ink); text-decoration: line-th
 ins { background: var(--ins-bg); color: var(--ins-ink); text-decoration: none; }
 /* a changed attribute type: the new type only, in blue (not redlined) */
 .chg, .chg a { color: var(--link); }
+/* #110 in signature lines (association ends, attribute bounds) keep the struck and
+   inserted parts apart, so 0..1 → 1 does not read as 0..11 */
+.sigline del + ins, td.sig del + ins { margin-left: .3em; }
+body.clean .sigline del + ins, body.clean td.sig del + ins { margin-left: 0; }
 body.clean del { display: none; }
 body.clean ins { background: none; color: inherit; }
 
@@ -185,6 +189,11 @@ table.t tr[data-status="moved"] > th.k, td.c-moved { background: var(--moved); c
 table.t tr[data-status="changed"] > th.k, td.c-changed { background: var(--changed); color: var(--changed-ink); }
 table.t tr[data-status="identical"] > th.k { background: var(--identical); color: var(--identical-ink); }
 table.t td.void { color: var(--faint); text-align: center; }
+/* #109 a multiplicity written differently with the same meaning (1..1 → 1) */
+/* the multiplicity, its tag and the arrow after it wrap as one */
+.cardw { white-space: nowrap; }
+.notation { display: inline-block; margin-left: 6px; padding: 0 6px; border: 1px solid var(--line); border-radius: 999px; background: var(--ground); color: var(--muted); font: 600 10.5px/1.6 var(--sans); letter-spacing: .02em; vertical-align: 1px; white-space: nowrap; }
+table.t td.nil { color: var(--faint); font-style: italic; }
 .tw { overflow-x: auto; }
 
 /* attributes (two-sided) */

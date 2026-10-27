@@ -366,7 +366,7 @@ public class ReportPreProcessor {
 				ee.setAttribute("baselineClassId", bc);
 			if (mc != null)
 				ee.setAttribute("modelClassId", mc);
-			copyNotesAndProperties(end, ee);
+			copyNotesAndProperties(end, ee, "added".equals(status) || "deleted".equals(status) ? status : statusOf(end));
 			e.appendChild(ee);
 		}
 		return e;
@@ -484,6 +484,18 @@ public class ReportPreProcessor {
 	}
 
 	private void copyNotesAndProperties(Element src, Element dst) {
+		copyNotesAndProperties(src, dst, dst.getAttribute("status"));
+	}
+
+	/**
+	 * @param owner the status of the element the properties belong to. When it
+	 *              exists on both sides (anything but added or deleted), a
+	 *              property with a value on one side only is changed, not added
+	 *              or deleted: EA leaves an empty value out of its export, but
+	 *              the element still has the property (#107).
+	 */
+	private void copyNotesAndProperties(Element src, Element dst, String owner) {
+		boolean bothSides = !"added".equals(owner) && !"deleted".equals(owner);
 		Element props = firstChild(src, "Properties");
 		if (props == null)
 			return;
@@ -492,6 +504,8 @@ public class ReportPreProcessor {
 		for (Element p : children(props, "Property")) {
 			String name = attr(p, "name");
 			String st = normalize(attr(p, "status"));
+			if (bothSides && ("added".equals(st) || "deleted".equals(st)))
+				st = "changed";
 			String b = p.hasAttribute("baseline") ? p.getAttribute("baseline") : null;
 			String m = p.hasAttribute("model") ? p.getAttribute("model") : null;
 			Element po = out.createElement("Property");
@@ -501,6 +515,8 @@ public class ReportPreProcessor {
 				po.setAttribute("baseline", b);
 			if (m != null)
 				po.setAttribute("model", m);
+			if ("changed".equals(st) && "Cardinality".equals(name) && sameMultiplicity(b, m))
+				po.setAttribute("notation", "true");
 			if ("changed".equals(st) && TEXT_PROPS.contains(name)) {
 				Element r = out.createElement("Redline");
 				WordDiff.appendRedline(out, r, b, m);
@@ -626,6 +642,30 @@ public class ReportPreProcessor {
 				return true;
 		}
 		return false;
+	}
+
+	/**
+	 * True when two multiplicities differ only in notation (#109): {@code n..n}
+	 * is {@code n} (e.g. {@code 1..1} = {@code 1}) and {@code 0..*} is {@code *}.
+	 */
+	static boolean sameMultiplicity(String a, String b) {
+		if (a == null || b == null)
+			return false;
+		String x = canonicalMultiplicity(a), y = canonicalMultiplicity(b);
+		return !x.isEmpty() && x.equals(y);
+	}
+
+	private static String canonicalMultiplicity(String m) {
+		String s = m.replaceAll("\\s+", "");
+		int dots = s.indexOf("..");
+		if (dots > 0 && s.indexOf("..", dots + 2) < 0) {
+			String lo = s.substring(0, dots), hi = s.substring(dots + 2);
+			if (lo.equals(hi))
+				return lo;
+			if ("0".equals(lo) && "*".equals(hi))
+				return "*";
+		}
+		return s;
 	}
 
 	private static boolean hasChangedProperties(Element item) {

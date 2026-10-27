@@ -19,7 +19,8 @@
       │  │  ├ Plant                           baseline only (type="") → deleted class
       │  │  │   └ Links: Generalization        baseline only (type="") → deleted link
       │  │  ├ Equipment                       renamed class (was ConductingEquipmentBase)
-      │  │  │   └ Links: Association          role and multiplicity changed; the target role is unspecified
+      │  │  │   └ Links: Association          role and multiplicity changed; the target role is unspecified;
+      │  │  │                                 source multiplicity 0..* → * is notation only (#109)
       │  │  ├ Location                        only an attribute description changed (curly quotes) →
       │  │  │                                 changed class, but not highlighted on a diagram
       │  │  ├ CoreOverview (diagram)          changed properties → shown; #37 DiagramObjects (one
@@ -30,7 +31,8 @@
       │  │                                    shown with its highlight
       │  ├ Wires
       │  │  ├ ACLineSegment                   model only → added
-      │  │  ├ Switch                          moved here from Core
+      │  │  ├ Switch                          moved here from Core; Phase cleared and Complexity
+      │  │  │                                 filled in (value on one side only) → changed (#107)
       │  │  ├ DocWires (diagram)              renamed, nothing on it changed → metadata only, no images
       │  │  └ WiresConnectors (diagram)       only a rerouted connector → shown
       │  ├ DER                                only a diagram with nothing to highlight → package hidden
@@ -157,7 +159,7 @@
                     </Properties>
                     <CompareItem name="Source: (Equipment)" type="Src" guid="Src-{00000000-0000-0000-0000-000000000180}" status="Changed">
                       <Properties>
-                        <Property name="Cardinality" model="0..*" baseline="0..*" status="Identical"/>
+                        <Property name="Cardinality" model="*" baseline="0..*" status="Changed"/>
                         <Property name="End" model="Equipment" baseline="ConductingEquipmentBase" status="Changed"/>
                         <Property name="Role" model="Equipments" baseline="Equipment" status="Changed"/>
                       </Properties>
@@ -167,6 +169,7 @@
                         <Property name="Cardinality" model="1" baseline="0..1" status="Changed"/>
                         <Property name="End" model="IdentifiedObject" baseline="IdentifiedObject" status="Identical"/>
                         <Property name="Role" model="" baseline="" status="Identical"/>
+                        <Property name="TargetScope" baseline="instance" status="Baseline only"/>
                       </Properties>
                     </CompareItem>
                   </CompareItem>
@@ -260,7 +263,9 @@
               <CompareItem name="Switch" type="Class" guid="{00000000-0000-0000-0000-000000000122}" status="Moved">
                 <Properties>
                   <Property name="Name" model="Switch" baseline="Switch" status="Identical"/>
+                  <Property name="Complexity" model="2" status="Model only"/>
                   <Property name="ParentPackage" model="Wires" baseline="Core" status="Changed"/>
+                  <Property name="Phase" baseline="1.0" status="Baseline only"/>
                   <Property name="Type" model="Class" baseline="Class" status="Identical"/>
                 </Properties>
               </CompareItem>

@@ -352,7 +352,6 @@ public class ReportRendererTest {
 		assertTrue(page.contains("  .diag { break-inside: avoid; }"));
 		assertTrue(page.contains("window.addEventListener('beforeprint'"));
 		assertFalse(page.contains("d.open = true"));
-		assertTrue(page.contains(".row[data-kind=\"📁\"] .ico { font-size: 0; }"));
 	}
 
 	@Test
@@ -372,5 +371,20 @@ public class ReportRendererTest {
 		File all = new File(tmp.getRoot(), "empty-all.html");
 		new ReportRenderer(false, null, false, "jpg").showEmptyValues(true).render(xml, all);
 		assertFalse(read(all).contains("<div class=\"empty-note\">"));
+	}
+
+	@Test
+	public void headerHasPrintButtonAndPackagesADrawnFolder() throws Exception {
+		File xml = copyFixture();
+		File html = new File(tmp.getRoot(), "btn.html");
+		new ReportRenderer(false, null, false, "jpg").render(xml, html);
+		String page = read(html);
+		// #131
+		assertTrue(page.contains("<button type=\"button\" id=\"btn-print\""));
+		assertTrue(page.contains("<b>Print or save as PDF</b>"));
+		assertTrue(page.contains("window.print()"));
+		assertTrue(page.contains("<span class=\"ico\"><span class=\"fold\" aria-hidden=\"true\"></span></span>"));
+		assertFalse(page.contains("<span class=\"ico\">📁</span>"));
+		assertFalse(page.contains(">ⓘ hover<"));
 	}
 }

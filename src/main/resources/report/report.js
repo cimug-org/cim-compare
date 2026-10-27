@@ -156,7 +156,7 @@
     res.innerHTML = '';
     hits.slice(0, 40).forEach(function (h, i) {
       var d = document.createElement('div'); if (i === sel) d.className = 'sel';
-      d.innerHTML = '<span class="kind">' + h.kind + '</span><code>' + h.name + '</code><span class="path">' + h.path + '</span>';
+      d.innerHTML = '<span class="kind">' + (h.kind === '📁' ? '<span class="fold"></span>' : h.kind) + '</span><code>' + h.name + '</code><span class="path">' + h.path + '</span>';
       d.addEventListener('mousedown', function (ev) { ev.preventDefault(); go(h); });
       res.appendChild(d);
     });
@@ -368,6 +368,7 @@
 
   /* ---- #128 printing: load every diagram image first (images not yet scrolled into view
      would otherwise print blank). "Show full metadata" sections print as they are on screen. ---- */
+  var pb = $('#btn-print'); if (pb) pb.addEventListener('click', function () { window.print(); });
   window.addEventListener('beforeprint', function () {
     $$('img[loading="lazy"]').forEach(function (i) { i.loading = 'eager'; });
   });

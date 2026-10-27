@@ -233,7 +233,10 @@
     <div class="row{if ($leaf) then ' leaf' else ''}" data-status="{$st}" tabindex="0"
          data-name="{$e/@name}" data-kind="{$ico}" data-path="{r:path($e)}">
       <span class="chev"><xsl:value-of select="if ($leaf) then '' else '▶'"/></span>
-      <span class="ico"><xsl:value-of select="$ico"/></span>
+      <xsl:choose>
+        <xsl:when test="$ico = '📁'"><span class="ico"><span class="fold" aria-hidden="true"></span></span></xsl:when>
+        <xsl:otherwise><span class="ico"><xsl:value-of select="$ico"/></span></xsl:otherwise>
+      </xsl:choose>
       <span class="name"><xsl:call-template name="r:display-name"><xsl:with-param name="e" select="$e"/></xsl:call-template></span>
       <!-- all stereotypes in one pair of guillemets, as UML 2.5.1 shows them (#118); «deprecated» is shown with the name -->
       <xsl:variable name="stereos" select="tokenize(string($e/@stereotype), ',\s*')[normalize-space() != '' and . != 'deprecated']"/>
@@ -280,7 +283,9 @@
             <label class="chk"><input id="chk-guids" type="checkbox" checked="checked"/> GUIDs <kbd>g</kbd></label>
             <label class="chk"><input id="chk-clean" type="checkbox"/> Hide redline</label>
             <xsl:if test="$diagrams"><label class="chk" title="Highlight added, removed, changed, moved and restyled elements on the diagram images"><input id="chk-hl" type="checkbox" checked="checked"/> Diagram highlights</label></xsl:if>
-            <span class="seg" id="seg-meta" title="How ⓘ metadata is shown"><button type="button" class="on" data-mode="hover">ⓘ hover</button><button type="button" data-mode="inline">ⓘ inline</button></span>
+            <span class="seg" id="seg-meta" title="How ⓘ metadata is shown"><button type="button" class="on" data-mode="hover"><svg width="14" height="14" viewBox="0 0 16 16" aria-hidden="true"><rect x="1.5" y="1.5" width="13" height="9" rx="2" fill="none" stroke="currentColor" stroke-width="1.4"/><path d="M5 10.5 4 14l4-3.5" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/><path d="M4.5 5h7M4.5 7.5h4.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>hover</button><button type="button" data-mode="inline"><svg width="14" height="14" viewBox="0 0 16 16" aria-hidden="true"><path d="M1.5 3h13" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><rect x="3.5" y="5.5" width="11" height="5" rx="1" fill="none" stroke="currentColor" stroke-width="1.3"/><path d="M1.5 13h13" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>inline</button></span>
+            <!-- #131 print or save as PDF, with the browser settings that give a good result -->
+            <span class="pbwrap"><button type="button" id="btn-print" aria-describedby="pb-help"><svg width="15" height="15" viewBox="0 0 16 16" aria-hidden="true"><path d="M4 6V1.5h8V6" fill="none" stroke="currentColor" stroke-width="1.3"/><rect x="1.5" y="6" width="13" height="6" rx="1.5" fill="none" stroke="currentColor" stroke-width="1.3"/><rect x="4" y="9.5" width="8" height="5" fill="none" stroke="currentColor" stroke-width="1.3"/><circle cx="12" cy="8.3" r=".8" fill="currentColor"/></svg>Print / PDF</button><span class="pbpop" id="pb-help" role="tooltip"><b>Print or save as PDF</b><span>Opens your browser’s print dialog (or press Ctrl+P, ⌘P on a Mac).</span><span>• To save a PDF, choose <i>Save as PDF</i> (or <i>Microsoft Print to PDF</i>) as the printer.</span><span>• Choose <i>Landscape</i> if the browser doesn’t pick it.</span><span>• Turn off <i>Headers and footers</i> for a cleaner page.</span><span>• Leave <i>Background graphics</i> on so the change colours print.</span><span class="pbn">Sections print as they are on the page: open any “Show full metadata” you want included first. Wait for diagram images to load in large reports.</span></span></span>
           </div>
         </header>
         <div class="wrap">

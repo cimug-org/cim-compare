@@ -253,6 +253,45 @@ public class XmiMergerTest {
 		assertEquals(Arrays.asList("ERCOT", "Model"), top);
 	}
 
+	/**
+	 * A --package package found in one model only (#94, option B): the other side
+	 * is an empty model, and the package is reported as added or deleted.
+	 */
+	private Element compareWithEmpty(boolean emptyIsBaseline) throws Exception {
+		File empty = new File(tmp.getRoot(), "empty.xmi");
+		XmiMerger.writeEmpty(empty);
+		File ercot = fixture("rootB-ERCOT.xmi");
+		File comparison = new File(tmp.getRoot(), "one-sided.xml");
+		DiffXMLGenerator.main(new String[] { (emptyIsBaseline ? empty : ercot).getAbsolutePath(),
+				(emptyIsBaseline ? ercot : empty).getAbsolutePath(), comparison.getAbsolutePath(), "JPG" });
+		File enriched = org.cimug.compare.report.ReportRenderer
+				.forPackages(false, Arrays.asList("ERCOT"), false, "jpg")
+				.render(comparison, new File(tmp.getRoot(), "one-sided.html"));
+		return parse(enriched).getDocumentElement();
+	}
+
+	private static String status(Element report, String kind, String status) {
+		for (Element c : children(only(report, null, "Summary"), null, "Count"))
+			if (kind.equals(c.getAttribute("kind")) && status.equals(c.getAttribute("status")))
+				return c.getAttribute("n");
+		return "0";
+	}
+
+	@Test
+	public void packageOnlyInTheDestinationIsReportedAsAdded() throws Exception {
+		Element report = compareWithEmpty(true);
+		assertEquals("ERCOT", report.getAttribute("scope"));
+		assertEquals("added", only(report, null, "Package").getAttribute("status"));
+		assertEquals("1", status(report, "class", "added"));
+	}
+
+	@Test
+	public void packageOnlyInTheBaselineIsReportedAsDeleted() throws Exception {
+		Element report = compareWithEmpty(false);
+		assertEquals("deleted", only(report, null, "Package").getAttribute("status"));
+		assertEquals("1", status(report, "class", "deleted"));
+	}
+
 	/** Each root's export writes an Images folder; all end up in the side's folder. */
 	@Test
 	public void imagesFromEveryRootEndUpInOneFolder() throws Exception {

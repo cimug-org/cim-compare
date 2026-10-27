@@ -667,7 +667,9 @@ public class CIMModelComparisonGenerator {
 				File imagesDirectory = new File(outputDir, "Images");
 				if (imagesDirectory.exists()) {
 					File newImagesDirectory = new File(outputDir, "Images" + (baseline ? "-baseline" : "-destination"));
-					imagesDirectory.renameTo(newImagesDirectory);
+					// Not a plain rename: on Windows it can fail while EA has the project open,
+					// leaving the images for the next export to overwrite (issue #91).
+					moveImages(imagesDirectory, newImagesDirectory);
 					System.out.println("\n" + side + " model diagrams successfully exported as " + diagramImage.name()
 							+ " images to:  \n" + newImagesDirectory.getAbsolutePath());
 				} else {
@@ -771,20 +773,22 @@ public class CIMModelComparisonGenerator {
 
 	/**
 	 * Moves the images EA wrote to {@code from} into {@code to}: a rename when
-	 * {@code to} does not exist yet, otherwise file by file (replacing files of the
-	 * same name), after which {@code from} is removed.
+	 * {@code to} does not exist yet, otherwise (or when the rename fails) file by
+	 * file, replacing files of the same name, after which {@code from} is removed if
+	 * possible. A file that cannot be moved is an error, so the images of one model
+	 * are never left where the next export writes (issue #91).
 	 */
 	static void moveImages(File from, File to) throws IOException {
 		if (!to.exists() && from.renameTo(to))
 			return;
-		if (!to.exists() && !to.mkdirs())
+		if (!to.isDirectory() && !to.mkdirs())
 			throw new IOException("Unable to create " + to.getAbsolutePath());
 		File[] files = from.listFiles();
 		if (files != null)
 			for (File f : files)
 				java.nio.file.Files.move(f.toPath(), new File(to, f.getName()).toPath(),
 						java.nio.file.StandardCopyOption.REPLACE_EXISTING);
-		from.delete();
+		from.delete(); // may stay behind, empty, while EA holds it; the next export reuses it
 	}
 
 	private static Package findPackage(String packageName, Collection<Package> packages) {

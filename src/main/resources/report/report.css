@@ -190,6 +190,9 @@ body.hide-guids .guid { display: none; }
 /* #133 a link or list entry jumped to gets the same rounded blue ring as a row; a table row cannot
    have rounded corners, so report.js lays a ring (.tr-ring) over an attribute row instead */
 ul.plain li.target, ul.plain li:target, .linkB.target { outline: 2px solid var(--focus); outline-offset: 1px; border-radius: var(--r); }
+/* #139 under a diagram shown as PNG because EA could not draw it as SVG */
+.dimg .dnone { padding: 28px 12px; text-align: center; font: italic 12px var(--sans); color: var(--muted); border: 1px dashed var(--line); border-radius: var(--r); }
+.dimg .dnote { font: italic 11.5px var(--sans); color: var(--muted); padding: 4px 2px 0; }
 .tr-ring { position: absolute; pointer-events: none; z-index: 2; border: 2px solid var(--focus); border-radius: var(--r); }
 .row, ul.plain li, table.attrs tr, .linkB { scroll-margin-top: calc(var(--hdr-h, 96px) + 12px); }  /* clear the sticky header when scrolled to */
 .filtered-out { display: none !important; }

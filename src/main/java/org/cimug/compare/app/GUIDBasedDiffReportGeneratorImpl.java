@@ -24,6 +24,7 @@ import org.cimug.compare.GeneralizationProperties;
 import org.cimug.compare.NamedTypeComparator;
 import org.cimug.compare.PackageProperties;
 import org.cimug.compare.Status;
+import org.cimug.compare.SvgDiagrams;
 import org.cimug.compare.app.CIMModelComparisonGenerator.DiagramImage;
 import org.cimug.compare.logs.CompareItem;
 import org.cimug.compare.logs.ComparePackage;
@@ -53,6 +54,18 @@ class GUIDBasedDiffReportGeneratorImpl implements DiffReportGenerator {
 	private File destinationImagesDir;
 	private DiagramImage imageType;
 	private File outputFile;
+
+	/**
+	 * #141: when set, the images of the diagrams that changed are drawn one at a time
+	 * just before the comparison XML is written, and the highlight boxes are moved into
+	 * their coordinates. Set by the run around the comparison.
+	 */
+	static PerDiagramImages drawer;
+	/** #141: the diagrams to draw on each side. */
+	private final java.util.Set<String> drawBaseline = new java.util.LinkedHashSet<>(),
+			drawDestination = new java.util.LinkedHashSet<>();
+	/** #141: each changed diagram's highlight items, to move into its images once drawn. */
+	private final List<Object[]> toPlace = new java.util.ArrayList<>();
 
 	public GUIDBasedDiffReportGeneratorImpl(XMIContentType baselineContentType, XMIContentType targetContentType,
 			File outputFile, DiagramImage imageType) throws JAXBException {
@@ -126,10 +139,27 @@ class GUIDBasedDiffReportGeneratorImpl implements DiffReportGenerator {
 	public void processDiffReport() {
 		try {
 			EACompareLog compareLog = processDiffReport(baselineContentType, targetContentType);
+			if (drawer != null)
+				drawAndPlace();
 			writeCompareLogFile(compareLog);
 		} catch (FileNotFoundException | JAXBException e) {
 			e.printStackTrace();
 			throw new RuntimeException(e);
+		}
+	}
+
+	/** #141: draws the changed diagrams and moves their highlight boxes into the images. */
+	private void drawAndPlace() {
+		drawer.draw(drawBaseline, drawDestination);
+		if (drawer.unavailable != null)
+			return; // the run exports again with images and compares again
+		for (Object[] p : toPlace) {
+			@SuppressWarnings("unchecked")
+			List<CompareItem> items = (List<CompareItem>) p[0];
+			Diagram b = (Diagram) p[1], d = (Diagram) p[2];
+			String name = (String) p[3];
+			SvgDiagrams.convert(items, b == null ? new java.util.HashMap<>() : drawer.boxes(true, b.getXmiId(), elementsOf(b), name),
+					d == null ? new java.util.HashMap<>() : drawer.boxes(false, d.getXmiId(), elementsOf(d), name));
 		}
 	}
 
@@ -503,6 +533,8 @@ class GUIDBasedDiffReportGeneratorImpl implements DiffReportGenerator {
 			Properties properties = deletedDiagramProperties.getProperties();
 
 			diagramStatus = Status.BaselineOnly;
+			if (drawer != null)
+				drawBaseline.add(aDiagram.getXmiId());
 			
 			theDiagram = new CompareItem(properties, aDiagram.getName(), "", aDiagram.getGUID(),
 					diagramStatus.toString());
@@ -515,6 +547,8 @@ class GUIDBasedDiffReportGeneratorImpl implements DiffReportGenerator {
 				Properties properties = newDiagramProperties.getProperties();
 
 				diagramStatus = Status.ModelOnly;
+				if (drawer != null)
+					drawDestination.add(aDiagram.getXmiId());
 				
 				theDiagram = new CompareItem(properties, aDiagram.getName(), "Diagram", aDiagram.getGUID(),
 						diagramStatus.toString());
@@ -653,9 +687,24 @@ class GUIDBasedDiffReportGeneratorImpl implements DiffReportGenerator {
 
 				// #37: element-level differences, for highlighting on the diagram images.
 				if (!Status.Identical.equals(diagramStatus)) {
-					theDiagram.getCompareItem()
-							.addAll(DiagramElementDiff.compare(elementsOf(baselineDiagram), elementsOf(targetDiagram),
-									this::diagramSubjectName));
+					List<CompareItem> elementItems = DiagramElementDiff.compare(elementsOf(baselineDiagram),
+							elementsOf(targetDiagram), this::diagramSubjectName, imageType == DiagramImage.SVG || drawer != null);
+					if (drawer != null) {
+						// #141: draw this diagram once the comparison is done; its boxes (diagram
+						// positions) are moved into the images then
+						if (baselineDiagram != null)
+							drawBaseline.add(baselineDiagram.getXmiId());
+						if (targetDiagram != null)
+							drawDestination.add(targetDiagram.getXmiId());
+						toPlace.add(new Object[] { elementItems, baselineDiagram, targetDiagram, targetDiagram.getName() });
+					} else if (imageType == DiagramImage.SVG)
+						// #139: SVG images beside XMI files given as input: move the boxes (diagram
+						// positions, or the pixels of an image the XMI export wrote) into each
+						// SVG's own coordinates
+						SvgDiagrams.convert(elementItems,
+								svgBoxes(this.baselineImagesDir, baselineDiagram, targetDiagram.getName(), "Baseline"),
+								svgBoxes(this.destinationImagesDir, targetDiagram, targetDiagram.getName(), "Destination"));
+					theDiagram.getCompareItem().addAll(elementItems);
 				}
 
 				if (Status.Identical.equals(diagramStatus)) {
@@ -668,6 +717,25 @@ class GUIDBasedDiffReportGeneratorImpl implements DiffReportGenerator {
 		}
 
 		return theDiagram;
+	}
+
+	/** #139 a diagram's highlight boxes mapped into its SVG image (empty when it cannot be). */
+	private static java.util.Map<String, String> svgBoxes(File imagesDir, Diagram diagram, String name, String side) {
+		if (diagram == null || imagesDir == null)
+			return new java.util.HashMap<>();
+		File svg = new File(imagesDir, diagram.getXmiId() + ".svg");
+		if (!svg.isFile())
+			return new java.util.HashMap<>();
+		try {
+			String text = new String(java.nio.file.Files.readAllBytes(svg.toPath()), java.nio.charset.StandardCharsets.UTF_8);
+			int[] shift = SvgDiagrams.shift(text, elementsOf(diagram));
+			if (shift == null)
+				System.out.println("\nWARNING:  " + side + " model: could not line up the highlights with the SVG image of diagram '" + name
+						+ "' (" + svg.getName() + "); its highlights are left out.");
+			return SvgDiagrams.boxMap(elementsOf(diagram), shift, text);
+		} catch (java.io.IOException e) {
+			return new java.util.HashMap<>();
+		}
 	}
 
 	private static List<DiagramElement> elementsOf(Diagram diagram) {

@@ -62,6 +62,31 @@ public class DiagramElementDiff {
 	 */
 	public static List<CompareItem> compare(List<DiagramElement> baseline, List<DiagramElement> destination,
 			Function<String, String> nameOf) {
+		return compare(baseline, destination, nameOf, false);
+	}
+
+	/**
+	 * @param positions #139: when an element has no image box (the XMI was exported
+	 *                  without images, as for SVG images), use its diagram position
+	 *                  ({@code Left;Top;Right;Bottom}) instead; {@link SvgDiagrams}
+	 *                  then moves it into the SVG's coordinates
+	 */
+	public static List<CompareItem> compare(List<DiagramElement> baseline, List<DiagramElement> destination,
+			Function<String, String> nameOf, boolean positions) {
+		Boolean before = POSITIONS.get();
+		POSITIONS.set(positions);
+		try {
+			return compareBoxes(baseline, destination, nameOf);
+		} finally {
+			POSITIONS.set(before);
+		}
+	}
+
+	/** #139 whether {@link #box} falls back to the diagram position (see compare). */
+	private static final ThreadLocal<Boolean> POSITIONS = ThreadLocal.withInitial(() -> Boolean.FALSE);
+
+	private static List<CompareItem> compareBoxes(List<DiagramElement> baseline, List<DiagramElement> destination,
+			Function<String, String> nameOf) {
 		Map<String, DiagramElement> b = boxed(baseline);
 		Map<String, DiagramElement> d = boxed(destination);
 
@@ -257,7 +282,7 @@ public class DiagramElementDiff {
 		return m;
 	}
 
-	/** The element's box in image pixels, or null when EA did not write one. */
+	/** The element's box in image pixels, or null when EA did not write one (see compare's positions). */
 	static int[] box(DiagramElement e) {
 		Map<String, String> g = geometry(e.getGeometry());
 		try {
@@ -267,7 +292,7 @@ public class DiagramElementDiff {
 		} catch (NumberFormatException ignored) {
 			// fall through: no usable box
 		}
-		return null;
+		return POSITIONS.get() ? SvgDiagrams.position(e) : null;
 	}
 
 	static Map<String, String> geometry(String geometry) {

@@ -139,14 +139,19 @@ public class CIMModelComparisonGenerator {
 			Document document = null;
 			InputSource is = null;
 
+			// The comparison XML is UTF-8 (#143); one written by an earlier release on Java 17
+			// or earlier may be in Windows-1252 although it says UTF-8, so the other readings
+			// are tried in turn, without the parser's error message for each failed one
 			try {
 				builder = factory.newDocumentBuilder();
+				builder.setErrorHandler(QUIET);
 				is = new InputSource(new FileInputStream(compareLogXMLFile));
 				is.setEncoding(UTF8);
 				document = builder.parse(is);
 			} catch (Exception e) {
 				try {
 					builder = factory.newDocumentBuilder();
+					builder.setErrorHandler(QUIET);
 					document = builder.parse(compareLogXMLFile);
 				} catch (Exception e2) {
 					builder = factory.newDocumentBuilder();
@@ -190,6 +195,20 @@ public class CIMModelComparisonGenerator {
 			System.exit(1);
 		}
 	}
+
+	/** #143: an XML error handler that reports nothing; the caller tries another reading. */
+	private static final org.xml.sax.ErrorHandler QUIET = new org.xml.sax.ErrorHandler() {
+		public void warning(org.xml.sax.SAXParseException e) {
+		}
+
+		public void error(org.xml.sax.SAXParseException e) throws org.xml.sax.SAXParseException {
+			throw e;
+		}
+
+		public void fatalError(org.xml.sax.SAXParseException e) throws org.xml.sax.SAXParseException {
+			throw e;
+		}
+	};
 
 	/**
 	 * @param option

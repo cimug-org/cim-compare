@@ -663,8 +663,7 @@ public class CIMModelComparisonGenerator {
 			System.gc();
 			if (repository != null) {
 				// Required by EA's automation API to ensure everything terminates properly.
-				repository.CloseFile();
-				repository.Exit();
+				closeQuietly(repository);
 				repository = null;
 			}
 			if (failed) {
@@ -860,8 +859,7 @@ public class CIMModelComparisonGenerator {
 		} finally {
 			System.gc();
 			if (repository != null) {
-				repository.CloseFile();
-				repository.Exit();
+				closeQuietly(repository);
 				repository = null;
 			}
 			if (failed) {
@@ -986,6 +984,24 @@ public class CIMModelComparisonGenerator {
 		}
 	}
 
+	/**
+	 * Closes EA. #139: after an EA call fails (e.g. "Internal application error" from
+	 * PutDiagramImageToFile), EA can report the same error again on CloseFile or Exit;
+	 * that must not stop the run, whose export is already written.
+	 */
+	private static void closeQuietly(Repository repository) {
+		try {
+			repository.CloseFile();
+		} catch (Throwable e) {
+			System.out.println("\nNote:  EA reported an error while closing the project (" + e.getMessage() + "); continuing.");
+		}
+		try {
+			repository.Exit();
+		} catch (Throwable e) {
+			// already reported, or EA has gone
+		}
+	}
+
 	/** #139: why SVG images could not be written in this run (null while they could). */
 	private static String svgUnavailable;
 	/** #139: SVG was asked for but JPG images were used. */
@@ -1010,8 +1026,8 @@ public class CIMModelComparisonGenerator {
 			String reason = writeSvg(repository, base, svg);
 			if (reason != null) {
 				svgUnavailable = reason;
-				System.out.println("\nWARNING:  " + side + " model: could not write an SVG image of diagram " + base
-						+ " (" + reason + "). The report uses JPG images instead.");
+				System.out.println("\nWARNING:  " + side + " model: could not write an SVG image of diagram "
+						+ diagramName(repository, base) + base + " (" + reason + "). The report uses JPG images instead.");
 				return;
 			}
 			written++;
@@ -1023,7 +1039,13 @@ public class CIMModelComparisonGenerator {
 	/** Writes one diagram's SVG; null when it worked, else why not. */
 	private static String writeSvg(Repository repository, String eaid, File svg) {
 		try {
-			boolean ok = repository.GetProjectInterface().PutDiagramImageToFile(eaidToGuid(eaid), svg.getAbsolutePath(), 1);
+			boolean ok;
+			try {
+				ok = repository.GetProjectInterface().PutDiagramImageToFile(eaidToGuid(eaid), svg.getAbsolutePath(), 1);
+			} catch (Throwable first) {
+				// EA accepts the diagram's GUID in either form; try the XML form once before giving up
+				ok = repository.GetProjectInterface().PutDiagramImageToFile(eaid, svg.getAbsolutePath(), 1);
+			}
 			if (!ok || !svg.isFile())
 				return "EA did not write the file";
 			String text = new String(java.nio.file.Files.readAllBytes(svg.toPath()), java.nio.charset.StandardCharsets.UTF_8);
@@ -1034,6 +1056,15 @@ public class CIMModelComparisonGenerator {
 			return null;
 		} catch (Throwable e) {
 			return String.valueOf(e);
+		}
+	}
+
+	/** "'Name' " of a diagram, for messages; empty when EA cannot say. */
+	private static String diagramName(Repository repository, String eaid) {
+		try {
+			return "'" + repository.GetDiagramByGuid(eaidToGuid(eaid)).GetName() + "' ";
+		} catch (Throwable e) {
+			return "";
 		}
 	}
 

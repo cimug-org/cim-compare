@@ -118,6 +118,27 @@ public class SvgImagesTest {
 	}
 
 	@Test
+	public void aDiagramEaWouldNotDrawAsSvgIsShownAsPngWithoutHighlights() throws Exception {
+		File baseline = export("baseline.xmi", 394, false), destination = export("destination.xmi", 494, false);
+		svg("Images-baseline", 100);
+		File dest = new File(tmp.getRoot(), "Images-destination");
+		dest.mkdirs();
+		Files.write(new File(dest, DIAGRAM + ".png").toPath(), new byte[] { (byte) 0x89, 'P', 'N', 'G', 13, 10, 26, 10, 0 });
+		File xml = new File(tmp.getRoot(), "comparison.xml");
+		DiffXMLGenerator.main(new String[] { baseline.getPath(), destination.getPath(), xml.getPath(), "svg" });
+		Document log = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(xml);
+		assertEquals("100,100,300,200", box(log, "baseline"));
+		assertEquals("no box on the PNG", "", box(log, "model"));
+
+		File html = new File(tmp.getRoot(), "report.html");
+		new ReportRenderer(false, null, true, "svg").render(xml, html);
+		String page = new String(Files.readAllBytes(html.toPath()), StandardCharsets.UTF_8);
+		assertTrue(page.contains("src=\"Images-baseline/" + DIAGRAM + ".svg\""));
+		assertTrue(page.contains("src=\"Images-destination/" + DIAGRAM + ".png\""));
+		assertTrue(page.contains("EA could not draw this diagram as SVG; it is shown as a PNG, without highlights."));
+	}
+
+	@Test
 	public void theDiagramsToDrawComeFromTheExportedXmi() throws Exception {
 		File xmi = export("baseline.xmi", 394, false);
 		assertEquals(java.util.Collections.singletonList(DIAGRAM), CIMModelComparisonGenerator.diagramIds(xmi));

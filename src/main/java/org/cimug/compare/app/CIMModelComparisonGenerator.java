@@ -1102,8 +1102,9 @@ public class CIMModelComparisonGenerator {
 
 	/**
 	 * #139: writes an SVG of each diagram in a model's exported XMI file, with EA's
-	 * {@code Project.PutDiagramImageToFile} (Type 1: the format from the file name).
-	 * On the first failure it stops and records why, and the run falls back to JPG.
+	 * {@code Project.PutDiagramImageToFile} (Type 1: the format from the file name). A
+	 * diagram EA will not draw as SVG is written as a PNG instead (shown without
+	 * highlights); only when not one SVG can be written does the run fall back to JPG.
 	 */
 	private static void writeSvgImages(Repository repository, File xmi, File imagesDir, String side) {
 		svgUsed = true;
@@ -1119,46 +1120,124 @@ public class CIMModelComparisonGenerator {
 		imagesDir.mkdirs();
 		svgRetries = 0;
 		int written = 0;
+		List<String> png = new java.util.ArrayList<String>(), none = new java.util.ArrayList<String>();
 		for (String id : ids) {
 			String reason = writeSvg(repository, id, new File(imagesDir, id + ".svg"));
-			if (reason != null) {
-				svgUnavailable = reason;
-				System.out.println("\nWARNING:  " + side + " model: could not write an SVG image of diagram "
-						+ diagramName(repository, id) + id + " (" + reason + "). The report uses JPG images instead.");
-				return;
+			if (reason == null) {
+				written++;
+				continue;
 			}
-			written++;
+			// #139: one diagram EA will not draw as SVG: show it as a PNG (without highlights)
+			// and keep the other diagrams' SVGs
+			String name = diagramName(repository, id);
+			if (writePng(repository, id, new File(imagesDir, id + ".png"))) {
+				png.add(name + id);
+				System.out.println("\nWARNING:  " + side + " model: EA could not draw diagram " + name + id + " as SVG ("
+						+ reason + "); it is shown as a PNG image, without highlights.");
+			} else {
+				none.add(name + id);
+				System.out.println("\nWARNING:  " + side + " model: EA could not draw diagram " + name + id
+						+ " as SVG or PNG (" + reason + "); the report shows no image of it.");
+			}
+		}
+		if (written == 0 && !ids.isEmpty()) {
+			// not one SVG: this EA cannot write them after all; the run uses JPG images
+			svgUnavailable = "EA did not write any SVG image";
+			return;
 		}
 		System.out.println("\n" + side + " model: " + written + " diagram(s) written as SVG images"
-				+ (svgRetries > 0 ? " (" + svgRetries + " on a second try, after an error from EA)" : "") + " to:  \n"
-				+ imagesDir.getAbsolutePath());
+				+ (svgRetries > 0 ? " (EA needed " + svgRetries + " extra tr" + (svgRetries == 1 ? "y" : "ies") + ")" : "")
+				+ (png.isEmpty() ? "" : ", " + png.size() + " as PNG") + (none.isEmpty() ? "" : ", " + none.size() + " without an image")
+				+ " to:  \n" + imagesDir.getAbsolutePath());
+	}
+
+	/** #139: a PNG of one diagram, for one EA would not draw as SVG; true when written. */
+	private static boolean writePng(Repository repository, String eaid, File png) {
+		for (int attempt = 1; attempt <= 2; attempt++) {
+			try {
+				if (attempt > 1)
+					Thread.sleep(1000);
+				png.delete();
+				repository.GetProjectInterface().PutDiagramImageToFile(attempt == 1 ? eaidToGuid(eaid) : eaid,
+						png.getAbsolutePath(), 1);
+				if (png.isFile() && png.length() > 8)
+					return true;
+			} catch (InterruptedException e) {
+				Thread.currentThread().interrupt();
+				return false;
+			} catch (Throwable e) {
+				// try again, then give up
+			}
+		}
+		png.delete();
+		return false;
 	}
 
 	/** #139: SVGs of the current model that EA wrote only on a second try. */
 	private static int svgRetries;
 
-	/** Writes one diagram's SVG; null when it worked, else why not. */
+	/**
+	 * Writes one diagram's SVG; null when it worked, else what EA said on each try.
+	 * EA 17 sometimes fails on a diagram it draws fine a moment later ("Internal
+	 * application error", or false with no file), so there are three tries: the GUID,
+	 * the GUID in its XML form after a short pause, and loading the diagram and saving
+	 * its image after a longer one.
+	 */
 	private static String writeSvg(Repository repository, String eaid, File svg) {
-		try {
-			boolean ok;
+		List<String> tries = new java.util.ArrayList<String>();
+		for (int attempt = 1; attempt <= 3; attempt++) {
 			try {
-				ok = repository.GetProjectInterface().PutDiagramImageToFile(eaidToGuid(eaid), svg.getAbsolutePath(), 1);
-			} catch (Throwable first) {
-				// EA accepts the diagram's GUID in either form; try the XML form once before giving up
-				svgRetries++;
-				ok = repository.GetProjectInterface().PutDiagramImageToFile(eaid, svg.getAbsolutePath(), 1);
+				if (attempt > 1) {
+					Thread.sleep(attempt == 2 ? 500 : 2000);
+					svgRetries++;
+				}
+				svg.delete();
+				String said = "";
+				boolean ok;
+				if (attempt == 1) {
+					ok = repository.GetProjectInterface().PutDiagramImageToFile(eaidToGuid(eaid), svg.getAbsolutePath(), 1);
+				} else if (attempt == 2) {
+					ok = repository.GetProjectInterface().PutDiagramImageToFile(eaid, svg.getAbsolutePath(), 1);
+				} else {
+					repository.GetProjectInterface().LoadDiagram(eaid);
+					said = repository.GetProjectInterface().SaveDiagramImageToFile(svg.getAbsolutePath());
+					ok = svg.isFile();
+				}
+				if (!ok || !svg.isFile()) {
+					tries.add("try " + attempt + ": no file" + lastError(repository, said));
+					continue;
+				}
+				String text = new String(java.nio.file.Files.readAllBytes(svg.toPath()), java.nio.charset.StandardCharsets.UTF_8);
+				if (!org.cimug.compare.SvgDiagrams.isSvg(text)) {
+					tries.add("try " + attempt + ": not an SVG");
+					continue;
+				}
+				java.nio.file.Files.write(svg.toPath(),
+						org.cimug.compare.SvgDiagrams.withFontFallbacks(text).getBytes(java.nio.charset.StandardCharsets.UTF_8));
+				return null;
+			} catch (InterruptedException e) {
+				Thread.currentThread().interrupt();
+				tries.add("interrupted");
+				break;
+			} catch (Throwable e) {
+				tries.add("try " + attempt + ": " + e.getMessage());
 			}
-			if (!ok || !svg.isFile())
-				return "EA did not write the file";
-			String text = new String(java.nio.file.Files.readAllBytes(svg.toPath()), java.nio.charset.StandardCharsets.UTF_8);
-			if (!org.cimug.compare.SvgDiagrams.isSvg(text))
-				return "EA wrote a file that is not SVG";
-			java.nio.file.Files.write(svg.toPath(),
-					org.cimug.compare.SvgDiagrams.withFontFallbacks(text).getBytes(java.nio.charset.StandardCharsets.UTF_8));
-			return null;
-		} catch (Throwable e) {
-			return String.valueOf(e);
 		}
+		svg.delete();
+		return String.join("; ", tries);
+	}
+
+	/** EA's last error message, if it has one, for the messages of {@link #writeSvg}. */
+	private static String lastError(Repository repository, String said) {
+		String err = said == null ? "" : said.trim();
+		try {
+			String e = repository.GetProjectInterface().GetLastError();
+			if (e != null && !e.trim().isEmpty())
+				err += (err.isEmpty() ? "" : " / ") + e.trim();
+		} catch (Throwable ignored) {
+			// none
+		}
+		return err.isEmpty() ? "" : " (" + err + ")";
 	}
 
 	/** "'Name' " of a diagram, for messages; empty when EA cannot say. */

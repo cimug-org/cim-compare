@@ -429,4 +429,15 @@ public class ReportRendererTest {
 		// the package folder sits 1px higher than in #131, level with the name
 		assertTrue(page.contains(".fold { display: inline-block; width: 1.15em; height: .92em; position: relative; top: calc(.08em - 1px);"));
 	}
+	@Test
+	public void headerSaysWhenSvgFellBackToJpg() throws Exception {
+		File xml = copyFixture();
+		File html = new File(tmp.getRoot(), "note.html");
+		new ReportRenderer(false, null, false, "jpg").imageNote("Diagrams are JPG: SVG images were not available from this version of EA.").render(xml, html);
+		// #139
+		assertTrue(read(html).contains(" · <span class=\"imgnote\">Diagrams are JPG: SVG images were not available from this version of EA.</span>"));
+		File plain = new File(tmp.getRoot(), "plain.html");
+		new ReportRenderer(false, null, false, "jpg").render(xml, plain);
+		assertFalse(read(plain).contains("class=\"imgnote\""));
+	}
 }

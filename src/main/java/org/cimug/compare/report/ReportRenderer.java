@@ -80,6 +80,14 @@ public class ReportRenderer {
 
 	private boolean showEmptyValues;
 
+	/** #139 a note on the diagram images shown in the report header (e.g. SVG fell back to JPG). */
+	private String imageNote = "";
+
+	public ReportRenderer imageNote(String note) {
+		this.imageNote = note == null ? "" : note;
+		return this;
+	}
+
 	/** The {@code --show-empty-values} option (#126). */
 	public ReportRenderer showEmptyValues(boolean show) {
 		this.showEmptyValues = show;
@@ -109,6 +117,8 @@ public class ReportRenderer {
 				: new ReportPreProcessor(full, packageFilter)).showEmptyValues(showEmptyValues).process(in);
 		in = null; // let the (large) input go
 
+		if (includeDiagrams && html != null)
+			markPngDiagrams(enriched, html.getAbsoluteFile().getParentFile(), imageType);
 		File enrichedFile = enrichedFileFor(comparisonXml, html);
 		writeXml(enriched, enrichedFile);
 
@@ -118,6 +128,7 @@ public class ReportRenderer {
 		t.setParameter("logo", readResource(LOGO));
 		t.setParameter("include-diagrams", Boolean.toString(includeDiagrams));
 		t.setParameter("image-type", imageType);
+		t.setParameter("image-note", imageNote);
 
 		Writer w = null;
 		try {
@@ -132,6 +143,30 @@ public class ReportRenderer {
 		if (includeDiagrams && html != null)
 			deleteUnshownImages(html.getAbsoluteFile().getParentFile(), diagrams, shownDiagramIds(enriched), imageType);
 		return enrichedFile;
+	}
+
+	/**
+	 * #139: in an SVG report, a diagram EA would not draw as SVG has a PNG instead, or no
+	 * image; marks it ({@code baseline-ext} / {@code destination-ext} = "png" or "none")
+	 * so the report links the PNG, or says there is no image rather than linking none.
+	 */
+	static void markPngDiagrams(Document enriched, File dir, String imageType) {
+		if (dir == null || !"svg".equalsIgnoreCase(imageType))
+			return;
+		NodeList all = enriched.getElementsByTagName("Diagram");
+		for (int i = 0; i < all.getLength(); i++) {
+			Element d = (Element) all.item(i);
+			String id = d.getAttribute("eaid");
+			if (id.isEmpty())
+				continue;
+			for (String side : new String[] { "baseline", "destination" }) {
+				File folder = new File(dir, "Images-" + side);
+				if (new File(folder, id + ".svg").isFile())
+					continue;
+				// a PNG in its place, or no image at all (EA could draw it neither way)
+				d.setAttribute(side + "-ext", new File(folder, id + ".png").isFile() ? "png" : "none");
+			}
+		}
 	}
 
 	/** EAIDs of every diagram in the comparison. */
@@ -182,8 +217,12 @@ public class ReportRenderer {
 			if (!folder.isDirectory())
 				continue;
 			for (String id : diagrams)
-				if (!shown.contains(id) && new File(folder, id + "." + ext).delete())
-					n++;
+				if (!shown.contains(id)) {
+					if (new File(folder, id + "." + ext).delete())
+						n++;
+					if ("svg".equals(ext) && new File(folder, id + ".png").delete()) // #139 a PNG in place of an SVG
+						n++;
+				}
 		}
 		return n;
 	}

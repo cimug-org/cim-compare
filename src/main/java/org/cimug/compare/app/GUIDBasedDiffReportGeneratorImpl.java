@@ -25,6 +25,7 @@ import org.cimug.compare.GeneralizationProperties;
 import org.cimug.compare.NamedTypeComparator;
 import org.cimug.compare.PackageProperties;
 import org.cimug.compare.Status;
+import org.cimug.compare.SvgDiagrams;
 import org.cimug.compare.app.CIMModelComparisonGenerator.DiagramImage;
 import org.cimug.compare.logs.CompareItem;
 import org.cimug.compare.logs.ComparePackage;
@@ -647,9 +648,15 @@ class GUIDBasedDiffReportGeneratorImpl implements DiffReportGenerator {
 
 				// #37: element-level differences, for highlighting on the diagram images.
 				if (!Status.Identical.equals(diagramStatus)) {
-					theDiagram.getCompareItem()
-							.addAll(DiagramElementDiff.compare(elementsOf(baselineDiagram), elementsOf(targetDiagram),
-									this::diagramSubjectName));
+					List<CompareItem> elementItems = DiagramElementDiff.compare(elementsOf(baselineDiagram),
+							elementsOf(targetDiagram), this::diagramSubjectName, imageType == DiagramImage.SVG);
+					// #139: with SVG images, move the boxes (diagram positions, or the pixels of an
+					// image the XMI export wrote) into each SVG's own coordinates
+					if (imageType == DiagramImage.SVG)
+						SvgDiagrams.convert(elementItems,
+								svgBoxes(this.baselineImagesDir, baselineDiagram, targetDiagram.getName()),
+								svgBoxes(this.destinationImagesDir, targetDiagram, targetDiagram.getName()));
+					theDiagram.getCompareItem().addAll(elementItems);
 				}
 
 				if (Status.Identical.equals(diagramStatus)) {
@@ -662,6 +669,25 @@ class GUIDBasedDiffReportGeneratorImpl implements DiffReportGenerator {
 		}
 
 		return theDiagram;
+	}
+
+	/** #139 a diagram's highlight boxes mapped into its SVG image (empty when it cannot be). */
+	private static java.util.Map<String, String> svgBoxes(File imagesDir, Diagram diagram, String name) {
+		if (diagram == null || imagesDir == null)
+			return new java.util.HashMap<>();
+		File svg = new File(imagesDir, diagram.getXmiId() + ".svg");
+		if (!svg.isFile())
+			return new java.util.HashMap<>();
+		try {
+			String text = new String(java.nio.file.Files.readAllBytes(svg.toPath()), java.nio.charset.StandardCharsets.UTF_8);
+			int[] shift = SvgDiagrams.shift(text, elementsOf(diagram));
+			if (shift == null)
+				System.out.println("\nWARNING:  Could not line up the highlights with the SVG image of diagram '" + name
+						+ "' (" + svg.getName() + "); its highlights are left out.");
+			return SvgDiagrams.boxMap(elementsOf(diagram), shift, text);
+		} catch (java.io.IOException e) {
+			return new java.util.HashMap<>();
+		}
 	}
 
 	private static List<DiagramElement> elementsOf(Diagram diagram) {

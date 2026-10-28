@@ -26,6 +26,8 @@
   <xsl:param name="logo" as="xs:string" select="''"/>
   <xsl:param name="include-diagrams" as="xs:string" select="'true'"/>
   <xsl:param name="image-type" as="xs:string" select="'jpg'"/>
+  <!-- #139 e.g. "Diagrams are JPG: SVG images were not available from this version of EA." -->
+  <xsl:param name="image-note" as="xs:string" select="''"/>
 
   <xsl:variable name="diagrams" as="xs:boolean" select="$include-diagrams = 'true'"/>
   <xsl:variable name="full" as="xs:boolean" select="/ComparisonReport/@full = 'true'"/>
@@ -286,7 +288,7 @@
               <span class="ver"><xsl:value-of select="@baselineVersion"/></span><xsl:text> </xsl:text><span class="lbl">baseline</span>
               <xsl:text> </xsl:text><span class="arrow">→</span><xsl:text> </xsl:text>
               <span class="ver"><xsl:value-of select="@destinationVersion"/></span><xsl:text> </xsl:text><span class="lbl">destination</span></div>
-            <div class="sub">Scope: <xsl:value-of select="@scope"/> · compared <xsl:value-of select="@comparedOn"/> · <a class="gen" href="{@releaseUrl}" target="_blank" rel="noopener" title="{@generator} release"><xsl:value-of select="@generator"/></a><xsl:if test="$full"> · full (identical items included)</xsl:if></div>
+            <div class="sub">Scope: <xsl:value-of select="@scope"/> · compared <xsl:value-of select="@comparedOn"/> · <a class="gen" href="{@releaseUrl}" target="_blank" rel="noopener" title="{@generator} release"><xsl:value-of select="@generator"/></a><xsl:if test="$image-note != ''"> · <span class="imgnote"><xsl:value-of select="$image-note"/></span></xsl:if><xsl:if test="$full"> · full (identical items included)</xsl:if></div>
           </div>
           <div class="tools">
             <div class="search"><input id="q" type="search" placeholder="Find class, package, diagram or attribute…  (/)" autocomplete="off"/><div id="q-results" class="results"></div></div>
@@ -809,7 +811,15 @@
   <xsl:template name="r:diagram-image">
     <xsl:param name="side" as="xs:string"/>
     <div class="dimg" data-side="{$side}">
-      <img loading="lazy" src="Images-{$side}/{@eaid}.{$image-type}" alt="{@name} ({$side})"/>
+      <!-- #139 a diagram EA would not draw as SVG is a PNG, shown without highlights -->
+      <xsl:variable name="ext" select="(@*[local-name() = concat($side, '-ext')], $image-type)[1]"/>
+      <xsl:choose>
+        <xsl:when test="$ext = 'none'"><div class="dnone">No image: EA could not draw this diagram as SVG or PNG.</div></xsl:when>
+        <xsl:otherwise>
+          <img loading="lazy" src="Images-{$side}/{@eaid}.{$ext}" alt="{@name} ({$side})"/>
+          <xsl:if test="$ext != $image-type"><div class="dnote">EA could not draw this diagram as SVG; it is shown as a PNG, without highlights.</div></xsl:if>
+        </xsl:otherwise>
+      </xsl:choose>
       <xsl:for-each select="Highlight[@side = $side]">
         <span class="hl hl-{@kind}" data-box="{@box}" title="{if (@name != '') then concat(@name, ': ') else ''}{if (@kind = 'moved') then 'moved or resized' else @kind}"></span>
       </xsl:for-each>

@@ -684,7 +684,7 @@ class GUIDBasedDiffReportGeneratorImpl implements DiffReportGenerator {
 			if (shift == null)
 				System.out.println("\nWARNING:  Could not line up the highlights with the SVG image of diagram '" + name
 						+ "' (" + svg.getName() + "); its highlights are left out.");
-			return SvgDiagrams.boxMap(elementsOf(diagram), shift);
+			return SvgDiagrams.boxMap(elementsOf(diagram), shift, text);
 		} catch (java.io.IOException e) {
 			return new java.util.HashMap<>();
 		}

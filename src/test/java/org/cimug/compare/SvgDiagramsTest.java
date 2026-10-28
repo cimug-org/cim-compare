@@ -105,4 +105,23 @@ public class SvgDiagramsTest {
 		assertFalse(SvgDiagrams.isSvg("\u0001\u0000\u0000\u0000l\u0000 EMF data"));
 		assertFalse(SvgDiagrams.isSvg(null));
 	}
+	@Test
+	public void aClassEaDrewWiderThanItsStoredSizeGetsAHighlightAsWideAsTheDrawing() {
+		// from a real EA 17 diagram: ControlFunctionBlock is stored 217 wide but drawn 252 wide,
+		// its attribute lines being longer than the stored box
+		List<DiagramElement> one = Arrays.asList(el("EAID_X", 661, 82, 878, 218, 0, 0, 0, 0));
+		String svg = "<svg viewBox=\"0 0 900 300\">" + rect(367, 10, 252, 136) + "</svg>";
+		Map<String, String> map = SvgDiagrams.boxMap(one, new int[] { 294, 72 }, svg);
+		assertEquals("367,10,619,146", map.get("0,0,0,0"));
+		// without the SVG, the stored size
+		assertEquals("367,10,584,146", SvgDiagrams.boxMap(one, new int[] { 294, 72 }).get("0,0,0,0"));
+	}
+
+	@Test
+	public void packagesAndNotesDrawnAsPolygonsCountForTheShift() {
+		// a package: its tab and body drawn as one polygon, 200 x 120 overall
+		List<DiagramElement> pkg = Arrays.asList(el("EAID_P", 400, 200, 600, 320, 0, 0, 0, 0));
+		String svg = "<svg viewBox=\"0 0 500 400\"><polygon points=\"100 128 100 248 300 248 300 148 180 148 180 128 100 128\"/></svg>";
+		assertArrayEquals(new int[] { 300, 72 }, SvgDiagrams.shift(svg, pkg));
+	}
 }

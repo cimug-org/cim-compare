@@ -813,8 +813,13 @@
     <div class="dimg" data-side="{$side}">
       <!-- #139 a diagram EA would not draw as SVG is a PNG, shown without highlights -->
       <xsl:variable name="ext" select="(@*[local-name() = concat($side, '-ext')], $image-type)[1]"/>
-      <img loading="lazy" src="Images-{$side}/{@eaid}.{$ext}" alt="{@name} ({$side})"/>
-      <xsl:if test="$ext != $image-type"><div class="dnote">EA could not draw this diagram as SVG; it is shown as a PNG, without highlights.</div></xsl:if>
+      <xsl:choose>
+        <xsl:when test="$ext = 'none'"><div class="dnone">No image: EA could not draw this diagram as SVG or PNG.</div></xsl:when>
+        <xsl:otherwise>
+          <img loading="lazy" src="Images-{$side}/{@eaid}.{$ext}" alt="{@name} ({$side})"/>
+          <xsl:if test="$ext != $image-type"><div class="dnote">EA could not draw this diagram as SVG; it is shown as a PNG, without highlights.</div></xsl:if>
+        </xsl:otherwise>
+      </xsl:choose>
       <xsl:for-each select="Highlight[@side = $side]">
         <span class="hl hl-{@kind}" data-box="{@box}" title="{if (@name != '') then concat(@name, ': ') else ''}{if (@kind = 'moved') then 'moved or resized' else @kind}"></span>
       </xsl:for-each>

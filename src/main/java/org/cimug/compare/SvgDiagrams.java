@@ -80,33 +80,64 @@ public final class SvgDiagrams {
 	public static int[] shift(String svg, List<DiagramElement> elements) {
 		if (svg == null || elements == null)
 			return null;
-		Map<String, int[]> bySize = new HashMap<>();
+		Map<String, int[]> byKey = new HashMap<>();
 		Map<String, Integer> votes = new HashMap<>();
-		Matcher m = RECT.matcher(svg);
-		java.util.List<double[]> rects = new java.util.ArrayList<>();
-		while (m.find())
-			rects.add(new double[] { Double.parseDouble(m.group(1)), Double.parseDouble(m.group(2)),
-					Double.parseDouble(m.group(3)), Double.parseDouble(m.group(4)) });
+		List<double[]> shapes = shapes(svg);
 		int[] best = null;
 		int bestVotes = 0;
 		for (DiagramElement e : elements) {
 			int[] g = position(e);
 			if (g == null)
 				continue;
-			for (double[] r : rects) {
+			for (double[] r : shapes) {
 				if (Math.round(r[2]) != g[2] - g[0] || Math.round(r[3]) != g[3] - g[1])
 					continue;
 				int dx = g[0] - (int) Math.round(r[0]), dy = g[1] - (int) Math.round(r[1]);
 				String key = dx + "," + dy;
-				bySize.putIfAbsent(key, new int[] { dx, dy });
+				byKey.putIfAbsent(key, new int[] { dx, dy });
 				int n = votes.merge(key, 1, Integer::sum);
 				if (n > bestVotes) {
 					bestVotes = n;
-					best = bySize.get(key);
+					best = byKey.get(key);
 				}
 			}
 		}
 		return best;
+	}
+
+	private static final Pattern POLYGON = Pattern.compile("<polygon\\s+points=\"([-0-9.\\s,]+)\"");
+
+	/**
+	 * The boxes EA drew, as {x, y, width, height}: its rectangles (classes, enumerations,
+	 * boundaries) and the bounding boxes of its polygons (packages with their tab,
+	 * notes with their folded corner, ...).
+	 */
+	static List<double[]> shapes(String svg) {
+		List<double[]> out = new java.util.ArrayList<>();
+		Matcher m = RECT.matcher(svg);
+		while (m.find())
+			out.add(new double[] { Double.parseDouble(m.group(1)), Double.parseDouble(m.group(2)),
+					Double.parseDouble(m.group(3)), Double.parseDouble(m.group(4)) });
+		m = POLYGON.matcher(svg);
+		while (m.find()) {
+			String[] v = m.group(1).trim().split("[\\s,]+");
+			if (v.length < 6)
+				continue;
+			double minX = Double.MAX_VALUE, minY = Double.MAX_VALUE, maxX = -Double.MAX_VALUE, maxY = -Double.MAX_VALUE;
+			try {
+				for (int i = 0; i + 1 < v.length; i += 2) {
+					double x = Double.parseDouble(v[i]), y = Double.parseDouble(v[i + 1]);
+					minX = Math.min(minX, x);
+					maxX = Math.max(maxX, x);
+					minY = Math.min(minY, y);
+					maxY = Math.max(maxY, y);
+				}
+			} catch (NumberFormatException ignored) {
+				continue;
+			}
+			out.add(new double[] { minX, minY, maxX - minX, maxY - minY });
+		}
+		return out;
 	}
 
 	/** The element's diagram position (Left, Top, Right, Bottom), or null. */
@@ -128,16 +159,31 @@ public final class SvgDiagrams {
 	 * without images) mapped to its box in the SVG, given the diagram's {@link #shift}.
 	 */
 	public static Map<String, String> boxMap(List<DiagramElement> elements, int[] shift) {
+		return boxMap(elements, shift, null);
+	}
+
+	/**
+	 * As {@link #boxMap(List, int[])}, and where the SVG ({@code svg}, may be null) has
+	 * a box at the element's place that is larger than the element's stored size, the
+	 * highlight takes the drawn size: EA widens a class whose attribute lines do not
+	 * fit when it draws it, without changing the size stored in the model.
+	 */
+	public static Map<String, String> boxMap(List<DiagramElement> elements, int[] shift, String svg) {
 		Map<String, String> map = new HashMap<>();
 		if (elements == null || shift == null)
 			return map;
+		List<double[]> shapes = svg == null ? java.util.Collections.<double[]>emptyList() : shapes(svg);
 		for (DiagramElement e : elements) {
 			int[] g = position(e), img = DiagramElementDiff.box(e);
 			if (g == null)
 				continue;
 			int[] key = img != null ? img : g;
-			map.put(key[0] + "," + key[1] + "," + key[2] + "," + key[3],
-					(g[0] - shift[0]) + "," + (g[1] - shift[1]) + "," + (g[2] - shift[0]) + "," + (g[3] - shift[1]));
+			int l = g[0] - shift[0], t = g[1] - shift[1], r = g[2] - shift[0], b = g[3] - shift[1];
+			for (double[] s : shapes)
+				if (Math.abs(s[0] - l) <= 1 && Math.abs(s[1] - t) <= 1 && Math.abs(s[3] - (b - t)) <= 1
+						&& s[2] > r - l + 1)
+					r = Math.max(r, l + (int) Math.round(s[2]));
+			map.put(key[0] + "," + key[1] + "," + key[2] + "," + key[3], l + "," + t + "," + r + "," + b);
 		}
 		return map;
 	}

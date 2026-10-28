@@ -139,6 +139,21 @@ public class SvgImagesTest {
 	}
 
 	@Test
+	public void aDiagramWithNoImageSaysSoInsteadOfLinkingAMissingFile() throws Exception {
+		File baseline = export("baseline.xmi", 394, false), destination = export("destination.xmi", 494, false);
+		svg("Images-baseline", 100);
+		new File(tmp.getRoot(), "Images-destination").mkdirs(); // EA drew it neither as SVG nor as PNG
+		File xml = new File(tmp.getRoot(), "comparison.xml");
+		DiffXMLGenerator.main(new String[] { baseline.getPath(), destination.getPath(), xml.getPath(), "svg" });
+		File html = new File(tmp.getRoot(), "report.html");
+		new ReportRenderer(false, null, true, "svg").render(xml, html);
+		String page = new String(Files.readAllBytes(html.toPath()), StandardCharsets.UTF_8);
+		assertTrue(page.contains("src=\"Images-baseline/" + DIAGRAM + ".svg\""));
+		assertFalse(page.contains("src=\"Images-destination/" + DIAGRAM));
+		assertTrue(page.contains("<div class=\"dnone\">No image: EA could not draw this diagram as SVG or PNG.</div>"));
+	}
+
+	@Test
 	public void theDiagramsToDrawComeFromTheExportedXmi() throws Exception {
 		File xmi = export("baseline.xmi", 394, false);
 		assertEquals(java.util.Collections.singletonList(DIAGRAM), CIMModelComparisonGenerator.diagramIds(xmi));

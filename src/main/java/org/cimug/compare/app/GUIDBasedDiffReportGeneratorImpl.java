@@ -649,9 +649,9 @@ class GUIDBasedDiffReportGeneratorImpl implements DiffReportGenerator {
 				// #37: element-level differences, for highlighting on the diagram images.
 				if (!Status.Identical.equals(diagramStatus)) {
 					List<CompareItem> elementItems = DiagramElementDiff.compare(elementsOf(baselineDiagram),
-							elementsOf(targetDiagram), this::diagramSubjectName);
-					// #139: the boxes are in the pixels of the JPG the XMI export wrote; with SVG
-					// images, re-express them in each SVG's own coordinates
+							elementsOf(targetDiagram), this::diagramSubjectName, imageType == DiagramImage.SVG);
+					// #139: with SVG images, move the boxes (diagram positions, or the pixels of an
+					// image the XMI export wrote) into each SVG's own coordinates
 					if (imageType == DiagramImage.SVG)
 						SvgDiagrams.convert(elementItems,
 								svgBoxes(this.baselineImagesDir, baselineDiagram, targetDiagram.getName()),

@@ -14,13 +14,13 @@ import org.cimug.compare.uml1_3.DiagramElement;
  * SVG diagram images (issue #139).
  * <p>
  * EA's XMI export writes diagram images only as EMF, BMP, GIF, PNG or JPG; an SVG of
- * each diagram is written afterwards with {@code Project.PutDiagramImageToFile}. The
- * highlight boxes in the XMI ({@code imgL;imgT;imgR;imgB}) are in the pixels of the
- * image the XMI export wrote (the JPG), which EA draws at a larger scale than the SVG.
- * The SVG draws each element at its diagram position ({@code Left;Top;Right;Bottom}),
- * less one shift for the whole diagram. The shift is found by matching the SVG's
- * boxes to the elements of the same width and height; each element's box is then
- * re-expressed in the SVG's coordinates.
+ * each diagram is written with {@code Project.PutDiagramImageToFile} (EA 16.1 build
+ * 1629 and later). The SVG draws each element at its diagram position
+ * ({@code Left;Top;Right;Bottom}, which the XMI has with or without images), less
+ * one shift for the whole diagram. The shift is found by matching the SVG's boxes to
+ * the elements of the same width and height, and each highlight box is moved into
+ * the SVG's coordinates. (The image boxes, {@code imgL;imgT;imgR;imgB}, are in the
+ * pixels of an image the XMI export wrote, which EA draws at a larger scale.)
  */
 public final class SvgDiagrams {
 
@@ -123,18 +123,20 @@ public final class SvgDiagrams {
 	}
 
 	/**
-	 * For each element with a highlight box, its box in the image the XMI export wrote
-	 * ("l,t,r,b") mapped to its box in the SVG, given the diagram's {@link #shift}.
+	 * For each element, the highlight box the comparison gave it ("l,t,r,b": its box in
+	 * the image the XMI export wrote, or its diagram position when the XMI was exported
+	 * without images) mapped to its box in the SVG, given the diagram's {@link #shift}.
 	 */
 	public static Map<String, String> boxMap(List<DiagramElement> elements, int[] shift) {
 		Map<String, String> map = new HashMap<>();
 		if (elements == null || shift == null)
 			return map;
 		for (DiagramElement e : elements) {
-			int[] img = DiagramElementDiff.box(e), g = position(e);
-			if (img == null || g == null)
+			int[] g = position(e), img = DiagramElementDiff.box(e);
+			if (g == null)
 				continue;
-			map.put(img[0] + "," + img[1] + "," + img[2] + "," + img[3],
+			int[] key = img != null ? img : g;
+			map.put(key[0] + "," + key[1] + "," + key[2] + "," + key[3],
 					(g[0] - shift[0]) + "," + (g[1] - shift[1]) + "," + (g[2] - shift[0]) + "," + (g[3] - shift[1]));
 		}
 		return map;

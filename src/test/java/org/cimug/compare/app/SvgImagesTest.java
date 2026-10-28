@@ -21,7 +21,7 @@ import org.w3c.dom.Document;
 
 /**
  * --image-type=SVG (#139), end to end from two XMI exports with SVG diagram images
- * to the comparison XML and the report; and the JPG fallback.
+ * to the comparison XML and the report.
  * <p>
  * The diagram of {@code multiroot/rootB-Extensions.xmi} is given the geometry EA 17
  * writes (the diagram position, and the box in the JPG the XMI export wrote, drawn
@@ -42,13 +42,18 @@ public class SvgImagesTest {
 	}
 
 	private File export(String name, int left1) throws Exception {
+		return export(name, left1, true);
+	}
+
+	/** @param images as exported with images (image boxes in the geometry) or without (SVG runs) */
+	private File export(String name, int left1, boolean images) throws Exception {
 		File src = new File(getClass().getClassLoader().getResource("multiroot/rootB-Extensions.xmi").toURI());
 		String xmi = new String(Files.readAllBytes(src.toPath()), CP1252);
 		int il = (int) Math.round((left1 - 294) * 1.3646);
 		xmi = xmi.replace("geometry=\"100,100,300,200,\"", "geometry=\"Left=" + left1 + ";Top=172;Right=" + (left1 + 200)
-				+ ";Bottom=272;imgL=" + il + ";imgT=150;imgR=" + (il + 273) + ";imgB=286;\"");
+				+ ";Bottom=272;" + (images ? "imgL=" + il + ";imgT=150;imgR=" + (il + 273) + ";imgB=286;" : "") + "\"");
 		xmi = xmi.replace("geometry=\"100,300,300,400,\"",
-				"geometry=\"Left=394;Top=372;Right=594;Bottom=472;imgL=137;imgT=423;imgR=410;imgB=559;\"");
+				"geometry=\"Left=394;Top=372;Right=594;Bottom=472;" + (images ? "imgL=137;imgT=423;imgR=410;imgB=559;" : "") + "\"");
 		File f = tmp.newFile(name);
 		Files.write(f.toPath(), xmi.getBytes(CP1252));
 		return f;
@@ -69,7 +74,21 @@ public class SvgImagesTest {
 	}
 
 	@Test
+	public void highlightsComeFromTheDiagramPositionsWhenTheXmiHasNoImages() throws Exception {
+		// an SVG run exports the XMI without images, so there are no image boxes
+		File baseline = export("baseline.xmi", 394, false), destination = export("destination.xmi", 494, false);
+		svg("Images-baseline", 100);
+		svg("Images-destination", 200);
+		File xml = new File(tmp.getRoot(), "comparison.xml");
+		DiffXMLGenerator.main(new String[] { baseline.getPath(), destination.getPath(), xml.getPath(), "svg" });
+		Document log = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(xml);
+		assertEquals("100,100,300,200", box(log, "baseline"));
+		assertEquals("200,100,400,200", box(log, "model"));
+	}
+
+	@Test
 	public void highlightsAreInTheSvgsCoordinates() throws Exception {
+		// XMI files exported with images (e.g. given as input) and SVG images beside them
 		File baseline = export("baseline.xmi", 394), destination = export("destination.xmi", 494);
 		svg("Images-baseline", 100);
 		svg("Images-destination", 200);
@@ -98,31 +117,19 @@ public class SvgImagesTest {
 		assertEquals("136,150,409,286", box(log, "baseline"));
 	}
 
-	private File images(String dir, String... names) throws Exception {
-		File d = new File(tmp.getRoot(), dir);
-		d.mkdirs();
-		for (String n : names)
-			Files.write(new File(d, n).toPath(), new byte[] { 1 });
-		return d;
+	@Test
+	public void theDiagramsToDrawComeFromTheExportedXmi() throws Exception {
+		File xmi = export("baseline.xmi", 394, false);
+		assertEquals(java.util.Collections.singletonList(DIAGRAM), CIMModelComparisonGenerator.diagramIds(xmi));
 	}
 
 	@Test
-	public void whenEveryDiagramHasAnSvgTheJpgsAreRemoved() throws Exception {
-		File b = images("Images-baseline", "EAID_1.jpg", "EAID_1.svg"), d = images("Images-destination", "EAID_1.jpg", "EAID_1.svg");
-		assertTrue(CIMModelComparisonGenerator.finishSvgImages(tmp.getRoot()));
-		assertFalse(new File(b, "EAID_1.jpg").exists());
-		assertTrue(new File(b, "EAID_1.svg").exists());
-		assertFalse(new File(d, "EAID_1.jpg").exists());
-	}
-
-	@Test
-	public void whenAnSvgCouldNotBeWrittenBothModelsFallBackToJpg() throws Exception {
-		File b = images("Images-baseline", "EAID_1.jpg", "EAID_1.svg"), d = images("Images-destination", "EAID_1.jpg");
-		CIMModelComparisonGenerator.svgUnavailable("EA did not write the file");
-		assertFalse(CIMModelComparisonGenerator.finishSvgImages(tmp.getRoot()));
-		assertTrue(new File(b, "EAID_1.jpg").exists());
-		assertFalse("no mix of SVG and JPG", new File(b, "EAID_1.svg").exists());
-		assertTrue(new File(d, "EAID_1.jpg").exists());
+	public void svgNeedsEa161Build1629() {
+		assertEquals(1629, CIMModelComparisonGenerator.SVG_MIN_BUILD);
+		assertEquals("EA 17", CIMModelComparisonGenerator.eaVersion(1721));
+		assertEquals("EA 16.1", CIMModelComparisonGenerator.eaVersion(1629));
+		assertEquals("EA 16.0", CIMModelComparisonGenerator.eaVersion(1608));
+		assertEquals("EA 15", CIMModelComparisonGenerator.eaVersion(1560));
 	}
 
 	@Test

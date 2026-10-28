@@ -2,7 +2,6 @@ package org.cimug.compare.app;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.PrintWriter;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -169,10 +168,17 @@ class GUIDBasedDiffReportGeneratorImpl implements DiffReportGenerator {
 		Marshaller jaxbMarshaller = jaxbContext.createMarshaller();
 		jaxbMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
 		jaxbMarshaller.setProperty(Marshaller.JAXB_ENCODING, "UTF-8");
+		// #143: marshal to bytes, so the XML is written in the UTF-8 it declares; a Writer
+		// such as new PrintWriter(File) uses the JVM's default character set (Windows-1252
+		// on Java 17 and earlier on Windows)
 		if (this.outputFile != null) {
-			jaxbMarshaller.marshal(compareLog, new PrintWriter(this.outputFile));
+			try (java.io.OutputStream out = new java.io.BufferedOutputStream(new java.io.FileOutputStream(this.outputFile), 1 << 16)) {
+				jaxbMarshaller.marshal(compareLog, out);
+			} catch (java.io.IOException e) {
+				throw new JAXBException(e);
+			}
 		} else {
-			jaxbMarshaller.marshal(compareLog, new PrintWriter(System.out));
+			jaxbMarshaller.marshal(compareLog, System.out);
 		}
 	}
 

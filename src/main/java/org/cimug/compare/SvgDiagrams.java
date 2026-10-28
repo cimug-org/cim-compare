@@ -11,7 +11,8 @@ import org.cimug.compare.logs.Property;
 import org.cimug.compare.uml1_3.DiagramElement;
 
 /**
- * SVG diagram images (issue #139).
+ * SVG diagram images (issue #139), and the placing of highlights on diagram images
+ * drawn one at a time (#141).
  * <p>
  * EA's XMI export writes diagram images only as EMF, BMP, GIF, PNG or JPG; an SVG of
  * each diagram is written with {@code Project.PutDiagramImageToFile} (EA 16.1 build
@@ -109,8 +110,8 @@ public final class SvgDiagrams {
 
 	/**
 	 * The boxes EA drew, as {x, y, width, height}: its rectangles (classes, enumerations,
-	 * boundaries) and the bounding boxes of its polygons (packages with their tab,
-	 * notes with their folded corner, ...).
+	 * boundaries), the bounding boxes of its polygons (notes with their folded corner,
+	 * ...) and of each package's body and tab, which EA draws as two polygons.
 	 */
 	static List<double[]> shapes(String svg) {
 		List<double[]> out = new java.util.ArrayList<>();
@@ -119,6 +120,7 @@ public final class SvgDiagrams {
 			out.add(new double[] { Double.parseDouble(m.group(1)), Double.parseDouble(m.group(2)),
 					Double.parseDouble(m.group(3)), Double.parseDouble(m.group(4)) });
 		m = POLYGON.matcher(svg);
+		double[] previous = null;
 		while (m.find()) {
 			String[] v = m.group(1).trim().split("[\\s,]+");
 			if (v.length < 6)
@@ -135,7 +137,17 @@ public final class SvgDiagrams {
 			} catch (NumberFormatException ignored) {
 				continue;
 			}
-			out.add(new double[] { minX, minY, maxX - minX, maxY - minY });
+			double[] box = { minX, minY, maxX - minX, maxY - minY };
+			out.add(box);
+			// #141: EA 17 draws a package as two polygons, its body and the tab on top of it;
+			// the package's stored size is that of the two together
+			if (previous != null && Math.abs(previous[0] - box[0]) <= 1 && (Math.abs(box[1] + box[3] - previous[1]) <= 1
+					|| Math.abs(previous[1] + previous[3] - box[1]) <= 1)) {
+				double top = Math.min(previous[1], box[1]);
+				out.add(new double[] { box[0], top, Math.max(previous[2], box[2]),
+						Math.max(previous[1] + previous[3], box[1] + box[3]) - top });
+			}
+			previous = box;
 		}
 		return out;
 	}
@@ -186,6 +198,31 @@ public final class SvgDiagrams {
 			map.put(key[0] + "," + key[1] + "," + key[2] + "," + key[3], l + "," + t + "," + r + "," + b);
 		}
 		return map;
+	}
+
+	private static final Pattern VIEWBOX = Pattern.compile("viewBox=\"\\s*(-?[0-9.]+)[\\s,]+(-?[0-9.]+)[\\s,]+([0-9.]+)[\\s,]+([0-9.]+)");
+
+	/** The height of an SVG's viewBox; -1 when it has none. */
+	public static double height(String svg) {
+		Matcher m = svg == null ? null : VIEWBOX.matcher(svg);
+		return m != null && m.find() ? Double.parseDouble(m.group(4)) : -1;
+	}
+
+	/**
+	 * #141: boxes from {@link #boxMap} in a raster image EA drew of the same diagram,
+	 * {@code scale} times the size of the SVG (1 as EA draws them).
+	 */
+	public static Map<String, String> scale(Map<String, String> boxes, double scale) {
+		if (scale == 1)
+			return boxes;
+		Map<String, String> out = new HashMap<>();
+		for (Map.Entry<String, String> e : boxes.entrySet()) {
+			StringBuilder b = new StringBuilder();
+			for (String n : e.getValue().split(","))
+				b.append(b.length() > 0 ? "," : "").append(Math.round(Integer.parseInt(n) * scale));
+			out.put(e.getKey(), b.toString());
+		}
+		return out;
 	}
 
 	/**

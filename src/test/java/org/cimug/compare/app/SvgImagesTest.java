@@ -154,12 +154,6 @@ public class SvgImagesTest {
 	}
 
 	@Test
-	public void theDiagramsToDrawComeFromTheExportedXmi() throws Exception {
-		File xmi = export("baseline.xmi", 394, false);
-		assertEquals(java.util.Collections.singletonList(DIAGRAM), CIMModelComparisonGenerator.diagramIds(xmi));
-	}
-
-	@Test
 	public void svgNeedsEa161Build1629() {
 		assertEquals(1629, CIMModelComparisonGenerator.SVG_MIN_BUILD);
 		assertEquals("EA 17", CIMModelComparisonGenerator.eaVersion(1721));

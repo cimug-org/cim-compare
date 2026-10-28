@@ -149,10 +149,15 @@ public class ReportRenderer {
 	 * #139: in an SVG report, a diagram EA would not draw as SVG has a PNG instead, or no
 	 * image; marks it ({@code baseline-ext} / {@code destination-ext} = "png" or "none")
 	 * so the report links the PNG, or says there is no image rather than linking none.
+	 * #141: in a PNG, JPG, GIF or BMP report whose images were drawn one at a time, a
+	 * diagram EA could not draw is marked "none" too (only where its side's image folder
+	 * exists, so a report rendered away from its images links them as before).
 	 */
 	static void markPngDiagrams(Document enriched, File dir, String imageType) {
-		if (dir == null || !"svg".equalsIgnoreCase(imageType))
+		if (dir == null || imageType == null)
 			return;
+		boolean svg = "svg".equalsIgnoreCase(imageType);
+		String ext = imageType.toLowerCase();
 		NodeList all = enriched.getElementsByTagName("Diagram");
 		for (int i = 0; i < all.getLength(); i++) {
 			Element d = (Element) all.item(i);
@@ -161,10 +166,10 @@ public class ReportRenderer {
 				continue;
 			for (String side : new String[] { "baseline", "destination" }) {
 				File folder = new File(dir, "Images-" + side);
-				if (new File(folder, id + ".svg").isFile())
+				if (new File(folder, id + "." + ext).isFile() || (!svg && !folder.isDirectory()))
 					continue;
-				// a PNG in its place, or no image at all (EA could draw it neither way)
-				d.setAttribute(side + "-ext", new File(folder, id + ".png").isFile() ? "png" : "none");
+				// a PNG in place of an SVG, or no image at all (EA could not draw it)
+				d.setAttribute(side + "-ext", svg && new File(folder, id + ".png").isFile() ? "png" : "none");
 			}
 		}
 	}

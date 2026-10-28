@@ -32,16 +32,13 @@ import org.sparx.Repository;
  * <p>
  * Every diagram is drawn as SVG, whose boxes give the diagram's offset
  * ({@link SvgDiagrams#shift}). For a raster format (PNG, JPG, GIF, BMP) the SVG is a
- * measuring stick, deleted afterwards: EA draws a single raster image at
- * {@link #RASTER_SCALE} times the SVG, {@link #RASTER_DY} pixels lower (measured on EA
- * 17, build 1721), which is checked against each image's height.
+ * measuring stick, deleted afterwards: EA draws a single raster image exactly as the
+ * SVG, the same size with every shape at the same pixel (EA 17, build 1721: 39 PNG/JPG
+ * and SVG pairs of CIM 18v13 and 18v14 diagrams). Should an image be drawn at another
+ * size, the boxes are scaled by its height.
  */
 class PerDiagramImages {
 
-	/** EA's raster images are this many times the size of its SVGs. */
-	static final double RASTER_SCALE = 1.3646;
-	/** ... and this many pixels lower. */
-	static final int RASTER_DY = 6;
 	/** #139: how often EA may be reopened while one model's images are drawn. */
 	static final int MAX_REOPEN = 3;
 
@@ -204,21 +201,17 @@ class PerDiagramImages {
 		int height = imageHeight(image);
 		if (height <= 0)
 			return new HashMap<String, String>();
-		return SvgDiagrams.scale(map, rasterScale(SvgDiagrams.height(text), height), RASTER_DY);
+		return SvgDiagrams.scale(map, rasterScale(SvgDiagrams.height(text), height));
 	}
 
 	/**
-	 * The scale of a raster image drawn from an SVG {@code svgHeight} high: EA's usual
-	 * {@link #RASTER_SCALE}, unless the image's height says otherwise (e.g. different
-	 * display settings), when it is taken from the height.
+	 * The scale of a raster image drawn from an SVG {@code svgHeight} high: 1 when, as
+	 * EA draws them, the image is the SVG's size; otherwise its height over the SVG's.
 	 */
 	static double rasterScale(double svgHeight, int imageHeight) {
-		if (svgHeight <= 0 || imageHeight <= 0)
-			return RASTER_SCALE;
-		double expected = svgHeight * RASTER_SCALE + RASTER_DY;
-		if (Math.abs(imageHeight - expected) <= Math.max(4, imageHeight * 0.01))
-			return RASTER_SCALE;
-		return (imageHeight - RASTER_DY) / svgHeight;
+		if (svgHeight <= 0 || imageHeight <= 0 || Math.abs(imageHeight - svgHeight) <= 1)
+			return 1;
+		return imageHeight / svgHeight;
 	}
 
 	/** An image's height in pixels, read from its header; -1 when it cannot be read. */

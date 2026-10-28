@@ -28,7 +28,7 @@ import org.w3c.dom.Document;
  * #141: images drawn one diagram at a time after the comparison, for the diagrams
  * that changed. EA is stood in for by a drawer that writes the files EA would: an SVG
  * drawing the classes at their diagram positions less (294, 72), and for a raster
- * format an image 1.3646 times the SVG and 6 pixels taller.
+ * format an image of the same size, which EA draws exactly as the SVG.
  * <p>
  * As in {@link SvgImagesTest}, the destination moves the diagram's first class 100 to
  * the right; both XMI files are exported without images.
@@ -50,6 +50,7 @@ public class PerDiagramImagesTest {
 	private class FakeEa extends PerDiagramImages {
 		final Set<String> baseline = new LinkedHashSet<String>(), destination = new LinkedHashSet<String>();
 		boolean draws = true;
+		int rasterSize = 1;
 
 		FakeEa(DiagramImage format) {
 			super(new File("baseline.qeax"), new File("destination.qeax"), tmp.getRoot(), format);
@@ -73,7 +74,9 @@ public class PerDiagramImagesTest {
 					if (format() != DiagramImage.SVG) {
 						File image = imageFile(side, id);
 						image.getParentFile().mkdirs();
-						ImageIO.write(new BufferedImage(940, 688, BufferedImage.TYPE_INT_RGB), format().ext(), image);
+						// EA draws the image exactly as the SVG (or, in one test, twice the size)
+						ImageIO.write(new BufferedImage(700 * rasterSize, 500 * rasterSize, BufferedImage.TYPE_INT_RGB),
+								format().ext(), image);
 					}
 				}
 			} catch (Exception e) {
@@ -134,11 +137,10 @@ public class PerDiagramImagesTest {
 	}
 
 	@Test
-	public void pngHighlightsAreTheSvgBoxesScaledAndMovedDown() throws Exception {
+	public void pngHighlightsAreWhereTheSvgHasThem() throws Exception {
 		File xml = compare(new FakeEa(DiagramImage.PNG), 494);
-		// (100,100,300,200) x 1.3646, 6 lower
-		assertEquals("136,142,409,279", box(xml, "baseline"));
-		assertEquals("273,142,546,279", box(xml, "model"));
+		assertEquals("100,100,300,200", box(xml, "baseline"));
+		assertEquals("200,100,400,200", box(xml, "model"));
 		assertTrue(new File(tmp.getRoot(), "Images-baseline/" + DIAGRAM + ".png").isFile());
 		// the measuring-stick SVGs are gone, and none is among the images
 		assertFalse(new File(tmp.getRoot(), ".svg-measure").exists());
@@ -148,7 +150,15 @@ public class PerDiagramImagesTest {
 	@Test
 	public void jpgWorksTheSameWay() throws Exception {
 		File xml = compare(new FakeEa(DiagramImage.JPG), 494);
-		assertEquals("136,142,409,279", box(xml, "baseline"));
+		assertEquals("100,100,300,200", box(xml, "baseline"));
+	}
+
+	@Test
+	public void anImageOfAnotherSizeHasItsBoxesScaled() throws Exception {
+		FakeEa ea = new FakeEa(DiagramImage.PNG);
+		ea.rasterSize = 2;
+		File xml = compare(ea, 494);
+		assertEquals("200,200,600,400", box(xml, "baseline"));
 	}
 
 	@Test
@@ -161,12 +171,12 @@ public class PerDiagramImagesTest {
 	}
 
 	@Test
-	public void theRasterScaleComesFromTheImageHeightWhenItDiffers() {
-		assertEquals(1.3646, PerDiagramImages.rasterScale(840, 1150), 0);
-		assertEquals(1.3646, PerDiagramImages.rasterScale(901, 1235), 0);
-		// e.g. drawn at another display scale
-		assertEquals((1500 - 6) / 840.0, PerDiagramImages.rasterScale(840, 1500), 1e-9);
-		assertEquals(1.3646, PerDiagramImages.rasterScale(-1, 1150), 0);
+	public void theRasterScaleIsOneUnlessTheImageIsAnotherSize() {
+		// DocSSSC (CIM 18v14): SVG 1735 x 965, JPG 1735 x 965
+		assertEquals(1, PerDiagramImages.rasterScale(965, 965), 0);
+		assertEquals(1, PerDiagramImages.rasterScale(965, 966), 0);
+		assertEquals(2, PerDiagramImages.rasterScale(965, 1930), 0);
+		assertEquals(1, PerDiagramImages.rasterScale(-1, 965), 0);
 	}
 
 	@Test

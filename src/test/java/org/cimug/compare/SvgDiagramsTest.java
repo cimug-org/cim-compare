@@ -126,11 +126,11 @@ public class SvgDiagramsTest {
 	}
 
 	@Test
-	public void rasterBoxesAreScaledAndMovedDown() {
+	public void rasterBoxesAreTheSvgBoxesUnlessTheImageIsAnotherSize() {
 		java.util.Map<String, String> m = new java.util.HashMap<>();
 		m.put("1222,462,1412,532", "928,390,1118,460");
-		// EPRIProposedUpdates1 as EA 17 drew it: the PNG box is at 1266,538 to 1525,632
-		assertEquals("1266,538,1526,634", SvgDiagrams.scale(m, 1.3646, 6).get("1222,462,1412,532"));
+		assertEquals("928,390,1118,460", SvgDiagrams.scale(m, 1).get("1222,462,1412,532"));
+		assertEquals("1856,780,2236,920", SvgDiagrams.scale(m, 2).get("1222,462,1412,532"));
 	}
 
 	@Test

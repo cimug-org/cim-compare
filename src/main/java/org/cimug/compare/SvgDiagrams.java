@@ -209,15 +209,18 @@ public final class SvgDiagrams {
 	}
 
 	/**
-	 * #141: boxes from {@link #boxMap} moved into a raster image EA drew of the same
-	 * diagram: {@code scale} times larger, and {@code dy} pixels lower.
+	 * #141: boxes from {@link #boxMap} in a raster image EA drew of the same diagram,
+	 * {@code scale} times the size of the SVG (1 as EA draws them).
 	 */
-	public static Map<String, String> scale(Map<String, String> boxes, double scale, int dy) {
+	public static Map<String, String> scale(Map<String, String> boxes, double scale) {
+		if (scale == 1)
+			return boxes;
 		Map<String, String> out = new HashMap<>();
 		for (Map.Entry<String, String> e : boxes.entrySet()) {
-			String[] v = e.getValue().split(",");
-			out.put(e.getKey(), Math.round(Integer.parseInt(v[0]) * scale) + "," + (Math.round(Integer.parseInt(v[1]) * scale) + dy)
-					+ "," + Math.round(Integer.parseInt(v[2]) * scale) + "," + (Math.round(Integer.parseInt(v[3]) * scale) + dy));
+			StringBuilder b = new StringBuilder();
+			for (String n : e.getValue().split(","))
+				b.append(b.length() > 0 ? "," : "").append(Math.round(Integer.parseInt(n) * scale));
+			out.put(e.getKey(), b.toString());
 		}
 		return out;
 	}

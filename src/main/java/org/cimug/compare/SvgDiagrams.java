@@ -11,7 +11,8 @@ import org.cimug.compare.logs.Property;
 import org.cimug.compare.uml1_3.DiagramElement;
 
 /**
- * SVG diagram images (issue #139).
+ * SVG diagram images (issue #139), and the placing of highlights on diagram images
+ * drawn one at a time (#141).
  * <p>
  * EA's XMI export writes diagram images only as EMF, BMP, GIF, PNG or JPG; an SVG of
  * each diagram is written with {@code Project.PutDiagramImageToFile} (EA 16.1 build
@@ -186,6 +187,28 @@ public final class SvgDiagrams {
 			map.put(key[0] + "," + key[1] + "," + key[2] + "," + key[3], l + "," + t + "," + r + "," + b);
 		}
 		return map;
+	}
+
+	private static final Pattern VIEWBOX = Pattern.compile("viewBox=\"\\s*(-?[0-9.]+)[\\s,]+(-?[0-9.]+)[\\s,]+([0-9.]+)[\\s,]+([0-9.]+)");
+
+	/** The height of an SVG's viewBox; -1 when it has none. */
+	public static double height(String svg) {
+		Matcher m = svg == null ? null : VIEWBOX.matcher(svg);
+		return m != null && m.find() ? Double.parseDouble(m.group(4)) : -1;
+	}
+
+	/**
+	 * #141: boxes from {@link #boxMap} moved into a raster image EA drew of the same
+	 * diagram: {@code scale} times larger, and {@code dy} pixels lower.
+	 */
+	public static Map<String, String> scale(Map<String, String> boxes, double scale, int dy) {
+		Map<String, String> out = new HashMap<>();
+		for (Map.Entry<String, String> e : boxes.entrySet()) {
+			String[] v = e.getValue().split(",");
+			out.put(e.getKey(), Math.round(Integer.parseInt(v[0]) * scale) + "," + (Math.round(Integer.parseInt(v[1]) * scale) + dy)
+					+ "," + Math.round(Integer.parseInt(v[2]) * scale) + "," + (Math.round(Integer.parseInt(v[3]) * scale) + dy));
+		}
+		return out;
 	}
 
 	/**

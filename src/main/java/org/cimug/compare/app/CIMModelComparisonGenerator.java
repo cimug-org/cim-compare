@@ -80,8 +80,8 @@ public class CIMModelComparisonGenerator {
 		NONE(-1, null), EMF(0, "emf"), BMP(1, "bmp"), GIF(2, "gif"), PNG(3, "png"), JPG(4, "jpg"),
 		/**
 		 * #139: EA's XMI export cannot write SVG, so the XMI is exported without images
-		 * (code -1) and an SVG of each diagram is then written with
-		 * PutDiagramImageToFile (EA 16.1 build 1629 and later).
+		 * (code -1) and the SVGs are drawn one diagram at a time with
+		 * PutDiagramImageToFile (EA 16.1 build 1629 and later; #141).
 		 */
 		SVG(-1, "svg");
 
@@ -471,6 +471,8 @@ public class CIMModelComparisonGenerator {
 			 * additional step of first exporting the baseline and target XMI files before
 			 * executing a call to the DiffXMLGenerator.
 			 */
+			drawer = null;
+			exportAgain = null;
 			if (isProjectFile(arguments[0])) {
 
 				DiagramXML diagramXML = (options.containsKey(PARAM_INCLUDE_DIAGRAMS) ? DiagramXML.EXPORT_WITHOUT_IMAGES
@@ -478,11 +480,15 @@ public class CIMModelComparisonGenerator {
 
 				svgUnavailable = null;
 				svgFellBack = false;
-				svgUsed = false;
 				eaReported = false;
 				DiagramImage diagramImage = (options.containsKey(PARAM_IMAGE_TYPE)
 						? DiagramImage.valueOf(options.get(PARAM_IMAGE_TYPE).toUpperCase())
 						: DiagramImage.NONE);
+				// #141: draw images one diagram at a time, after the comparison, for the
+				// diagrams that changed (not EMF, which no browser shows; not on an EA too old
+				// to draw them, which effectiveImage finds out)
+				perDiagram = diagramXML != DiagramXML.NO_EXPORT && diagramImage != DiagramImage.NONE
+						&& diagramImage != DiagramImage.EMF;
 
 				String thePackageName = (options.containsKey(PARAM_PACKAGE) ? options.get(PARAM_PACKAGE) : null);
 
@@ -502,19 +508,15 @@ public class CIMModelComparisonGenerator {
 				selectedPackages = exportBoth(arguments, outputDir, baselineXmi, destinationXmi, thePackageName,
 						diagramXML, diagramImage);
 
-				if (diagramImage == DiagramImage.SVG && diagramXML != DiagramXML.NO_EXPORT && svgUnavailable != null) {
-					// #139: SVG images could not be had from this EA; the run uses JPG images
-					if (svgUsed) {
-						// an SVG failed after a model was exported for SVG (without images): export
-						// both models again, with JPG images
-						System.out.println("\nExporting both models again with JPG diagram images.");
-						clearImages(outputDir);
-						selectedPackages = exportBoth(arguments, outputDir, baselineXmi, destinationXmi, thePackageName,
-								diagramXML, DiagramImage.JPG);
-					}
+				if (perDiagram)
+					drawer = new PerDiagramImages(arguments[0], arguments[1], outputDir, diagramImage);
+				else if (diagramImage == DiagramImage.SVG && diagramXML != DiagramXML.NO_EXPORT) {
+					// #139: this EA cannot draw SVG images; the models were exported with JPG images
 					options.put(PARAM_IMAGE_TYPE, DiagramImage.JPG.ext());
 					svgFellBack = true;
 				}
+				exportAgain = new Object[] { arguments, outputDir, baselineXmi, destinationXmi, thePackageName, diagramXML,
+						diagramImage };
 
 				baselineXmiFile = baselineXmi.getAbsolutePath();
 				destinationXmiFile = destinationXmi.getAbsolutePath();
@@ -535,8 +537,7 @@ public class CIMModelComparisonGenerator {
 				destinationXmiFile = arguments[1].getAbsolutePath();
 			}
 
-			DiffXMLGenerator.main(
-					new String[] { baselineXmiFile, destinationXmiFile, modelComparisonXMLFile.getAbsolutePath(), (options.containsKey(PARAM_IMAGE_TYPE) ? options.get(PARAM_IMAGE_TYPE) : DiagramImage.JPG.name())});
+			compare(baselineXmiFile, destinationXmiFile, modelComparisonXMLFile, options);
 
 			System.out.println("\nCompare Log XML report generated:  \n" + modelComparisonXMLFile.getAbsolutePath());
 		} else {
@@ -603,6 +604,52 @@ public class CIMModelComparisonGenerator {
 		return results;
 	}
 
+	/** #141: draws the changed diagrams' images during the comparison of this run, or null. */
+	private static PerDiagramImages drawer;
+	/** #141: exportBoth's arguments, to export again with images when the drawer cannot draw. */
+	private static Object[] exportAgain;
+	/** #141: images are drawn one diagram at a time after the comparison (set per run). */
+	private static boolean perDiagram;
+
+	/**
+	 * Writes the comparison XML. #141: with images drawn one diagram at a time, the
+	 * changed diagrams are drawn while it is built; when EA cannot draw them that way
+	 * (not one SVG on a side), both models are exported again with images, as before
+	 * #141, and compared again.
+	 */
+	private static void compare(String baselineXmiFile, String destinationXmiFile, File comparisonXml,
+			Map<String, String> options) {
+		String type = options.containsKey(PARAM_IMAGE_TYPE) ? options.get(PARAM_IMAGE_TYPE) : DiagramImage.JPG.name();
+		GUIDBasedDiffReportGeneratorImpl.drawer = drawer;
+		try {
+			DiffXMLGenerator.main(new String[] { baselineXmiFile, destinationXmiFile, comparisonXml.getAbsolutePath(), type });
+		} finally {
+			GUIDBasedDiffReportGeneratorImpl.drawer = null;
+			if (drawer != null)
+				drawer.finish();
+		}
+		if (drawer == null || drawer.unavailable == null)
+			return;
+
+		DiagramImage requested = drawer.format();
+		DiagramImage withImages = requested == DiagramImage.SVG ? DiagramImage.JPG : requested;
+		System.out.println("\nWARNING:  " + drawer.unavailable + ". Exporting both models again with " + withImages.name()
+				+ " diagram images.");
+		drawer = null;
+		perDiagram = false;
+		Object[] a = exportAgain;
+		File outputDir = (File) a[1];
+		clearImages(outputDir);
+		selectedPackages = exportBoth((File[]) a[0], outputDir, (File) a[2], (File) a[3], (String) a[4], (DiagramXML) a[5],
+				withImages);
+		if (requested == DiagramImage.SVG) {
+			options.put(PARAM_IMAGE_TYPE, DiagramImage.JPG.ext());
+			svgFellBack = true;
+		}
+		DiffXMLGenerator.main(new String[] { baselineXmiFile, destinationXmiFile, comparisonXml.getAbsolutePath(),
+				options.get(PARAM_IMAGE_TYPE) });
+	}
+
 	private static String baseName(File file) {
 		String name = file.getName();
 		int dot = name.lastIndexOf(".");
@@ -659,15 +706,12 @@ public class CIMModelComparisonGenerator {
 				return exportAllRoots(repository, models, eaProject, side, baseline, outputDir, xmiExportFile,
 						diagramXML, diagramImage);
 			Package packageToCompare = models.GetAt((short) 0);
-			// #139: read now; if EA crashes while drawing SVGs, this EA session is gone
 			String packageName = packageToCompare.GetName(), packageGuid = packageToCompare.GetPackageGUID();
 
 			repository.GetProjectInterface().ExportPackageXMI(packageGuid, EnumXMIType.xmiEA11, diagramXML.code(),
 					diagramImage.code(), 1, 0, xmiExportFile.getAbsolutePath());
 
-			if (diagramXML != DiagramXML.NO_EXPORT && diagramImage == DiagramImage.SVG) {
-				writeSvgImages(repository, eaProject, xmiExportFile, new File(outputDir, "Images" + (baseline ? "-baseline" : "-destination")), side);
-			} else if (diagramXML != DiagramXML.NO_EXPORT) {
+			if (diagramXML != DiagramXML.NO_EXPORT && diagramImage != DiagramImage.NONE) {
 				File imagesDirectory = new File(outputDir, "Images");
 				if (imagesDirectory.exists()) {
 					File newImagesDirectory = new File(outputDir, "Images" + (baseline ? "-baseline" : "-destination"));
@@ -859,15 +903,13 @@ public class CIMModelComparisonGenerator {
 				XmiMerger.writeEmpty(xmiExportFile);
 				System.out.println("\n" + side + " model: none of the packages is in this model; it is compared as empty.");
 			} else if (packages.size() == 1) {
-				String packageName = packages.get(0).GetName(); // #139: before EA may crash drawing SVGs
+				String packageName = packages.get(0).GetName();
 				repository.GetProjectInterface().ExportPackageXMI(packages.get(0).GetPackageGUID(),
 						EnumXMIType.xmiEA11, diagramXML.code(), diagramImage.code(), 1, 0,
 						xmiExportFile.getAbsolutePath());
 				File imagesDirectory = new File(outputDir, "Images");
 				File sideImages = new File(outputDir, "Images" + (baseline ? "-baseline" : "-destination"));
-				if (diagramXML != DiagramXML.NO_EXPORT && diagramImage == DiagramImage.SVG) {
-					writeSvgImages(repository, eaProject, xmiExportFile, sideImages, side);
-				} else if (diagramXML != DiagramXML.NO_EXPORT) {
+				if (diagramXML != DiagramXML.NO_EXPORT && diagramImage != DiagramImage.NONE) {
 					if (!imagesDirectory.exists()) {
 						System.err.println("ERROR:  Unable to export diagram images. Terminating EA .eap XMI export processing.");
 						System.exit(1);
@@ -956,7 +998,7 @@ public class CIMModelComparisonGenerator {
 		System.out.println("\n" + side + " project " + eaProject.getName() + " has " + roots.size()
 				+ " root nodes (" + names + "). All are compared.");
 
-		String firstGuid = roots.get(0).GetPackageGUID(); // #139: before EA may crash drawing SVGs
+		String firstGuid = roots.get(0).GetPackageGUID();
 		exportMerged(repository, roots, "root node", eaProject, side, baseline, outputDir, xmiExportFile,
 				diagramXML, diagramImage);
 		System.out.println("\n" + side + " model XMI export completed successfully (root nodes " + names
@@ -1006,9 +1048,7 @@ public class CIMModelComparisonGenerator {
 				part.delete();
 		}
 
-		if (diagramXML != DiagramXML.NO_EXPORT && diagramImage == DiagramImage.SVG) {
-			writeSvgImages(repository, eaProject, xmiExportFile, sideImagesDirectory, side);
-		} else if (diagramXML != DiagramXML.NO_EXPORT) {
+		if (diagramXML != DiagramXML.NO_EXPORT && diagramImage != DiagramImage.NONE) {
 			if (sideImagesDirectory.exists()) {
 				System.out.println("\n" + side + " model diagrams successfully exported as " + diagramImage.name()
 						+ " images to:  \n" + sideImagesDirectory.getAbsolutePath());
@@ -1024,7 +1064,7 @@ public class CIMModelComparisonGenerator {
 	 * PutDiagramImageToFile), EA can report the same error again on CloseFile or Exit;
 	 * that must not stop the run, whose export is already written.
 	 */
-	private static void closeQuietly(Repository repository) {
+	static void closeQuietly(Repository repository) {
 		try {
 			repository.CloseFile();
 		} catch (Throwable e) {
@@ -1041,8 +1081,6 @@ public class CIMModelComparisonGenerator {
 	private static String svgUnavailable;
 	/** #139: SVG was asked for but JPG images were used. */
 	private static boolean svgFellBack;
-	/** #139: a model was exported for SVG images (without images) in this run. */
-	private static boolean svgUsed;
 	/** EA's build has been printed in this run. */
 	private static boolean eaReported;
 
@@ -1051,8 +1089,9 @@ public class CIMModelComparisonGenerator {
 
 	/**
 	 * Prints EA's build and edition (once a run) and returns the image type to export
-	 * with: #139 SVG becomes JPG when this EA cannot write SVG images (before build
-	 * 1629) or an SVG has already failed in this run.
+	 * the XMI with: none when the images are drawn one diagram at a time after the
+	 * comparison (#141), which needs EA 16.1 build 1629 or later; otherwise the type
+	 * asked for, with SVG becoming JPG (#139).
 	 */
 	private static DiagramImage effectiveImage(Repository repository, DiagramImage requested, DiagramXML diagramXML) {
 		int build = -1;
@@ -1069,16 +1108,24 @@ public class CIMModelComparisonGenerator {
 				eaReported = true;
 			}
 		} catch (Throwable ignored) {
-			// unknown build: SVG is tried, with the JPG fallback
+			// unknown build: images are drawn one at a time, falling back to the XMI export's
 		}
-		if (requested != DiagramImage.SVG || diagramXML == DiagramXML.NO_EXPORT)
+		if (diagramXML == DiagramXML.NO_EXPORT || requested == DiagramImage.NONE)
 			return requested;
-		if (svgUnavailable == null && build >= 0 && build < SVG_MIN_BUILD) {
-			svgUnavailable = "SVG images need Enterprise Architect 16.1 build " + SVG_MIN_BUILD + " or later; this is build "
-					+ build;
-			System.out.println("\nWARNING:  " + svgUnavailable + ". The report uses JPG images instead.");
+		if (perDiagram && build >= 0 && build < SVG_MIN_BUILD) {
+			perDiagram = false;
+			if (requested == DiagramImage.SVG) {
+				svgUnavailable = "SVG images need Enterprise Architect 16.1 build " + SVG_MIN_BUILD + " or later; this is build "
+						+ build;
+				System.out.println("\nWARNING:  " + svgUnavailable + ". The report uses JPG images instead.");
+			} else {
+				System.out.println("\nNote:  Enterprise Architect build " + build + " cannot draw diagrams one at a time (that needs"
+						+ " 16.1 build " + SVG_MIN_BUILD + " or later); the images of every diagram are exported with the XMI.");
+			}
 		}
-		return svgUnavailable == null ? DiagramImage.SVG : DiagramImage.JPG;
+		if (perDiagram)
+			return DiagramImage.NONE;
+		return requested == DiagramImage.SVG ? DiagramImage.JPG : requested;
 	}
 
 	/** The EA version a build belongs to, as far as can be told from its number. */
@@ -1092,215 +1139,6 @@ public class CIMModelComparisonGenerator {
 		if (build >= 1500)
 			return "EA 15";
 		return "EA before 15";
-	}
-
-	/** #139: the diagrams in an exported XMI file, by their xmi.id (EAID_...). */
-	static List<String> diagramIds(File xmi) throws IOException {
-		String text = new String(java.nio.file.Files.readAllBytes(xmi.toPath()), java.nio.charset.StandardCharsets.ISO_8859_1);
-		java.util.regex.Matcher m = java.util.regex.Pattern.compile("<UML:Diagram\\s[^>]*?xmi\\.id=\"(EAID_[^\"]+)\"").matcher(text);
-		java.util.LinkedHashSet<String> ids = new java.util.LinkedHashSet<String>();
-		while (m.find())
-			ids.add(m.group(1));
-		return new java.util.ArrayList<String>(ids);
-	}
-
-	/**
-	 * #139: writes an SVG of each diagram in a model's exported XMI file, with EA's
-	 * {@code Project.PutDiagramImageToFile} (Type 1: the format from the file name). A
-	 * diagram EA will not draw as SVG is written as a PNG instead (shown without
-	 * highlights); only when not one SVG can be written does the run fall back to JPG.
-	 */
-	private static void writeSvgImages(Repository opened, File eaProject, File xmi, File imagesDir, String side) {
-		svgUsed = true;
-		if (svgUnavailable != null)
-			return;
-		List<String> ids;
-		try {
-			ids = diagramIds(xmi);
-		} catch (IOException e) {
-			svgUnavailable = "could not read " + xmi.getName() + ": " + e.getMessage();
-			return;
-		}
-		imagesDir.mkdirs();
-		svgRetries = 0;
-		int written = 0, reopened = 0;
-		List<String> png = new java.util.ArrayList<String>(), none = new java.util.ArrayList<String>();
-		Repository repository = opened;
-		try {
-			for (String id : ids) {
-				// #139: EA's SVG drawing can crash EA itself (e.g. on one particular diagram);
-				// then the project is opened again and the run carries on
-				if (!alive(repository)) {
-					if (reopened == MAX_REOPEN || (repository = reopen(repository, opened, eaProject, side)) == null) {
-						none.add(id);
-						continue;
-					}
-					reopened++;
-				}
-				String reason = writeSvg(repository, id, new File(imagesDir, id + ".svg"));
-				if (reason == null) {
-					written++;
-					continue;
-				}
-				if (!alive(repository) && reopened < MAX_REOPEN
-						&& (repository = reopen(repository, opened, eaProject, side)) != null)
-					reopened++;
-				// one diagram EA will not draw as SVG: show it as a PNG (without highlights) and
-				// keep the other diagrams' SVGs
-				String name = alive(repository) ? diagramName(repository, id) : "";
-				if (alive(repository) && writePng(repository, id, new File(imagesDir, id + ".png"))) {
-					png.add(name + id);
-					System.out.println("\nWARNING:  " + side + " model: EA could not draw diagram " + name + id + " as SVG ("
-							+ reason + "); it is shown as a PNG image, without highlights.");
-				} else {
-					none.add(name + id);
-					System.out.println("\nWARNING:  " + side + " model: EA could not draw diagram " + name + id
-							+ " as SVG or PNG (" + reason + "); the report shows no image of it.");
-				}
-			}
-		} finally {
-			if (repository != null && repository != opened)
-				closeQuietly(repository);
-		}
-		if (written == 0 && !ids.isEmpty()) {
-			// not one SVG: this EA cannot write them after all; the run uses JPG images
-			svgUnavailable = "EA did not write any SVG image";
-			return;
-		}
-		System.out.println("\n" + side + " model: " + written + " diagram(s) written as SVG images"
-				+ (svgRetries > 0 ? " (EA needed " + svgRetries + " extra tr" + (svgRetries == 1 ? "y" : "ies") + ")" : "")
-				+ (png.isEmpty() ? "" : ", " + png.size() + " as PNG") + (none.isEmpty() ? "" : ", " + none.size() + " without an image")
-				+ " to:  \n" + imagesDir.getAbsolutePath());
-	}
-
-	/** #139: how often EA may be reopened while its SVGs of one model are written. */
-	static final int MAX_REOPEN = 3;
-
-	/** #139: whether EA still answers (after a crash, GetProjectInterface returns null). */
-	private static boolean alive(Repository repository) {
-		try {
-			return repository != null && repository.GetProjectInterface() != null;
-		} catch (Throwable e) {
-			return false;
-		}
-	}
-
-	/** #139: opens the project again after EA stopped; null when it cannot be. */
-	private static Repository reopen(Repository dead, Repository opened, File eaProject, String side) {
-		System.out.println("\nWARNING:  " + side + " model: Enterprise Architect stopped responding while drawing a diagram;"
-				+ " opening " + eaProject.getName() + " again to carry on.");
-		if (dead != null && dead != opened)
-			closeQuietly(dead);
-		try {
-			Repository r = new Repository();
-			r.OpenFile(eaProject.getAbsolutePath());
-			return alive(r) ? r : null;
-		} catch (Throwable e) {
-			System.out.println("\nWARNING:  could not open " + eaProject.getName() + " again (" + e.getMessage() + ").");
-			return null;
-		}
-	}
-
-	/** #139: a PNG of one diagram, for one EA would not draw as SVG; true when written. */
-	private static boolean writePng(Repository repository, String eaid, File png) {
-		for (int attempt = 1; attempt <= 2; attempt++) {
-			try {
-				if (attempt > 1)
-					Thread.sleep(1000);
-				png.delete();
-				repository.GetProjectInterface().PutDiagramImageToFile(attempt == 1 ? eaidToGuid(eaid) : eaid,
-						png.getAbsolutePath(), 1);
-				if (png.isFile() && png.length() > 8)
-					return true;
-			} catch (InterruptedException e) {
-				Thread.currentThread().interrupt();
-				return false;
-			} catch (Throwable e) {
-				// try again, then give up
-			}
-		}
-		png.delete();
-		return false;
-	}
-
-	/** #139: SVGs of the current model that EA wrote only on a second try. */
-	private static int svgRetries;
-
-	/**
-	 * Writes one diagram's SVG; null when it worked, else what EA said on each try.
-	 * EA 17 sometimes fails on a diagram it draws fine a moment later ("Internal
-	 * application error", or false with no file), so there are three tries: the GUID,
-	 * the GUID in its XML form after a short pause, and loading the diagram and saving
-	 * its image after a longer one.
-	 */
-	private static String writeSvg(Repository repository, String eaid, File svg) {
-		List<String> tries = new java.util.ArrayList<String>();
-		for (int attempt = 1; attempt <= 3; attempt++) {
-			if (!alive(repository)) {
-				tries.add("try " + attempt + ": EA stopped responding");
-				break;
-			}
-			try {
-				if (attempt > 1) {
-					Thread.sleep(attempt == 2 ? 500 : 2000);
-					svgRetries++;
-				}
-				svg.delete();
-				String said = "";
-				boolean ok;
-				if (attempt == 1) {
-					ok = repository.GetProjectInterface().PutDiagramImageToFile(eaidToGuid(eaid), svg.getAbsolutePath(), 1);
-				} else if (attempt == 2) {
-					ok = repository.GetProjectInterface().PutDiagramImageToFile(eaid, svg.getAbsolutePath(), 1);
-				} else {
-					repository.GetProjectInterface().LoadDiagram(eaid);
-					said = repository.GetProjectInterface().SaveDiagramImageToFile(svg.getAbsolutePath());
-					ok = svg.isFile();
-				}
-				if (!ok || !svg.isFile()) {
-					tries.add("try " + attempt + ": no file" + lastError(repository, said));
-					continue;
-				}
-				String text = new String(java.nio.file.Files.readAllBytes(svg.toPath()), java.nio.charset.StandardCharsets.UTF_8);
-				if (!org.cimug.compare.SvgDiagrams.isSvg(text)) {
-					tries.add("try " + attempt + ": not an SVG");
-					continue;
-				}
-				java.nio.file.Files.write(svg.toPath(),
-						org.cimug.compare.SvgDiagrams.withFontFallbacks(text).getBytes(java.nio.charset.StandardCharsets.UTF_8));
-				return null;
-			} catch (InterruptedException e) {
-				Thread.currentThread().interrupt();
-				tries.add("interrupted");
-				break;
-			} catch (Throwable e) {
-				tries.add("try " + attempt + ": " + e.getMessage());
-			}
-		}
-		svg.delete();
-		return String.join("; ", tries);
-	}
-
-	/** EA's last error message, if it has one, for the messages of {@link #writeSvg}. */
-	private static String lastError(Repository repository, String said) {
-		String err = said == null ? "" : said.trim();
-		try {
-			String e = repository.GetProjectInterface().GetLastError();
-			if (e != null && !e.trim().isEmpty())
-				err += (err.isEmpty() ? "" : " / ") + e.trim();
-		} catch (Throwable ignored) {
-			// none
-		}
-		return err.isEmpty() ? "" : " (" + err + ")";
-	}
-
-	/** "'Name' " of a diagram, for messages; empty when EA cannot say. */
-	private static String diagramName(Repository repository, String eaid) {
-		try {
-			return "'" + repository.GetDiagramByGuid(eaidToGuid(eaid)).GetName() + "' ";
-		} catch (Throwable e) {
-			return "";
-		}
 	}
 
 	/** EAID_70EC2267_19ED_48a1_973A_CD797502D5A8 -> {70EC2267-19ED-48a1-973A-CD797502D5A8}. */
@@ -1390,7 +1228,7 @@ public class CIMModelComparisonGenerator {
 		return zipFile;
 	}
 	
-	private static void deleteDirectory(File directory) {
+	static void deleteDirectory(File directory) {
         if (directory.isDirectory()) {
             // Get all files and directories in the current directory
             File[] files = directory.listFiles();

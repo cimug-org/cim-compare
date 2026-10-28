@@ -124,4 +124,18 @@ public class SvgDiagramsTest {
 		String svg = "<svg viewBox=\"0 0 500 400\"><polygon points=\"100 128 100 248 300 248 300 148 180 148 180 128 100 128\"/></svg>";
 		assertArrayEquals(new int[] { 300, 72 }, SvgDiagrams.shift(svg, pkg));
 	}
+
+	@Test
+	public void rasterBoxesAreScaledAndMovedDown() {
+		java.util.Map<String, String> m = new java.util.HashMap<>();
+		m.put("1222,462,1412,532", "928,390,1118,460");
+		// EPRIProposedUpdates1 as EA 17 drew it: the PNG box is at 1266,538 to 1525,632
+		assertEquals("1266,538,1526,634", SvgDiagrams.scale(m, 1.3646, 6).get("1222,462,1412,532"));
+	}
+
+	@Test
+	public void theSvgHeightComesFromItsViewBox() {
+		assertEquals(840, SvgDiagrams.height("<svg width=\"30.90cm\" viewBox=\"0 0 1168 840\">"), 0);
+		assertEquals(-1, SvgDiagrams.height("<svg>"), 0);
+	}
 }

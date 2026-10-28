@@ -138,4 +138,26 @@ public class SvgDiagramsTest {
 		assertEquals(840, SvgDiagrams.height("<svg width=\"30.90cm\" viewBox=\"0 0 1168 840\">"), 0);
 		assertEquals(-1, SvgDiagrams.height("<svg>"), 0);
 	}
+
+	/** A diagram position without image boxes, as an XMI exported without images has. */
+	private static DiagramElement at(String subject, int l, int t, int r, int b) {
+		DiagramElement e = new DiagramElement();
+		e.setSubject(subject);
+		e.setGeometry("Left=" + l + ";Top=" + t + ";Right=" + r + ";Bottom=" + b + ";");
+		return e;
+	}
+
+	@Test
+	public void packagesDrawnAsBodyAndTabLineUp() throws Exception {
+		// #141: DocGeneration (CIM 18v14), as EA 17 build 1721 draws it: three packages, each
+		// two polygons (body, then tab), and a text element
+		String svg = new String(java.nio.file.Files.readAllBytes(java.nio.file.Paths.get(
+				getClass().getClassLoader().getResource("svg/DocGeneration.svg").toURI())), java.nio.charset.StandardCharsets.UTF_8);
+		List<DiagramElement> elements = Arrays.asList(at("EAID_TEXT", 59, 281, 374, 312),
+				at("EAID_PRODUCTION", 35, 167, 155, 217), at("EAID_GTS", 186, 167, 388, 217), at("EAID_WIRES", 176, 39, 296, 89));
+		assertArrayEquals(new int[] { 25, 29 }, SvgDiagrams.shift(svg, elements));
+		Map<String, String> boxes = SvgDiagrams.boxMap(elements, SvgDiagrams.shift(svg, elements), svg);
+		assertEquals("151,10,271,60", boxes.get("176,39,296,89"));
+		assertEquals("161,138,363,188", boxes.get("186,167,388,217"));
+	}
 }

@@ -110,8 +110,8 @@ public final class SvgDiagrams {
 
 	/**
 	 * The boxes EA drew, as {x, y, width, height}: its rectangles (classes, enumerations,
-	 * boundaries) and the bounding boxes of its polygons (packages with their tab,
-	 * notes with their folded corner, ...).
+	 * boundaries), the bounding boxes of its polygons (notes with their folded corner,
+	 * ...) and of each package's body and tab, which EA draws as two polygons.
 	 */
 	static List<double[]> shapes(String svg) {
 		List<double[]> out = new java.util.ArrayList<>();
@@ -120,6 +120,7 @@ public final class SvgDiagrams {
 			out.add(new double[] { Double.parseDouble(m.group(1)), Double.parseDouble(m.group(2)),
 					Double.parseDouble(m.group(3)), Double.parseDouble(m.group(4)) });
 		m = POLYGON.matcher(svg);
+		double[] previous = null;
 		while (m.find()) {
 			String[] v = m.group(1).trim().split("[\\s,]+");
 			if (v.length < 6)
@@ -136,7 +137,17 @@ public final class SvgDiagrams {
 			} catch (NumberFormatException ignored) {
 				continue;
 			}
-			out.add(new double[] { minX, minY, maxX - minX, maxY - minY });
+			double[] box = { minX, minY, maxX - minX, maxY - minY };
+			out.add(box);
+			// #141: EA 17 draws a package as two polygons, its body and the tab on top of it;
+			// the package's stored size is that of the two together
+			if (previous != null && Math.abs(previous[0] - box[0]) <= 1 && (Math.abs(box[1] + box[3] - previous[1]) <= 1
+					|| Math.abs(previous[1] + previous[3] - box[1]) <= 1)) {
+				double top = Math.min(previous[1], box[1]);
+				out.add(new double[] { box[0], top, Math.max(previous[2], box[2]),
+						Math.max(previous[1] + previous[3], box[1] + box[3]) - top });
+			}
+			previous = box;
 		}
 		return out;
 	}

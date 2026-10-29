@@ -294,15 +294,15 @@ public class ReportPreProcessorTest {
 	}
 
 	@Test
-	public void changedNamesAreRedlinedButTypesAreNot() throws Exception {
-		// Names are redlined (Todd, 2026-09-28); a changed type is shown by the
-		// report as the new type in blue, so the pre-pass computes no redline for it.
+	public void onlyFreeTextIsRedlined() throws Exception {
+		// #179: metadata tables redline free text only (Notes, RoleNote); a changed name
+		// or alias sits beside its baseline value as it is, like a changed type.
 		Document d = enrich(false, null);
 		String name = "//Class[@name='Equipment']/Properties/Property[@name='Name']";
 		assertEquals("changed", str(d, name + "/@status"));
-		assertEquals("ConductingEquipmentBase", str(d, name + "/Redline/del"));
-		assertEquals("Equipment", str(d, name + "/Redline/ins"));
-		assertEquals(1, count(d, "//Package[@name='Grid']/Properties/Property[@name='Name']/Redline"));
+		assertEquals("ConductingEquipmentBase", str(d, name + "/@baseline"));
+		assertEquals("Equipment", str(d, name + "/@model"));
+		assertEquals(0, count(d, "//Property[@name='Name' or @name='Alias']/Redline"));
 		assertEquals(0, count(d, "//Attribute[@name='ratedS']//Redline"));
 	}
 

@@ -120,8 +120,6 @@
     <xsl:param name="skip" as="xs:string*" select="()"/>
     <xsl:param name="one-sided" as="xs:string?" select="()"/>
     <xsl:param name="sides" as="xs:string*" select="('Baseline', 'Destination')"/>
-    <!-- properties whose changed destination value is shown as plain text, not redlined (#67) -->
-    <xsl:param name="plain" as="xs:string*" select="()"/>
     <!-- one-sided tables omit properties that have no value on the side that exists (no information content) -->
     <xsl:variable name="rows" select="$e/Properties/Property[(not($only-changed) or @status != 'identical') and not(@name = $skip)
         and (not($one-sided) or string(if ($one-sided = 'deleted') then @baseline else @model) != '')]"/>
@@ -160,7 +158,7 @@
                           <xsl:when test="$empty and string(@model) = ''"><td class="nil">(empty)</td></xsl:when>
                           <xsl:when test="$empty"><td><xsl:value-of select="@model"/></td></xsl:when>
                           <xsl:otherwise><td><xsl:choose>
-                            <xsl:when test="@status = 'changed' and Redline and not(@name = $plain)"><xsl:copy-of select="Redline/node()"/></xsl:when>
+                            <xsl:when test="@status = 'changed' and Redline"><xsl:copy-of select="Redline/node()"/></xsl:when>
                             <xsl:otherwise><xsl:value-of select="@model"/></xsl:otherwise>
                           </xsl:choose><xsl:if test="@tag"><span class="notation"><xsl:value-of select="@tag"/></span></xsl:if></td></xsl:otherwise>
                         </xsl:choose>
@@ -674,8 +672,8 @@
     </tr>
     <tr class="meta"><td colspan="4">
       <div class="lbl">Attribute metadata — <xsl:value-of select="@name"/></div>
-      <!-- the ⓘ view shows the new name as it is, like the baseline (#67) -->
-      <xsl:call-template name="r:prop-table"><xsl:with-param name="e" select="."/><xsl:with-param name="only-changed" select="false()"/><xsl:with-param name="plain" select="'Name'"/></xsl:call-template>
+      <!-- the ⓘ view shows the new name as it is, like the baseline (#67, #179) -->
+      <xsl:call-template name="r:prop-table"><xsl:with-param name="e" select="."/><xsl:with-param name="only-changed" select="false()"/></xsl:call-template>
       <xsl:if test="Tags/Tag"><div class="lbl">Tagged values</div><xsl:call-template name="r:tag-table"><xsl:with-param name="e" select="."/><xsl:with-param name="only-changed" select="false()"/></xsl:call-template></xsl:if>
     </td></tr>
   </xsl:template>

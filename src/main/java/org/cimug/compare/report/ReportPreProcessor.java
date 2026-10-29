@@ -83,8 +83,12 @@ public class ReportPreProcessor {
 
 	public static final String GENERATOR = "cim-compare " + org.cimug.compare.Version.VERSION;
 
+	/**
+	 * Free-text properties, the only ones redlined in the report's metadata tables;
+	 * a short value such as a name or alias sits beside its baseline value as it is (#179).
+	 */
 	private static final Set<String> TEXT_PROPS = new HashSet<String>(
-			Arrays.asList("Notes", "RoleNote", "Alias", "Name"));
+			Arrays.asList("Notes", "RoleNote"));
 	private static final Set<String> LINK_NAMES = new HashSet<String>(
 			Arrays.asList("Generalization", "Association", "Aggregation"));
 

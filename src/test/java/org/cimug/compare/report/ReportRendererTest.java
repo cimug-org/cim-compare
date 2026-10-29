@@ -109,6 +109,22 @@ public class ReportRendererTest {
 	}
 
 	@Test
+	public void theCountsCanBeKeptInView() throws Exception {
+		File xml = copyFixture();
+		File html = new File(tmp.getRoot(), "pin.html");
+		new ReportRenderer(false, null, false, "jpg").render(xml, html);
+		String page = read(html);
+		// #175: Off · Counts · Counts + legend at the right of the counts; Counts is the default
+		assertTrue(page.matches("(?s).*<span class=\"pinseg\" role=\"group\"[^>]*>\\s*<button type=\"button\" data-pin=\"off\"><svg.*"));
+		assertTrue(page.contains("<button type=\"button\" data-pin=\"counts\" class=\"on\">Counts</button>"));
+		assertTrue(page.contains("<button type=\"button\" data-pin=\"all\">Counts + legend</button>"));
+		assertTrue("the p key", page.contains("<kbd class=\"pin-kbd\">p</kbd>"));
+		assertTrue("default in the script", page.contains("setPin(saved || 'counts', false); /* the counts stay in view unless set otherwise */ })();"));
+		assertTrue("remembered", page.contains("localStorage.setItem(PIN_KEY, p)"));
+		assertTrue("pinned counts stay under the header", page.contains("body.pin-counts .summary, body.pin-all .summary { position: sticky;"));
+	}
+
+	@Test
 	public void changedTypeShowsTheNewTypeAndBoundsAreRedlined() throws Exception {
 		File xml = copyFixture();
 		File html = new File(tmp.getRoot(), "types.html");

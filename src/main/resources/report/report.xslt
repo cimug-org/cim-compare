@@ -353,6 +353,10 @@
               <xsl:call-template name="r:summary-group"><xsl:with-param name="kind" select="'diagram'"/><xsl:with-param name="label" select="'Diagrams'"/></xsl:call-template>
             </xsl:if>
             <span id="flt-status" class="clear">Click a count to show only those items</span>
+            <!-- #175: keep the counts, or the counts and the legend, in view while scrolling -->
+            <span class="pinseg" role="group" aria-label="Keep in view while scrolling" title="Keep in view while scrolling (p)">
+              <button type="button" data-pin="off"><svg width="13" height="13" viewBox="0 0 16 16" aria-hidden="true"><path d="M6 1.5h4l-.6 4.2 2.6 2.3v1.2H4V8l2.6-2.3z" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/><path d="M8 9.2V14.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>Off</button><button type="button" data-pin="counts" class="on">Counts</button><button type="button" data-pin="all">Counts + legend</button>
+            </span><kbd class="pin-kbd">p</kbd>
           </div>
           <div class="legend">
             <span><i class="sw s-added"></i><b>Added</b> — only in destination</span>

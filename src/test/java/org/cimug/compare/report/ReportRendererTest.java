@@ -179,7 +179,7 @@ public class ReportRendererTest {
 		new ReportRenderer(false, null, false, "jpg").render(xml, html);
 		String page = read(html);
 		// #67: in an attribute's ⓘ metadata table the Name row shows the new name plainly
-		int meta = page.indexOf("Attribute metadata — aliasName");
+		int meta = page.indexOf("Attribute metadata — <span class=\"nm-case\">aliasName</span>");
 		assertTrue("aliasName metadata view", meta > 0);
 		String view = page.substring(meta, page.indexOf("</tr>", page.indexOf("<th class=\"k\">Name</th>", meta)));
 		assertTrue(view, view.contains("<td>aliasName</td><td>«deprecated» aliasName</td>"));

@@ -311,7 +311,7 @@ table.attrsB td.nt .side { font-size: 10px; text-transform: uppercase; letter-sp
 .linkB .rows { padding: 0 10px 8px; }
 .linkB .rows .sub { font-size: 10.5px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: .04em; margin: 6px 0 3px; }
 /* #172: the class or role name in an end's heading keeps its own case */
-.sub .nm-case { text-transform: none; letter-spacing: 0; }
+.sub .nm-case, .lbl .nm-case { text-transform: none; letter-spacing: 0; }
 .linkB .endsB { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
 .linkB .endsB table.t th.k { width: 110px; }
 .linkB .endsB .none { color: var(--muted); font-style: italic; font-size: var(--fs-s); padding: 4px 8px; }

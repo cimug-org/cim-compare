@@ -272,8 +272,8 @@ public class ReportRendererTest {
 		new ReportRenderer(false, null, false, "jpg").render(xml, html);
 		String page = read(html);
 		// #107: a cleared or filled-in value is a changed row, with (empty) on the empty side
-		assertTrue(page.contains("<tr data-status=\"changed\"><th class=\"k\">Phase</th><td>1.0</td><td class=\"nil\">(empty)</td></tr>"));
-		assertTrue(page.contains("<tr data-status=\"changed\"><th class=\"k\">Complexity</th><td class=\"nil\">(empty)</td><td>2</td></tr>"));
+		assertTrue(page.contains("<tr data-status=\"changed\"><th class=\"k\">Author</th><td>toddv</td><td class=\"nil\">(empty)</td></tr>"));
+		assertTrue(page.contains("<tr data-status=\"changed\"><th class=\"k\">Alias</th><td class=\"nil\">(empty)</td><td>SW-1</td></tr>"));
 		assertTrue(page.contains("<td>instance</td><td class=\"nil\">(empty)</td>"));
 	}
 
@@ -286,6 +286,189 @@ public class ReportRendererTest {
 		// #109: still a change, tagged in the end table and the signature line
 		assertTrue(page.contains("<tr data-status=\"changed\"><th class=\"k\">Cardinality</th><td>0..*</td><td>*<span class=\"notation\">notation only</span></td></tr>"));
 		assertTrue(page.contains("<span class=\"card\">[<del>0..*</del><ins>*</ins>]</span><span class=\"notation\">notation only</span>"));
-		assertEquals(2, page.split("class=\"notation\"").length - 1);
+		assertEquals(3, page.split("class=\"notation\"").length - 1); // two for the multiplicity, one for #118
+	}
+
+	@Test
+	public void allStereotypesAreShownAndOrderChangesTagged() throws Exception {
+		File xml = copyFixture();
+		File html = new File(tmp.getRoot(), "stereo.html");
+		new ReportRenderer(false, null, false, "jpg").render(xml, html);
+		String page = read(html);
+		// #118: one pair of guillemets around the whole list (UML 2.5.1)
+		assertTrue(page.contains("<span class=\"stereo\">«util, ShadowExtension»</span>"));
+		assertTrue(page.contains("<tr data-status=\"changed\"><th class=\"k\">Stereotype</th><td>ShadowExtension, util</td><td>util, ShadowExtension<span class=\"notation\">order only</span></td></tr>"));
+		assertTrue(page.contains("<tr data-status=\"changed\"><th class=\"k\">Stereotype</th><td>ShadowExtension, util</td><td>ShadowExtension</td></tr>"));
+	}
+
+	@Test
+	public void attributesWithChangesOnlyInTheirMetadataAreMarked() throws Exception {
+		File xml = copyFixture();
+		File html = new File(tmp.getRoot(), "mnote.html");
+		new ReportRenderer(false, null, false, "jpg").render(xml, html);
+		String page = read(html);
+		// #123: phaseCode changed only its Default, which its row does not show
+		int row = page.indexOf("data-name=\"phaseCode\"");
+		assertTrue(row > 0);
+		String cell = page.substring(row, page.indexOf("</td>", row));
+		assertTrue(cell, cell.contains("<span class=\"info info-chg\""));
+		assertTrue(cell, cell.contains("metadata changed - hover"));
+		assertTrue(cell, cell.contains("metadata changed - see below"));
+		// ratedS changed its type and multiplicity, which its row shows: plain ⓘ, no note
+		row = page.indexOf("data-name=\"ratedS\"");
+		cell = page.substring(row, page.indexOf("</td>", row));
+		assertTrue(cell, cell.contains("<span class=\"info\""));
+		assertFalse(cell, cell.contains("metadata changed"));
+	}
+
+	@Test
+	public void rowInfoIconIsMarkedWhenTheDescriptionChanged() throws Exception {
+		File xml = copyFixture();
+		File html = new File(tmp.getRoot(), "rowinfo.html");
+		new ReportRenderer(false, null, false, "jpg").render(xml, html);
+		String page = read(html);
+		// #123: the moved class Switch's description changed: its row ⓘ is marked, with no note
+		int row = page.indexOf("data-name=\"Switch\" data-kind=\"⚙\"");
+		assertTrue(row > 0);
+		String r = page.substring(row, page.indexOf("class=\"guid\"", row));
+		assertTrue(r, r.contains("<span class=\"info info-chg\""));
+		assertFalse(r, r.contains("metadata changed"));
+		assertFalse(page.contains("<span class=\"info info-chg\" data-id=\"EAID_00000000_0000_0000_0000_000000000115\""));
+	}
+
+	@Test
+	public void printKeepsColoursAndTheHeader() throws Exception {
+		File xml = copyFixture();
+		File html = new File(tmp.getRoot(), "print.html");
+		new ReportRenderer(false, null, false, "jpg").render(xml, html);
+		String page = read(html);
+		// #128
+		assertTrue(page.contains("print-color-adjust: exact !important;"));
+		assertTrue(page.contains(".hdr .tools, .summary .clear, .lightbox { display: none; }"));
+		assertFalse(page.contains(".hdr, .summary .clear, .lightbox { display: none; }"));
+		assertFalse(page.contains(".tree, .row { break-inside: avoid; }"));
+		assertTrue(page.contains("@page { size: landscape; margin: 0.4in; }"));
+		assertTrue(page.contains("  .layout { display: block; }"));
+		assertTrue(page.contains("  .diag { break-inside: avoid; }"));
+		assertTrue(page.contains("window.addEventListener('beforeprint'"));
+		assertFalse(page.contains("d.open = true"));
+	}
+
+	@Test
+	public void theReportSaysHowManyEmptyValuesAreNotShown() throws Exception {
+		File xml = copyFixture();
+		File html = new File(tmp.getRoot(), "empty-note.html");
+		new ReportRenderer(false, null, false, "jpg").render(xml, html);
+		String page = read(html);
+		// #126: the note follows the legend
+		int legend = page.indexOf("<div class=\"legend\">"), note = page.indexOf("<div class=\"empty-note\">");
+		assertTrue(legend > 0 && note > legend);
+		assertTrue(page.contains("6 differences are not shown where one side is empty in <span class=\"tipwrap\" tabindex=\"0\">a metadata field EA fills in automatically<span class=\"tip\"><b>Metadata fields affected</b><span class=\"tl\">"));
+		assertTrue(page.contains("IsLiteral, Derived, Const, Static: false"));
+		assertTrue(page.contains("; they do not change the model’s definitions."));
+		assertTrue(page.contains("<code>--show-empty-values</code>"));
+
+		File all = new File(tmp.getRoot(), "empty-all.html");
+		new ReportRenderer(false, null, false, "jpg").showEmptyValues(true).render(xml, all);
+		assertFalse(read(all).contains("<div class=\"empty-note\">"));
+	}
+
+	@Test
+	public void headerHasPrintButtonAndPackagesADrawnFolder() throws Exception {
+		File xml = copyFixture();
+		File html = new File(tmp.getRoot(), "btn.html");
+		new ReportRenderer(false, null, false, "jpg").render(xml, html);
+		String page = read(html);
+		// #131
+		assertTrue(page.contains("<button type=\"button\" id=\"btn-print\""));
+		assertTrue(page.contains("<b>Print or save as PDF</b>"));
+		assertTrue(page.contains("window.print()"));
+		assertTrue(page.contains("<span class=\"ico\"><span class=\"fold\" aria-hidden=\"true\"></span></span>"));
+		assertFalse(page.contains("<span class=\"ico\">📁</span>"));
+		assertFalse(page.contains(">ⓘ hover<"));
+	}
+	@Test
+	public void searchFindsElementsAndLinksByGuid() throws Exception {
+		File xml = copyFixture();
+		File html = new File(tmp.getRoot(), "guid.html");
+		new ReportRenderer(false, null, false, "jpg").render(xml, html);
+		String page = read(html);
+		// #133 links carry their GUID and end classes for the search index: a link card in a changed class ...
+		assertTrue(page.contains("<div class=\"linkB\" data-status=\"changed\" data-link=\"Association\" data-guid=\"{00000000-0000-0000-0000-000000000180}\" data-ends=\"Equipment — IdentifiedObject\">"));
+		// ... and a list entry in a deleted class (baseline names)
+		assertTrue(page.contains("<li data-link=\"Generalization\" data-guid=\"{00000000-0000-0000-0000-000000000116}\" data-ends=\"Plant ▷ PowerSystemResource\">"));
+		// any common GUID form, case ignored; 8+ hex digits counts as a GUID; a message when nothing matches
+		assertTrue(page.contains(".replace(/[{}]/g, '').replace(/^EAID_/i, '').replace(/[-_\\s]/g, '').toLowerCase()"));
+		assertTrue(page.contains("if (g.length >= 8 && /^[0-9a-f]+$/.test(g))"));
+		assertTrue(page.contains("No element with this GUID in this report"));
+		// a hit shows the GUID as written in the report (EA's mixed case), not lower-cased
+		assertTrue(page.contains("shown: /^EAID_/.test(host.id || '') ? '{' + host.id.slice(5).replace(/_/g, '-') + '}' : ''"));
+		assertTrue(page.contains("var full = h.shown,"));
+		// the attribute-row ring is placed outside the table's sideways-scrolling box, which would clip its left edge
+		assertTrue(page.contains("var table = tr.closest('table'), box = table.parentElement, host = box.parentElement;"));
+		// one rounded ring for every target; attribute rows get the laid-over ring, not a box-shadow on each cell
+		assertTrue(page.contains("ul.plain li.target, ul.plain li:target, .linkB.target { outline: 2px solid var(--focus);"));
+		assertTrue(page.contains(".tr-ring { position: absolute;"));
+		assertFalse(page.contains("tr.target > td"));
+	}
+	@Test
+	public void infoSymbolInTextIsDrawnNotAFontCharacter() throws Exception {
+		File xml = copyFixture();
+		File html = new File(tmp.getRoot(), "ii.html");
+		new ReportRenderer(false, null, false, "jpg").render(xml, html);
+		String page = read(html);
+		// #137 the legend, the "not shown" note and "metadata changed - hover" use the drawn ⓘ
+		assertTrue(page.contains("the <svg class=\"ii\""));
+		assertTrue(page.contains("<div class=\"empty-note\"><svg class=\"ii\""));
+		assertTrue(page.contains("metadata changed - hover<svg class=\"ii\""));
+		assertTrue(page.contains("svg.ii { width: 1.1em; height: 1.1em; vertical-align: -0.2em;"));
+		// no Unicode ⓘ is left in the page's text
+		assertFalse(page.contains("the ⓘ metadata view"));
+		assertFalse(page.contains("<div class=\"empty-note\">ⓘ"));
+		assertFalse(page.contains("<span class=\"m-i\">"));
+		// the package folder sits 1px higher than in #131, level with the name
+		assertTrue(page.contains(".fold { display: inline-block; width: 1.15em; height: .92em; position: relative; top: calc(.08em - 1px);"));
+	}
+	@Test
+	public void headerSaysWhenSvgFellBackToJpg() throws Exception {
+		File xml = copyFixture();
+		File html = new File(tmp.getRoot(), "note.html");
+		new ReportRenderer(false, null, false, "jpg").imageNote("Diagrams are JPG: SVG images were not available from this version of EA.").render(xml, html);
+		// #139
+		assertTrue(read(html).contains(" · <span class=\"imgnote\">Diagrams are JPG: SVG images were not available from this version of EA.</span>"));
+		File plain = new File(tmp.getRoot(), "plain.html");
+		new ReportRenderer(false, null, false, "jpg").render(xml, plain);
+		assertFalse(read(plain).contains("class=\"imgnote\""));
+	}
+
+	@Test
+	public void aConnectorWhoseLabelsChangedIsListedWithWhatChanged() throws Exception {
+		// #145: the fixture's rerouted connector, made a "labels changed" one
+		File xml = copyFixture();
+		String text = read(xml);
+		String from = "<Property name=\"Change\" model=\"rerouted\" status=\"Moved\"/>";
+		assertTrue(text.contains(from));
+		text = text.replace(from, "<Property name=\"Change\" model=\"labels changed\" status=\"Changed\"/>"
+				+ "<Property name=\"Labels\" model=\"multiplicity 0..* \u2192 1..*\" status=\"Changed\"/>");
+		java.nio.file.Files.write(xml.toPath(), text.getBytes(java.nio.charset.StandardCharsets.UTF_8));
+		File html = new File(xml.getParentFile(), "report.html");
+		new ReportRenderer(false, null, true, "jpg").render(xml, html);
+		String page = read(html);
+		assertTrue(page.contains("<span class=\"cx-k cx-labels-changed\">labels changed</span><span class=\"cx-name\">ACLineSegment \u2013 Switch</span>"
+				+ "<span class=\"cx-what\">multiplicity 0..* \u2192 1..*</span>"));
+		assertTrue(page.contains("1 labels changed"));
+	}
+
+	@Test
+	public void theLightboxCanZoomAndPan() throws Exception {
+		// #153: the report carries the zoom and pan code and styles; the lightbox starts empty
+		File xml = copyFixture();
+		File html = new File(xml.getParentFile(), "report.html");
+		new ReportRenderer(false, null, true, "svg").render(xml, html);
+		String page = read(html);
+		assertTrue(page.contains("<div id=\"lightbox\" class=\"lightbox\"></div>"));
+		assertTrue(page.contains(".lb-tools {"));
+		assertTrue(page.contains("function lbZoomAt("));
+		assertTrue(page.contains("'Fit the whole diagram (0)'"));
 	}
 }

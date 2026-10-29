@@ -26,6 +26,8 @@
   <xsl:param name="logo" as="xs:string" select="''"/>
   <xsl:param name="include-diagrams" as="xs:string" select="'true'"/>
   <xsl:param name="image-type" as="xs:string" select="'jpg'"/>
+  <!-- #139 e.g. "Diagrams are JPG: SVG images were not available from this version of EA." -->
+  <xsl:param name="image-note" as="xs:string" select="''"/>
 
   <xsl:variable name="diagrams" as="xs:boolean" select="$include-diagrams = 'true'"/>
   <xsl:variable name="full" as="xs:boolean" select="/ComparisonReport/@full = 'true'"/>
@@ -36,6 +38,9 @@
       select="map { 'identical': 'Identical', 'deleted': 'Deleted', 'added': 'Added', 'moved': 'Moved', 'changed': 'Changed' }"/>
   <xsl:variable name="badge" as="map(xs:string, xs:string)"
       select="map { 'identical': 'IDENTICAL', 'deleted': 'DELETED', 'added': 'ADDED', 'moved': 'MOVED', 'changed': 'CHANGED' }"/>
+  <!-- #137 the ⓘ in running text: drawn, so it sits on the line the same in every browser and font
+       (the Unicode ⓘ came out small and below the line); sized to the text by .ii in report.css -->
+  <xsl:variable name="ii"><svg class="ii" viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="7.1" fill="none" stroke="currentColor" stroke-width="1.1"/><circle cx="8.9" cy="4.5" r="1.05" fill="currentColor"/><path d="M8.3 6.9 L7.2 11.3 Q7 12.1 7.8 11.8 L8.6 11.3" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg></xsl:variable>
   <xsl:variable name="link-order" as="xs:string*" select="('Generalization', 'Association', 'Aggregation')"/>
 
   <!-- ====================================================== helpers -->
@@ -50,6 +55,16 @@
     <xsl:param name="name" as="xs:string"/>
     <xsl:param name="side" as="xs:string"/>
     <xsl:sequence select="string($e/Properties/Property[@name = $name]/@*[local-name() = $side])"/>
+  </xsl:function>
+
+  <!-- #133 a link's two end classes for the search list, e.g. "Plant ▷ PowerSystemResource" -->
+  <xsl:function name="r:link-ends" as="xs:string">
+    <xsl:param name="link" as="element()"/>
+    <xsl:param name="side" as="xs:string"/>
+    <xsl:variable name="end" select="$link/End/Properties/Property[@name = 'End']"/>
+    <xsl:sequence select="concat(string(($end[../../@side = 'source']/@*[local-name() = $side])[1]),
+                                 if ($link/@kind = 'Generalization') then ' ▷ ' else ' — ',
+                                 string(($end[../../@side = 'target']/@*[local-name() = $side])[1]))"/>
   </xsl:function>
 
   <xsl:function name="r:pstatus" as="xs:string">
@@ -145,7 +160,7 @@
                           <xsl:otherwise><td><xsl:choose>
                             <xsl:when test="@status = 'changed' and Redline and not(@name = $plain)"><xsl:copy-of select="Redline/node()"/></xsl:when>
                             <xsl:otherwise><xsl:value-of select="@model"/></xsl:otherwise>
-                          </xsl:choose><xsl:if test="@notation = 'true'"><span class="notation">notation only</span></xsl:if></td></xsl:otherwise>
+                          </xsl:choose><xsl:if test="@tag"><span class="notation"><xsl:value-of select="@tag"/></span></xsl:if></td></xsl:otherwise>
                         </xsl:choose>
                       </xsl:otherwise>
                     </xsl:choose>
@@ -233,11 +248,18 @@
     <div class="row{if ($leaf) then ' leaf' else ''}" data-status="{$st}" tabindex="0"
          data-name="{$e/@name}" data-kind="{$ico}" data-path="{r:path($e)}">
       <span class="chev"><xsl:value-of select="if ($leaf) then '' else '▶'"/></span>
-      <span class="ico"><xsl:value-of select="$ico"/></span>
+      <xsl:choose>
+        <xsl:when test="$ico = '📁'"><span class="ico"><span class="fold" aria-hidden="true"></span></span></xsl:when>
+        <xsl:otherwise><span class="ico"><xsl:value-of select="$ico"/></span></xsl:otherwise>
+      </xsl:choose>
       <span class="name"><xsl:call-template name="r:display-name"><xsl:with-param name="e" select="$e"/></xsl:call-template></span>
-      <xsl:if test="$e/@stereotype and $e/@stereotype != 'deprecated'"><span class="stereo">«<xsl:value-of select="$e/@stereotype"/>»</span></xsl:if>
+      <!-- all stereotypes in one pair of guillemets, as UML 2.5.1 shows them (#118); «deprecated» is shown with the name -->
+      <xsl:variable name="stereos" select="tokenize(string($e/@stereotype), ',\s*')[normalize-space() != '' and . != 'deprecated']"/>
+      <xsl:if test="exists($stereos)"><span class="stereo">«<xsl:value-of select="$stereos" separator=", "/>»</span></xsl:if>
       <xsl:if test="$e/Properties/Property[@name = 'Notes']">
-        <span class="info" data-id="{$e/@id}" title="notes">i</span>
+        <!-- #123: the description behind this ⓘ changed -->
+        <xsl:variable name="chg" select="($st = 'changed' or $st = 'moved') and r:pstatus($e, 'Notes') = 'changed'"/>
+        <span class="info{if ($chg) then ' info-chg' else ''}" data-id="{$e/@id}" title="notes">i</span>
         <xsl:call-template name="r:notes-src"><xsl:with-param name="e" select="$e"/></xsl:call-template>
       </xsl:if>
       <xsl:if test="$st != 'identical'"><span class="badge" data-status="{$st}"><xsl:value-of select="$badge($st)"/></span></xsl:if>
@@ -266,7 +288,7 @@
               <span class="ver"><xsl:value-of select="@baselineVersion"/></span><xsl:text> </xsl:text><span class="lbl">baseline</span>
               <xsl:text> </xsl:text><span class="arrow">→</span><xsl:text> </xsl:text>
               <span class="ver"><xsl:value-of select="@destinationVersion"/></span><xsl:text> </xsl:text><span class="lbl">destination</span></div>
-            <div class="sub">Scope: <xsl:value-of select="@scope"/> · compared <xsl:value-of select="@comparedOn"/> · <a class="gen" href="{@releaseUrl}" target="_blank" rel="noopener" title="{@generator} release"><xsl:value-of select="@generator"/></a><xsl:if test="$full"> · full (identical items included)</xsl:if></div>
+            <div class="sub">Scope: <xsl:value-of select="@scope"/> · compared <xsl:value-of select="@comparedOn"/> · <a class="gen" href="{@releaseUrl}" target="_blank" rel="noopener" title="{@generator} release"><xsl:value-of select="@generator"/></a><xsl:if test="$image-note != ''"> · <span class="imgnote"><xsl:value-of select="$image-note"/></span></xsl:if><xsl:if test="$full"> · full (identical items included)</xsl:if></div>
           </div>
           <div class="tools">
             <div class="search"><input id="q" type="search" placeholder="Find class, package, diagram or attribute…  (/)" autocomplete="off"/><div id="q-results" class="results"></div></div>
@@ -276,7 +298,9 @@
             <label class="chk"><input id="chk-guids" type="checkbox" checked="checked"/> GUIDs <kbd>g</kbd></label>
             <label class="chk"><input id="chk-clean" type="checkbox"/> Hide redline</label>
             <xsl:if test="$diagrams"><label class="chk" title="Highlight added, removed, changed, moved and restyled elements on the diagram images"><input id="chk-hl" type="checkbox" checked="checked"/> Diagram highlights</label></xsl:if>
-            <span class="seg" id="seg-meta" title="How ⓘ metadata is shown"><button type="button" class="on" data-mode="hover">ⓘ hover</button><button type="button" data-mode="inline">ⓘ inline</button></span>
+            <span class="seg" id="seg-meta" title="How ⓘ metadata is shown"><button type="button" class="on" data-mode="hover"><svg width="14" height="14" viewBox="0 0 16 16" aria-hidden="true"><rect x="1.5" y="1.5" width="13" height="9" rx="2" fill="none" stroke="currentColor" stroke-width="1.4"/><path d="M5 10.5 4 14l4-3.5" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/><path d="M4.5 5h7M4.5 7.5h4.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>hover</button><button type="button" data-mode="inline"><svg width="14" height="14" viewBox="0 0 16 16" aria-hidden="true"><path d="M1.5 3h13" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><rect x="3.5" y="5.5" width="11" height="5" rx="1" fill="none" stroke="currentColor" stroke-width="1.3"/><path d="M1.5 13h13" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>inline</button></span>
+            <!-- #131 print or save as PDF, with the browser settings that give a good result -->
+            <span class="pbwrap"><button type="button" id="btn-print" aria-describedby="pb-help"><svg width="15" height="15" viewBox="0 0 16 16" aria-hidden="true"><path d="M4 6V1.5h8V6" fill="none" stroke="currentColor" stroke-width="1.3"/><rect x="1.5" y="6" width="13" height="6" rx="1.5" fill="none" stroke="currentColor" stroke-width="1.3"/><rect x="4" y="9.5" width="8" height="5" fill="none" stroke="currentColor" stroke-width="1.3"/><circle cx="12" cy="8.3" r=".8" fill="currentColor"/></svg>Print / PDF</button><span class="pbpop" id="pb-help" role="tooltip"><b>Print or save as PDF</b><span>Opens your browser’s print dialog (or press Ctrl+P, ⌘P on a Mac).</span><span>• To save a PDF, choose <i>Save as PDF</i> (or <i>Microsoft Print to PDF</i>) as the printer.</span><span>• Choose <i>Landscape</i> if the browser doesn’t pick it.</span><span>• Turn off <i>Headers and footers</i> for a cleaner page.</span><span>• Leave <i>Background graphics</i> on so the change colours print.</span><span class="pbn">Sections print as they are on the page: open any “Show full metadata” you want included first. Wait for diagram images to load in large reports.</span></span></span>
           </div>
         </header>
         <div class="wrap">
@@ -295,9 +319,13 @@
             <span><i class="sw s-changed"></i><b>Changed</b> — same GUID and package; properties or members differ</span>
             <span><i class="sw s-identical"></i><b>Identical</b></span>
             <span><i class="sw s-pkg"></i><b>Package</b> (unchanged itself)</span>
-            <span><del>struck</del><ins>inserted</ins> — destination text with baseline wording struck (descriptions, names, role names, multiplicities); the ⓘ metadata view shows both texts verbatim</span>
+            <span><del>struck</del><ins>inserted</ins> — destination text with baseline wording struck (descriptions, names, role names, multiplicities); the <xsl:copy-of select="$ii"/>metadata view shows both texts verbatim</span>
             <span><b class="chg">Blue</b> — a changed attribute type (the new type)</span>
           </div>
+          <!-- #126: what was left out, as the last line under the legend -->
+          <xsl:if test="@emptyValuesNotShown">
+            <div class="empty-note"><xsl:copy-of select="$ii"/><xsl:value-of select="@emptyValuesNotShown"/><xsl:value-of select="if (@emptyValuesNotShown = '1') then ' difference is' else ' differences are'"/> not shown where one side is empty in <span class="tipwrap" tabindex="0">a metadata field EA fills in automatically<span class="tip"><b>Metadata fields affected</b><span class="tl">Complexity, Phase, Version, GenType: any value</span><span class="tl">Containment: “Not Specified” / “Unspecified”</span><span class="tl">IsLiteral, Derived, Const, Static: false</span><span class="tip-n">Any other difference is always shown.</span></span></span>; they do not change the model’s definitions. Run with <code>--show-empty-values</code> to include them.</div>
+          </xsl:if>
           <div class="layout">
             <nav id="rail" class="rail" aria-label="Package outline">
               <div class="r-h"><span>Packages</span><span class="r-hn" title="changed classes and diagrams in each package, including sub-packages">changes</span></div>
@@ -308,7 +336,7 @@
             </div>
           </div>
         </div>
-        <div id="lightbox" class="lightbox"><img alt=""/></div>
+        <div id="lightbox" class="lightbox"></div>
         <script><xsl:value-of select="$js" disable-output-escaping="yes"/></script>
       </body>
     </html>
@@ -502,7 +530,7 @@
             <xsl:sort select="index-of($link-order, string(@kind))[1]" data-type="number"/>
             <xsl:variable name="src" select="End[@side = 'source']"/>
             <xsl:variable name="dst" select="End[@side = 'target']"/>
-            <li>
+            <li data-link="{@kind}" data-guid="{@guid}" data-ends="{r:link-ends(., $side)}">
               <span class="kind"><xsl:value-of select="@kind"/></span><xsl:text> </xsl:text>
               <xsl:call-template name="r:sig-compact"><xsl:with-param name="link" select="."/><xsl:with-param name="side" select="$side"/><xsl:with-param name="redline" select="false()"/></xsl:call-template>
               <span class="guid"><xsl:value-of select="@guid"/></span>
@@ -541,6 +569,9 @@
 
   <!-- ====================================================== attributes (variant B rows) -->
 
+  <!-- attribute properties an Attributes row shows itself (name, type, multiplicity, notes) -->
+  <xsl:variable name="row-shown" as="xs:string*" select="('Name', 'Type', 'LowerBound', 'UpperBound', 'Notes')"/>
+
   <xsl:template match="Attribute" mode="row">
     <xsl:variable name="st" select="string(@status)"/>
     <xsl:variable name="nb" select="r:prop(., 'Name', 'baseline')"/>
@@ -551,7 +582,10 @@
           <xsl:when test="@renamedFrom"><xsl:value-of select="r:new-name(.)"/></xsl:when>
           <xsl:otherwise><xsl:value-of select="@name"/></xsl:otherwise>
         </xsl:choose>
-        <span class="info" data-id="{@guid}" title="attribute metadata">i</span>
+        <!-- #123: a change the row does not show (e.g. Default, Const, Stereotype) marks the ⓘ and adds a note -->
+        <xsl:variable name="hidden" select="$st = 'changed' and exists(Properties/Property[@status != 'identical' and not(@name = $row-shown)])"/>
+        <span class="info{if ($hidden) then ' info-chg' else ''}" data-id="{@guid}" title="attribute metadata">i</span>
+        <xsl:if test="$hidden"><span class="mnote"><span class="m-hover">metadata changed - hover<xsl:copy-of select="$ii"/></span><span class="m-inline">metadata changed - see below</span></span></xsl:if>
         <xsl:if test="@renamedFrom"><span class="renamed-from">renamed from <xsl:value-of select="@renamedFrom"/></span></xsl:if>
         <span class="guid"><xsl:value-of select="@guid"/></span>
       </td>
@@ -639,7 +673,7 @@
       <xsl:text>&#160;</xsl:text><span class="cardw"><span class="card">[<xsl:choose>
         <xsl:when test="$rl"><xsl:call-template name="r:token"><xsl:with-param name="e" select="$end"/><xsl:with-param name="name" select="'Cardinality'"/><xsl:with-param name="side" select="'model'"/></xsl:call-template></xsl:when>
         <xsl:otherwise><xsl:value-of select="r:prop($end, 'Cardinality', $side)"/></xsl:otherwise>
-      </xsl:choose>]</span><xsl:if test="$rl and $end/Properties/Property[@name = 'Cardinality']/@notation = 'true'"><span class="notation">notation only</span></xsl:if></span><xsl:if test="position() = 1"><xsl:text>&#160;→</xsl:text></xsl:if></span></span>
+      </xsl:choose>]</span><xsl:if test="$rl and $end/Properties/Property[@name = 'Cardinality']/@tag"><span class="notation"><xsl:value-of select="$end/Properties/Property[@name = 'Cardinality']/@tag"/></span></xsl:if></span><xsl:if test="position() = 1"><xsl:text>&#160;→</xsl:text></xsl:if></span></span>
       <xsl:if test="position() = 1"><xsl:text> </xsl:text></xsl:if>
     </xsl:for-each>
     </xsl:otherwise>
@@ -650,7 +684,7 @@
     <xsl:variable name="st" select="string(@status)"/>
     <xsl:variable name="src" select="End[@side = 'source']"/>
     <xsl:variable name="dst" select="End[@side = 'target']"/>
-    <div class="linkB" data-status="{$st}">
+    <div class="linkB" data-status="{$st}" data-link="{@kind}" data-guid="{@guid}" data-ends="{r:link-ends(., if ($st = 'deleted') then 'baseline' else 'model')}">
       <div class="link-h"><span class="badge" data-status="{$st}"><xsl:value-of select="$badge($st)"/></span><xsl:value-of select="@kind"/><span class="guid"><xsl:value-of select="@guid"/></span></div>
       <div class="sigline">
         <div><span class="lbl">Baseline</span>
@@ -756,12 +790,12 @@
             <xsl:if test="Connector">
               <xsl:variable name="cx" select="Connector"/>
               <div class="cx-list">
-                <div class="cx-h">Connectors <span class="cx-n"><xsl:value-of select="string-join(for $k in ('added', 'removed', 'rerouted', 'labels moved', 'restyled') return (if ($cx[@kind = $k]) then concat(count($cx[@kind = $k]), ' ', $k) else ()), ' · ')"/></span>
+                <div class="cx-h">Connectors <span class="cx-n"><xsl:value-of select="string-join(for $k in ('added', 'removed', 'rerouted', 'labels moved', 'labels changed', 'restyled') return (if ($cx[@kind = $k]) then concat(count($cx[@kind = $k]), ' ', $k) else ()), ' · ')"/></span>
                   <span class="cx-hint">hover a connector to outline the elements it joins</span></div>
                 <xsl:for-each select="$cx">
-                  <xsl:sort select="index-of(('added', 'removed', 'rerouted', 'labels moved', 'restyled'), @kind)[1]" data-type="number"/>
+                  <xsl:sort select="index-of(('added', 'removed', 'rerouted', 'labels moved', 'labels changed', 'restyled'), @kind)[1]" data-type="number"/>
                   <xsl:sort select="@name"/>
-                  <div class="cx-row" tabindex="0" data-side="{@side}" data-ends="{@ends}"><span class="cx-k cx-{translate(@kind, ' ', '-')}"><xsl:value-of select="@kind"/></span><span class="cx-name"><xsl:value-of select="@name"/></span></div>
+                  <div class="cx-row" tabindex="0" data-side="{@side}" data-ends="{@ends}"><span class="cx-k cx-{translate(@kind, ' ', '-')}"><xsl:value-of select="@kind"/></span><span class="cx-name"><xsl:value-of select="@name"/></span><xsl:if test="@what"><span class="cx-what"><xsl:value-of select="@what"/></span></xsl:if></div>
                 </xsl:for-each>
               </div>
             </xsl:if>
@@ -777,7 +811,16 @@
   <xsl:template name="r:diagram-image">
     <xsl:param name="side" as="xs:string"/>
     <div class="dimg" data-side="{$side}">
-      <img loading="lazy" src="Images-{$side}/{@eaid}.{$image-type}" alt="{@name} ({$side})"/>
+      <!-- #139 a diagram EA would not draw as SVG is a PNG, shown without highlights;
+           #139/#141 one EA could not draw at all has no image -->
+      <xsl:variable name="ext" select="(@*[local-name() = concat($side, '-ext')], $image-type)[1]"/>
+      <xsl:choose>
+        <xsl:when test="$ext = 'none'"><div class="dnone">No image: EA could not draw this diagram<xsl:if test="lower-case($image-type) = 'svg'"> as SVG or PNG</xsl:if>.</div></xsl:when>
+        <xsl:otherwise>
+          <img loading="lazy" src="Images-{$side}/{@eaid}.{$ext}" alt="{@name} ({$side})"/>
+          <xsl:if test="$ext != $image-type"><div class="dnote">EA could not draw this diagram as SVG; it is shown as a PNG, without highlights.</div></xsl:if>
+        </xsl:otherwise>
+      </xsl:choose>
       <xsl:for-each select="Highlight[@side = $side]">
         <span class="hl hl-{@kind}" data-box="{@box}" title="{if (@name != '') then concat(@name, ': ') else ''}{if (@kind = 'moved') then 'moved or resized' else @kind}"></span>
       </xsl:for-each>

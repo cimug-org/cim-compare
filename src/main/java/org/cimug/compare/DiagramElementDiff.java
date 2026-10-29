@@ -62,6 +62,31 @@ public class DiagramElementDiff {
 	 */
 	public static List<CompareItem> compare(List<DiagramElement> baseline, List<DiagramElement> destination,
 			Function<String, String> nameOf) {
+		return compare(baseline, destination, nameOf, false);
+	}
+
+	/**
+	 * @param positions #139: when an element has no image box (the XMI was exported
+	 *                  without images, as for SVG images), use its diagram position
+	 *                  ({@code Left;Top;Right;Bottom}) instead; {@link SvgDiagrams}
+	 *                  then moves it into the SVG's coordinates
+	 */
+	public static List<CompareItem> compare(List<DiagramElement> baseline, List<DiagramElement> destination,
+			Function<String, String> nameOf, boolean positions) {
+		Boolean before = POSITIONS.get();
+		POSITIONS.set(positions);
+		try {
+			return compareBoxes(baseline, destination, nameOf);
+		} finally {
+			POSITIONS.set(before);
+		}
+	}
+
+	/** #139 whether {@link #box} falls back to the diagram position (see compare). */
+	private static final ThreadLocal<Boolean> POSITIONS = ThreadLocal.withInitial(() -> Boolean.FALSE);
+
+	private static List<CompareItem> compareBoxes(List<DiagramElement> baseline, List<DiagramElement> destination,
+			Function<String, String> nameOf) {
 		Map<String, DiagramElement> b = boxed(baseline);
 		Map<String, DiagramElement> d = boxed(destination);
 
@@ -226,6 +251,42 @@ public class DiagramElementDiff {
 		return n == null || n.isEmpty() ? "(not in this model)" : n;
 	}
 
+	/**
+	 * #145: a connector for each association on the diagram whose drawn labels changed
+	 * ({@code labels}: association EAID → what changed), unless {@code listed} already
+	 * has a connector item for it. Each has a {@code Change} of {@code labels changed},
+	 * a {@code Labels} property saying what changed, and the boxes of its two ends.
+	 *
+	 * @param positions as for {@link #compare}
+	 */
+	public static List<CompareItem> labelsChanged(List<DiagramElement> destination, Map<String, String> labels,
+			List<CompareItem> listed, Function<String, String> nameOf, boolean positions) {
+		List<CompareItem> out = new ArrayList<>();
+		if (destination == null || labels == null || labels.isEmpty())
+			return out;
+		Boolean before = POSITIONS.get();
+		POSITIONS.set(positions);
+		try {
+			java.util.Set<String> have = new java.util.HashSet<>();
+			if (listed != null)
+				for (CompareItem i : listed)
+					if (CONNECTOR_TYPE.equals(i.getType()))
+						have.add(i.getGuid());
+			Map<String, DiagramElement> dDuid = byDuid(boxed(destination));
+			for (Map.Entry<String, DiagramElement> e : unboxed(destination).entrySet()) {
+				String what = labels.get(e.getKey());
+				if (what == null || have.contains(DiffUtils.convertXmiIdToEAGUID(e.getKey())))
+					continue;
+				CompareItem c = connector(e.getKey(), "labels changed", Status.Changed, e.getValue(), dDuid, false, nameOf);
+				c.getProperties().getProperty().add(new Property("Labels", null, what, Status.Changed.toString()));
+				out.add(c);
+			}
+		} finally {
+			POSITIONS.set(before);
+		}
+		return out;
+	}
+
 	/** Connectors (elements without image coordinates), by subject. */
 	private static Map<String, DiagramElement> unboxed(List<DiagramElement> elements) {
 		Map<String, DiagramElement> m = new LinkedHashMap<>();
@@ -257,7 +318,7 @@ public class DiagramElementDiff {
 		return m;
 	}
 
-	/** The element's box in image pixels, or null when EA did not write one. */
+	/** The element's box in image pixels, or null when EA did not write one (see compare's positions). */
 	static int[] box(DiagramElement e) {
 		Map<String, String> g = geometry(e.getGeometry());
 		try {
@@ -267,7 +328,7 @@ public class DiagramElementDiff {
 		} catch (NumberFormatException ignored) {
 			// fall through: no usable box
 		}
-		return null;
+		return POSITIONS.get() ? SvgDiagrams.position(e) : null;
 	}
 
 	static Map<String, String> geometry(String geometry) {

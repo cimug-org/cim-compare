@@ -2,7 +2,6 @@ package org.cimug.compare.app;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.PrintWriter;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -25,6 +24,8 @@ import org.cimug.compare.GeneralizationProperties;
 import org.cimug.compare.NamedTypeComparator;
 import org.cimug.compare.PackageProperties;
 import org.cimug.compare.Status;
+import org.cimug.compare.DrawnChanges;
+import org.cimug.compare.SvgDiagrams;
 import org.cimug.compare.app.CIMModelComparisonGenerator.DiagramImage;
 import org.cimug.compare.logs.CompareItem;
 import org.cimug.compare.logs.ComparePackage;
@@ -54,6 +55,18 @@ class GUIDBasedDiffReportGeneratorImpl implements DiffReportGenerator {
 	private File destinationImagesDir;
 	private DiagramImage imageType;
 	private File outputFile;
+
+	/**
+	 * #141: when set, the images of the diagrams that changed are drawn one at a time
+	 * just before the comparison XML is written, and the highlight boxes are moved into
+	 * their coordinates. Set by the run around the comparison.
+	 */
+	static PerDiagramImages drawer;
+	/** #141: the diagrams to draw on each side. */
+	private final java.util.Set<String> drawBaseline = new java.util.LinkedHashSet<>(),
+			drawDestination = new java.util.LinkedHashSet<>();
+	/** #141: each changed diagram's highlight items, to move into its images once drawn. */
+	private final List<Object[]> toPlace = new java.util.ArrayList<>();
 
 	public GUIDBasedDiffReportGeneratorImpl(XMIContentType baselineContentType, XMIContentType targetContentType,
 			File outputFile, DiagramImage imageType) throws JAXBException {
@@ -127,10 +140,29 @@ class GUIDBasedDiffReportGeneratorImpl implements DiffReportGenerator {
 	public void processDiffReport() {
 		try {
 			EACompareLog compareLog = processDiffReport(baselineContentType, targetContentType);
+			markDrawnChanges(compareLog);
+			if (drawer != null)
+				drawAndPlace();
+			deleteUnchangedImages();
 			writeCompareLogFile(compareLog);
 		} catch (FileNotFoundException | JAXBException e) {
 			e.printStackTrace();
 			throw new RuntimeException(e);
+		}
+	}
+
+	/** #141: draws the changed diagrams and moves their highlight boxes into the images. */
+	private void drawAndPlace() {
+		drawer.draw(drawBaseline, drawDestination);
+		if (drawer.unavailable != null)
+			return; // the run exports again with images and compares again
+		for (Object[] p : toPlace) {
+			@SuppressWarnings("unchecked")
+			List<CompareItem> items = (List<CompareItem>) p[0];
+			Diagram b = (Diagram) p[1], d = (Diagram) p[2];
+			String name = (String) p[3];
+			SvgDiagrams.convert(items, b == null ? new java.util.HashMap<>() : drawer.boxes(true, b.getXmiId(), elementsOf(b), name),
+					d == null ? new java.util.HashMap<>() : drawer.boxes(false, d.getXmiId(), elementsOf(d), name));
 		}
 	}
 
@@ -139,10 +171,17 @@ class GUIDBasedDiffReportGeneratorImpl implements DiffReportGenerator {
 		Marshaller jaxbMarshaller = jaxbContext.createMarshaller();
 		jaxbMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
 		jaxbMarshaller.setProperty(Marshaller.JAXB_ENCODING, "UTF-8");
+		// #143: marshal to bytes, so the XML is written in the UTF-8 it declares; a Writer
+		// such as new PrintWriter(File) uses the JVM's default character set (Windows-1252
+		// on Java 17 and earlier on Windows)
 		if (this.outputFile != null) {
-			jaxbMarshaller.marshal(compareLog, new PrintWriter(this.outputFile));
+			try (java.io.OutputStream out = new java.io.BufferedOutputStream(new java.io.FileOutputStream(this.outputFile), 1 << 16)) {
+				jaxbMarshaller.marshal(compareLog, out);
+			} catch (java.io.IOException e) {
+				throw new JAXBException(e);
+			}
 		} else {
-			jaxbMarshaller.marshal(compareLog, new PrintWriter(System.out));
+			jaxbMarshaller.marshal(compareLog, System.out);
 		}
 	}
 
@@ -221,13 +260,22 @@ class GUIDBasedDiffReportGeneratorImpl implements DiffReportGenerator {
 		return compareResults;
 	}
 
+	/** #147: the name of a package's parent package, or null when it is not in the export. */
+	private static String parentName(PackageType p, java.util.Map<String, PackageType> packages) {
+		if (p == null || p.getParentPackageXmiId() == null)
+			return null;
+		PackageType parent = packages.get(p.getParentPackageXmiId());
+		return parent == null ? null : parent.getName();
+	}
+
 	private CompareItem parsePackage(PackageType aPackage) {
 		CompareItem thePackage = null;
 
 		// Very first thing we do is to first determine if the package passed in is a
 		// deleted package...
 		if (preProcessor.getBaselineDeletedPackagesXmiIds().containsKey(aPackage.getXmiId())) {
-			PackageProperties deletedPackageProperties = new PackageProperties(aPackage, null);
+			PackageProperties deletedPackageProperties = new PackageProperties(aPackage, null,
+					parentName(aPackage, preProcessor.getAllBaselinePackagesXmiIds()), null);
 			Properties properties = deletedPackageProperties.getProperties();
 
 			thePackage = new CompareItem(properties, aPackage.getName(), "", aPackage.getGUID(),
@@ -263,7 +311,9 @@ class GUIDBasedDiffReportGeneratorImpl implements DiffReportGenerator {
 					? preProcessor.getBaselinePackagesXmiIds().get(aPackage.getXmiId())
 					: null);
 
-			PackageProperties packageProperties = new PackageProperties(baselinePackage, aPackage);
+			PackageProperties packageProperties = new PackageProperties(baselinePackage, aPackage,
+					parentName(baselinePackage, preProcessor.getAllBaselinePackagesXmiIds()),
+					parentName(aPackage, preProcessor.getAllTargetPackagesXmiIds()));
 			Properties properties = packageProperties.getProperties();
 
 			thePackage = new CompareItem(properties, aPackage.getName(), "Package", aPackage.getGUID(),
@@ -497,6 +547,8 @@ class GUIDBasedDiffReportGeneratorImpl implements DiffReportGenerator {
 			Properties properties = deletedDiagramProperties.getProperties();
 
 			diagramStatus = Status.BaselineOnly;
+			if (drawer != null)
+				drawBaseline.add(aDiagram.getXmiId());
 			
 			theDiagram = new CompareItem(properties, aDiagram.getName(), "", aDiagram.getGUID(),
 					diagramStatus.toString());
@@ -509,6 +561,8 @@ class GUIDBasedDiffReportGeneratorImpl implements DiffReportGenerator {
 				Properties properties = newDiagramProperties.getProperties();
 
 				diagramStatus = Status.ModelOnly;
+				if (drawer != null)
+					drawDestination.add(aDiagram.getXmiId());
 				
 				theDiagram = new CompareItem(properties, aDiagram.getName(), "Diagram", aDiagram.getGUID(),
 						diagramStatus.toString());
@@ -645,23 +699,153 @@ class GUIDBasedDiffReportGeneratorImpl implements DiffReportGenerator {
 				theDiagram = new CompareItem(properties, targetDiagram.getName(), "Diagram", targetDiagram.getGUID(),
 						diagramStatus.toString());
 
-				// #37: element-level differences, for highlighting on the diagram images.
-				if (!Status.Identical.equals(diagramStatus)) {
-					theDiagram.getCompareItem()
-							.addAll(DiagramElementDiff.compare(elementsOf(baselineDiagram), elementsOf(targetDiagram),
-									this::diagramSubjectName));
-				}
-
-				if (Status.Identical.equals(diagramStatus)) {
-					File baselineImageFile = new File(this.baselineImagesDir, targetDiagram.getXmiId()+ "." + imageType.ext());
-					baselineImageFile.delete();
-					File destinationImageFile = new File(this.destinationImagesDir, targetDiagram.getXmiId()+ "." + imageType.ext());
-					destinationImageFile.delete();
-				} 
+				// #37: element-level differences, for highlighting on the diagram images; #145:
+				// a diagram whose layout is unchanged may still be changed by what is drawn on it
+				// (see markDrawnChanges), so every diagram is kept until the comparison is done
+				DiagramRecord record = new DiagramRecord(theDiagram, baselineDiagram, targetDiagram);
+				diagramRecords.add(record);
+				if (!Status.Identical.equals(diagramStatus))
+					addElementItems(record);
 			}
 		}
 
 		return theDiagram;
+	}
+
+	/** A diagram in both models, with its comparison item and (once changed) its element items. */
+	private static final class DiagramRecord {
+		final CompareItem item;
+		final Diagram baseline, destination;
+		List<CompareItem> elementItems;
+
+		DiagramRecord(CompareItem item, Diagram baseline, Diagram destination) {
+			this.item = item;
+			this.baseline = baseline;
+			this.destination = destination;
+		}
+	}
+
+	/** The diagrams in both models, in the order compared. */
+	private final List<DiagramRecord> diagramRecords = new java.util.ArrayList<>();
+
+	/** #37: a changed diagram's element items (highlights and connectors). */
+	private void addElementItems(DiagramRecord r) {
+		List<CompareItem> elementItems = DiagramElementDiff.compare(elementsOf(r.baseline), elementsOf(r.destination),
+				this::diagramSubjectName, positions());
+		r.elementItems = elementItems;
+		if (drawer != null) {
+			// #141: draw this diagram once the comparison is done; its boxes (diagram
+			// positions) are moved into the images then
+			if (r.baseline != null)
+				drawBaseline.add(r.baseline.getXmiId());
+			if (r.destination != null)
+				drawDestination.add(r.destination.getXmiId());
+			toPlace.add(new Object[] { elementItems, r.baseline, r.destination, r.destination.getName() });
+		} else
+			placeOnSvgs(r, elementItems);
+		r.item.getCompareItem().addAll(elementItems);
+	}
+
+	/** #139: diagram positions are used for boxes when the XMI has no image boxes. */
+	private boolean positions() {
+		return imageType == DiagramImage.SVG || drawer != null;
+	}
+
+	/**
+	 * #139: SVG images beside XMI files given as input: move the boxes (diagram
+	 * positions, or the pixels of an image the XMI export wrote) into each SVG's own
+	 * coordinates.
+	 */
+	private void placeOnSvgs(DiagramRecord r, List<CompareItem> items) {
+		if (imageType == DiagramImage.SVG)
+			SvgDiagrams.convert(items,
+					svgBoxes(this.baselineImagesDir, r.baseline, r.destination.getName(), "Baseline"),
+					svgBoxes(this.destinationImagesDir, r.destination, r.destination.getName(), "Destination"));
+	}
+
+	/**
+	 * #145: a diagram is changed when its picture would differ: when its layout changed
+	 * (found while comparing), or when a class or an association drawn on it changed in
+	 * a way the diagram shows ({@link DrawnChanges}). A diagram whose layout is unchanged
+	 * but which shows such a class or association becomes changed, and is drawn and
+	 * reported like any other; on every changed diagram, an association whose drawn
+	 * labels changed is listed as a connector whose labels changed.
+	 */
+	private void markDrawnChanges(EACompareLog log) {
+		CompareItem root = log == null || log.getComparePackage() == null
+				|| log.getComparePackage().getCompareResults() == null ? null
+						: log.getComparePackage().getCompareResults().getCompareItem();
+		if (root == null)
+			return;
+		java.util.Set<String> classes = DrawnChanges.classes(root);
+		java.util.Map<String, String> connectors = DrawnChanges.connectors(root);
+		if (classes.isEmpty() && connectors.isEmpty())
+			return;
+		int promoted = 0;
+		for (DiagramRecord r : diagramRecords) {
+			if (r.elementItems == null) {
+				// layout unchanged: changed when something drawn on it changed
+				if (!showsAny(r.destination, classes, connectors))
+					continue;
+				r.item.setStatus(Status.Changed.toString());
+				addElementItems(r);
+				promoted++;
+			}
+			List<CompareItem> relabelled = DiagramElementDiff.labelsChanged(elementsOf(r.destination), connectors,
+					r.elementItems, this::diagramSubjectName, positions());
+			if (relabelled.isEmpty())
+				continue;
+			r.elementItems.addAll(relabelled); // placed on the images with the others (#141)
+			if (drawer == null)
+				placeOnSvgs(r, relabelled);
+			r.item.getCompareItem().addAll(relabelled);
+		}
+		if (promoted > 0)
+			System.out.println("\n" + promoted + " diagram(s) with an unchanged layout show a changed class or association;"
+					+ " they are reported as changed.");
+	}
+
+	/** Whether a diagram shows one of the classes or associations given (by EAID). */
+	private static boolean showsAny(Diagram d, java.util.Set<String> classes, java.util.Map<String, String> connectors) {
+		List<DiagramElement> elements = elementsOf(d);
+		if (elements != null)
+			for (DiagramElement e : elements)
+				if (e.getSubject() != null && (classes.contains(e.getSubject()) || connectors.containsKey(e.getSubject())))
+					return true;
+		return false;
+	}
+
+	/**
+	 * Deletes the images of the diagrams that stayed unchanged (images the XMI export
+	 * wrote for every diagram; none when they are drawn one at a time, #141).
+	 */
+	private void deleteUnchangedImages() {
+		if (imageType == null || imageType.ext() == null)
+			return;
+		for (DiagramRecord r : diagramRecords)
+			if (r.elementItems == null) {
+				new File(this.baselineImagesDir, r.destination.getXmiId() + "." + imageType.ext()).delete();
+				new File(this.destinationImagesDir, r.destination.getXmiId() + "." + imageType.ext()).delete();
+			}
+	}
+
+	/** #139 a diagram's highlight boxes mapped into its SVG image (empty when it cannot be). */
+	private static java.util.Map<String, String> svgBoxes(File imagesDir, Diagram diagram, String name, String side) {
+		if (diagram == null || imagesDir == null)
+			return new java.util.HashMap<>();
+		File svg = new File(imagesDir, diagram.getXmiId() + ".svg");
+		if (!svg.isFile())
+			return new java.util.HashMap<>();
+		try {
+			String text = new String(java.nio.file.Files.readAllBytes(svg.toPath()), java.nio.charset.StandardCharsets.UTF_8);
+			int[] shift = SvgDiagrams.shift(text, elementsOf(diagram));
+			if (shift == null)
+				System.out.println("\nWARNING:  " + side + " model: could not line up the highlights with the SVG image of diagram '" + name
+						+ "' (" + svg.getName() + "); its highlights are left out.");
+			return SvgDiagrams.boxMap(elementsOf(diagram), shift, text);
+		} catch (java.io.IOException e) {
+			return new java.util.HashMap<>();
+		}
 	}
 
 	private static List<DiagramElement> elementsOf(Diagram diagram) {

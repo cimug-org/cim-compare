@@ -84,6 +84,31 @@ button { font: inherit; }
 .hdr .results div:hover, .hdr .results div.sel { background: var(--changed); }
 .hdr .results .path { color: var(--muted); font-size: var(--fs-s); margin-left: auto; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 55%; }
 .hdr .results .kind { color: var(--faint); font-size: var(--fs-s); width: 16px; }
+/* #133 a GUID hit: the GUID under the name, the typed part in bold; links get a line icon */
+.hdr .results { min-width: min(560px, 90vw); }
+.hdr .results div.ghit { align-items: center; }
+.hdr .results .kind svg { color: var(--muted); vertical-align: middle; }
+.hdr .results .gmain { display: flex; flex-direction: column; min-width: 0; }
+.hdr .results .gname .lk { color: var(--muted); font-size: var(--fs-s); }
+.hdr .results .gid { font: 11px/1.4 var(--mono); color: var(--faint); white-space: nowrap; }
+.hdr .results .gid b { color: var(--muted); font-weight: 600; }
+.hdr .results div.gnone { color: var(--muted); font-style: italic; cursor: default; }
+.hdr .results div.gnone:hover { background: none; }
+/* #131 packages: a drawn folder (SVG), the same on every system and in print; sized in em so it
+   scales with the text at any zoom. (The 📁 emoji looked different everywhere, and Edge and Chrome
+   put it into a PDF as a Type 3 font that Acrobat warns about.) */
+.fold { display: inline-block; width: 1.15em; height: .92em; position: relative; top: calc(.08em - 1px);
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 13'%3E%3Cpath d='M1 2.2C1 1.5 1.5 1 2.2 1h3.6l1.6 1.6h6.4c.7 0 1.2.5 1.2 1.2v7c0 .7-.5 1.2-1.2 1.2H2.2C1.5 12 1 11.5 1 10.8z' fill='%23D9A43A' stroke='%23B5841F' stroke-width='.8'/%3E%3Cpath d='M1 4.4h14' stroke='%23B5841F' stroke-width='.8'/%3E%3Crect x='1.4' y='4.8' width='13.2' height='6.8' rx='.6' fill='%23F0C35A'/%3E%3C/svg%3E") no-repeat center / contain; }
+/* the Print / PDF button and its hover note */
+.hdr .pbwrap { position: relative; display: inline-block; }
+.hdr button svg, .hdr .seg svg { vertical-align: -2px; margin-right: 5px; }
+.hdr .pbpop { display: none; position: absolute; right: 0; top: calc(100% + 6px); z-index: 60; width: 360px; padding: 10px 12px;
+  background: var(--surface); color: var(--ink); border: 1px solid var(--line); border-radius: var(--r); box-shadow: 0 6px 18px #0004;
+  font: 12px/1.55 var(--sans); text-align: left; white-space: normal; }
+.hdr .pbpop b { display: block; margin-bottom: 4px; font-size: 13px; }
+.hdr .pbpop span { display: block; }
+.hdr .pbpop .pbn { margin-top: 6px; color: var(--muted); }
+.hdr .pbwrap:hover .pbpop, .hdr .pbwrap:focus-within .pbpop { display: block; }
 .hdr button, .hdr label.chk { padding: 4px 9px; border: 1px solid #4a5563; border-radius: var(--r); background: #ffffff14; color: var(--head-ink);
   cursor: pointer; font-size: var(--fs-s); white-space: nowrap; display: inline-flex; gap: 5px; align-items: center; }
 .hdr button:hover, .hdr label.chk:hover { background: #ffffff24; }
@@ -105,6 +130,15 @@ button { font: inherit; }
 .summary .clear.active { color: var(--ink); }
 .summary .clear a { color: var(--link); }
 .legend { display: flex; flex-wrap: wrap; gap: 6px 16px; font-size: var(--fs-s); color: var(--ink-2); padding: 0 4px 10px; }
+/* #126 the "not shown" note: tight under the legend, space before the outline */
+.empty-note { margin: -6px 0 10px; padding: 0 4px; font: italic 11.5px var(--sans); color: var(--muted); }
+.empty-note code { font-style: normal; }
+.empty-note .tipwrap { position: relative; border-bottom: 1px dotted var(--muted); cursor: help; outline: none; }
+.empty-note .tip { display: none; position: absolute; left: 0; top: 1.6em; z-index: 50; width: 330px; padding: 8px 10px; background: var(--surface); color: var(--ink); border: 1px solid var(--line); border-radius: var(--r); box-shadow: 0 4px 14px #0002; font: normal 12px/1.55 var(--sans); }
+.empty-note .tip b, .empty-note .tip .tl, .empty-note .tip .tip-n { display: block; }
+.empty-note .tip .tip-n { color: var(--muted); }
+.empty-note .tipwrap:hover .tip, .empty-note .tipwrap:focus .tip { display: block; }
+ @media print { .empty-note .tip { display: inline; position: static; box-shadow: none; border: 0; padding: 0; width: auto; font: inherit; color: inherit; } .empty-note .tip b, .empty-note .tip .tip-n { display: none; } .empty-note .tip .tl { display: inline; } .empty-note .tip .tl + .tl::before { content: "; "; } .empty-note .tip::before { content: " ("; } .empty-note .tip::after { content: ")"; } }
 .legend span { display: inline-flex; align-items: center; gap: 5px; }
 .sw { display: inline-block; width: 12px; height: 12px; border-radius: 3px; border: 1px solid #0002; }
 .s-added { background: var(--added); border-color: var(--added-line); }
@@ -152,8 +186,15 @@ body.hide-guids .guid { display: none; }
 .grp-h { font-weight: 700; font-size: 12px; color: var(--ink-2); padding: 8px 8px 2px; }
 .grp-h .n { color: var(--muted); font-weight: 400; }
 .empty { color: var(--muted); font-size: var(--fs-s); padding: 4px 10px; font-style: italic; }
-.row.target, tr.target > td, ul.plain li.target { box-shadow: 0 0 0 3px var(--hilite); }
-.row, ul.plain li, table.attrs tr { scroll-margin-top: calc(var(--hdr-h, 96px) + 12px); }  /* clear the sticky header when scrolled to */
+.row.target { box-shadow: 0 0 0 3px var(--hilite); }
+/* #133 a link or list entry jumped to gets the same rounded blue ring as a row; a table row cannot
+   have rounded corners, so report.js lays a ring (.tr-ring) over an attribute row instead */
+ul.plain li.target, ul.plain li:target, .linkB.target { outline: 2px solid var(--focus); outline-offset: 1px; border-radius: var(--r); }
+/* #139 under a diagram shown as PNG because EA could not draw it as SVG */
+.dimg .dnone { padding: 28px 12px; text-align: center; font: italic 12px var(--sans); color: var(--muted); border: 1px dashed var(--line); border-radius: var(--r); }
+.dimg .dnote { font: italic 11.5px var(--sans); color: var(--muted); padding: 4px 2px 0; }
+.tr-ring { position: absolute; pointer-events: none; z-index: 2; border: 2px solid var(--focus); border-radius: var(--r); }
+.row, ul.plain li, table.attrs tr, .linkB { scroll-margin-top: calc(var(--hdr-h, 96px) + 12px); }  /* clear the sticky header when scrolled to */
 .filtered-out { display: none !important; }
 
 /* ---------- detail ---------- */
@@ -207,6 +248,15 @@ table.attrs td.gone { text-align: center; color: var(--deleted-ink); font-weight
 table.attrs td.nx { text-align: center; color: var(--muted); font-size: var(--fs-s); vertical-align: middle; background: repeating-linear-gradient(135deg, transparent 0 8px, #0000000a 8px 10px); }
 table.attrs .info { display: inline-block; color: var(--muted); font-size: 11px; border: 1px solid var(--faint); border-radius: 50%; width: 14px; height: 14px; line-height: 12px; text-align: center; font-family: serif; font-style: italic; cursor: pointer; margin-left: 5px; vertical-align: 1px; }
 table.attrs .info:hover { color: var(--ink); border-color: var(--ink); }
+/* #123 metadata changed that the row does not show: a blue ⓘ with a dot, and a grey note */
+.info.info-chg { position: relative; color: var(--changed-ink); border-color: var(--changed-ink); }
+.info.info-chg::after { content: ""; position: absolute; top: -3px; right: -4px; width: 6px; height: 6px; border-radius: 50%; background: #2864d2; }
+table.attrs .mnote { margin-left: 6px; font: italic 400 11px var(--sans); color: var(--muted); white-space: nowrap; }
+/* #137 the drawn ⓘ in running text (legend, "not shown" note, "metadata changed - hover") */
+svg.ii { width: 1.1em; height: 1.1em; vertical-align: -0.2em; margin-right: .3em; flex: none; }
+.legend svg.ii { margin-right: -1px; }
+.mnote svg.ii { margin: 0 0 0 .25em; }
+body.meta-inline table.attrs .mnote .m-hover, body:not(.meta-inline) table.attrs .mnote .m-inline { display: none; }
 tr.meta { display: none; }
 tr.meta.open { display: table-row; }
 tr.meta > td { background: var(--ground); padding: 6px 10px; }
@@ -261,15 +311,29 @@ table.attrsB td.nt .side { font-size: 10px; text-transform: uppercase; letter-sp
 .diag img { max-width: 100%; height: auto; background: #fff; border: 1px solid var(--line); cursor: zoom-in; }
 .diag .gone { color: var(--deleted-ink); font-weight: 600; padding: 30px 0; }
 .diag .nx { color: var(--muted); font-style: italic; padding: 30px 0; }
-.lightbox { position: fixed; inset: 0; background: #000c; z-index: 50; display: none; align-items: center; justify-content: center; padding: 20px; cursor: zoom-out; }
-.lightbox.on { display: flex; }
-.lightbox img { max-width: calc(100vw - 40px); max-height: calc(100vh - 40px); background: #fff; display: block; }
+.lightbox { position: fixed; inset: 0; background: #000c; z-index: 50; display: none; overflow: hidden; }
+.lightbox.on { display: block; }
+/* #153 zoom and pan: the image is sized by script (zoom) and moved by a translate (pan) */
+.lb-stage { position: absolute; inset: 0; overflow: hidden; cursor: grab; touch-action: none; user-select: none; -webkit-user-select: none; }
+.lb-stage img { -webkit-user-drag: none; }
+.lb-stage.dragging { cursor: grabbing; }
+.lb-stage .dimg { position: absolute; left: 0; top: 0; max-width: none; }
+.lb-stage .dimg img { max-width: none; max-height: none; background: #fff; display: block; }
+.lb-tools { position: absolute; top: 14px; right: 14px; z-index: 2; display: flex; align-items: center; gap: 2px; padding: 4px;
+  background: #1f2933ee; border: 1px solid #ffffff2e; border-radius: 8px; box-shadow: 0 4px 16px #0006; font: 600 13px var(--sans); color: #fff; }
+.lb-tools button { all: unset; box-sizing: border-box; min-width: 32px; height: 30px; padding: 0 10px; border-radius: 6px;
+  text-align: center; line-height: 30px; cursor: pointer; color: #e8edf2; }
+.lb-tools button:hover, .lb-tools button:focus-visible { background: #ffffff1f; }
+.lb-tools .lvl { min-width: 54px; text-align: center; font-variant-numeric: tabular-nums; }
+.lb-tools .sep { width: 1px; height: 20px; background: #ffffff2e; margin: 0 4px; }
+.lb-hint { position: absolute; left: 50%; bottom: 14px; transform: translateX(-50%); z-index: 2; padding: 5px 12px; border-radius: 14px;
+  background: #1f2933cc; color: #d5dde5; font: 12px var(--sans); pointer-events: none; white-space: nowrap; }
 /* #37 diagram highlights: fixed colours, since diagram images are always white */
 .dimg { position: relative; display: inline-block; max-width: 100%; vertical-align: top; }
 .dimg img { display: block; }
 .hl { position: absolute; display: none; box-sizing: border-box; border: 2px solid; pointer-events: auto; cursor: zoom-in; }
 .dimg.placed .hl { display: block; }
-.lightbox .hl { border-width: 3px; cursor: zoom-out; }
+.lightbox .hl { border-width: 3px; cursor: inherit; }
 .hl-added    { border-color: #16963c; background: #16963c26; }
 .hl-removed  { border-color: #d22828; background: #d2282826; }
 .hl-changed  { border-color: #2864d2; background: #2864d226; }
@@ -288,6 +352,8 @@ body.no-hl .hl, body.no-hl .hl-legend { display: none !important; }
 /* the same fixed colours as the diagram highlights */
 .cx-added { color: #16963c; } .cx-removed { color: #d22828; }
 .cx-rerouted, .cx-labels-moved { color: #e68c00; } .cx-restyled { color: #8c46be; }
+.cx-labels-changed { color: var(--changed-ink); } /* #145: a change in the model, not in the layout */
+.cx-what { color: var(--muted); margin-left: 6px; }
 .cx-end { position: absolute; left: 0; top: 0; width: 100%; height: 100%; overflow: visible; pointer-events: none; }
 /* link signatures: "Class role name [multiplicity]" */
 .role-lbl { color: var(--muted); font-size: 11px; font-style: italic; }
@@ -316,10 +382,20 @@ body.no-hl .hl, body.no-hl .hl-legend { display: none !important; }
   .hdr .brand { border-right: 0; padding-right: 0; }
 }
 @media print {
-  .hdr, .summary .clear, .lightbox { display: none; }
+  /* #128 keep the status colours and redline highlights: browsers drop backgrounds unless asked */
+  html, body, * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+  /* the header prints with its title and information; the search box and buttons do not */
+  .hdr { position: static; }
+  .hdr .tools, .summary .clear, .lightbox { display: none; }
   .node.closed > .kids, .node.closed > .detail { display: block; }
-  .tree, .row { break-inside: avoid; }
+  /* the tree flows across pages (it used to be pushed whole to page 2); a row stays with its details */
+  .row { break-inside: avoid; break-after: avoid; }
+  /* expanded for printing, so the arrows show open */
+  .node > .row .chev:not(:empty) { font-size: 0; }
+  .node > .row .chev:not(:empty)::before { content: "▼"; font-size: 9px; }
 }
+/* #128 wide tables read better across the page: ask for landscape (the paper size stays the reader's) */
+@page { size: landscape; margin: 0.4in; }
 @media (prefers-reduced-motion: no-preference) {
   .row { transition: filter .12s; }
 }
@@ -333,7 +409,6 @@ ul.plain .card { color: var(--ink-2); font-family: var(--mono); }
 ul.plain .kind { font-size: var(--fs-s); color: var(--muted); min-width: 96px; }
 ul.plain .nt { color: var(--ink-2); flex: 1 1 100%; padding-left: 12px; font-size: var(--fs-s); }
 ul.plain .guid { margin-left: auto; font-family: var(--mono); font-size: 10px; color: var(--faint); user-select: all; }
-ul.plain li:target { box-shadow: 0 0 0 3px var(--hilite); }
 details.more { margin-top: 8px; }
 details.more > summary { cursor: pointer; color: var(--link); font-size: var(--fs-s); }
 details.more > summary:hover { text-decoration: underline; }
@@ -381,5 +456,11 @@ body.no-rail .rail { display: none; }
 }
 @media print {
   .rail { display: none; }
-  .layout { grid-template-columns: minmax(0, 1fr); }
+  /* #128 a block, not a one-column grid: Firefox does not split a grid item across pages, so it
+     pushed the whole tree to page 2 */
+  .layout { display: block; }
+  /* keep a diagram's baseline and destination panels on one page with their images */
+  .diag { break-inside: avoid; }
+  .sec-h { break-after: avoid; }
+  .tr-ring { display: none; }
 }

@@ -38,6 +38,23 @@ public class PackageProperties {
 	private Properties properties;
 
 	public PackageProperties(PackageType baselinePackage, PackageType targetPackage) {
+		this(baselinePackage, targetPackage, null, null);
+	}
+
+	/** #147: the names of the packages' parents, for the ParentPackage property. */
+	private final String baselineParentName, targetParentName;
+
+	/**
+	 * @param baselineParentName
+	 *            the name of the baseline package's parent, or null when it has none in
+	 *            the export (a root node or the --package package)
+	 * @param targetParentName
+	 *            the same for the destination package
+	 */
+	public PackageProperties(PackageType baselinePackage, PackageType targetPackage, String baselineParentName,
+			String targetParentName) {
+		this.baselineParentName = baselineParentName;
+		this.targetParentName = targetParentName;
 		this.baselinePackage = baselinePackage;
 		this.targetPackage = targetPackage;
 		//
@@ -203,6 +220,21 @@ public class PackageProperties {
 			}
 		}
 
+		// #147: the parent package, as for a class (whose ParentPackage comes from EA's
+		// package_name tag). It is changed only when the package moved to another parent: a
+		// parent that was only renamed is still the same package.
+		if (baselinePackage != null && targetPackage != null) {
+			boolean moved = movedParent(baselinePackage, targetPackage);
+			properties.getProperty().add(new Property("ParentPackage", baselineParentName, targetParentName,
+					moved ? Status.Changed.toString() : Status.Identical.toString()));
+		} else if (baselinePackage != null) {
+			properties.getProperty().add(new Property("ParentPackage", baselineParentName, null,
+					getStatus(baselineParentName, null)));
+		} else if (targetPackage != null) {
+			properties.getProperty().add(new Property("ParentPackage", null, targetParentName,
+					getStatus(null, targetParentName)));
+		}
+
 		// Sort the properties by property name...
 		Collections.sort(properties.getProperty(), new Comparator<Property>() {
 			@Override
@@ -223,8 +255,7 @@ public class PackageProperties {
 			return Status.ModelOnly;
 		if (this.targetPackage == null)
 			return Status.BaselineOnly;
-		if (this.baselinePackage.getParentPackageGUID() != null && this.targetPackage.getParentPackageGUID() != null
-				&& !this.baselinePackage.getParentPackageGUID().equals(this.targetPackage.getParentPackageGUID()))
+		if (movedParent(this.baselinePackage, this.targetPackage))
 			return Status.Moved;
 		for (Property property : properties.getProperty()) {
 			if (!Status.Identical.toString().equals(property.getStatus())) {
@@ -232,6 +263,12 @@ public class PackageProperties {
 			}
 		}
 		return Status.Identical;
+	}
+
+	/** Whether the package's parent is another package in the destination than in the baseline. */
+	private static boolean movedParent(PackageType baseline, PackageType target) {
+		return baseline.getParentPackageGUID() != null && target.getParentPackageGUID() != null
+				&& !baseline.getParentPackageGUID().equals(target.getParentPackageGUID());
 	}
 
 	private String getValue(String name, List<TaggedValueType> taggedValues) {

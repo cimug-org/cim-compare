@@ -103,12 +103,10 @@ public class ReportPreProcessor {
 	 */
 	private final Set<String> visiblyChangedClasses = new HashSet<String>();
 
-	/** Class properties drawn in a class's box on a diagram. */
-	private static final Set<String> DRAWN_CLASS_PROPS = new HashSet<String>(
-			Arrays.asList("Name", "Stereotype", "Abstract", "ParentPackage"));
+	/** Class properties drawn in a class's box on a diagram (shared with the comparison, #145). */
+	private static final Set<String> DRAWN_CLASS_PROPS = org.cimug.compare.DrawnChanges.CLASS_PROPS;
 	/** Attribute properties drawn in a class's box on a diagram. */
-	private static final Set<String> DRAWN_ATTRIBUTE_PROPS = new HashSet<String>(Arrays.asList("Name", "Stereotype",
-			"Type", "LowerBound", "UpperBound", "Default", "Scope", "Static", "Const", "IsLiteral"));
+	private static final Set<String> DRAWN_ATTRIBUTE_PROPS = org.cimug.compare.DrawnChanges.ATTRIBUTE_PROPS;
 	private final Map<String, Integer> counts = new LinkedHashMap<String, Integer>();
 	private final Set<String> usedIds = new HashSet<String>();
 
@@ -142,10 +140,25 @@ public class ReportPreProcessor {
 				: new ArrayList<String>(packageNames);
 	}
 
+	private boolean showEmptyValues;
+
+	/**
+	 * Report differences between a value and an empty value in EA's housekeeping
+	 * fields too (the {@code --show-empty-values} option, #126); by default they
+	 * are left out and counted.
+	 */
+	public ReportPreProcessor showEmptyValues(boolean show) {
+		this.showEmptyValues = show;
+		return this;
+	}
+
 	public Document process(Document in) throws ParserConfigurationException {
+		int emptyValues = showEmptyValues ? 0 : EmptyValues.apply(in.getDocumentElement());
 		out = DocumentBuilderFactory.newInstance().newDocumentBuilder().newDocument();
 		Element root = out.createElement("ComparisonReport");
 		out.appendChild(root);
+		if (emptyValues > 0)
+			root.setAttribute("emptyValuesNotShown", String.valueOf(emptyValues));
 
 		Element compareResults = firstChild(firstChild(in.getDocumentElement(), "ComparePackage"), "CompareResults");
 		Element comparePackage = firstChild(in.getDocumentElement(), "ComparePackage");
@@ -450,6 +463,9 @@ public class ReportPreProcessor {
 			if (!b.isEmpty())
 				ends.append(ends.length() > 0 ? ";" : "").append(b);
 		c.setAttribute("ends", ends.toString());
+		String what = prop(o, "Labels", "model"); // #145: what a "labels changed" connector shows changed
+		if (!what.isEmpty())
+			c.setAttribute("what", what);
 		return c;
 	}
 
@@ -515,8 +531,12 @@ public class ReportPreProcessor {
 				po.setAttribute("baseline", b);
 			if (m != null)
 				po.setAttribute("model", m);
-			if ("changed".equals(st) && "Cardinality".equals(name) && sameMultiplicity(b, m))
-				po.setAttribute("notation", "true");
+			if ("changed".equals(st)) {
+				String tag = "Cardinality".equals(name) && sameMultiplicity(b, m) ? "notation only" // #109
+						: "Stereotype".equals(name) ? stereotypeTag(b, m) : null; // #118
+				if (tag != null)
+					po.setAttribute("tag", tag);
+			}
 			if ("changed".equals(st) && TEXT_PROPS.contains(name)) {
 				Element r = out.createElement("Redline");
 				WordDiff.appendRedline(out, r, b, m);
@@ -642,6 +662,35 @@ public class ReportPreProcessor {
 				return true;
 		}
 		return false;
+	}
+
+	/**
+	 * How two stereotype lists that differ are alike (#118): "order only" when
+	 * they hold the same stereotypes in another order, "case only" when only the
+	 * case of a name changed, "order and case only" for both; null when a
+	 * stereotype was added, removed or renamed.
+	 */
+	static String stereotypeTag(String a, String b) {
+		java.util.List<String> x = org.cimug.compare.Stereotypes.split(a), y = org.cimug.compare.Stereotypes.split(b);
+		if (x.isEmpty() || x.size() != y.size())
+			return null;
+		if (sorted(x, false).equals(sorted(y, false)))
+			return x.equals(y) ? null : "order only";
+		boolean sameOrder = true;
+		for (int i = 0; i < x.size(); i++)
+			if (!x.get(i).equalsIgnoreCase(y.get(i)))
+				sameOrder = false;
+		if (sameOrder)
+			return "case only";
+		return sorted(x, true).equals(sorted(y, true)) ? "order and case only" : null;
+	}
+
+	private static java.util.List<String> sorted(java.util.List<String> names, boolean ignoreCase) {
+		java.util.List<String> l = new java.util.ArrayList<String>();
+		for (String n : names)
+			l.add(ignoreCase ? n.toLowerCase(java.util.Locale.ROOT) : n);
+		java.util.Collections.sort(l);
+		return l;
 	}
 
 	/**

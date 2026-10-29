@@ -27,4 +27,4 @@ defaults:
 
 # Latest release, shown in the website header (label and Download button).
 # Update this on each release; the jar is downloaded from that GitHub release.
-cim_compare_version: 2.1.1
+cim_compare_version: 2.2.0

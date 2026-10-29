@@ -6,7 +6,7 @@
 - **What it does:** given a "baseline" and a "destination" model (EA `.eap` / `.qea` project files, XMI 1.1 exports, or an EA model comparison log), it writes a single, self-contained HTML report of every added, deleted, moved and changed package, class and diagram. The report has search, filters, word-level redlines and highlighted diagram changes, and needs no server or internet connection.
 - **Who uses it:** the UCA TF13 model managers use it to publish the changes in each CIM release, and anyone tracking the CIM can use it to see what a new release means for their profiles, interfaces or products.
 
-See an [example report](https://cim-compare.ucaiug.io/example-comparison-report/comparison-report.html), or download this guide as a [PDF](cim-compare-2.1.1-users-guide.pdf).
+See an [example report](https://cim-compare.ucaiug.io/example-comparison-report/comparison-report.html), or download this guide as a [PDF](cim-compare-2.2.0-users-guide.pdf).
 
 ## Table of Contents
 - [Home](#cim-compare)
@@ -41,10 +41,24 @@ See an [example report](https://cim-compare.ucaiug.io/example-comparison-report/
 
 ## Latest Release
 
-2.1.1  
+2.2.0  
 
  - For release notes describing the latest features and/or fixes visit [latest release](https://github.com/cimug-org/cim-compare/releases).
- - To directly download the latest release of the cim-compare command-line application click [cim-compare-2.1.1.jar](https://github.com/cimug-org/cim-compare/releases/download/2.1.1/cim-compare-2.1.1.jar).
+ - To directly download the latest release of the cim-compare command-line application click [cim-compare-2.2.0.jar](https://github.com/cimug-org/cim-compare/releases/download/2.2.0/cim-compare-2.2.0.jar).
+
+<details markdown="1">
+<summary>What's New in 2.2.0</summary>
+
+- **SVG diagram images** ([#139](https://github.com/cimug-org/cim-compare/issues/139)). `--image-type=SVG` gives diagrams that stay sharp at any zoom and in print, with their text kept as text. They need EA 16.1 build 1629 or later on the machine that generates the report (whoever opens the report needs only a browser); with an older EA the report uses JPG and its header says so. See [Diagrams](#diagrams).
+- **Only the diagrams the report shows are drawn** ([#141](https://github.com/cimug-org/cim-compare/issues/141)). With EA project files and `--include-diagrams`, the models are exported without images and EA then draws only the changed diagrams, which shortens long runs and avoids EA running out of memory. A diagram is changed when its picture differs, including when a class or association drawn on it changed; an association whose role names, multiplicities or stereotype changed is listed as **labels changed**.
+- **Zoom and pan in the enlarged view** ([#153](https://github.com/cimug-org/cim-compare/issues/153)): mouse wheel, pinch, drag, a toolbar and the `+` `−` `0` keys.
+- **Search by GUID** ([#133](https://github.com/cimug-org/cim-compare/issues/133)), in any of the forms EA, XMI files and scripts use. See [Finding Things](#finding-things).
+- **A Print / PDF button** ([#131](https://github.com/cimug-org/cim-compare/issues/131)) with the settings for a good PDF, and printing that keeps the colors and the header ([#128](https://github.com/cimug-org/cim-compare/issues/128)). See [Printing and PDF](#printing-and-pdf).
+- **Empty housekeeping values are left out** ([#126](https://github.com/cimug-org/cim-compare/issues/126)): a value against an empty value in Complexity, Phase, Version, GenType and similar fields is not reported unless `--show-empty-values` is given; a line under the legend says how many were left out.
+- **Hidden attribute changes are pointed out** ([#123](https://github.com/cimug-org/cim-compare/issues/123)): *metadata changed - hover ⓘ* on a row whose change is only in its ⓘ metadata.
+- **Fixes:** every stereotype is read and compared, not only the first ([#118](https://github.com/cimug-org/cim-compare/issues/118)); Const is read from EA's `changeable` ([#122](https://github.com/cimug-org/cim-compare/issues/122)); the legend's ⓘ is drawn at the right size ([#137](https://github.com/cimug-org/cim-compare/issues/137)); the comparison XML is written in UTF-8 on every Java version ([#143](https://github.com/cimug-org/cim-compare/issues/143)); a moved package says where it came from ([#147](https://github.com/cimug-org/cim-compare/issues/147)); a filtered package is not shown as empty ([#148](https://github.com/cimug-org/cim-compare/issues/148)); the enlarged view's outlines line up in windows with a scrollbar ([#151](https://github.com/cimug-org/cim-compare/issues/151)).
+
+</details>
 
 <details markdown="1">
 <summary>What's New in 2.1.1</summary>
@@ -221,16 +235,16 @@ Current versions of Chrome, Edge, Firefox and Safari. Internet Explorer is not s
 
 Given the large file sizes consumed and produced by the utility, **OutOfMemory** exceptions occur if the default heap (memory) size is used. The following guidelines should be followed:
 
-> For a 32-bit JRE it is recommended to specify a max heap size of at least 1G (i.e. 1024m) resources permitting. With a 1G heap size the execution will typically run slower. Note that the maximum theoretical heap limit for a 32-bit JVM is 4G. However, due to various additional constraints such as available swap, kernel address space usage, memory fragmentation, and VM overhead, in practice the limit can be much lower. On most modern 32-bit Windows systems the maximum heap size will range from 1.4G to 1.6G.
+> For a 32-bit JRE it is recommended to specify a max heap size of at least 1G (i.e. 1024m) resources permitting. With a 1G heap size the execution will typically run slower. Note that the maximum theoretical heap limit for a 32-bit JVM is 4G. However, due to various additional constraints such as available swap, kernel address space usage, memory fragmentation, and VM overhead, in practice the limit can be much lower. On most modern 32-bit Windows systems the maximum heap size will range from 1.4G to 1.6G. A 32-bit Java refuses a larger setting such as `-Xmx4G` at startup with "Invalid maximum heap size". A comparison of the CIM Grid package with diagrams runs on 32-bit Java 17 with `-Xmx1200m`.
 
 ```
-java -Xmx1G -jar cim-compare-2.1.1.jar iec61970cim16v26a.xmi iec61970cim17v16.xmi D:\reports
+java -Xmx1G -jar cim-compare-2.2.0.jar iec61970cim16v26a.xmi iec61970cim17v16.xmi D:\reports
 ```
 
 > For 64 bit JREs it is recommended that the maximum heap size be increased to at least 2G (i.e. 2048m) but more if available. It has been observed that 2G is minimally sufficient to handle larger CIM models one might encounter. In the below example 4G is being allocated.
 
 ```
-java -Xmx4G -jar cim-compare-2.1.1.jar iec61970cim16v26a.qea iec61970cim17v16.qea D:\reports
+java -Xmx4G -jar cim-compare-2.2.0.jar iec61970cim16v26a.qea iec61970cim17v16.qea D:\reports
 ```
 
 > Most of that memory is needed to export and compare the models. Producing the report itself takes much less: for a full-model CIM17v40 → CIM18v16 comparison (a 92 MB comparison XML), the report step needed less than 1G, including with `--full`.
@@ -262,7 +276,7 @@ or, in a batch file, set them once for every Java program run from it:
 set "JAVA_TOOL_OPTIONS=-Djdk.xml.totalEntitySizeLimit=0 -Djdk.xml.maxGeneralEntitySizeLimit=0 --enable-native-access=ALL-UNNAMED"
 ```
 
-Note that newer Java releases for Windows are 64-bit only (see [Azul OpenJDK](#azul-openjdk)). Comparing `.eap` project files needs 32-bit Java, so for `.eap` input use Java 21 or earlier; `.qea`, XMI and compare-log input can use any current release.
+Note that newer Java releases for Windows are 64-bit only (see [Azul OpenJDK](#azul-openjdk)). Comparing `.eap` project files needs 32-bit Java, so for `.eap` input use Java 17 or earlier; `.qea`, XMI and compare-log input can use any current release.
 
 ### Azul OpenJDK
 
@@ -273,10 +287,7 @@ We recommend end-users use Azul OpenJDK (Zulu) which is Azul Systems’ free, TC
 * Available for multiple platforms: Windows, Linux, macOS, and others.
 * Includes free updates, security patches, and optional commercial support.
 
-When downloading there are special considerations related to the 32-bit version. As of Azul's [April 2025 supported-platforms list](https://docs.azul.com/core/supported-platforms), Java 8, 11, 17, 21 — are available in both Windows x86 32‑bit and 64‑bit, as well as Linux x86 32‑bit and 64‑bit. However, there are no 32-bit builds for the latest releases:
-
-* **Java 24 (OpenJDK 24)** — The supported platform table explicitly states that Azul Zulu builds of **Java 24 are only offered for 64‑bit Windows**, with no mention of 32‑bit availability.
-* The broader Azul download includes the latest versions (Java 23, 21, 17, etc.) but **only have available 64‑bit options for newer platform support**.
+When downloading there are special considerations related to the 32-bit version. Azul's [supported-platforms list](https://docs.azul.com/core/supported-platforms) offers Windows x86 32-bit builds only of Java 8, 11 and 17; Java 21 and later are 64-bit only on Windows.
 
 The reason for the shift is that it reflects a broader trend. OpenJDK deprecated Windows 32‑bit, targeting removal in JDK 23+, making it increasingly rare to see 32‑bit builds in newer OpenJDK distributions. Therefore, though **cim-compare** is not tied to Java 17 and can run on newer releases of OpenJDK (from 2.0.1 including Java 24 and later with no extra settings; see [Java 24 and Later](#java-24-and-later)), the below provided download links simply point to Java 17 where both 32-bit and 64-bit versions are available. For `.qea`, XMI or compare-log input a newer 64-bit release such as Java 21 or 25 works equally well.
 
@@ -313,9 +324,9 @@ If you are comparing `.qea` files with a 64-bit EA (EA 16 or later) then you'll 
 >
 > The purpose of each is:
 > 
-> - `SSJavaCOM.dll` - the 32-bit COM Module DLL (Dynamic Linked Library) that **cim-compare** will link to when a 32-bit Java JVM/JRE is used to run `cim-compare-2.1.1.jar` from the command line (the usual path for `.eap` project files with a 32-bit EA; `.eap` files use Microsoft's Jet database engine, which is 32-bit only, so only a 32-bit EA can open them, though 64-bit Java with `SSJavaCOM64.dll` can also drive a 32-bit EA, as in the tested mixed comparison under [Warning: Potential Configuration Pitfalls](#warning-potential-configuration-pitfalls)).
+> - `SSJavaCOM.dll` - the 32-bit COM Module DLL (Dynamic Linked Library) that **cim-compare** will link to when a 32-bit Java JVM/JRE is used to run `cim-compare-2.2.0.jar` from the command line (the usual path for `.eap` project files with a 32-bit EA; `.eap` files use Microsoft's Jet database engine, which is 32-bit only, so only a 32-bit EA can open them, though 64-bit Java with `SSJavaCOM64.dll` can also drive a 32-bit EA, as in the tested mixed comparison under [Warning: Potential Configuration Pitfalls](#warning-potential-configuration-pitfalls)).
 >
-> - `SSJavaCOM64.dll` - the 64-bit COM Module DLL that **cim-compare** will link to when a 64-bit Java JVM/JRE is used to run `cim-compare-2.1.1.jar` from the command line (the usual path for `.qea` project files with a 64-bit EA, EA 16 or later; `.qea` itself is not 64-bit-only, as Sparx states `.qea` files work in both 32-bit and 64-bit EA).
+> - `SSJavaCOM64.dll` - the 64-bit COM Module DLL that **cim-compare** will link to when a 64-bit Java JVM/JRE is used to run `cim-compare-2.2.0.jar` from the command line (the usual path for `.qea` project files with a 64-bit EA, EA 16 or later; `.qea` itself is not 64-bit-only, as Sparx states `.qea` files work in both 32-bit and 64-bit EA).
 >   	
 > **cim-compare** communicates to the appropriate COM Module DLL depending on the particular JVM (32-bit or 64-bit) being used on the command line. Which DLL to load is decided at run time: EA's `eaapi.jar` loads `SSJavaCOM.dll` when Java reports its architecture as `x86` (32-bit Java) and `SSJavaCOM64.dll` otherwise.
 >
@@ -327,8 +338,8 @@ To use **cim-compare** on a system with a dual 32-bit and 64-bit Sparx EA instal
 ```
 C:\
 ├── cim-compare
-│   ├── cim-compare-2.1.1.jar   (the latest downloaded from https://cim-compare.ucaiug.io)
-│   ├── cim-compare-2.1.1.bat   (example batch file for execution)
+│   ├── cim-compare-2.2.0.jar   (the latest downloaded from https://cim-compare.ucaiug.io)
+│   ├── cim-compare-2.2.0.bat   (example batch file for execution)
 │   ├── ea15
 │   │   ├── SSJavaCOM.dll       (copied from "C:\Program Files (x86)\Sparx Systems\EA15\Java API")
 │   │   └── SSJavaCOM64.dll     (copied from "C:\Program Files (x86)\Sparx Systems\EA15\Java API")
@@ -356,14 +367,14 @@ Of importance is that each EA installation's set of DLL files be located in thei
 Following is a set of command lines based on the above example configuration and file system structure. The first compares `.eap` files with 32-bit Java and the 32-bit EA15 installation; the second compares `.qea` files with 64-bit Java and the 64-bit EA16 installation. The command lines are split over several lines with `^`, the Windows command prompt's line-continuation character, so they can be pasted into a command prompt as shown.
  
 ```
-"C:\Program Files (x86)\Zulu\zulu-17\bin\java.exe" -Xmx1G -Djava.library.path="C:\cim-compare\ea15" ^
-  -jar cim-compare-2.1.1.jar cim17v40.eap cim18v02.eap comparison-report.html ^
+"C:\Program Files (x86)\Zulu\zulu-17\bin\java.exe" -Xmx1200m -Djava.library.path="C:\cim-compare\ea15" ^
+  -jar cim-compare-2.2.0.jar cim17v40.eap cim18v02.eap comparison-report.html ^
   --include-diagrams --image-type=JPG
 ```
 
 The above 32-bit command line example uses:
  - a 32-bit Java 17 JRE/JVM  (i.e. `"C:\Program Files (x86)\Zulu\zulu-17\bin\java.exe"`)
- - a max heap size of 1G (i.e. 1GB specified via `-Xmx1G` or `-Xmx1024m`)
+ - a max heap size of 1.2G (i.e. `-Xmx1200m`)
  - the 32-bit COM DLL loaded from the `C:\cim-compare\ea15` directory (i.e. via `-Djava.library.path="C:\cim-compare\ea15"`) 
  - `cim17v40.eap` as the input baseline model (an `.eap` project file, which only 32-bit EA can open)
  - `cim18v02.eap` as the input destination model (an `.eap` project file, which only 32-bit EA can open)
@@ -373,8 +384,8 @@ The above 32-bit command line example uses:
 
 ```
 "C:\Program Files\Zulu\zulu-17\bin\java.exe" -Xmx4G -Djava.library.path="C:\cim-compare\ea16" ^
-  -jar cim-compare-2.1.1.jar cim17v40.qea cim18v02.qea comparison-report.html ^
-  --include-diagrams --image-type=JPG
+  -jar cim-compare-2.2.0.jar cim17v40.qea cim18v02.qea comparison-report.html ^
+  --include-diagrams --image-type=SVG
 ```
 The above 64-bit command line example uses:
  - a 64-bit Java 17 JRE/JVM (i.e. `"C:\Program Files\Zulu\zulu-17\bin\java.exe"`)
@@ -384,7 +395,7 @@ The above 64-bit command line example uses:
  - `cim18v02.qea` as the input destination model (a `.qea` project file, opened here by the 64-bit EA16)
  - `comparison-report.html` as the name of the generated report
  - the inclusion of changed diagrams in the report (i.e. `--include-diagrams`)
- - JPG for the type of diagrams (i.e. `--image-type=JPG`)
+ - SVG for the type of diagrams (i.e. `--image-type=SVG`)
  
 ### Warning: Potential Configuration Pitfalls
 
@@ -402,7 +413,7 @@ The above 64-bit command line example uses:
 >
 > If choosing to simplify the command line via use of the default installation of Java such as:
 >
-> `java -Xmx4G -Djava.library.path="C:\cim-compare\ea16" -jar cim-compare-2.1.1.jar ...`
+> `java -Xmx4G -Djava.library.path="C:\cim-compare\ea16" -jar cim-compare-2.2.0.jar ...`
 > 
 > ...then it is suggested that you confirm the bit-wise version of your default Java installation. The following java command will result in output that should indicate if your default installation is 32-bit. This either by explicitly stating as such or by including the installation directory which for 32-bit will be located in `C:\Program Files (x86)\...`. Note that for many of the newest releases of Java, if not explicitly stated as being 32-bit, it is then implied to be 64-bit as illustrated in this example:
 >
@@ -438,15 +449,15 @@ The preferred usage is to provide two Enterprise Architect `*.eap` or `*.qea` fi
 The command-line usage for this option takes the following form:
 
 ```
-java [<jvm-parameter-1>]...[<jvm-parameter-n>] -jar cim-compare-2.1.1.jar
+java [<jvm-parameter-1>]...[<jvm-parameter-n>] -jar cim-compare-2.2.0.jar
      <baseline-model-file> <destination-model-file> [<output-directory-or-html-file>]
-     [--package=<package-name>,...] [--full] [--include-diagrams] [--image-type=<image-file-extension>]
+     [--package=<package-name>,...] [--full] [--show-empty-values] [--include-diagrams] [--image-type=<image-file-extension>]
      [--zip] [--cleanup]
 ```
 
 *Parameter Details*:
 
-`[<jvm-parameter-x>]` **(Optional)**: A JVM (Java Virtual Machine) parameter that may be needed for execution. JVM parameters are configurations used to control the behavior of the JVM at runtime and take a form such as `-Xmx1G`, `-Xmx4G` or `-Dfile.encoding=UTF-8`. These parameters can influence memory usage, garbage collection, system properties, debugging, and performance tuning. JVM parameters are passed as command-line arguments when starting a Java application and if used should **appear first** in the sequence of command line arguments (before `cim-compare-2.1.1.jar`). This is necessary so that **cim-compare** does not try to process them as part of its command line arguments which should always appear after `cim-compare-2.1.1.jar`. Note that for this Option #1 the `-Djava.library.path=<directory>` JVM parameter is required as will be described later.
+`[<jvm-parameter-x>]` **(Optional)**: A JVM (Java Virtual Machine) parameter that may be needed for execution. JVM parameters are configurations used to control the behavior of the JVM at runtime and take a form such as `-Xmx1G`, `-Xmx4G` or `-Dfile.encoding=UTF-8`. These parameters can influence memory usage, garbage collection, system properties, debugging, and performance tuning. JVM parameters are passed as command-line arguments when starting a Java application and if used should **appear first** in the sequence of command line arguments (before `cim-compare-2.2.0.jar`). This is necessary so that **cim-compare** does not try to process them as part of its command line arguments which should always appear after `cim-compare-2.2.0.jar`. Note that for this Option #1 the `-Djava.library.path=<directory>` JVM parameter is required as will be described later.
 
 `<baseline-model-file>` **(Required)**: An Enterprise Architect baseline `.eap` or `.qea` model file. When not specified as an absolute file path the location is assumed to be the directory **cim-compare** is being executed from.
 
@@ -458,11 +469,13 @@ java [<jvm-parameter-1>]...[<jvm-parameter-n>] -jar cim-compare-2.1.1.jar
 
 `[--full]` **(Optional)**: Include identical packages, classes, attributes, links and diagrams in the report as well as the changes. They are shown collapsed and in grey. Without `--full` the report contains only what changed.
 
+`[--show-empty-values]` **(Optional)**: Report every difference between a value and an empty value. Without it, such a difference is left out in the housekeeping fields EA fills in automatically when it creates an element: Complexity, Phase, Version and GenType (any value); Containment `Not Specified` or `Unspecified`; IsLiteral, Derived, Const and Static `false`. These fields are often empty in a model whose elements were created outside EA, and the differences do not change the model's definitions. The report says how many were left out, under the legend.
+
 `[--minimal]` **(Optional)**: Accepted so that command lines written for 1.x keep working, but has no effect: the report contains only changes by default since 2.0.0.
 
-`[--include-diagrams]` **(Optional)**: Indicates that diagram images should also be exported from EA along with the XMI exports. The type of images to be exported should also be provided using the `--image-type` option. When not specified the image type will default to JPG.
+`[--include-diagrams]` **(Optional)**: Include the changed diagrams in the report, with their images. **cim-compare** exports the two models from EA without images, compares them, and then has EA draw only the diagrams the report shows, into `Images-baseline` and `Images-destination`. A diagram EA fails to draw is tried once more in a new EA session; one it cannot draw at all says "No image" in the report. With EMF images, or with an EA older than 16.1 build 1629, every diagram's image is exported with the XMI instead, and the images the report does not show are then deleted. The image type is set with `--image-type`; JPG is the default.
 
-`[--image-type=<image-file-extension>]` **(Optional)**: The type of diagrams to be exported from EA (i.e. JPG, GIF, PNG, BMP, or EMF). This can be skipped for JPG images as JPG is used as the default value when the option is not specified. This command line option is only used when `--include-diagrams` also appears on the command line.
+`[--image-type=<image-file-extension>]` **(Optional)**: The type of diagram images: JPG (the default), SVG, PNG, GIF, BMP or EMF. SVG images stay sharp at any zoom and in print; they need EA 16.1 build 1629 or later on the machine where **cim-compare** runs (viewers of the report need only a browser), and with an older EA **cim-compare** says so and uses JPG, which the report header notes. A diagram EA will not draw as SVG is shown as a PNG, without highlights. Browsers cannot show EMF, so EMF diagrams do not display in the report. Used only with `--include-diagrams`.
 
 `[--zip]` **(Optional)**: When specified **cim-compare** will package up the generated report and any associated diagrams into a single ZIP archive. It is most often utilized for packaging the report when diagram images are included and can help simplify distribution. The ZIP archive contains the report and, with `--include-diagrams`, the `Images-baseline` and `Images-destination` folders; it never contains the XMI or XML files.
 
@@ -471,34 +484,37 @@ java [<jvm-parameter-1>]...[<jvm-parameter-n>] -jar cim-compare-2.1.1.jar
 **Command Line Examples:**
 
 ```
-java -Xmx1G -Djava.library.path="C:\cim-compare\ea15" -jar cim-compare-2.1.1.jar ^
+java -Xmx1G -Djava.library.path="C:\cim-compare\ea15" -jar cim-compare-2.2.0.jar ^
   "C:\exports\15v33.eap" "C:\exports\CIM16v26a.eap" "C:\reports"
 
-java -Xmx4G -Djava.library.path="C:\cim-compare\ea16" -jar cim-compare-2.1.1.jar ^
+java -Xmx4G -Djava.library.path="C:\cim-compare\ea16" -jar cim-compare-2.2.0.jar ^
   "C:\exports\15v33.qea" "C:\exports\CIM16v26a.qea" "C:\reports"
 
-java -Xmx1G -Djava.library.path="C:\cim-compare\ea15" -jar cim-compare-2.1.1.jar ^
+java -Xmx1G -Djava.library.path="C:\cim-compare\ea15" -jar cim-compare-2.2.0.jar ^
   "C:\exports\15v33.eap" "C:\exports\CIM16v26a.eap" --package=IEC61970
 
-java -Xmx4G -Djava.library.path="C:\cim-compare\ea16" -jar cim-compare-2.1.1.jar ^
+java -Xmx4G -Djava.library.path="C:\cim-compare\ea16" -jar cim-compare-2.2.0.jar ^
   CIM16_Reference.qea CIM16_Extended.qeax --package="Grid,European Standards,UtilityExtensions"
 
-java -Xmx1G -Djava.library.path="C:\cim-compare\ea15" -jar cim-compare-2.1.1.jar ^
+java -Xmx1G -Djava.library.path="C:\cim-compare\ea15" -jar cim-compare-2.2.0.jar ^
   CIM15v33.eap CIM16v26a.eap C:\reports --include-diagrams --zip
 
-java -Xmx4G -Djava.library.path="C:\cim-compare\ea16" -jar cim-compare-2.1.1.jar ^
+java -Xmx4G -Djava.library.path="C:\cim-compare\ea16" -jar cim-compare-2.2.0.jar ^
   CIM15v33.qea CIM16v26a.qea C:\reports\CIM15v33_CIM16v26a_ComparisonReport.html --full
 
-java -Xmx1G -Djava.library.path="C:\cim-compare\ea15" -jar cim-compare-2.1.1.jar ^
+java -Xmx1G -Djava.library.path="C:\cim-compare\ea15" -jar cim-compare-2.2.0.jar ^
   CIM15v33.eap CIM16v26a.eap --package=IEC62325 --include-diagrams --image-type=GIF --zip --cleanup
 
-java -Xmx4G -Djava.library.path="C:\cim-compare\ea16" -jar cim-compare-2.1.1.jar ^
-  CIM17v40.qea CIM18v16.qea --package=Grid --include-diagrams --zip --cleanup
+java -Xmx4G -Djava.library.path="C:\cim-compare\ea16" -jar cim-compare-2.2.0.jar ^
+  CIM17v40.qea CIM18v16.qea --package=Grid --include-diagrams --image-type=SVG --zip --cleanup
 
-java -Xmx4G -Djava.library.path="C:\cim-compare\ea16" -jar cim-compare-2.1.1.jar ^
+java -Xmx4G -Djava.library.path="C:\cim-compare\ea16" -jar cim-compare-2.2.0.jar ^
+  CIM_Grid18v13.qea CIM_Grid18v14.qea --package=Grid --show-empty-values
+
+java -Xmx4G -Djava.library.path="C:\cim-compare\ea16" -jar cim-compare-2.2.0.jar ^
   CIM16_Reference.qea CIM16_Extended.qeax --package=Model
 
-java -Xmx4G -Djava.library.path="C:\cim-compare\ea16" -jar cim-compare-2.1.1.jar ^
+java -Xmx4G -Djava.library.path="C:\cim-compare\ea16" -jar cim-compare-2.2.0.jar ^
   CIM_Grid18v13.eap CIM_Grid18v14.qeax --package=Grid --include-diagrams
 ```
 
@@ -509,15 +525,15 @@ NOTE:  The above command line examples use both `.eap` and `.qea` EA files as in
 The second usage is to directly specify two XMI 1.1 compliant files representing the "baseline" and “destination” models exported as described later in [Enterprise Architect XMI Export Procedures](#enterprise-architect-xmi-export-procedures). In this scenario the command-line usage takes the following form:
 
 ```
-java [<jvm-parameter-1>]...[<jvm-parameter-n>] -jar cim-compare-2.1.1.jar
+java [<jvm-parameter-1>]...[<jvm-parameter-n>] -jar cim-compare-2.2.0.jar
      <baseline-model-xmi-file> <destination-model-xmi-file> [<output-directory-or-html-file>]
-     [--package=<package-name>,...] [--full] [--include-diagrams] [--image-type=<image-file-extension>]
+     [--package=<package-name>,...] [--full] [--show-empty-values] [--include-diagrams] [--image-type=<image-file-extension>]
      [--zip] [--cleanup]
 ```
 
 *Parameter Details*:
 
-`[<jvm-parameter-x>]` **(Optional)**: A JVM (Java Virtual Machine) parameter that may be needed for execution. JVM parameters are configurations used to control the behavior of the JVM at runtime and take a form such as `-Xmx1G`, `-Xmx4G` or `-Dfile.encoding=UTF-8`. These parameters can influence memory usage, garbage collection, system properties, debugging, and performance tuning. JVM parameters are passed as command-line arguments when starting a Java application and if used should **appear first** in the sequence of command line arguments (before `cim-compare-2.1.1.jar`). This is necessary so that **cim-compare** does not try to process them as part of its command line arguments which should always appear after `cim-compare-2.1.1.jar`.
+`[<jvm-parameter-x>]` **(Optional)**: A JVM (Java Virtual Machine) parameter that may be needed for execution. JVM parameters are configurations used to control the behavior of the JVM at runtime and take a form such as `-Xmx1G`, `-Xmx4G` or `-Dfile.encoding=UTF-8`. These parameters can influence memory usage, garbage collection, system properties, debugging, and performance tuning. JVM parameters are passed as command-line arguments when starting a Java application and if used should **appear first** in the sequence of command line arguments (before `cim-compare-2.2.0.jar`). This is necessary so that **cim-compare** does not try to process them as part of its command line arguments which should always appear after `cim-compare-2.2.0.jar`.
 
 `<baseline-model-xmi-file>` **(Required)**: An XMI 1.1 compliant baseline model file exported from EA. When not specified as an absolute file path the location of the file is assumed to be the directory the utility is being executed from.
 
@@ -529,13 +545,15 @@ java [<jvm-parameter-1>]...[<jvm-parameter-n>] -jar cim-compare-2.1.1.jar
 
 `[--full]` **(Optional)**: Include identical packages, classes, attributes, links and diagrams in the report as well as the changes. They are shown collapsed and in grey. Without `--full` the report contains only what changed.
 
+`[--show-empty-values]` **(Optional)**: Report every difference between a value and an empty value. Without it, such a difference is left out in the housekeeping fields EA fills in automatically when it creates an element: Complexity, Phase, Version and GenType (any value); Containment `Not Specified` or `Unspecified`; IsLiteral, Derived, Const and Static `false`. These fields are often empty in a model whose elements were created outside EA, and the differences do not change the model's definitions. The report says how many were left out, under the legend.
+
 `[--minimal]` **(Optional)**: Accepted so that command lines written for 1.x keep working, but has no effect: the report contains only changes by default since 2.0.0.
 
 `[--include-diagrams]` **(Optional)**: When specified **cim-compare** indicates that diagram images should be included in the generated comparison report. Note that if the types of diagrams to be included are not JPG files then the `--image-type` option must also be used in tandem. When this option does not appear on the command line no diagrams will be included in the report.
 
-> IMPORTANT: this command line option does not automatically export diagrams as performed in usage Option \#1.  Rather the expectation is that they be exported as part of manual exports of XMI baseline and destination models from EA and that images are hosted in folders named `<output directory>\Images-baseline` and `<output directory>\Images-destination` respectively. This must be done prior to running **cim-compare**. Images of diagrams the report does not show (identical diagrams, and diagrams with nothing changed on them) are deleted from those folders. Refer to the [Enterprise Architect XMI Export Procedures](#enterprise-architect-xmi-export-procedures) for further details.
+> IMPORTANT: this command line option does not automatically export diagrams as performed in usage Option \#1.  Rather the expectation is that they be exported as part of manual exports of XMI baseline and destination models from EA and that images are hosted in folders named `<output directory>\Images-baseline` and `<output directory>\Images-destination` respectively. This must be done prior to running **cim-compare**. Images of diagrams the report does not show (identical diagrams, and diagrams with nothing changed on them) are deleted from those folders. SVG images can be exported with the XMI from EA 16.1 build 1621 or later. Refer to the [Enterprise Architect XMI Export Procedures](#enterprise-architect-xmi-export-procedures) for further details.
 
-`[--image-type=<image-file-extension>]` **(Optional / Conditionally Required)**: Indicates the type of images (i.e. JPG, GIF, PNG, BMP, or EMF) referenced in the report. Conditionally required when the `--include-diagrams` option is used and the diagram are not JPG image files. When not specified the default image type of JPG is used. This command line option is only relevant when `--include-diagrams` also appears on the command line.
+`[--image-type=<image-file-extension>]` **(Optional / Conditionally Required)**: Indicates the type of images (i.e. JPG, SVG, GIF, PNG, BMP, or EMF) referenced in the report. Conditionally required when the `--include-diagrams` option is used and the diagram are not JPG image files. When not specified the default image type of JPG is used. This command line option is only relevant when `--include-diagrams` also appears on the command line.
 
 `[--zip]` **(Optional)**: When specified **cim-compare** will package up the generated report and any associated diagrams into a single ZIP archive. It is most often utilized for packaging the report when diagram images are included and can help simplify distribution. The ZIP archive contains the report and, with `--include-diagrams`, the `Images-baseline` and `Images-destination` folders (everything in them is included, so keep only the diagram images there); it never contains the XMI or XML files.
 
@@ -544,20 +562,20 @@ java [<jvm-parameter-1>]...[<jvm-parameter-n>] -jar cim-compare-2.1.1.jar
 **Command Line Examples:**
 
 ```
-java -Xmx2G -jar cim-compare-2.1.1.jar "C:\XMI exports\15v33.xmi" "C:\XMI exports\CIM16v26a.xmi" "C:\reports"
+java -Xmx2G -jar cim-compare-2.2.0.jar "C:\XMI exports\15v33.xmi" "C:\XMI exports\CIM16v26a.xmi" "C:\reports"
 
-java -Xmx2G -jar cim-compare-2.1.1.jar "C:\XMI exports\15v33.xmi" "C:\XMI exports\CIM16v26a.xmi" --package=IEC61970
+java -Xmx2G -jar cim-compare-2.2.0.jar "C:\XMI exports\15v33.xmi" "C:\XMI exports\CIM16v26a.xmi" --package=IEC61970
 
-java -Xmx2G -jar cim-compare-2.1.1.jar CIM16_Reference.xmi CIM16_Extended.xmi --package=Grid,UtilityExtensions
+java -Xmx2G -jar cim-compare-2.2.0.jar CIM16_Reference.xmi CIM16_Extended.xmi --package=Grid,UtilityExtensions
 
-java -Xmx2G -jar cim-compare-2.1.1.jar CIM15v33.xmi CIM16v26a.xmi C:\reports --full
+java -Xmx2G -jar cim-compare-2.2.0.jar CIM15v33.xmi CIM16v26a.xmi C:\reports --full
 
-java -Xmx2G -jar cim-compare-2.1.1.jar CIM15v33.xmi CIM16v26a.xmi C:\reports ^
+java -Xmx2G -jar cim-compare-2.2.0.jar CIM15v33.xmi CIM16v26a.xmi C:\reports ^
   --include-diagrams --image-type=GIF --zip --cleanup
 
-java -Xmx2G -jar cim-compare-2.1.1.jar CIM15v33.xmi CIM16v26a.xmi C:\reports\CIM15v33_CIM16v26a_ComparisonReport.html
+java -Xmx2G -jar cim-compare-2.2.0.jar CIM15v33.xmi CIM16v26a.xmi C:\reports\CIM15v33_CIM16v26a_ComparisonReport.html
 
-java -Xmx2G -jar cim-compare-2.1.1.jar CIM15v33.xmi CIM16v26a.xmi CIM15v33_CIM16v26a_ComparisonReport.html ^
+java -Xmx2G -jar cim-compare-2.2.0.jar CIM15v33.xmi CIM16v26a.xmi CIM15v33_CIM16v26a_ComparisonReport.html ^
   --package=IEC62325 --include-diagrams --image-type=JPG --zip
 ```
 
@@ -568,14 +586,14 @@ The third option is by specifying an **EA model comparison log** file as input o
 This particular usage takes the following form:
 
 ```
-java [<jvm-parameter-1>]...[<jvm-parameter-n>] -jar cim-compare-2.1.1.jar
+java [<jvm-parameter-1>]...[<jvm-parameter-n>] -jar cim-compare-2.2.0.jar
      <comparison-results-xml-file> [<output-directory-or-html-file>]
-     [--package=<package-name>,...] [--full] [--zip] [--cleanup]
+     [--package=<package-name>,...] [--full] [--show-empty-values] [--zip] [--cleanup]
 ```
 
 *Parameter Details*:
 
-`[<jvm-parameter-x>]` **(Optional)**: A JVM (Java Virtual Machine) parameter that may be needed for execution. JVM parameters are configurations used to control the behavior of the JVM at runtime and take a form such as `-Xmx1G`, `-Xmx4G` or `-Dfile.encoding=UTF-8`. These parameters can influence memory usage, garbage collection, system properties, debugging, and performance tuning. JVM parameters are passed as command-line arguments when starting a Java application and if used should **appear first** in the sequence of command line arguments (before `cim-compare-2.1.1.jar`). This is necessary so that **cim-compare** does not try to process them as part of its command line arguments which should always appear after `cim-compare-2.1.1.jar`.
+`[<jvm-parameter-x>]` **(Optional)**: A JVM (Java Virtual Machine) parameter that may be needed for execution. JVM parameters are configurations used to control the behavior of the JVM at runtime and take a form such as `-Xmx1G`, `-Xmx4G` or `-Dfile.encoding=UTF-8`. These parameters can influence memory usage, garbage collection, system properties, debugging, and performance tuning. JVM parameters are passed as command-line arguments when starting a Java application and if used should **appear first** in the sequence of command line arguments (before `cim-compare-2.2.0.jar`). This is necessary so that **cim-compare** does not try to process them as part of its command line arguments which should always appear after `cim-compare-2.2.0.jar`.
 
 `<comparison-results-xml-file>` **(Required)**: The model comparison file. When not specified as an absolute file path the location of the file is assumed to be the directory the utility is being executed in.
 
@@ -584,6 +602,8 @@ java [<jvm-parameter-1>]...[<jvm-parameter-n>] -jar cim-compare-2.1.1.jar
 `[--package=<package-name>,...]` **(Optional)**: The package the report starts from, together with everything below it (e.g. `--package=Grid`, `--package=IEC61970`, `--package=IEC61968`, `--package=IEC62325`). Several packages can be given, separated by commas (e.g. `--package=Grid,UtilityExtensions`), and the report shows them in that order; put the value in quotes when a package name contains a space (e.g. `--package="Grid,European Standards"`). A name can be the package's name in either model, so a package renamed between the two versions (e.g. `IEC61970` → `Grid`) can be given by either name. If no package of a given name is in the comparison, **cim-compare** stops with an error naming it. If one listed package is inside another, it is reported as part of the outer package and a warning says so. When `--package` is not given, the report covers the whole model.
 
 `[--full]` **(Optional)**: Include identical packages, classes, attributes, links and diagrams in the report as well as the changes. They are shown collapsed and in grey. Without `--full` the report contains only what changed.
+
+`[--show-empty-values]` **(Optional)**: Report every difference between a value and an empty value. Without it, such a difference is left out in the housekeeping fields EA fills in automatically when it creates an element: Complexity, Phase, Version and GenType (any value); Containment `Not Specified` or `Unspecified`; IsLiteral, Derived, Const and Static `false`. These fields are often empty in a model whose elements were created outside EA, and the differences do not change the model's definitions. The report says how many were left out, under the legend.
 
 `[--minimal]` **(Optional)**: Accepted so that command lines written for 1.x keep working, but has no effect: the report contains only changes by default since 2.0.0.
 
@@ -594,19 +614,19 @@ java [<jvm-parameter-1>]...[<jvm-parameter-n>] -jar cim-compare-2.1.1.jar
 **Command Line Examples:**
 
 ```
-java -Xmx2G -jar cim-compare-2.1.1.jar "C:\CIM XMI Exports\CIM15v33_CIM16v26a_EA_Comparison_Report.xml" "C:\Reports"
+java -Xmx2G -jar cim-compare-2.2.0.jar "C:\CIM XMI Exports\CIM15v33_CIM16v26a_EA_Comparison_Report.xml" "C:\Reports"
 
-java -Xmx2G -jar cim-compare-2.1.1.jar CIM15v33_CIM16v26a_EA_Comparison_Report.xml "C:\Comparison Reports" --full
+java -Xmx2G -jar cim-compare-2.2.0.jar CIM15v33_CIM16v26a_EA_Comparison_Report.xml "C:\Comparison Reports" --full
 
-java -Xmx2G -jar cim-compare-2.1.1.jar CIM15v33_CIM16v26a_EA_Comparison_Report.xml "C:\Comparison Reports" --package=IEC61968
+java -Xmx2G -jar cim-compare-2.2.0.jar CIM15v33_CIM16v26a_EA_Comparison_Report.xml "C:\Comparison Reports" --package=IEC61968
 
-java -Xmx2G -jar cim-compare-2.1.1.jar CIM15v33_CIM16v26a_EA_Comparison_Report.xml ComparisonReport_CIM15v33_CIM16v26a.html
+java -Xmx2G -jar cim-compare-2.2.0.jar CIM15v33_CIM16v26a_EA_Comparison_Report.xml ComparisonReport_CIM15v33_CIM16v26a.html
 
-java -Xmx2G -jar cim-compare-2.1.1.jar CIM15v33_CIM16v26a_EA_Comparison_Report.xml
+java -Xmx2G -jar cim-compare-2.2.0.jar CIM15v33_CIM16v26a_EA_Comparison_Report.xml
 
-java -Xmx2G -jar cim-compare-2.1.1.jar CIM15v33_CIM16v26a_EA_Comparison_Report.xml --package=IEC61970
+java -Xmx2G -jar cim-compare-2.2.0.jar CIM15v33_CIM16v26a_EA_Comparison_Report.xml --package=IEC61970
 
-java -Xmx2G -jar cim-compare-2.1.1.jar CIM15v33_CIM16v26a_EA_Comparison_Report.xml --package=IEC61970 --zip --cleanup
+java -Xmx2G -jar cim-compare-2.2.0.jar CIM15v33_CIM16v26a_EA_Comparison_Report.xml --package=IEC61970 --zip --cleanup
 ```
 
 ### Output Files
@@ -616,7 +636,7 @@ In the output directory, a run produces:
 | File | Produced by | Contents |
 |---|---|---|
 | `<name>.html` | all options | The comparison report. |
-| `Images-baseline\`, `Images-destination\` | Option #1 with `--include-diagrams` | The diagram images exported from the two EA projects. (With Option #2 you provide these folders yourself.) |
+| `Images-baseline\`, `Images-destination\` | Option #1 with `--include-diagrams` | The images of the diagrams the report shows, drawn by EA from the two projects. (With Option #2 you provide these folders yourself.) |
 | `<baseline>.xmi`, `<destination>.xmi` | Option #1 | The two models exported from EA as XMI 1.1. |
 | `<name>.xml` | Options #1 and #2 | The comparison of the two models, in EA's compare log format. |
 | `<name>-enriched.xml` | all options | The comparison XML as prepared for the report: element kinds and statuses resolved, redlines computed, counts added. Useful for troubleshooting a report or for processing the comparison with other tools. |
@@ -640,7 +660,7 @@ The procedure to perform an export of EA baseline and destination models as **XM
       <img src="media/Publish_Other_Formats.png">
    </p>
 
-* The dialog box shown next will be presented to allow selection of the specific settings to use for export.  Select the **“UML 1.3 (XMI 1.1)”** XML export type.  This is the only export format supported for **cim-compare** comparison reports. It is important that the "Unisys/Rose Format" option **not** be checked. Finally, the inclusion of UML diagrams in the comparison report can optionally be selected at this time. This is done by additionally checking the "Export Diagrams" and "Generate Diagram Images" check boxes along with the selection of an image type (e.g. JPG, GIF, PNG, etc.) to export the diagrams in. Note that when including UML diagrams as part of the export EA will automatically create a directory called "Images" and export all image files into that directory. Note that when exporting an image type other than JPG the `--image-type` command line option described in the [Command Line Usage](#command-line-usage) section must be used.
+* The dialog box shown next will be presented to allow selection of the specific settings to use for export.  Select the **“UML 1.3 (XMI 1.1)”** XML export type.  This is the only export format supported for **cim-compare** comparison reports. It is important that the "Unisys/Rose Format" option **not** be checked. Finally, the inclusion of UML diagrams in the comparison report can optionally be selected at this time. This is done by additionally checking the "Export Diagrams" and "Generate Diagram Images" check boxes along with the selection of an image type (e.g. JPG, GIF, PNG, SVG, etc.) to export the diagrams in; SVG is available from EA 16.1 build 1621. Note that when including UML diagrams as part of the export EA will automatically create a directory called "Images" and export all image files into that directory. Note that when exporting an image type other than JPG the `--image-type` command line option described in the [Command Line Usage](#command-line-usage) section must be used.
 
    <p align="left">
       <img src="media/Publish_Model_Package_Export_Settings.png">
@@ -663,7 +683,7 @@ Distributed under the MIT license. See [LICENSE](LICENSE) for more information.
 
 ### Third-Party Software
 
-The `cim-compare-2.1.1.jar` includes the following third-party software:
+The `cim-compare-2.2.0.jar` includes the following third-party software:
 
 - **Saxon-HE** 12.5 by Saxonica, used to produce the HTML report, distributed under the [Mozilla Public License 2.0](https://www.mozilla.org/en-US/MPL/2.0/). Source code is available from [github.com/Saxonica/Saxon-HE](https://github.com/Saxonica/Saxon-HE).
 - **XML Resolver** 5.2.2, used by Saxon-HE, distributed under the [Apache License 2.0](https://www.apache.org/licenses/LICENSE-2.0).

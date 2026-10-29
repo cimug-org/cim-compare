@@ -313,7 +313,9 @@ table.attrsB td.nt .side { font-size: 10px; text-transform: uppercase; letter-sp
 .diag .nx { color: var(--muted); font-style: italic; padding: 30px 0; }
 .lightbox { position: fixed; inset: 0; background: #000c; z-index: 50; display: none; align-items: center; justify-content: center; padding: 20px; cursor: zoom-out; }
 .lightbox.on { display: flex; }
-.lightbox img { max-width: calc(100vw - 40px); max-height: calc(100vh - 40px); background: #fff; display: block; }
+/* #151: max-width 100% (of the image's box), not 100vw, which counts the scrollbar: the image
+   was drawn wider than its box, and the highlights, placed in the box, came out shifted */
+.lightbox img { max-width: 100%; max-height: calc(100vh - 40px); background: #fff; display: block; }
 /* #37 diagram highlights: fixed colours, since diagram images are always white */
 .dimg { position: relative; display: inline-block; max-width: 100%; vertical-align: top; }
 .dimg img { display: block; }

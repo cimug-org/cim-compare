@@ -79,9 +79,9 @@ public class CIMModelComparisonGenerator {
 	static enum DiagramImage {
 		NONE(-1, null), EMF(0, "emf"), BMP(1, "bmp"), GIF(2, "gif"), PNG(3, "png"), JPG(4, "jpg"),
 		/**
-		 * #139: EA's XMI export cannot write SVG, so the XMI is exported without images
-		 * (code -1) and the SVGs are drawn one diagram at a time with
-		 * PutDiagramImageToFile (EA 16.1 build 1629 and later; #141).
+		 * #139: SVG images are not exported with the XMI: the XMI is exported without
+		 * images (code -1), and after the comparison the diagrams the report shows are
+		 * drawn one at a time with PutDiagramImageToFile (EA 16.1 build 1629 and later; #141).
 		 */
 		SVG(-1, "svg");
 
@@ -1350,8 +1350,8 @@ public class CIMModelComparisonGenerator {
 				"                        Static false). Left out by default; the report says how many.",
 				"   --minimal            Accepted for 1.x command lines; no effect (only changes are reported by default).",
 				"   --include-diagrams   Include changed diagrams (options 1 and 2).",
-				"   --image-type=<ext>   JPG (default), SVG, PNG, GIF, BMP or EMF. SVG needs an EA that can write",
-				"                        SVG diagram images (EA 17); otherwise JPG is used. Browsers cannot show EMF.",
+				"   --image-type=<ext>   JPG (default), SVG, PNG, GIF, BMP or EMF. SVG needs EA 16.1 build 1629 or later",
+				"                        on this machine; otherwise JPG is used. Browsers cannot show EMF.",
 				"   --zip                Put the report and diagram images in a ZIP archive.",
 				"   --cleanup            With --zip: delete what this run created, leaving the ZIP. Input files are never deleted.",
 				"" };

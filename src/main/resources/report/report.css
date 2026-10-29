@@ -311,17 +311,28 @@ table.attrsB td.nt .side { font-size: 10px; text-transform: uppercase; letter-sp
 .diag img { max-width: 100%; height: auto; background: #fff; border: 1px solid var(--line); cursor: zoom-in; }
 .diag .gone { color: var(--deleted-ink); font-weight: 600; padding: 30px 0; }
 .diag .nx { color: var(--muted); font-style: italic; padding: 30px 0; }
-.lightbox { position: fixed; inset: 0; background: #000c; z-index: 50; display: none; align-items: center; justify-content: center; padding: 20px; cursor: zoom-out; }
-.lightbox.on { display: flex; }
-/* #151: max-width 100% (of the image's box), not 100vw, which counts the scrollbar: the image
-   was drawn wider than its box, and the highlights, placed in the box, came out shifted */
-.lightbox img { max-width: 100%; max-height: calc(100vh - 40px); background: #fff; display: block; }
+.lightbox { position: fixed; inset: 0; background: #000c; z-index: 50; display: none; overflow: hidden; }
+.lightbox.on { display: block; }
+/* #153 zoom and pan: the image is sized by script (zoom) and moved by a translate (pan) */
+.lb-stage { position: absolute; inset: 0; overflow: hidden; cursor: grab; touch-action: none; }
+.lb-stage.dragging { cursor: grabbing; }
+.lb-stage .dimg { position: absolute; left: 0; top: 0; max-width: none; }
+.lb-stage .dimg img { max-width: none; max-height: none; background: #fff; display: block; }
+.lb-tools { position: absolute; top: 14px; right: 14px; z-index: 2; display: flex; align-items: center; gap: 2px; padding: 4px;
+  background: #1f2933ee; border: 1px solid #ffffff2e; border-radius: 8px; box-shadow: 0 4px 16px #0006; font: 600 13px var(--sans); color: #fff; }
+.lb-tools button { all: unset; box-sizing: border-box; min-width: 32px; height: 30px; padding: 0 10px; border-radius: 6px;
+  text-align: center; line-height: 30px; cursor: pointer; color: #e8edf2; }
+.lb-tools button:hover, .lb-tools button:focus-visible { background: #ffffff1f; }
+.lb-tools .lvl { min-width: 54px; text-align: center; font-variant-numeric: tabular-nums; }
+.lb-tools .sep { width: 1px; height: 20px; background: #ffffff2e; margin: 0 4px; }
+.lb-hint { position: absolute; left: 50%; bottom: 14px; transform: translateX(-50%); z-index: 2; padding: 5px 12px; border-radius: 14px;
+  background: #1f2933cc; color: #d5dde5; font: 12px var(--sans); pointer-events: none; white-space: nowrap; }
 /* #37 diagram highlights: fixed colours, since diagram images are always white */
 .dimg { position: relative; display: inline-block; max-width: 100%; vertical-align: top; }
 .dimg img { display: block; }
 .hl { position: absolute; display: none; box-sizing: border-box; border: 2px solid; pointer-events: auto; cursor: zoom-in; }
 .dimg.placed .hl { display: block; }
-.lightbox .hl { border-width: 3px; cursor: zoom-out; }
+.lightbox .hl { border-width: 3px; cursor: inherit; }
 .hl-added    { border-color: #16963c; background: #16963c26; }
 .hl-removed  { border-color: #d22828; background: #d2282826; }
 .hl-changed  { border-color: #2864d2; background: #2864d226; }

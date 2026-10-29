@@ -338,6 +338,8 @@ body.no-hl .hl, body.no-hl .hl-legend { display: none !important; }
 /* the same fixed colours as the diagram highlights */
 .cx-added { color: #16963c; } .cx-removed { color: #d22828; }
 .cx-rerouted, .cx-labels-moved { color: #e68c00; } .cx-restyled { color: #8c46be; }
+.cx-labels-changed { color: var(--changed-ink); } /* #145: a change in the model, not in the layout */
+.cx-what { color: var(--muted); margin-left: 6px; }
 .cx-end { position: absolute; left: 0; top: 0; width: 100%; height: 100%; overflow: visible; pointer-events: none; }
 /* link signatures: "Class role name [multiplicity]" */
 .role-lbl { color: var(--muted); font-size: 11px; font-style: italic; }

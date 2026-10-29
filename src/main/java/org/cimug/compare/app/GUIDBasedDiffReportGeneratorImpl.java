@@ -24,6 +24,7 @@ import org.cimug.compare.GeneralizationProperties;
 import org.cimug.compare.NamedTypeComparator;
 import org.cimug.compare.PackageProperties;
 import org.cimug.compare.Status;
+import org.cimug.compare.DrawnChanges;
 import org.cimug.compare.SvgDiagrams;
 import org.cimug.compare.app.CIMModelComparisonGenerator.DiagramImage;
 import org.cimug.compare.logs.CompareItem;
@@ -139,8 +140,10 @@ class GUIDBasedDiffReportGeneratorImpl implements DiffReportGenerator {
 	public void processDiffReport() {
 		try {
 			EACompareLog compareLog = processDiffReport(baselineContentType, targetContentType);
+			markDrawnChanges(compareLog);
 			if (drawer != null)
 				drawAndPlace();
+			deleteUnchangedImages();
 			writeCompareLogFile(compareLog);
 		} catch (FileNotFoundException | JAXBException e) {
 			e.printStackTrace();
@@ -685,38 +688,134 @@ class GUIDBasedDiffReportGeneratorImpl implements DiffReportGenerator {
 				theDiagram = new CompareItem(properties, targetDiagram.getName(), "Diagram", targetDiagram.getGUID(),
 						diagramStatus.toString());
 
-				// #37: element-level differences, for highlighting on the diagram images.
-				if (!Status.Identical.equals(diagramStatus)) {
-					List<CompareItem> elementItems = DiagramElementDiff.compare(elementsOf(baselineDiagram),
-							elementsOf(targetDiagram), this::diagramSubjectName, imageType == DiagramImage.SVG || drawer != null);
-					if (drawer != null) {
-						// #141: draw this diagram once the comparison is done; its boxes (diagram
-						// positions) are moved into the images then
-						if (baselineDiagram != null)
-							drawBaseline.add(baselineDiagram.getXmiId());
-						if (targetDiagram != null)
-							drawDestination.add(targetDiagram.getXmiId());
-						toPlace.add(new Object[] { elementItems, baselineDiagram, targetDiagram, targetDiagram.getName() });
-					} else if (imageType == DiagramImage.SVG)
-						// #139: SVG images beside XMI files given as input: move the boxes (diagram
-						// positions, or the pixels of an image the XMI export wrote) into each
-						// SVG's own coordinates
-						SvgDiagrams.convert(elementItems,
-								svgBoxes(this.baselineImagesDir, baselineDiagram, targetDiagram.getName(), "Baseline"),
-								svgBoxes(this.destinationImagesDir, targetDiagram, targetDiagram.getName(), "Destination"));
-					theDiagram.getCompareItem().addAll(elementItems);
-				}
-
-				if (Status.Identical.equals(diagramStatus)) {
-					File baselineImageFile = new File(this.baselineImagesDir, targetDiagram.getXmiId()+ "." + imageType.ext());
-					baselineImageFile.delete();
-					File destinationImageFile = new File(this.destinationImagesDir, targetDiagram.getXmiId()+ "." + imageType.ext());
-					destinationImageFile.delete();
-				} 
+				// #37: element-level differences, for highlighting on the diagram images; #145:
+				// a diagram whose layout is unchanged may still be changed by what is drawn on it
+				// (see markDrawnChanges), so every diagram is kept until the comparison is done
+				DiagramRecord record = new DiagramRecord(theDiagram, baselineDiagram, targetDiagram);
+				diagramRecords.add(record);
+				if (!Status.Identical.equals(diagramStatus))
+					addElementItems(record);
 			}
 		}
 
 		return theDiagram;
+	}
+
+	/** A diagram in both models, with its comparison item and (once changed) its element items. */
+	private static final class DiagramRecord {
+		final CompareItem item;
+		final Diagram baseline, destination;
+		List<CompareItem> elementItems;
+
+		DiagramRecord(CompareItem item, Diagram baseline, Diagram destination) {
+			this.item = item;
+			this.baseline = baseline;
+			this.destination = destination;
+		}
+	}
+
+	/** The diagrams in both models, in the order compared. */
+	private final List<DiagramRecord> diagramRecords = new java.util.ArrayList<>();
+
+	/** #37: a changed diagram's element items (highlights and connectors). */
+	private void addElementItems(DiagramRecord r) {
+		List<CompareItem> elementItems = DiagramElementDiff.compare(elementsOf(r.baseline), elementsOf(r.destination),
+				this::diagramSubjectName, positions());
+		r.elementItems = elementItems;
+		if (drawer != null) {
+			// #141: draw this diagram once the comparison is done; its boxes (diagram
+			// positions) are moved into the images then
+			if (r.baseline != null)
+				drawBaseline.add(r.baseline.getXmiId());
+			if (r.destination != null)
+				drawDestination.add(r.destination.getXmiId());
+			toPlace.add(new Object[] { elementItems, r.baseline, r.destination, r.destination.getName() });
+		} else
+			placeOnSvgs(r, elementItems);
+		r.item.getCompareItem().addAll(elementItems);
+	}
+
+	/** #139: diagram positions are used for boxes when the XMI has no image boxes. */
+	private boolean positions() {
+		return imageType == DiagramImage.SVG || drawer != null;
+	}
+
+	/**
+	 * #139: SVG images beside XMI files given as input: move the boxes (diagram
+	 * positions, or the pixels of an image the XMI export wrote) into each SVG's own
+	 * coordinates.
+	 */
+	private void placeOnSvgs(DiagramRecord r, List<CompareItem> items) {
+		if (imageType == DiagramImage.SVG)
+			SvgDiagrams.convert(items,
+					svgBoxes(this.baselineImagesDir, r.baseline, r.destination.getName(), "Baseline"),
+					svgBoxes(this.destinationImagesDir, r.destination, r.destination.getName(), "Destination"));
+	}
+
+	/**
+	 * #145: a diagram is changed when its picture would differ: when its layout changed
+	 * (found while comparing), or when a class or an association drawn on it changed in
+	 * a way the diagram shows ({@link DrawnChanges}). A diagram whose layout is unchanged
+	 * but which shows such a class or association becomes changed, and is drawn and
+	 * reported like any other; on every changed diagram, an association whose drawn
+	 * labels changed is listed as a connector whose labels changed.
+	 */
+	private void markDrawnChanges(EACompareLog log) {
+		CompareItem root = log == null || log.getComparePackage() == null
+				|| log.getComparePackage().getCompareResults() == null ? null
+						: log.getComparePackage().getCompareResults().getCompareItem();
+		if (root == null)
+			return;
+		java.util.Set<String> classes = DrawnChanges.classes(root);
+		java.util.Map<String, String> connectors = DrawnChanges.connectors(root);
+		if (classes.isEmpty() && connectors.isEmpty())
+			return;
+		int promoted = 0;
+		for (DiagramRecord r : diagramRecords) {
+			if (r.elementItems == null) {
+				// layout unchanged: changed when something drawn on it changed
+				if (!showsAny(r.destination, classes, connectors))
+					continue;
+				r.item.setStatus(Status.Changed.toString());
+				addElementItems(r);
+				promoted++;
+			}
+			List<CompareItem> relabelled = DiagramElementDiff.labelsChanged(elementsOf(r.destination), connectors,
+					r.elementItems, this::diagramSubjectName, positions());
+			if (relabelled.isEmpty())
+				continue;
+			r.elementItems.addAll(relabelled); // placed on the images with the others (#141)
+			if (drawer == null)
+				placeOnSvgs(r, relabelled);
+			r.item.getCompareItem().addAll(relabelled);
+		}
+		if (promoted > 0)
+			System.out.println("\n" + promoted + " diagram(s) with an unchanged layout show a changed class or association;"
+					+ " they are reported as changed.");
+	}
+
+	/** Whether a diagram shows one of the classes or associations given (by EAID). */
+	private static boolean showsAny(Diagram d, java.util.Set<String> classes, java.util.Map<String, String> connectors) {
+		List<DiagramElement> elements = elementsOf(d);
+		if (elements != null)
+			for (DiagramElement e : elements)
+				if (e.getSubject() != null && (classes.contains(e.getSubject()) || connectors.containsKey(e.getSubject())))
+					return true;
+		return false;
+	}
+
+	/**
+	 * Deletes the images of the diagrams that stayed unchanged (images the XMI export
+	 * wrote for every diagram; none when they are drawn one at a time, #141).
+	 */
+	private void deleteUnchangedImages() {
+		if (imageType == null || imageType.ext() == null)
+			return;
+		for (DiagramRecord r : diagramRecords)
+			if (r.elementItems == null) {
+				new File(this.baselineImagesDir, r.destination.getXmiId() + "." + imageType.ext()).delete();
+				new File(this.destinationImagesDir, r.destination.getXmiId() + "." + imageType.ext()).delete();
+			}
 	}
 
 	/** #139 a diagram's highlight boxes mapped into its SVG image (empty when it cannot be). */

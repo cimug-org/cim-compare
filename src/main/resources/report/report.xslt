@@ -790,12 +790,12 @@
             <xsl:if test="Connector">
               <xsl:variable name="cx" select="Connector"/>
               <div class="cx-list">
-                <div class="cx-h">Connectors <span class="cx-n"><xsl:value-of select="string-join(for $k in ('added', 'removed', 'rerouted', 'labels moved', 'restyled') return (if ($cx[@kind = $k]) then concat(count($cx[@kind = $k]), ' ', $k) else ()), ' · ')"/></span>
+                <div class="cx-h">Connectors <span class="cx-n"><xsl:value-of select="string-join(for $k in ('added', 'removed', 'rerouted', 'labels moved', 'labels changed', 'restyled') return (if ($cx[@kind = $k]) then concat(count($cx[@kind = $k]), ' ', $k) else ()), ' · ')"/></span>
                   <span class="cx-hint">hover a connector to outline the elements it joins</span></div>
                 <xsl:for-each select="$cx">
-                  <xsl:sort select="index-of(('added', 'removed', 'rerouted', 'labels moved', 'restyled'), @kind)[1]" data-type="number"/>
+                  <xsl:sort select="index-of(('added', 'removed', 'rerouted', 'labels moved', 'labels changed', 'restyled'), @kind)[1]" data-type="number"/>
                   <xsl:sort select="@name"/>
-                  <div class="cx-row" tabindex="0" data-side="{@side}" data-ends="{@ends}"><span class="cx-k cx-{translate(@kind, ' ', '-')}"><xsl:value-of select="@kind"/></span><span class="cx-name"><xsl:value-of select="@name"/></span></div>
+                  <div class="cx-row" tabindex="0" data-side="{@side}" data-ends="{@ends}"><span class="cx-k cx-{translate(@kind, ' ', '-')}"><xsl:value-of select="@kind"/></span><span class="cx-name"><xsl:value-of select="@name"/></span><xsl:if test="@what"><span class="cx-what"><xsl:value-of select="@what"/></span></xsl:if></div>
                 </xsl:for-each>
               </div>
             </xsl:if>

@@ -440,4 +440,22 @@ public class ReportRendererTest {
 		new ReportRenderer(false, null, false, "jpg").render(xml, plain);
 		assertFalse(read(plain).contains("class=\"imgnote\""));
 	}
+
+	@Test
+	public void aConnectorWhoseLabelsChangedIsListedWithWhatChanged() throws Exception {
+		// #145: the fixture's rerouted connector, made a "labels changed" one
+		File xml = copyFixture();
+		String text = read(xml);
+		String from = "<Property name=\"Change\" model=\"rerouted\" status=\"Moved\"/>";
+		assertTrue(text.contains(from));
+		text = text.replace(from, "<Property name=\"Change\" model=\"labels changed\" status=\"Changed\"/>"
+				+ "<Property name=\"Labels\" model=\"multiplicity 0..* \u2192 1..*\" status=\"Changed\"/>");
+		java.nio.file.Files.write(xml.toPath(), text.getBytes(java.nio.charset.StandardCharsets.UTF_8));
+		File html = new File(xml.getParentFile(), "report.html");
+		new ReportRenderer(false, null, true, "jpg").render(xml, html);
+		String page = read(html);
+		assertTrue(page.contains("<span class=\"cx-k cx-labels-changed\">labels changed</span><span class=\"cx-name\">ACLineSegment \u2013 Switch</span>"
+				+ "<span class=\"cx-what\">multiplicity 0..* \u2192 1..*</span>"));
+		assertTrue(page.contains("1 labels changed"));
+	}
 }

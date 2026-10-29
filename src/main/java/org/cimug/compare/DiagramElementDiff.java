@@ -251,6 +251,42 @@ public class DiagramElementDiff {
 		return n == null || n.isEmpty() ? "(not in this model)" : n;
 	}
 
+	/**
+	 * #145: a connector for each association on the diagram whose drawn labels changed
+	 * ({@code labels}: association EAID → what changed), unless {@code listed} already
+	 * has a connector item for it. Each has a {@code Change} of {@code labels changed},
+	 * a {@code Labels} property saying what changed, and the boxes of its two ends.
+	 *
+	 * @param positions as for {@link #compare}
+	 */
+	public static List<CompareItem> labelsChanged(List<DiagramElement> destination, Map<String, String> labels,
+			List<CompareItem> listed, Function<String, String> nameOf, boolean positions) {
+		List<CompareItem> out = new ArrayList<>();
+		if (destination == null || labels == null || labels.isEmpty())
+			return out;
+		Boolean before = POSITIONS.get();
+		POSITIONS.set(positions);
+		try {
+			java.util.Set<String> have = new java.util.HashSet<>();
+			if (listed != null)
+				for (CompareItem i : listed)
+					if (CONNECTOR_TYPE.equals(i.getType()))
+						have.add(i.getGuid());
+			Map<String, DiagramElement> dDuid = byDuid(boxed(destination));
+			for (Map.Entry<String, DiagramElement> e : unboxed(destination).entrySet()) {
+				String what = labels.get(e.getKey());
+				if (what == null || have.contains(DiffUtils.convertXmiIdToEAGUID(e.getKey())))
+					continue;
+				CompareItem c = connector(e.getKey(), "labels changed", Status.Changed, e.getValue(), dDuid, false, nameOf);
+				c.getProperties().getProperty().add(new Property("Labels", null, what, Status.Changed.toString()));
+				out.add(c);
+			}
+		} finally {
+			POSITIONS.set(before);
+		}
+		return out;
+	}
+
 	/** Connectors (elements without image coordinates), by subject. */
 	private static Map<String, DiagramElement> unboxed(List<DiagramElement> elements) {
 		Map<String, DiagramElement> m = new LinkedHashMap<>();

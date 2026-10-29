@@ -191,6 +191,33 @@ public class DiagramElementDiffTest {
 		assertEquals("25,110,115,160", prop(m.get(guid(L6)), "TargetBox").getModel());
 	}
 
+	@Test
+	public void aConnectorWhoseLabelsChangedIsListedWithWhatChanged() {
+		// #145: same layout on both sides; the association's multiplicity changed in the model
+		String geo = "SX=0;SY=0;EX=0;EY=0;EDGE=2;LLT=CX=10:CY=15:OX=0:OY=0;Path=100:-200$;";
+		List<DiagramElement> destination = new ArrayList<>(Arrays.asList(boxWithDuid(A, "D1", 10, 10, 100, 50),
+				boxWithDuid(B, "D2", 10, 100, 100, 150), link(L1, "D1", "D2", geo, "-1"), link(L2, "D2", "D1", geo, "-1")));
+		Map<String, String> labels = new HashMap<>();
+		labels.put(L1, "multiplicity 0..* \u2192 1..*");
+		Map<String, String> names = new HashMap<>();
+		names.put(A, "Alpha");
+		names.put(B, "Beta");
+
+		List<CompareItem> items = DiagramElementDiff.labelsChanged(destination, labels, null, names::get, false);
+		assertEquals(1, items.size());
+		CompareItem c = items.get(0);
+		assertEquals(DiagramElementDiff.CONNECTOR_TYPE, c.getType());
+		assertEquals(guid(L1), c.getGuid());
+		assertEquals("Changed", c.getStatus());
+		assertEquals("labels changed", change(c));
+		assertEquals("multiplicity 0..* \u2192 1..*", prop(c, "Labels").getModel());
+		assertEquals("Alpha \u2013 Beta", c.getName());
+		assertEquals("10,10,100,50", prop(c, "SourceBox").getModel());
+
+		// a connector already listed (e.g. rerouted) is not listed twice
+		assertTrue(DiagramElementDiff.labelsChanged(destination, labels, items, names::get, false).isEmpty());
+	}
+
 	private static Property prop(CompareItem i, String name) {
 		for (Property p : i.getProperties().getProperty())
 			if (name.equals(p.getName()))

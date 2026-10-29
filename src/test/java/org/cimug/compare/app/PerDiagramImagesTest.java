@@ -97,7 +97,17 @@ public class PerDiagramImagesTest {
 	}
 
 	private File compare(FakeEa ea, int destinationLeft) throws Exception {
+		return compare(ea, destinationLeft, null, null);
+	}
+
+	/** As above, with {@code from} replaced by {@code to} in the destination model. */
+	private File compare(FakeEa ea, int destinationLeft, String from, String to) throws Exception {
 		File baseline = export("baseline.xmi", 394), destination = export("destination.xmi", destinationLeft);
+		if (from != null) {
+			String xmi = new String(Files.readAllBytes(destination.toPath()), CP1252);
+			assertTrue(xmi.contains(from));
+			Files.write(destination.toPath(), xmi.replace(from, to).getBytes(CP1252));
+		}
 		File xml = new File(tmp.getRoot(), "comparison.xml");
 		GUIDBasedDiffReportGeneratorImpl.drawer = ea;
 		try {
@@ -113,6 +123,54 @@ public class PerDiagramImagesTest {
 		Document d = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(xml);
 		return XPathFactory.newInstance().newXPath().evaluate("//CompareItem[@type='DiagramObject' and @guid="
 				+ "'{E0C07000-0000-0000-0000-000000000003}']/Properties/Property[@name='Box']/@" + side, d);
+	}
+
+	private static String diagramStatus(File xml) throws Exception {
+		Document d = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(xml);
+		return XPathFactory.newInstance().newXPath().evaluate("//CompareItem[@type='Diagram' and @guid="
+				+ "'{E0C07000-0000-0000-0000-000000000005}']/@status", d);
+	}
+
+	@Test
+	public void aDiagramWhoseClassChangedVisiblyIsDrawnAlthoughItsLayoutDidNot() throws Exception {
+		// #145: the class drawn on the diagram is renamed; the diagram's layout is the same
+		FakeEa ea = new FakeEa(DiagramImage.SVG);
+		File xml = compare(ea, 394, "name=\"ExtLine\" xmi.id=\"EAID_E0C07000_0000_0000_0000_000000000003\"",
+				"name=\"ExtLineRenamed\" xmi.id=\"EAID_E0C07000_0000_0000_0000_000000000003\"");
+		assertEquals("Changed", diagramStatus(xml));
+		assertEquals(java.util.Collections.singleton(DIAGRAM), ea.destination);
+		assertEquals(java.util.Collections.singleton(DIAGRAM), ea.baseline);
+		// its box is in each image's coordinates (the stand-in draws the destination's class
+		// 100 further right)
+		assertEquals("100,100,300,200", box(xml, "baseline"));
+		assertEquals("200,100,400,200", box(xml, "model"));
+
+		// and the report outlines it as changed on the diagram
+		File html = new File(tmp.getRoot(), "report.html");
+		new ReportRenderer(false, null, true, "svg").render(xml, html);
+		String page = new String(Files.readAllBytes(html.toPath()), StandardCharsets.UTF_8);
+		assertTrue(page.contains("src=\"Images-destination/" + DIAGRAM + ".svg\""));
+		assertTrue(page.contains("class=\"hl hl-changed\" data-box=\"200,100,400,200\""));
+	}
+
+	@Test
+	public void aChangeTheDiagramDoesNotShowLeavesItUnchanged() throws Exception {
+		// a description is not drawn in the class's box
+		FakeEa ea = new FakeEa(DiagramImage.SVG);
+		File xml = compare(ea, 394, "value=\"An extension line.&#10;Second line.&#10;\"", "value=\"Changed text.&#10;\"");
+		assertEquals("Identical", diagramStatus(xml));
+		assertTrue(ea.destination.isEmpty());
+	}
+
+	@Test
+	public void withImagesFromTheXmiExportTheRuleIsTheSame() throws Exception {
+		// no drawer: the XMI export's own images (EA before 16.1 build 1629, EMF, XMI input)
+		File baseline = export("baseline.xmi", 394), destination = export("destination.xmi", 394);
+		String xmi = new String(Files.readAllBytes(destination.toPath()), CP1252);
+		Files.write(destination.toPath(), xmi.replace("name=\"ExtLine\" xmi.id", "name=\"ExtLineRenamed\" xmi.id").getBytes(CP1252));
+		File xml = new File(tmp.getRoot(), "comparison.xml");
+		DiffXMLGenerator.main(new String[] { baseline.getPath(), destination.getPath(), xml.getPath(), "jpg" });
+		assertEquals("Changed", diagramStatus(xml));
 	}
 
 	@Test

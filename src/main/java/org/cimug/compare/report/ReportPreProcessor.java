@@ -103,12 +103,10 @@ public class ReportPreProcessor {
 	 */
 	private final Set<String> visiblyChangedClasses = new HashSet<String>();
 
-	/** Class properties drawn in a class's box on a diagram. */
-	private static final Set<String> DRAWN_CLASS_PROPS = new HashSet<String>(
-			Arrays.asList("Name", "Stereotype", "Abstract", "ParentPackage"));
+	/** Class properties drawn in a class's box on a diagram (shared with the comparison, #145). */
+	private static final Set<String> DRAWN_CLASS_PROPS = org.cimug.compare.DrawnChanges.CLASS_PROPS;
 	/** Attribute properties drawn in a class's box on a diagram. */
-	private static final Set<String> DRAWN_ATTRIBUTE_PROPS = new HashSet<String>(Arrays.asList("Name", "Stereotype",
-			"Type", "LowerBound", "UpperBound", "Default", "Scope", "Static", "Const", "IsLiteral"));
+	private static final Set<String> DRAWN_ATTRIBUTE_PROPS = org.cimug.compare.DrawnChanges.ATTRIBUTE_PROPS;
 	private final Map<String, Integer> counts = new LinkedHashMap<String, Integer>();
 	private final Set<String> usedIds = new HashSet<String>();
 
@@ -465,6 +463,9 @@ public class ReportPreProcessor {
 			if (!b.isEmpty())
 				ends.append(ends.length() > 0 ? ";" : "").append(b);
 		c.setAttribute("ends", ends.toString());
+		String what = prop(o, "Labels", "model"); // #145: what a "labels changed" connector shows changed
+		if (!what.isEmpty())
+			c.setAttribute("what", what);
 		return c;
 	}
 

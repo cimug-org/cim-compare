@@ -772,7 +772,7 @@
                 <div>
                   <xsl:choose>
                     <xsl:when test="Properties/Property[@status != 'identical'] or Tags/Tag[@status != 'identical']">
-                      <div class="sub"><xsl:value-of select="$which"/> end — <xsl:value-of select="(r:prop(., $rolep, 'model'), r:prop(., 'End', 'model'))[. != ''][1]"/></div>
+                      <div class="sub"><xsl:value-of select="$which"/> end — <span class="nm-case"><xsl:value-of select="(r:prop(., $rolep, 'model'), r:prop(., 'End', 'model'))[. != ''][1]"/></span></div>
                       <xsl:call-template name="r:prop-table"><xsl:with-param name="e" select="."/><xsl:with-param name="only-changed" select="not($full)"/></xsl:call-template>
                       <xsl:variable name="etags"><xsl:call-template name="r:tag-table"><xsl:with-param name="e" select="."/><xsl:with-param name="only-changed" select="not($full)"/></xsl:call-template></xsl:variable>
                       <xsl:if test="$etags/*"><div class="sub">Tagged values</div><xsl:copy-of select="$etags"/></xsl:if>

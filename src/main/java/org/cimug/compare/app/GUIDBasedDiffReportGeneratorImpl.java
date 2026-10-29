@@ -260,13 +260,22 @@ class GUIDBasedDiffReportGeneratorImpl implements DiffReportGenerator {
 		return compareResults;
 	}
 
+	/** #147: the name of a package's parent package, or null when it is not in the export. */
+	private static String parentName(PackageType p, java.util.Map<String, PackageType> packages) {
+		if (p == null || p.getParentPackageXmiId() == null)
+			return null;
+		PackageType parent = packages.get(p.getParentPackageXmiId());
+		return parent == null ? null : parent.getName();
+	}
+
 	private CompareItem parsePackage(PackageType aPackage) {
 		CompareItem thePackage = null;
 
 		// Very first thing we do is to first determine if the package passed in is a
 		// deleted package...
 		if (preProcessor.getBaselineDeletedPackagesXmiIds().containsKey(aPackage.getXmiId())) {
-			PackageProperties deletedPackageProperties = new PackageProperties(aPackage, null);
+			PackageProperties deletedPackageProperties = new PackageProperties(aPackage, null,
+					parentName(aPackage, preProcessor.getAllBaselinePackagesXmiIds()), null);
 			Properties properties = deletedPackageProperties.getProperties();
 
 			thePackage = new CompareItem(properties, aPackage.getName(), "", aPackage.getGUID(),
@@ -302,7 +311,9 @@ class GUIDBasedDiffReportGeneratorImpl implements DiffReportGenerator {
 					? preProcessor.getBaselinePackagesXmiIds().get(aPackage.getXmiId())
 					: null);
 
-			PackageProperties packageProperties = new PackageProperties(baselinePackage, aPackage);
+			PackageProperties packageProperties = new PackageProperties(baselinePackage, aPackage,
+					parentName(baselinePackage, preProcessor.getAllBaselinePackagesXmiIds()),
+					parentName(aPackage, preProcessor.getAllTargetPackagesXmiIds()));
 			Properties properties = packageProperties.getProperties();
 
 			thePackage = new CompareItem(properties, aPackage.getName(), "Package", aPackage.getGUID(),

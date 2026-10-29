@@ -314,7 +314,8 @@ table.attrsB td.nt .side { font-size: 10px; text-transform: uppercase; letter-sp
 .lightbox { position: fixed; inset: 0; background: #000c; z-index: 50; display: none; overflow: hidden; }
 .lightbox.on { display: block; }
 /* #153 zoom and pan: the image is sized by script (zoom) and moved by a translate (pan) */
-.lb-stage { position: absolute; inset: 0; overflow: hidden; cursor: grab; touch-action: none; }
+.lb-stage { position: absolute; inset: 0; overflow: hidden; cursor: grab; touch-action: none; user-select: none; -webkit-user-select: none; }
+.lb-stage img { -webkit-user-drag: none; }
 .lb-stage.dragging { cursor: grabbing; }
 .lb-stage .dimg { position: absolute; left: 0; top: 0; max-width: none; }
 .lb-stage .dimg img { max-width: none; max-height: none; background: #fff; display: block; }

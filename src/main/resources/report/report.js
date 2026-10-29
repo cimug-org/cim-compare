@@ -468,6 +468,7 @@
   function lbOpen(wrap) {
     var copy = wrap.cloneNode(true);
     var img = copy.querySelector('img'); img.removeAttribute('loading');
+    img.draggable = false;   /* the browser's own image drag-and-drop would take over the pointer */
     var stage = document.createElement('div'); stage.className = 'lb-stage'; stage.appendChild(copy);
     var tools = document.createElement('div'); tools.className = 'lb-tools';
     var lvl = document.createElement('span'); lvl.className = 'lvl';
@@ -491,6 +492,7 @@
   }
   function lbGestures(stage) {
     var pts = new Map(), moved = 0, last = null, pinch = null, onImage = false;
+    stage.addEventListener('dragstart', function (e) { e.preventDefault(); });
     function local(e) { var r = stage.getBoundingClientRect(); return { x: e.clientX - r.left, y: e.clientY - r.top }; }
     stage.addEventListener('wheel', function (e) {
       if (!Z) return;
@@ -508,6 +510,7 @@
     stage.addEventListener('gestureend', function () { g0 = null; });
     stage.addEventListener('pointerdown', function (e) {
       if (!Z) return;
+      if (e.pointerType === 'mouse') e.preventDefault();   /* no text selection or image drag */
       try { stage.setPointerCapture(e.pointerId); } catch (ignored) { /* a pointer the browser no longer tracks */ }
       pts.set(e.pointerId, local(e));
       if (pts.size === 1) { moved = 0; last = local(e); onImage = !!e.target.closest('.dimg'); stage.classList.add('dragging'); }

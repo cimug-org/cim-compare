@@ -122,7 +122,9 @@
       nodes.forEach(function (n) {
         if (keep.indexOf(n) < 0 && !n.parentElement.closest('.node.pkg.flt-hit')) n.classList.add('filtered-out');
       });
-      $$('.tree .empty').forEach(function (e) { e.classList.add('filtered-out'); });
+      // the notes ("has no changes to the N classes it contains") belong to their package:
+      // they stay in a package that matches, so expanding it never shows nothing (#148)
+      $$('.tree .empty').forEach(function (e) { if (!e.closest('.node.pkg.flt-hit')) e.classList.add('filtered-out'); });
       $$('.tree .grp').forEach(function (g) {
         if (!$$(':scope > .node', g).some(function (n) { return !n.classList.contains('filtered-out'); })) g.classList.add('filtered-out');
       });

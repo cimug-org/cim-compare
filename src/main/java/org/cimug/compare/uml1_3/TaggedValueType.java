@@ -49,6 +49,12 @@ public class TaggedValueType implements GetValueFunction<String> {
 	protected String theValue;
 	@XmlAttribute(name = "xmi.id")
 	protected String xmiId;
+	/**
+	 * #169: the element a tag belongs to, when EA writes the tag on its own under
+	 * XMI.content rather than in the element's ModelElement.taggedValue.
+	 */
+	@XmlAttribute(name = "modelElement")
+	protected String modelElement;
 
 	public TaggedValueType(String value, String tag, String theValue, String xmiId, String modelElement) {
 		super();
@@ -56,6 +62,16 @@ public class TaggedValueType implements GetValueFunction<String> {
 		this.tag = tag;
 		this.theValue = theValue;
 		this.xmiId = xmiId;
+		this.modelElement = modelElement;
+	}
+
+	/** #169: the xmi.id of the element a stand-alone tag belongs to; null for a tag inside its element. */
+	public String getModelElement() {
+		return modelElement;
+	}
+
+	public void setModelElement(String modelElement) {
+		this.modelElement = modelElement;
 	}
 
 	public TaggedValueType() {

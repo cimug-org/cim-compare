@@ -42,6 +42,8 @@
        (the Unicode ⓘ came out small and below the line); sized to the text by .ii in report.css -->
   <xsl:variable name="ii"><svg class="ii" viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="7.1" fill="none" stroke="currentColor" stroke-width="1.1"/><circle cx="8.9" cy="4.5" r="1.05" fill="currentColor"/><path d="M8.3 6.9 L7.2 11.3 Q7 12.1 7.8 11.8 L8.6 11.3" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg></xsl:variable>
   <xsl:variable name="link-order" as="xs:string*" select="('Generalization', 'Association', 'Aggregation')"/>
+  <!-- #169: a hanging luggage tag with its string, for "Tagged values" -->
+  <xsl:variable name="tag-ico"><svg class="tg" width="14" height="14" viewBox="0 0 16 16" aria-hidden="true"><g transform="rotate(90 8 8)"><path d="M1.5 8 L5.5 3.5 H14.5 V12.5 H5.5 Z" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/><circle cx="6" cy="8" r="1.3" fill="none" stroke="currentColor" stroke-width="1.2"/></g><path d="M8 4.7 C 6.5 2.5, 9.5 1.6, 10.5 0.6" fill="none" stroke="currentColor" stroke-width="1.1" stroke-linecap="round"/></svg></xsl:variable>
 
   <!-- ====================================================== helpers -->
 
@@ -174,6 +176,45 @@
     </xsl:if>
   </xsl:template>
 
+  <!-- #169: an element's user-defined tagged values: tag, baseline value, destination value.
+       A tag only on one side shows "(no tag)" on the other; an empty value shows "(empty)". -->
+  <xsl:template name="r:tag-table">
+    <xsl:param name="e" as="element()"/>
+    <xsl:param name="only-changed" as="xs:boolean" select="true()"/>
+    <xsl:variable name="rows" select="$e/Tags/Tag[not($only-changed) or @status != 'identical']"/>
+    <xsl:if test="$rows">
+      <div class="tw">
+        <table class="t tags">
+          <thead><tr><th></th><th>Baseline</th><th>Destination</th></tr></thead>
+          <tbody>
+            <xsl:for-each select="$rows">
+              <tr data-status="{@status}">
+                <th class="k"><xsl:value-of select="@name"/></th>
+                <xsl:choose>
+                  <xsl:when test="@status = 'added'"><td class="nil">(no tag)</td></xsl:when>
+                  <xsl:when test="string(@baseline) = ''"><td class="nil">(empty)</td></xsl:when>
+                  <xsl:otherwise><td><xsl:value-of select="@baseline"/></td></xsl:otherwise>
+                </xsl:choose>
+                <xsl:choose>
+                  <xsl:when test="@status = 'deleted'"><td class="nil">(no tag)</td></xsl:when>
+                  <xsl:when test="string(@model) = ''"><td class="nil">(empty)</td></xsl:when>
+                  <xsl:otherwise><td><xsl:value-of select="@model"/></td></xsl:otherwise>
+                </xsl:choose>
+              </tr>
+            </xsl:for-each>
+          </tbody>
+        </table>
+      </div>
+    </xsl:if>
+  </xsl:template>
+
+  <!-- #169: a "Tagged values" section (packages and classes) -->
+  <xsl:template name="r:tag-sec">
+    <xsl:param name="e" as="element()"/>
+    <xsl:variable name="t"><xsl:call-template name="r:tag-table"><xsl:with-param name="e" select="$e"/><xsl:with-param name="only-changed" select="not($full) and not($e/@status = ('added', 'deleted'))"/></xsl:call-template></xsl:variable>
+    <xsl:if test="$t/*"><div class="sec"><div class="sec-h"><span class="ico"><xsl:copy-of select="$tag-ico"/></span>Tagged values</div><xsl:copy-of select="$t"/></div></xsl:if>
+  </xsl:template>
+
   <!-- Description block from Notes -->
   <xsl:template name="r:notes-block">
     <xsl:param name="e" as="element()"/>
@@ -214,6 +255,7 @@
         </xsl:when>
         <xsl:otherwise><div class="lbl">Description</div>No notes available.</xsl:otherwise>
       </xsl:choose>
+      <xsl:if test="$e/Tags/Tag"><div class="lbl pop-tags">Tagged values</div><xsl:call-template name="r:tag-table"><xsl:with-param name="e" select="$e"/><xsl:with-param name="only-changed" select="false()"/></xsl:call-template></xsl:if>
     </div>
   </xsl:template>
 
@@ -396,6 +438,7 @@
     <div class="node pkg{if ($depth > 1) then ' closed' else ''}" id="{@id}" data-depth="{$depth}">
       <xsl:call-template name="r:row"><xsl:with-param name="e" select="."/><xsl:with-param name="ico" select="'📁'"/></xsl:call-template>
       <div class="kids">
+        <xsl:call-template name="r:tag-sec"><xsl:with-param name="e" select="."/></xsl:call-template>
         <xsl:apply-templates select="Package"/>
         <xsl:call-template name="r:groups">
           <xsl:with-param name="items" select="Class"/>
@@ -474,6 +517,7 @@
     </xsl:variable>
     <xsl:if test="$nb/*"><div class="sec"><xsl:copy-of select="$nb"/></div></xsl:if>
     <xsl:if test="$meta/*"><div class="sec"><div class="sec-h"><span class="ico">▤</span>Metadata</div><xsl:copy-of select="$meta"/></div></xsl:if>
+    <xsl:call-template name="r:tag-sec"><xsl:with-param name="e" select="."/></xsl:call-template>
     <xsl:variable name="attrs" select="Attribute[$full or @status != 'identical']"/>
     <xsl:if test="$attrs">
       <div class="sec"><div class="sec-h"><span class="ico">≡</span>Attributes</div>
@@ -492,7 +536,7 @@
         </xsl:for-each>
       </div>
     </xsl:if>
-    <xsl:if test="not($nb/*) and not($meta/*) and not($attrs) and not($links)">
+    <xsl:if test="not($nb/*) and not($meta/*) and not($attrs) and not($links) and not(Tags/Tag[$full or @status != 'identical'])">
       <div class="empty">No changes occurred to the properties or links for this class.</div>
     </xsl:if>
   </xsl:template>
@@ -505,6 +549,7 @@
     <xsl:variable name="cid" select="if (@status = 'deleted') then 'baselineClassId' else 'modelClassId'"/>
     <xsl:variable name="nb"><xsl:call-template name="r:notes-block"><xsl:with-param name="e" select="."/></xsl:call-template></xsl:variable>
     <xsl:if test="$nb/*"><div class="sec"><xsl:copy-of select="$nb"/></div></xsl:if>
+    <xsl:call-template name="r:tag-sec"><xsl:with-param name="e" select="."/></xsl:call-template>
     <xsl:if test="Attribute">
       <div class="sec"><div class="sec-h"><span class="ico">≡</span>Attributes<xsl:text> </xsl:text><span class="n">(<xsl:value-of select="count(Attribute)"/>)</span></div>
         <ul class="plain">
@@ -583,7 +628,7 @@
           <xsl:otherwise><xsl:value-of select="@name"/></xsl:otherwise>
         </xsl:choose>
         <!-- #123: a change the row does not show (e.g. Default, Const, Stereotype) marks the ⓘ and adds a note -->
-        <xsl:variable name="hidden" select="$st = 'changed' and exists(Properties/Property[@status != 'identical' and not(@name = $row-shown)])"/>
+        <xsl:variable name="hidden" select="$st = 'changed' and (exists(Properties/Property[@status != 'identical' and not(@name = $row-shown)]) or exists(Tags/Tag[@status != 'identical']))"/>
         <span class="info{if ($hidden) then ' info-chg' else ''}" data-id="{@guid}" title="attribute metadata">i</span>
         <xsl:if test="$hidden"><span class="mnote"><span class="m-hover">metadata changed - hover<xsl:copy-of select="$ii"/></span><span class="m-inline">metadata changed - see below</span></span></xsl:if>
         <xsl:if test="@renamedFrom"><span class="renamed-from">renamed from <xsl:value-of select="@renamedFrom"/></span></xsl:if>
@@ -627,6 +672,7 @@
       <div class="lbl">Attribute metadata — <xsl:value-of select="@name"/></div>
       <!-- the ⓘ view shows the new name as it is, like the baseline (#67) -->
       <xsl:call-template name="r:prop-table"><xsl:with-param name="e" select="."/><xsl:with-param name="only-changed" select="false()"/><xsl:with-param name="plain" select="'Name'"/></xsl:call-template>
+      <xsl:if test="Tags/Tag"><div class="lbl">Tagged values</div><xsl:call-template name="r:tag-table"><xsl:with-param name="e" select="."/><xsl:with-param name="only-changed" select="false()"/></xsl:call-template></xsl:if>
     </td></tr>
   </xsl:template>
 
@@ -703,14 +749,17 @@
       </div>
       <xsl:variable name="one" select="if ($st = ('added', 'deleted')) then $st else ()"/>
       <xsl:variable name="meta"><xsl:call-template name="r:prop-table"><xsl:with-param name="e" select="."/><xsl:with-param name="only-changed" select="not($full)"/><xsl:with-param name="one-sided" select="$one"/></xsl:call-template></xsl:variable>
-      <xsl:if test="$meta/* or End">
+      <xsl:variable name="ltags"><xsl:call-template name="r:tag-table"><xsl:with-param name="e" select="."/><xsl:with-param name="only-changed" select="not($full) and not($one)"/></xsl:call-template></xsl:variable>
+      <xsl:if test="$meta/* or End or $ltags/*">
         <div class="rows">
           <xsl:if test="$meta/*"><div class="sub">Link metadata</div><xsl:copy-of select="$meta"/></xsl:if>
+          <xsl:if test="$ltags/*"><div class="sub">Tagged values</div><xsl:copy-of select="$ltags"/></xsl:if>
           <xsl:if test="$one and End">
             <div class="endsB">
               <xsl:for-each select="End">
                 <div><div class="sub"><xsl:value-of select="if (@side = 'source') then 'Source' else 'Target'"/> end</div>
                   <xsl:call-template name="r:prop-table"><xsl:with-param name="e" select="."/><xsl:with-param name="only-changed" select="false()"/><xsl:with-param name="one-sided" select="$one"/></xsl:call-template>
+                  <xsl:if test="Tags/Tag"><div class="sub">Tagged values</div><xsl:call-template name="r:tag-table"><xsl:with-param name="e" select="."/><xsl:with-param name="only-changed" select="false()"/></xsl:call-template></xsl:if>
                 </div>
               </xsl:for-each>
             </div>
@@ -722,9 +771,11 @@
                 <xsl:variable name="rolep" select="if (../@kind = 'Generalization') then 'End' else 'Role'"/>
                 <div>
                   <xsl:choose>
-                    <xsl:when test="Properties/Property[@status != 'identical']">
+                    <xsl:when test="Properties/Property[@status != 'identical'] or Tags/Tag[@status != 'identical']">
                       <div class="sub"><xsl:value-of select="$which"/> end — <xsl:value-of select="(r:prop(., $rolep, 'model'), r:prop(., 'End', 'model'))[. != ''][1]"/></div>
                       <xsl:call-template name="r:prop-table"><xsl:with-param name="e" select="."/><xsl:with-param name="only-changed" select="not($full)"/></xsl:call-template>
+                      <xsl:variable name="etags"><xsl:call-template name="r:tag-table"><xsl:with-param name="e" select="."/><xsl:with-param name="only-changed" select="not($full)"/></xsl:call-template></xsl:variable>
+                      <xsl:if test="$etags/*"><div class="sub">Tagged values</div><xsl:copy-of select="$etags"/></xsl:if>
                     </xsl:when>
                     <xsl:otherwise>
                       <div class="sub"><xsl:value-of select="$which"/> end</div><div class="none">no metadata changes</div>

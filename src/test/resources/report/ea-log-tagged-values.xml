@@ -1,0 +1,612 @@
+<?xml version="1.0" standalone="no" ?>
+<EA.CompareLog>
+	<ComparePackage name="ExtVendor" guid="EAID_DDF9A087_B9EA_4c8e_9578_B68CE2C1C1D6" packageID="0" comparedBy="modeler" comparedOn="2026-10-29 14:52:58">
+		<CompareResults hasChanges="true">
+			<CompareItem name="ExtVendor" type="" guid="{DDF9A087-B9EA-4c8e-9578-B68CE2C1C1D6}" status="Identical">
+				<Properties>
+					<Property name="Abstract" model="false" baseline="false" status="Identical"/>
+					<Property name="Alias" status="Identical"/>
+					<Property name="Author" model="modeler" baseline="modeler" status="Identical"/>
+					<Property name="DateCreated" model="12-Sep-25 4:42:41 PM" baseline="12-Sep-25 4:42:41 PM" status="Identical"/>
+					<Property name="Complexity" model="1" baseline="1" status="Identical"/>
+					<Property name="GenFile" status="Identical"/>
+					<Property name="GenType" model="Java" baseline="Java" status="Identical"/>
+					<Property name="IsLeaf" model="false" baseline="false" status="Identical"/>
+					<Property name="IsSpec" model="false" baseline="false" status="Identical"/>
+					<Property name="IsRoot" model="false" baseline="false" status="Identical"/>
+					<Property name="Keywords" status="Identical"/>
+					<Property name="Multiplicity" status="Identical"/>
+					<Property name="Name" model="ExtVendor" baseline="ExtVendor" status="Identical"/>
+					<Property name="Notes" status="Identical"/>
+					<Property name="Persistence" status="Identical"/>
+					<Property name="Phase" model="1.0" baseline="1.0" status="Identical"/>
+					<Property name="Scope" model="Public" baseline="Public" status="Identical"/>
+					<Property name="Status" model="Proposed" baseline="Proposed" status="Identical"/>
+					<Property name="Stereotype" status="Identical"/>
+					<Property name="Type" model="Package" baseline="Package" status="Identical"/>
+					<Property name="Version" model="1.0" baseline="1.0" status="Identical"/>
+					<Property name="Classifier" status="Identical"/>
+					<Property name="Visibility" status="Identical"/>
+					<Property name="Concurrency" status="Identical"/>
+					<Property name="Cardinality" status="Identical"/>
+					<Property name="Style" status="Identical"/>
+				</Properties>
+				<CompareItem name="ExtVendor_TC57CIM" type="" guid="{A270207E-24B1-40f5-8C1C-00EF5F512175}" status="Identical">
+					<Properties>
+						<Property name="Abstract" model="false" baseline="false" status="Identical"/>
+						<Property name="Alias" status="Identical"/>
+						<Property name="Author" model="modeler" baseline="modeler" status="Identical"/>
+						<Property name="DateCreated" model="08-Sep-26 2:30:25 PM" baseline="08-Sep-26 2:30:25 PM" status="Identical"/>
+						<Property name="DateModified" model="08-Sep-26 2:30:25 PM" baseline="08-Sep-26 2:30:25 PM" status="Identical"/>
+						<Property name="Complexity" model="1" baseline="1" status="Identical"/>
+						<Property name="GenFile" status="Identical"/>
+						<Property name="GenType" model="Java" baseline="Java" status="Identical"/>
+						<Property name="IsLeaf" model="false" baseline="false" status="Identical"/>
+						<Property name="IsSpec" model="false" baseline="false" status="Identical"/>
+						<Property name="IsRoot" model="false" baseline="false" status="Identical"/>
+						<Property name="Keywords" status="Identical"/>
+						<Property name="Multiplicity" status="Identical"/>
+						<Property name="Name" model="ExtVendor_TC57CIM" baseline="ExtVendor_TC57CIM" status="Identical"/>
+						<Property name="Notes" status="Identical"/>
+						<Property name="Persistence" status="Identical"/>
+						<Property name="Phase" model="1.0" baseline="1.0" status="Identical"/>
+						<Property name="Scope" model="Public" baseline="Public" status="Identical"/>
+						<Property name="Status" model="Proposed" baseline="Proposed" status="Identical"/>
+						<Property name="Stereotype" status="Identical"/>
+						<Property name="Type" model="Package" baseline="Package" status="Identical"/>
+						<Property name="Version" model="1.0" baseline="1.0" status="Identical"/>
+						<Property name="Classifier" status="Identical"/>
+						<Property name="Visibility" status="Identical"/>
+						<Property name="Concurrency" status="Identical"/>
+						<Property name="Cardinality" status="Identical"/>
+						<Property name="Style" status="Identical"/>
+					</Properties>
+					<CompareItem name="ExtVendor_IEC62325" type="" guid="{81354613-02B9-4852-A593-579CB3509919}" status="Identical">
+						<Properties>
+							<Property name="Abstract" model="false" baseline="false" status="Identical"/>
+							<Property name="Alias" status="Identical"/>
+							<Property name="Author" model="modeler" baseline="modeler" status="Identical"/>
+							<Property name="DateCreated" model="09-Sep-26 9:34:05 AM" baseline="09-Sep-26 9:34:05 AM" status="Identical"/>
+							<Property name="DateModified" model="09-Sep-26 9:34:05 AM" baseline="09-Sep-26 9:34:05 AM" status="Identical"/>
+							<Property name="Complexity" model="1" baseline="1" status="Identical"/>
+							<Property name="GenFile" status="Identical"/>
+							<Property name="GenType" model="Java" baseline="Java" status="Identical"/>
+							<Property name="IsLeaf" model="false" baseline="false" status="Identical"/>
+							<Property name="IsSpec" model="false" baseline="false" status="Identical"/>
+							<Property name="IsRoot" model="false" baseline="false" status="Identical"/>
+							<Property name="Keywords" status="Identical"/>
+							<Property name="Multiplicity" status="Identical"/>
+							<Property name="Name" model="ExtVendor_IEC62325" baseline="ExtVendor_IEC62325" status="Identical"/>
+							<Property name="Notes" status="Identical"/>
+							<Property name="Persistence" status="Identical"/>
+							<Property name="Phase" model="1.0" baseline="1.0" status="Identical"/>
+							<Property name="Scope" model="Public" baseline="Public" status="Identical"/>
+							<Property name="Status" model="Proposed" baseline="Proposed" status="Identical"/>
+							<Property name="Stereotype" status="Identical"/>
+							<Property name="Type" model="Package" baseline="Package" status="Identical"/>
+							<Property name="Version" model="1.0" baseline="1.0" status="Identical"/>
+							<Property name="Classifier" status="Identical"/>
+							<Property name="Visibility" status="Identical"/>
+							<Property name="Concurrency" status="Identical"/>
+							<Property name="Cardinality" status="Identical"/>
+							<Property name="Style" status="Identical"/>
+						</Properties>
+						<CompareItem name="ExtVendor_MarketOperations" type="" guid="{F0238F7F-9CE2-4871-ABFE-EF1B07C677FC}" status="Identical">
+							<Properties>
+								<Property name="Abstract" model="false" baseline="false" status="Identical"/>
+								<Property name="Alias" status="Identical"/>
+								<Property name="Author" model="modeler" baseline="modeler" status="Identical"/>
+								<Property name="DateCreated" model="09-Sep-26 9:34:28 AM" baseline="09-Sep-26 9:34:28 AM" status="Identical"/>
+								<Property name="DateModified" model="09-Sep-26 9:34:28 AM" baseline="09-Sep-26 9:34:28 AM" status="Identical"/>
+								<Property name="Complexity" model="1" baseline="1" status="Identical"/>
+								<Property name="GenFile" status="Identical"/>
+								<Property name="GenType" model="Java" baseline="Java" status="Identical"/>
+								<Property name="IsLeaf" model="false" baseline="false" status="Identical"/>
+								<Property name="IsSpec" model="false" baseline="false" status="Identical"/>
+								<Property name="IsRoot" model="false" baseline="false" status="Identical"/>
+								<Property name="Keywords" status="Identical"/>
+								<Property name="Multiplicity" status="Identical"/>
+								<Property name="Name" model="ExtVendor_MarketOperations" baseline="ExtVendor_MarketOperations" status="Identical"/>
+								<Property name="Notes" status="Identical"/>
+								<Property name="Persistence" status="Identical"/>
+								<Property name="Phase" model="1.0" baseline="1.0" status="Identical"/>
+								<Property name="Scope" model="Public" baseline="Public" status="Identical"/>
+								<Property name="Status" model="Proposed" baseline="Proposed" status="Identical"/>
+								<Property name="Stereotype" status="Identical"/>
+								<Property name="Type" model="Package" baseline="Package" status="Identical"/>
+								<Property name="Version" model="1.0" baseline="1.0" status="Identical"/>
+								<Property name="Classifier" status="Identical"/>
+								<Property name="Visibility" status="Identical"/>
+								<Property name="Concurrency" status="Identical"/>
+								<Property name="Cardinality" status="Identical"/>
+								<Property name="Style" status="Identical"/>
+							</Properties>
+							<CompareItem name="ExtVendor_ReferenceData" type="" guid="{A44E87FC-3F04-4959-A4CC-9A4F861FB1DD}" status="Identical">
+								<Properties>
+									<Property name="Abstract" model="false" baseline="false" status="Identical"/>
+									<Property name="Alias" status="Identical"/>
+									<Property name="Author" model="modeler" baseline="modeler" status="Identical"/>
+									<Property name="DateCreated" model="09-Sep-26 9:34:49 AM" baseline="09-Sep-26 9:34:49 AM" status="Identical"/>
+									<Property name="DateModified" model="09-Sep-26 9:34:49 AM" baseline="09-Sep-26 9:34:49 AM" status="Identical"/>
+									<Property name="Complexity" model="1" baseline="1" status="Identical"/>
+									<Property name="GenFile" status="Identical"/>
+									<Property name="GenType" model="Java" baseline="Java" status="Identical"/>
+									<Property name="IsLeaf" model="false" baseline="false" status="Identical"/>
+									<Property name="IsSpec" model="false" baseline="false" status="Identical"/>
+									<Property name="IsRoot" model="false" baseline="false" status="Identical"/>
+									<Property name="Keywords" status="Identical"/>
+									<Property name="Multiplicity" status="Identical"/>
+									<Property name="Name" model="ExtVendor_ReferenceData" baseline="ExtVendor_ReferenceData" status="Identical"/>
+									<Property name="Notes" status="Identical"/>
+									<Property name="Persistence" status="Identical"/>
+									<Property name="Phase" model="1.0" baseline="1.0" status="Identical"/>
+									<Property name="Scope" model="Public" baseline="Public" status="Identical"/>
+									<Property name="Status" model="Proposed" baseline="Proposed" status="Identical"/>
+									<Property name="Stereotype" status="Identical"/>
+									<Property name="Type" model="Package" baseline="Package" status="Identical"/>
+									<Property name="Version" model="1.0" baseline="1.0" status="Identical"/>
+									<Property name="Classifier" status="Identical"/>
+									<Property name="Visibility" status="Identical"/>
+									<Property name="Concurrency" status="Identical"/>
+									<Property name="Cardinality" status="Identical"/>
+									<Property name="Style" status="Identical"/>
+								</Properties>
+								<CompareItem name="ExtVendor_ReferenceData" type="" guid="{EFEC0B45-0FE8-4efd-BCBF-885D138157BB}" status="Changed">
+									<Properties>
+										<Property name="Name" model="ExtVendor_ReferenceData" baseline="ExtVendor_ReferenceData" status="Identical"/>
+										<Property name="Type" model="Logical" baseline="Logical" status="Identical"/>
+										<Property name="Version" model="1.0" baseline="1.0" status="Identical"/>
+										<Property name="Stereotype" status="Identical"/>
+										<Property name="DateCreated" model="09-Sep-26 9:34:52 AM" baseline="09-Sep-26 9:34:52 AM" status="Identical"/>
+										<Property name="DateModified" model="09-Sep-26 9:34:52 AM" baseline="09-Sep-26 9:34:52 AM" status="Identical"/>
+										<Property name="Notes" status="Identical"/>
+										<Property name="Style" model="HideRel=0;ShowTags=0;ShowReqs=0;ShowCons=0;OpParams=1;ShowSN=0;ScalePI=0;PPgs.cx=0;PPgs.cy=0;PSize=9;ShowIcons=1;SuppCN=0;HideProps=0;HideParents=0;UseAlias=0;HideAtts=0;HideOps=0;HideStereo=0;HideEStereo=0;ShowShape=1;FormName=;" baseline="HideRel=0;ShowTags=0;ShowReqs=0;ShowCons=0;OpParams=1;ShowSN=0;ScalePI=0;PPgs.cx=0;PPgs.cy=0;PSize=1;ShowIcons=1;SuppCN=0;HideProps=0;HideParents=0;UseAlias=0;HideAtts=0;HideOps=0;HideStereo=0;HideEStereo=0;ShowShape=1;FormName=;" status="Changed"/>
+										<Property name="StyleEx" model="ExcludeRTF=0;DocAll=0;ShowDiagramInPages=0;RotateImages=0;HideQuals=0;AttPkg=1;ShowTests=0;ShowMaint=0;Layout=;SuppressFOC=0;TConnectorNotation=UML 2.1;TExplicitNavigability=0;AdvancedElementProps=1;AdvancedFeatureProps=1;AdvancedConnectorProps=1;m_bElementClassifier=1;SPT=1;MDGDgm=;MDGView=;DefaultLang=;STBLDgm=;ShowNotes=0;VisibleAttributeDetail=0;ShowOpRetType=1;SuppressBrackets=0;SuppConnectorLabels=0;PrintPageHeadFoot=0;ShowAsList=0;GZ=;OverrideLinkedF=0;MarginL=0;MarginR=0;MarginT=0;MarginB=0;HandDraw=0;Whiteboard=0;HideConnStereotype=0;ShowFQN=0;NoFullScope=0;SuppressedCompartments=;Flow=;SF=0;ULC=0;BkgPath=;Roadmap=;CEE=0;FTV=0;ETV=0;FTM=0;ALLDOCK=0;SUPTAG=;SUPATT=;SUPOP=;GST=0;SD=0;SR=0;SRES=0;SIA=0;SIO=0;SIT=0;SFQT=0;SIR=0;SIC=0;SK=0;AFK=0;DSO=0;ShowProject=0;ShowScenarios=0;HideFeatLink=0;SSetCB=0;Lyrs=;DLKO=0;DDS=0;SupCol=0;SDI=1;SSB=1;SwimlanesActive=1;MatrixActive=0;MatrixLineWidth=1;MatrixLineClr=0;MatrixLocked=0;KanbanActive=0;KanbanType=;KanbanNote=;KanbanFont=;KBS=0;KVS=16;KHH=0;KND=0;KB=0;SubOrder=;SeqTopMargin=50;TDurLow=0;TDurHigh=0;TDurUnit=;TDurHide=0;StartPos=160;TimeIntervalList=;INT_ARGS=;INT_RET=;INT_ATT=;" baseline="ExcludeRTF=0;DocAll=0;ShowDiagramInPages=0;RotateImages=0;HideQuals=0;AttPkg=1;ShowTests=0;ShowMaint=0;Layout=;SuppressFOC=0;TConnectorNotation=UML 2.1;TExplicitNavigability=0;AdvancedElementProps=1;AdvancedFeatureProps=1;AdvancedConnectorProps=1;m_bElementClassifier=1;SPT=1;MDGDgm=;MDGView=;DefaultLang=;STBLDgm=;ShowNotes=0;VisibleAttributeDetail=0;ShowOpRetType=1;SuppressBrackets=0;SuppConnectorLabels=0;PrintPageHeadFoot=0;ShowAsList=0;GZ=;OverrideLinkedF=0;MarginL=0;MarginR=0;MarginT=0;MarginB=0;HandDraw=0;Whiteboard=0;HideConnStereotype=0;ShowFQN=0;NoFullScope=0;SuppressedCompartments=;Flow=;SF=0;ULC=0;BkgPath=;Roadmap=;CEE=0;FTV=0;ETV=0;FTM=0;ALLDOCK=0;SUPTAG=;SUPATT=;SUPOP=;GST=0;SD=0;SR=0;SRES=0;SIA=0;SIO=0;SIT=0;SFQT=0;SIR=0;SIC=0;SK=0;AFK=0;DSO=0;ShowProject=0;ShowScenarios=0;HideFeatLink=0;SSetCB=0;Lyrs=;DLKO=0;DDS=0;SupCol=0;SDI=1;SSB=1;SwimlanesActive=1;MatrixActive=0;MatrixLineWidth=1;MatrixLineClr=0;MatrixLocked=0;KanbanActive=0;KanbanType=;KanbanNote=;KanbanFont=;KBS=0;KVS=16;KHH=0;KND=0;KB=0;SubOrder=;SeqTopMargin=50;TDurLow=0;TDurHigh=0;TDurUnit=;TDurHide=0;StartPos=160;TimeIntervalList=;INT_ARGS=;INT_RET=;INT_ATT=;" status="Identical"/>
+									</Properties>
+								</CompareItem>
+							</CompareItem>
+							<CompareItem name="ExtVendor_MarketOperations" type="" guid="{070E0525-AF84-4e8f-95B1-81B4D63020ED}" status="Changed">
+								<Properties>
+									<Property name="Name" model="ExtVendor_MarketOperations" baseline="ExtVendor_MarketOperations" status="Identical"/>
+									<Property name="Type" model="Logical" baseline="Logical" status="Identical"/>
+									<Property name="Version" model="1.0" baseline="1.0" status="Identical"/>
+									<Property name="Stereotype" status="Identical"/>
+									<Property name="DateCreated" model="09-Sep-26 9:34:31 AM" baseline="09-Sep-26 9:34:31 AM" status="Identical"/>
+									<Property name="DateModified" model="09-Sep-26 9:34:31 AM" baseline="09-Sep-26 9:34:31 AM" status="Identical"/>
+									<Property name="Notes" status="Identical"/>
+									<Property name="Style" model="HideRel=0;ShowTags=0;ShowReqs=0;ShowCons=0;OpParams=1;ShowSN=0;ScalePI=0;PPgs.cx=0;PPgs.cy=0;PSize=9;ShowIcons=1;SuppCN=0;HideProps=0;HideParents=0;UseAlias=0;HideAtts=0;HideOps=0;HideStereo=0;HideEStereo=0;ShowShape=1;FormName=;" baseline="HideRel=0;ShowTags=0;ShowReqs=0;ShowCons=0;OpParams=1;ShowSN=0;ScalePI=0;PPgs.cx=0;PPgs.cy=0;PSize=1;ShowIcons=1;SuppCN=0;HideProps=0;HideParents=0;UseAlias=0;HideAtts=0;HideOps=0;HideStereo=0;HideEStereo=0;ShowShape=1;FormName=;" status="Changed"/>
+									<Property name="StyleEx" model="ExcludeRTF=0;DocAll=0;ShowDiagramInPages=0;RotateImages=0;HideQuals=0;AttPkg=1;ShowTests=0;ShowMaint=0;Layout=;SuppressFOC=0;TConnectorNotation=UML 2.1;TExplicitNavigability=0;AdvancedElementProps=1;AdvancedFeatureProps=1;AdvancedConnectorProps=1;m_bElementClassifier=1;SPT=1;MDGDgm=;MDGView=;DefaultLang=;STBLDgm=;ShowNotes=0;VisibleAttributeDetail=0;ShowOpRetType=1;SuppressBrackets=0;SuppConnectorLabels=0;PrintPageHeadFoot=0;ShowAsList=0;GZ=;OverrideLinkedF=0;MarginL=0;MarginR=0;MarginT=0;MarginB=0;HandDraw=0;Whiteboard=0;HideConnStereotype=0;ShowFQN=0;NoFullScope=0;SuppressedCompartments=;Flow=;SF=0;ULC=0;BkgPath=;Roadmap=;CEE=0;FTV=0;ETV=0;FTM=0;ALLDOCK=0;SUPTAG=;SUPATT=;SUPOP=;GST=0;SD=0;SR=0;SRES=0;SIA=0;SIO=0;SIT=0;SFQT=0;SIR=0;SIC=0;SK=0;AFK=0;DSO=0;ShowProject=0;ShowScenarios=0;HideFeatLink=0;SSetCB=0;Lyrs=;DLKO=0;DDS=0;SupCol=0;SDI=1;SSB=1;SwimlanesActive=1;MatrixActive=0;MatrixLineWidth=1;MatrixLineClr=0;MatrixLocked=0;KanbanActive=0;KanbanType=;KanbanNote=;KanbanFont=;KBS=0;KVS=16;KHH=0;KND=0;KB=0;SubOrder=;SeqTopMargin=50;TDurLow=0;TDurHigh=0;TDurUnit=;TDurHide=0;StartPos=160;TimeIntervalList=;INT_ARGS=;INT_RET=;INT_ATT=;" baseline="ExcludeRTF=0;DocAll=0;ShowDiagramInPages=0;RotateImages=0;HideQuals=0;AttPkg=1;ShowTests=0;ShowMaint=0;Layout=;SuppressFOC=0;TConnectorNotation=UML 2.1;TExplicitNavigability=0;AdvancedElementProps=1;AdvancedFeatureProps=1;AdvancedConnectorProps=1;m_bElementClassifier=1;SPT=1;MDGDgm=;MDGView=;DefaultLang=;STBLDgm=;ShowNotes=0;VisibleAttributeDetail=0;ShowOpRetType=1;SuppressBrackets=0;SuppConnectorLabels=0;PrintPageHeadFoot=0;ShowAsList=0;GZ=;OverrideLinkedF=0;MarginL=0;MarginR=0;MarginT=0;MarginB=0;HandDraw=0;Whiteboard=0;HideConnStereotype=0;ShowFQN=0;NoFullScope=0;SuppressedCompartments=;Flow=;SF=0;ULC=0;BkgPath=;Roadmap=;CEE=0;FTV=0;ETV=0;FTM=0;ALLDOCK=0;SUPTAG=;SUPATT=;SUPOP=;GST=0;SD=0;SR=0;SRES=0;SIA=0;SIO=0;SIT=0;SFQT=0;SIR=0;SIC=0;SK=0;AFK=0;DSO=0;ShowProject=0;ShowScenarios=0;HideFeatLink=0;SSetCB=0;Lyrs=;DLKO=0;DDS=0;SupCol=0;SDI=1;SSB=1;SwimlanesActive=1;MatrixActive=0;MatrixLineWidth=1;MatrixLineClr=0;MatrixLocked=0;KanbanActive=0;KanbanType=;KanbanNote=;KanbanFont=;KBS=0;KVS=16;KHH=0;KND=0;KB=0;SubOrder=;SeqTopMargin=50;TDurLow=0;TDurHigh=0;TDurUnit=;TDurHide=0;StartPos=160;TimeIntervalList=;INT_ARGS=;INT_RET=;INT_ATT=;" status="Identical"/>
+								</Properties>
+							</CompareItem>
+						</CompareItem>
+						<CompareItem name="ExtVendor_IEC62325" type="" guid="{BF0ECB3B-17AB-42e1-864F-691EC6CD4513}" status="Changed">
+							<Properties>
+								<Property name="Name" model="ExtVendor_IEC62325" baseline="ExtVendor_IEC62325" status="Identical"/>
+								<Property name="Type" model="Logical" baseline="Logical" status="Identical"/>
+								<Property name="Version" model="1.0" baseline="1.0" status="Identical"/>
+								<Property name="Stereotype" status="Identical"/>
+								<Property name="DateCreated" model="09-Sep-26 9:34:07 AM" baseline="09-Sep-26 9:34:07 AM" status="Identical"/>
+								<Property name="DateModified" model="09-Sep-26 9:34:07 AM" baseline="09-Sep-26 9:34:07 AM" status="Identical"/>
+								<Property name="Notes" status="Identical"/>
+								<Property name="Style" model="HideRel=0;ShowTags=0;ShowReqs=0;ShowCons=0;OpParams=1;ShowSN=0;ScalePI=0;PPgs.cx=0;PPgs.cy=0;PSize=9;ShowIcons=1;SuppCN=0;HideProps=0;HideParents=0;UseAlias=0;HideAtts=0;HideOps=0;HideStereo=0;HideEStereo=0;ShowShape=1;FormName=;" baseline="HideRel=0;ShowTags=0;ShowReqs=0;ShowCons=0;OpParams=1;ShowSN=0;ScalePI=0;PPgs.cx=0;PPgs.cy=0;PSize=1;ShowIcons=1;SuppCN=0;HideProps=0;HideParents=0;UseAlias=0;HideAtts=0;HideOps=0;HideStereo=0;HideEStereo=0;ShowShape=1;FormName=;" status="Changed"/>
+								<Property name="StyleEx" model="ExcludeRTF=0;DocAll=0;ShowDiagramInPages=0;RotateImages=0;HideQuals=0;AttPkg=1;ShowTests=0;ShowMaint=0;Layout=;SuppressFOC=0;TConnectorNotation=UML 2.1;TExplicitNavigability=0;AdvancedElementProps=1;AdvancedFeatureProps=1;AdvancedConnectorProps=1;m_bElementClassifier=1;SPT=1;MDGDgm=;MDGView=;DefaultLang=;STBLDgm=;ShowNotes=0;VisibleAttributeDetail=0;ShowOpRetType=1;SuppressBrackets=0;SuppConnectorLabels=0;PrintPageHeadFoot=0;ShowAsList=0;GZ=;OverrideLinkedF=0;MarginL=0;MarginR=0;MarginT=0;MarginB=0;HandDraw=0;Whiteboard=0;HideConnStereotype=0;ShowFQN=0;NoFullScope=0;SuppressedCompartments=;Flow=;SF=0;ULC=0;BkgPath=;Roadmap=;CEE=0;FTV=0;ETV=0;FTM=0;ALLDOCK=0;SUPTAG=;SUPATT=;SUPOP=;GST=0;SD=0;SR=0;SRES=0;SIA=0;SIO=0;SIT=0;SFQT=0;SIR=0;SIC=0;SK=0;AFK=0;DSO=0;ShowProject=0;ShowScenarios=0;HideFeatLink=0;SSetCB=0;Lyrs=;DLKO=0;DDS=0;SupCol=0;SDI=1;SSB=1;SwimlanesActive=1;MatrixActive=0;MatrixLineWidth=1;MatrixLineClr=0;MatrixLocked=0;KanbanActive=0;KanbanType=;KanbanNote=;KanbanFont=;KBS=0;KVS=16;KHH=0;KND=0;KB=0;SubOrder=;SeqTopMargin=50;TDurLow=0;TDurHigh=0;TDurUnit=;TDurHide=0;StartPos=160;TimeIntervalList=;INT_ARGS=;INT_RET=;INT_ATT=;" baseline="ExcludeRTF=0;DocAll=0;ShowDiagramInPages=0;RotateImages=0;HideQuals=0;AttPkg=1;ShowTests=0;ShowMaint=0;Layout=;SuppressFOC=0;TConnectorNotation=UML 2.1;TExplicitNavigability=0;AdvancedElementProps=1;AdvancedFeatureProps=1;AdvancedConnectorProps=1;m_bElementClassifier=1;SPT=1;MDGDgm=;MDGView=;DefaultLang=;STBLDgm=;ShowNotes=0;VisibleAttributeDetail=0;ShowOpRetType=1;SuppressBrackets=0;SuppConnectorLabels=0;PrintPageHeadFoot=0;ShowAsList=0;GZ=;OverrideLinkedF=0;MarginL=0;MarginR=0;MarginT=0;MarginB=0;HandDraw=0;Whiteboard=0;HideConnStereotype=0;ShowFQN=0;NoFullScope=0;SuppressedCompartments=;Flow=;SF=0;ULC=0;BkgPath=;Roadmap=;CEE=0;FTV=0;ETV=0;FTM=0;ALLDOCK=0;SUPTAG=;SUPATT=;SUPOP=;GST=0;SD=0;SR=0;SRES=0;SIA=0;SIO=0;SIT=0;SFQT=0;SIR=0;SIC=0;SK=0;AFK=0;DSO=0;ShowProject=0;ShowScenarios=0;HideFeatLink=0;SSetCB=0;Lyrs=;DLKO=0;DDS=0;SupCol=0;SDI=1;SSB=1;SwimlanesActive=1;MatrixActive=0;MatrixLineWidth=1;MatrixLineClr=0;MatrixLocked=0;KanbanActive=0;KanbanType=;KanbanNote=;KanbanFont=;KBS=0;KVS=16;KHH=0;KND=0;KB=0;SubOrder=;SeqTopMargin=50;TDurLow=0;TDurHigh=0;TDurUnit=;TDurHide=0;StartPos=160;TimeIntervalList=;INT_ARGS=;INT_RET=;INT_ATT=;" status="Identical"/>
+							</Properties>
+						</CompareItem>
+					</CompareItem>
+					<CompareItem name="ExtVendor_IEC61970" type="" guid="{AB781F28-C8FF-482e-B697-C020939FAE8F}" status="Identical">
+						<Properties>
+							<Property name="Abstract" model="false" baseline="false" status="Identical"/>
+							<Property name="Alias" status="Identical"/>
+							<Property name="Author" model="modeler" baseline="modeler" status="Identical"/>
+							<Property name="DateCreated" model="08-Sep-26 2:31:03 PM" baseline="08-Sep-26 2:31:03 PM" status="Identical"/>
+							<Property name="DateModified" model="08-Sep-26 2:31:03 PM" baseline="08-Sep-26 2:31:03 PM" status="Identical"/>
+							<Property name="Complexity" model="1" baseline="1" status="Identical"/>
+							<Property name="GenFile" status="Identical"/>
+							<Property name="GenType" model="Java" baseline="Java" status="Identical"/>
+							<Property name="IsLeaf" model="false" baseline="false" status="Identical"/>
+							<Property name="IsSpec" model="false" baseline="false" status="Identical"/>
+							<Property name="IsRoot" model="false" baseline="false" status="Identical"/>
+							<Property name="Keywords" status="Identical"/>
+							<Property name="Multiplicity" status="Identical"/>
+							<Property name="Name" model="ExtVendor_IEC61970" baseline="ExtVendor_IEC61970" status="Identical"/>
+							<Property name="Notes" status="Identical"/>
+							<Property name="Persistence" status="Identical"/>
+							<Property name="Phase" model="1.0" baseline="1.0" status="Identical"/>
+							<Property name="Scope" model="Public" baseline="Public" status="Identical"/>
+							<Property name="Status" model="Proposed" baseline="Proposed" status="Identical"/>
+							<Property name="Stereotype" status="Identical"/>
+							<Property name="Type" model="Package" baseline="Package" status="Identical"/>
+							<Property name="Version" model="1.0" baseline="1.0" status="Identical"/>
+							<Property name="Classifier" status="Identical"/>
+							<Property name="Visibility" status="Identical"/>
+							<Property name="Concurrency" status="Identical"/>
+							<Property name="Cardinality" status="Identical"/>
+							<Property name="Style" status="Identical"/>
+						</Properties>
+						<CompareItem name="ExtVendor_Base" type="" guid="{AF93CC99-6660-410c-94A2-753B91F877DB}" status="Identical">
+							<Properties>
+								<Property name="Abstract" model="false" baseline="false" status="Identical"/>
+								<Property name="Alias" status="Identical"/>
+								<Property name="Author" model="modeler" baseline="modeler" status="Identical"/>
+								<Property name="DateCreated" model="08-Sep-26 2:31:29 PM" baseline="08-Sep-26 2:31:29 PM" status="Identical"/>
+								<Property name="DateModified" model="08-Sep-26 2:31:29 PM" baseline="08-Sep-26 2:31:29 PM" status="Identical"/>
+								<Property name="Complexity" model="1" baseline="1" status="Identical"/>
+								<Property name="GenFile" status="Identical"/>
+								<Property name="GenType" model="Java" baseline="Java" status="Identical"/>
+								<Property name="IsLeaf" model="false" baseline="false" status="Identical"/>
+								<Property name="IsSpec" model="false" baseline="false" status="Identical"/>
+								<Property name="IsRoot" model="false" baseline="false" status="Identical"/>
+								<Property name="Keywords" status="Identical"/>
+								<Property name="Multiplicity" status="Identical"/>
+								<Property name="Name" model="ExtVendor_Base" baseline="ExtVendor_Base" status="Identical"/>
+								<Property name="Notes" status="Identical"/>
+								<Property name="Persistence" status="Identical"/>
+								<Property name="Phase" model="1.0" baseline="1.0" status="Identical"/>
+								<Property name="Scope" model="Public" baseline="Public" status="Identical"/>
+								<Property name="Status" model="Proposed" baseline="Proposed" status="Identical"/>
+								<Property name="Stereotype" status="Identical"/>
+								<Property name="Type" model="Package" baseline="Package" status="Identical"/>
+								<Property name="Version" model="1.0" baseline="1.0" status="Identical"/>
+								<Property name="Classifier" status="Identical"/>
+								<Property name="Visibility" status="Identical"/>
+								<Property name="Concurrency" status="Identical"/>
+								<Property name="Cardinality" status="Identical"/>
+								<Property name="Style" status="Identical"/>
+							</Properties>
+							<CompareItem name="ExtVendor_OperationalLimits" type="" guid="{649C19B9-3229-46a4-9992-C6ABE9E1ADF5}" status="Identical">
+								<Properties>
+									<Property name="Abstract" model="false" baseline="false" status="Identical"/>
+									<Property name="Alias" status="Identical"/>
+									<Property name="Author" model="modeler" baseline="modeler" status="Identical"/>
+									<Property name="DateCreated" model="09-Sep-26 9:32:06 AM" baseline="09-Sep-26 9:32:06 AM" status="Identical"/>
+									<Property name="DateModified" model="09-Sep-26 9:32:06 AM" baseline="09-Sep-26 9:32:06 AM" status="Identical"/>
+									<Property name="Complexity" model="1" baseline="1" status="Identical"/>
+									<Property name="GenFile" status="Identical"/>
+									<Property name="GenType" model="Java" baseline="Java" status="Identical"/>
+									<Property name="IsLeaf" model="false" baseline="false" status="Identical"/>
+									<Property name="IsSpec" model="false" baseline="false" status="Identical"/>
+									<Property name="IsRoot" model="false" baseline="false" status="Identical"/>
+									<Property name="Keywords" status="Identical"/>
+									<Property name="Multiplicity" status="Identical"/>
+									<Property name="Name" model="ExtVendor_OperationalLimits" baseline="ExtVendor_OperationalLimits" status="Identical"/>
+									<Property name="Notes" status="Identical"/>
+									<Property name="Persistence" status="Identical"/>
+									<Property name="Phase" model="1.0" baseline="1.0" status="Identical"/>
+									<Property name="Scope" model="Public" baseline="Public" status="Identical"/>
+									<Property name="Status" model="Proposed" baseline="Proposed" status="Identical"/>
+									<Property name="Stereotype" status="Identical"/>
+									<Property name="Type" model="Package" baseline="Package" status="Identical"/>
+									<Property name="Version" model="1.0" baseline="1.0" status="Identical"/>
+									<Property name="Classifier" status="Identical"/>
+									<Property name="Visibility" status="Identical"/>
+									<Property name="Concurrency" status="Identical"/>
+									<Property name="Cardinality" status="Identical"/>
+									<Property name="Style" status="Identical"/>
+								</Properties>
+								<CompareItem name="ExtVendor_OperationalLimits" type="" guid="{90CE79B5-CCF0-4c6b-9852-50813D86FF45}" status="Changed">
+									<Properties>
+										<Property name="Name" model="ExtVendor_OperationalLimits" baseline="ExtVendor_OperationalLimits" status="Identical"/>
+										<Property name="Type" model="Logical" baseline="Logical" status="Identical"/>
+										<Property name="Version" model="1.0" baseline="1.0" status="Identical"/>
+										<Property name="Stereotype" status="Identical"/>
+										<Property name="DateCreated" model="09-Sep-26 9:32:11 AM" baseline="09-Sep-26 9:32:11 AM" status="Identical"/>
+										<Property name="DateModified" model="09-Sep-26 9:32:11 AM" baseline="09-Sep-26 9:32:11 AM" status="Identical"/>
+										<Property name="Notes" status="Identical"/>
+										<Property name="Style" model="HideRel=0;ShowTags=0;ShowReqs=0;ShowCons=0;OpParams=1;ShowSN=0;ScalePI=0;PPgs.cx=0;PPgs.cy=0;PSize=9;ShowIcons=1;SuppCN=0;HideProps=0;HideParents=0;UseAlias=0;HideAtts=0;HideOps=0;HideStereo=0;HideEStereo=0;ShowShape=1;FormName=;" baseline="HideRel=0;ShowTags=0;ShowReqs=0;ShowCons=0;OpParams=1;ShowSN=0;ScalePI=0;PPgs.cx=0;PPgs.cy=0;PSize=1;ShowIcons=1;SuppCN=0;HideProps=0;HideParents=0;UseAlias=0;HideAtts=0;HideOps=0;HideStereo=0;HideEStereo=0;ShowShape=1;FormName=;" status="Changed"/>
+										<Property name="StyleEx" model="ExcludeRTF=0;DocAll=0;ShowDiagramInPages=0;RotateImages=0;HideQuals=0;AttPkg=1;ShowTests=0;ShowMaint=0;Layout=;SuppressFOC=0;TConnectorNotation=UML 2.1;TExplicitNavigability=0;AdvancedElementProps=1;AdvancedFeatureProps=1;AdvancedConnectorProps=1;m_bElementClassifier=1;SPT=1;MDGDgm=;MDGView=;DefaultLang=;STBLDgm=;ShowNotes=0;VisibleAttributeDetail=0;ShowOpRetType=1;SuppressBrackets=0;SuppConnectorLabels=0;PrintPageHeadFoot=0;ShowAsList=0;GZ=;OverrideLinkedF=0;MarginL=0;MarginR=0;MarginT=0;MarginB=0;HandDraw=0;Whiteboard=0;HideConnStereotype=0;ShowFQN=0;NoFullScope=0;SuppressedCompartments=;Flow=;SF=0;ULC=0;BkgPath=;Roadmap=;CEE=0;FTV=0;ETV=0;FTM=0;ALLDOCK=0;SUPTAG=;SUPATT=;SUPOP=;GST=0;SD=0;SR=0;SRES=0;SIA=0;SIO=0;SIT=0;SFQT=0;SIR=0;SIC=0;SK=0;AFK=0;DSO=0;ShowProject=0;ShowScenarios=0;HideFeatLink=0;SSetCB=0;Lyrs=;DLKO=0;DDS=0;SupCol=0;SDI=1;SSB=1;SwimlanesActive=1;MatrixActive=0;MatrixLineWidth=1;MatrixLineClr=0;MatrixLocked=0;KanbanActive=0;KanbanType=;KanbanNote=;KanbanFont=;KBS=0;KVS=16;KHH=0;KND=0;KB=0;SubOrder=;SeqTopMargin=50;TDurLow=0;TDurHigh=0;TDurUnit=;TDurHide=0;StartPos=160;TimeIntervalList=;INT_ARGS=;INT_RET=;INT_ATT=;" baseline="ExcludeRTF=0;DocAll=0;ShowDiagramInPages=0;RotateImages=0;HideQuals=0;AttPkg=1;ShowTests=0;ShowMaint=0;Layout=;SuppressFOC=0;TConnectorNotation=UML 2.1;TExplicitNavigability=0;AdvancedElementProps=1;AdvancedFeatureProps=1;AdvancedConnectorProps=1;m_bElementClassifier=1;SPT=1;MDGDgm=;MDGView=;DefaultLang=;STBLDgm=;ShowNotes=0;VisibleAttributeDetail=0;ShowOpRetType=1;SuppressBrackets=0;SuppConnectorLabels=0;PrintPageHeadFoot=0;ShowAsList=0;GZ=;OverrideLinkedF=0;MarginL=0;MarginR=0;MarginT=0;MarginB=0;HandDraw=0;Whiteboard=0;HideConnStereotype=0;ShowFQN=0;NoFullScope=0;SuppressedCompartments=;Flow=;SF=0;ULC=0;BkgPath=;Roadmap=;CEE=0;FTV=0;ETV=0;FTM=0;ALLDOCK=0;SUPTAG=;SUPATT=;SUPOP=;GST=0;SD=0;SR=0;SRES=0;SIA=0;SIO=0;SIT=0;SFQT=0;SIR=0;SIC=0;SK=0;AFK=0;DSO=0;ShowProject=0;ShowScenarios=0;HideFeatLink=0;SSetCB=0;Lyrs=;DLKO=0;DDS=0;SupCol=0;SDI=1;SSB=1;SwimlanesActive=1;MatrixActive=0;MatrixLineWidth=1;MatrixLineClr=0;MatrixLocked=0;KanbanActive=0;KanbanType=;KanbanNote=;KanbanFont=;KBS=0;KVS=16;KHH=0;KND=0;KB=0;SubOrder=;SeqTopMargin=50;TDurLow=0;TDurHigh=0;TDurUnit=;TDurHide=0;StartPos=160;TimeIntervalList=;INT_ARGS=;INT_RET=;INT_ATT=;" status="Identical"/>
+									</Properties>
+								</CompareItem>
+							</CompareItem>
+							<CompareItem name="ExtVendor_Generation" type="" guid="{718926ED-8FA3-4a4a-9600-D0160D43CFDB}" status="Identical">
+								<Properties>
+									<Property name="Abstract" model="false" baseline="false" status="Identical"/>
+									<Property name="Alias" status="Identical"/>
+									<Property name="Author" model="modeler" baseline="modeler" status="Identical"/>
+									<Property name="DateCreated" model="09-Sep-26 9:30:01 AM" baseline="09-Sep-26 9:30:01 AM" status="Identical"/>
+									<Property name="DateModified" model="09-Sep-26 9:30:01 AM" baseline="09-Sep-26 9:30:01 AM" status="Identical"/>
+									<Property name="Complexity" model="1" baseline="1" status="Identical"/>
+									<Property name="GenFile" status="Identical"/>
+									<Property name="GenType" model="Java" baseline="Java" status="Identical"/>
+									<Property name="IsLeaf" model="false" baseline="false" status="Identical"/>
+									<Property name="IsSpec" model="false" baseline="false" status="Identical"/>
+									<Property name="IsRoot" model="false" baseline="false" status="Identical"/>
+									<Property name="Keywords" status="Identical"/>
+									<Property name="Multiplicity" status="Identical"/>
+									<Property name="Name" model="ExtVendor_Generation" baseline="ExtVendor_Generation" status="Identical"/>
+									<Property name="Notes" status="Identical"/>
+									<Property name="Persistence" status="Identical"/>
+									<Property name="Phase" model="1.0" baseline="1.0" status="Identical"/>
+									<Property name="Scope" model="Public" baseline="Public" status="Identical"/>
+									<Property name="Status" model="Proposed" baseline="Proposed" status="Identical"/>
+									<Property name="Stereotype" status="Identical"/>
+									<Property name="Type" model="Package" baseline="Package" status="Identical"/>
+									<Property name="Version" model="1.0" baseline="1.0" status="Identical"/>
+									<Property name="Classifier" status="Identical"/>
+									<Property name="Visibility" status="Identical"/>
+									<Property name="Concurrency" status="Identical"/>
+									<Property name="Cardinality" status="Identical"/>
+									<Property name="Style" status="Identical"/>
+								</Properties>
+								<CompareItem name="ExtVendor_Production" type="" guid="{10F14EA1-F9B1-44a8-87A3-1E4917D255FF}" status="Identical">
+									<Properties>
+										<Property name="Abstract" model="false" baseline="false" status="Identical"/>
+										<Property name="Alias" status="Identical"/>
+										<Property name="Author" model="modeler" baseline="modeler" status="Identical"/>
+										<Property name="DateCreated" model="09-Sep-26 9:30:12 AM" baseline="09-Sep-26 9:30:12 AM" status="Identical"/>
+										<Property name="DateModified" model="09-Sep-26 9:30:12 AM" baseline="09-Sep-26 9:30:12 AM" status="Identical"/>
+										<Property name="Complexity" model="1" baseline="1" status="Identical"/>
+										<Property name="GenFile" status="Identical"/>
+										<Property name="GenType" model="Java" baseline="Java" status="Identical"/>
+										<Property name="IsLeaf" model="false" baseline="false" status="Identical"/>
+										<Property name="IsSpec" model="false" baseline="false" status="Identical"/>
+										<Property name="IsRoot" model="false" baseline="false" status="Identical"/>
+										<Property name="Keywords" status="Identical"/>
+										<Property name="Multiplicity" status="Identical"/>
+										<Property name="Name" model="ExtVendor_Production" baseline="ExtVendor_Production" status="Identical"/>
+										<Property name="Notes" status="Identical"/>
+										<Property name="Persistence" status="Identical"/>
+										<Property name="Phase" model="1.0" baseline="1.0" status="Identical"/>
+										<Property name="Scope" model="Public" baseline="Public" status="Identical"/>
+										<Property name="Status" model="Proposed" baseline="Proposed" status="Identical"/>
+										<Property name="Stereotype" status="Identical"/>
+										<Property name="Type" model="Package" baseline="Package" status="Identical"/>
+										<Property name="Version" model="1.0" baseline="1.0" status="Identical"/>
+										<Property name="Classifier" status="Identical"/>
+										<Property name="Visibility" status="Identical"/>
+										<Property name="Concurrency" status="Identical"/>
+										<Property name="Cardinality" status="Identical"/>
+										<Property name="Style" status="Identical"/>
+									</Properties>
+									<CompareItem name="ExtVendor_Production" type="" guid="{EDCA953D-1526-4eaa-AB54-9FCC1D448436}" status="Changed">
+										<Properties>
+											<Property name="Name" model="ExtVendor_Production" baseline="ExtVendor_Production" status="Identical"/>
+											<Property name="Type" model="Logical" baseline="Logical" status="Identical"/>
+											<Property name="Version" model="1.0" baseline="1.0" status="Identical"/>
+											<Property name="Stereotype" status="Identical"/>
+											<Property name="DateCreated" model="09-Sep-26 9:30:14 AM" baseline="09-Sep-26 9:30:14 AM" status="Identical"/>
+											<Property name="DateModified" model="09-Sep-26 9:30:14 AM" baseline="09-Sep-26 9:30:14 AM" status="Identical"/>
+											<Property name="Notes" status="Identical"/>
+											<Property name="Style" model="HideRel=0;ShowTags=0;ShowReqs=0;ShowCons=0;OpParams=1;ShowSN=0;ScalePI=0;PPgs.cx=0;PPgs.cy=0;PSize=9;ShowIcons=1;SuppCN=0;HideProps=0;HideParents=0;UseAlias=0;HideAtts=0;HideOps=0;HideStereo=0;HideEStereo=0;ShowShape=1;FormName=;" baseline="HideRel=0;ShowTags=0;ShowReqs=0;ShowCons=0;OpParams=1;ShowSN=0;ScalePI=0;PPgs.cx=0;PPgs.cy=0;PSize=1;ShowIcons=1;SuppCN=0;HideProps=0;HideParents=0;UseAlias=0;HideAtts=0;HideOps=0;HideStereo=0;HideEStereo=0;ShowShape=1;FormName=;" status="Changed"/>
+											<Property name="StyleEx" model="ExcludeRTF=0;DocAll=0;ShowDiagramInPages=0;RotateImages=0;HideQuals=0;AttPkg=1;ShowTests=0;ShowMaint=0;Layout=;SuppressFOC=0;TConnectorNotation=UML 2.1;TExplicitNavigability=0;AdvancedElementProps=1;AdvancedFeatureProps=1;AdvancedConnectorProps=1;m_bElementClassifier=1;SPT=1;MDGDgm=;MDGView=;DefaultLang=;STBLDgm=;ShowNotes=0;VisibleAttributeDetail=0;ShowOpRetType=1;SuppressBrackets=0;SuppConnectorLabels=0;PrintPageHeadFoot=0;ShowAsList=0;GZ=;OverrideLinkedF=0;MarginL=0;MarginR=0;MarginT=0;MarginB=0;HandDraw=0;Whiteboard=0;HideConnStereotype=0;ShowFQN=0;NoFullScope=0;SuppressedCompartments=;Flow=;SF=0;ULC=0;BkgPath=;Roadmap=;CEE=0;FTV=0;ETV=0;FTM=0;ALLDOCK=0;SUPTAG=;SUPATT=;SUPOP=;GST=0;SD=0;SR=0;SRES=0;SIA=0;SIO=0;SIT=0;SFQT=0;SIR=0;SIC=0;SK=0;AFK=0;DSO=0;ShowProject=0;ShowScenarios=0;HideFeatLink=0;SSetCB=0;Lyrs=;DLKO=0;DDS=0;SupCol=0;SDI=1;SSB=1;SwimlanesActive=1;MatrixActive=0;MatrixLineWidth=1;MatrixLineClr=0;MatrixLocked=0;KanbanActive=0;KanbanType=;KanbanNote=;KanbanFont=;KBS=0;KVS=16;KHH=0;KND=0;KB=0;SubOrder=;SeqTopMargin=50;TDurLow=0;TDurHigh=0;TDurUnit=;TDurHide=0;StartPos=160;TimeIntervalList=;INT_ARGS=;INT_RET=;INT_ATT=;" baseline="ExcludeRTF=0;DocAll=0;ShowDiagramInPages=0;RotateImages=0;HideQuals=0;AttPkg=1;ShowTests=0;ShowMaint=0;Layout=;SuppressFOC=0;TConnectorNotation=UML 2.1;TExplicitNavigability=0;AdvancedElementProps=1;AdvancedFeatureProps=1;AdvancedConnectorProps=1;m_bElementClassifier=1;SPT=1;MDGDgm=;MDGView=;DefaultLang=;STBLDgm=;ShowNotes=0;VisibleAttributeDetail=0;ShowOpRetType=1;SuppressBrackets=0;SuppConnectorLabels=0;PrintPageHeadFoot=0;ShowAsList=0;GZ=;OverrideLinkedF=0;MarginL=0;MarginR=0;MarginT=0;MarginB=0;HandDraw=0;Whiteboard=0;HideConnStereotype=0;ShowFQN=0;NoFullScope=0;SuppressedCompartments=;Flow=;SF=0;ULC=0;BkgPath=;Roadmap=;CEE=0;FTV=0;ETV=0;FTM=0;ALLDOCK=0;SUPTAG=;SUPATT=;SUPOP=;GST=0;SD=0;SR=0;SRES=0;SIA=0;SIO=0;SIT=0;SFQT=0;SIR=0;SIC=0;SK=0;AFK=0;DSO=0;ShowProject=0;ShowScenarios=0;HideFeatLink=0;SSetCB=0;Lyrs=;DLKO=0;DDS=0;SupCol=0;SDI=1;SSB=1;SwimlanesActive=1;MatrixActive=0;MatrixLineWidth=1;MatrixLineClr=0;MatrixLocked=0;KanbanActive=0;KanbanType=;KanbanNote=;KanbanFont=;KBS=0;KVS=16;KHH=0;KND=0;KB=0;SubOrder=;SeqTopMargin=50;TDurLow=0;TDurHigh=0;TDurUnit=;TDurHide=0;StartPos=160;TimeIntervalList=;INT_ARGS=;INT_RET=;INT_ATT=;" status="Identical"/>
+										</Properties>
+									</CompareItem>
+								</CompareItem>
+								<CompareItem name="ExtVendor_Generation" type="" guid="{C05F04FE-48E8-461b-BAC8-0F0485681DD7}" status="Changed">
+									<Properties>
+										<Property name="Name" model="ExtVendor_Generation" baseline="ExtVendor_Generation" status="Identical"/>
+										<Property name="Type" model="Logical" baseline="Logical" status="Identical"/>
+										<Property name="Version" model="1.0" baseline="1.0" status="Identical"/>
+										<Property name="Stereotype" status="Identical"/>
+										<Property name="DateCreated" model="09-Sep-26 9:30:03 AM" baseline="09-Sep-26 9:30:03 AM" status="Identical"/>
+										<Property name="DateModified" model="09-Sep-26 9:30:03 AM" baseline="09-Sep-26 9:30:03 AM" status="Identical"/>
+										<Property name="Notes" status="Identical"/>
+										<Property name="Style" model="HideRel=0;ShowTags=0;ShowReqs=0;ShowCons=0;OpParams=1;ShowSN=0;ScalePI=0;PPgs.cx=0;PPgs.cy=0;PSize=9;ShowIcons=1;SuppCN=0;HideProps=0;HideParents=0;UseAlias=0;HideAtts=0;HideOps=0;HideStereo=0;HideEStereo=0;ShowShape=1;FormName=;" baseline="HideRel=0;ShowTags=0;ShowReqs=0;ShowCons=0;OpParams=1;ShowSN=0;ScalePI=0;PPgs.cx=0;PPgs.cy=0;PSize=1;ShowIcons=1;SuppCN=0;HideProps=0;HideParents=0;UseAlias=0;HideAtts=0;HideOps=0;HideStereo=0;HideEStereo=0;ShowShape=1;FormName=;" status="Changed"/>
+										<Property name="StyleEx" model="ExcludeRTF=0;DocAll=0;ShowDiagramInPages=0;RotateImages=0;HideQuals=0;AttPkg=1;ShowTests=0;ShowMaint=0;Layout=;SuppressFOC=0;TConnectorNotation=UML 2.1;TExplicitNavigability=0;AdvancedElementProps=1;AdvancedFeatureProps=1;AdvancedConnectorProps=1;m_bElementClassifier=1;SPT=1;MDGDgm=;MDGView=;DefaultLang=;STBLDgm=;ShowNotes=0;VisibleAttributeDetail=0;ShowOpRetType=1;SuppressBrackets=0;SuppConnectorLabels=0;PrintPageHeadFoot=0;ShowAsList=0;GZ=;OverrideLinkedF=0;MarginL=0;MarginR=0;MarginT=0;MarginB=0;HandDraw=0;Whiteboard=0;HideConnStereotype=0;ShowFQN=0;NoFullScope=0;SuppressedCompartments=;Flow=;SF=0;ULC=0;BkgPath=;Roadmap=;CEE=0;FTV=0;ETV=0;FTM=0;ALLDOCK=0;SUPTAG=;SUPATT=;SUPOP=;GST=0;SD=0;SR=0;SRES=0;SIA=0;SIO=0;SIT=0;SFQT=0;SIR=0;SIC=0;SK=0;AFK=0;DSO=0;ShowProject=0;ShowScenarios=0;HideFeatLink=0;SSetCB=0;Lyrs=;DLKO=0;DDS=0;SupCol=0;SDI=1;SSB=1;SwimlanesActive=1;MatrixActive=0;MatrixLineWidth=1;MatrixLineClr=0;MatrixLocked=0;KanbanActive=0;KanbanType=;KanbanNote=;KanbanFont=;KBS=0;KVS=16;KHH=0;KND=0;KB=0;SubOrder=;SeqTopMargin=50;TDurLow=0;TDurHigh=0;TDurUnit=;TDurHide=0;StartPos=160;TimeIntervalList=;INT_ARGS=;INT_RET=;INT_ATT=;" baseline="ExcludeRTF=0;DocAll=0;ShowDiagramInPages=0;RotateImages=0;HideQuals=0;AttPkg=1;ShowTests=0;ShowMaint=0;Layout=;SuppressFOC=0;TConnectorNotation=UML 2.1;TExplicitNavigability=0;AdvancedElementProps=1;AdvancedFeatureProps=1;AdvancedConnectorProps=1;m_bElementClassifier=1;SPT=1;MDGDgm=;MDGView=;DefaultLang=;STBLDgm=;ShowNotes=0;VisibleAttributeDetail=0;ShowOpRetType=1;SuppressBrackets=0;SuppConnectorLabels=0;PrintPageHeadFoot=0;ShowAsList=0;GZ=;OverrideLinkedF=0;MarginL=0;MarginR=0;MarginT=0;MarginB=0;HandDraw=0;Whiteboard=0;HideConnStereotype=0;ShowFQN=0;NoFullScope=0;SuppressedCompartments=;Flow=;SF=0;ULC=0;BkgPath=;Roadmap=;CEE=0;FTV=0;ETV=0;FTM=0;ALLDOCK=0;SUPTAG=;SUPATT=;SUPOP=;GST=0;SD=0;SR=0;SRES=0;SIA=0;SIO=0;SIT=0;SFQT=0;SIR=0;SIC=0;SK=0;AFK=0;DSO=0;ShowProject=0;ShowScenarios=0;HideFeatLink=0;SSetCB=0;Lyrs=;DLKO=0;DDS=0;SupCol=0;SDI=1;SSB=1;SwimlanesActive=1;MatrixActive=0;MatrixLineWidth=1;MatrixLineClr=0;MatrixLocked=0;KanbanActive=0;KanbanType=;KanbanNote=;KanbanFont=;KBS=0;KVS=16;KHH=0;KND=0;KB=0;SubOrder=;SeqTopMargin=50;TDurLow=0;TDurHigh=0;TDurUnit=;TDurHide=0;StartPos=160;TimeIntervalList=;INT_ARGS=;INT_RET=;INT_ATT=;" status="Identical"/>
+									</Properties>
+								</CompareItem>
+							</CompareItem>
+							<CompareItem name="ExtVendor_Wires" type="" guid="{7CE45918-7282-4e8f-82B0-CB3DD152EF78}" status="Identical">
+								<Properties>
+									<Property name="Abstract" model="false" baseline="false" status="Identical"/>
+									<Property name="Alias" status="Identical"/>
+									<Property name="Author" model="modeler" baseline="modeler" status="Identical"/>
+									<Property name="DateCreated" model="09-Sep-26 9:29:10 AM" baseline="09-Sep-26 9:29:10 AM" status="Identical"/>
+									<Property name="DateModified" model="09-Sep-26 9:29:10 AM" baseline="09-Sep-26 9:29:10 AM" status="Identical"/>
+									<Property name="Complexity" model="1" baseline="1" status="Identical"/>
+									<Property name="GenFile" status="Identical"/>
+									<Property name="GenType" model="Java" baseline="Java" status="Identical"/>
+									<Property name="IsLeaf" model="false" baseline="false" status="Identical"/>
+									<Property name="IsSpec" model="false" baseline="false" status="Identical"/>
+									<Property name="IsRoot" model="false" baseline="false" status="Identical"/>
+									<Property name="Keywords" status="Identical"/>
+									<Property name="Multiplicity" status="Identical"/>
+									<Property name="Name" model="ExtVendor_Wires" baseline="ExtVendor_Wires" status="Identical"/>
+									<Property name="Notes" status="Identical"/>
+									<Property name="Persistence" status="Identical"/>
+									<Property name="Phase" model="1.0" baseline="1.0" status="Identical"/>
+									<Property name="Scope" model="Public" baseline="Public" status="Identical"/>
+									<Property name="Status" model="Proposed" baseline="Proposed" status="Identical"/>
+									<Property name="Stereotype" status="Identical"/>
+									<Property name="Type" model="Package" baseline="Package" status="Identical"/>
+									<Property name="Version" model="1.0" baseline="1.0" status="Identical"/>
+									<Property name="Classifier" status="Identical"/>
+									<Property name="Visibility" status="Identical"/>
+									<Property name="Concurrency" status="Identical"/>
+									<Property name="Cardinality" status="Identical"/>
+									<Property name="Style" status="Identical"/>
+								</Properties>
+								<CompareItem name="ExtVendorSynchronousMachine" type="" guid="{D2783140-058A-42d4-A94D-45E13727F0E1}" status="Identical">
+									<Properties>
+										<Property name="Abstract" model="false" baseline="false" status="Identical"/>
+										<Property name="Alias" status="Identical"/>
+										<Property name="Author" model="modeler" baseline="modeler" status="Identical"/>
+										<Property name="DateCreated" model="17-Sep-25 2:24:20 PM" baseline="17-Sep-25 2:24:20 PM" status="Identical"/>
+										<Property name="DateModified" model="09-Sep-26 9:29:36 AM" baseline="09-Sep-26 9:29:36 AM" status="Identical"/>
+										<Property name="Complexity" model="1" baseline="1" status="Identical"/>
+										<Property name="GenFile" status="Identical"/>
+										<Property name="GenType" model="Java" baseline="Java" status="Identical"/>
+										<Property name="IsLeaf" model="false" baseline="false" status="Identical"/>
+										<Property name="IsSpec" model="false" baseline="false" status="Identical"/>
+										<Property name="IsRoot" model="false" baseline="false" status="Identical"/>
+										<Property name="Keywords" status="Identical"/>
+										<Property name="Multiplicity" status="Identical"/>
+										<Property name="Name" model="ExtVendorSynchronousMachine" baseline="ExtVendorSynchronousMachine" status="Identical"/>
+										<Property name="Notes" status="Identical"/>
+										<Property name="Persistence" status="Identical"/>
+										<Property name="Phase" model="1.0" baseline="1.0" status="Identical"/>
+										<Property name="Scope" model="Public" baseline="Public" status="Identical"/>
+										<Property name="Status" model="Proposed" baseline="Proposed" status="Identical"/>
+										<Property name="Stereotype" model="ShadowExtension" baseline="ShadowExtension" status="Identical"/>
+										<Property name="Type" model="Class" baseline="Class" status="Identical"/>
+										<Property name="Version" model="1.0" baseline="1.0" status="Identical"/>
+										<Property name="Classifier" status="Identical"/>
+										<Property name="Visibility" status="Identical"/>
+										<Property name="Concurrency" status="Identical"/>
+										<Property name="Cardinality" status="Identical"/>
+										<Property name="Style" status="Identical"/>
+									</Properties>
+									<CompareItem name="Links" type="Links" guid="{D2783140-058A-42d4-A94D-45E13727F0E1}Links" status="Identical">
+										<CompareItem name="Association" type="" guid="{F3F624DE-00BE-4663-B73A-D8620C24CE90}" status="Identical">
+											<Properties>
+												<Property name="Direction" model="Unspecified" baseline="Unspecified" status="Identical"/>
+												<Property name="IsLeaf" model="false" baseline="false" status="Identical"/>
+												<Property name="IsRoot" model="false" baseline="false" status="Identical"/>
+												<Property name="Name" status="Identical"/>
+												<Property name="Alias" status="Identical"/>
+												<Property name="Notes" status="Identical"/>
+												<Property name="Stereotype" status="Identical"/>
+												<Property name="Type" model="Association" baseline="Association" status="Identical"/>
+												<Property name="Source Linked Feature" status="Identical"/>
+												<Property name="Target Linked Feature" status="Identical"/>
+											</Properties>
+											<CompareItem name="Tagged Values" type="Tagged Values" guid="{F3F624DE-00BE-4663-B73A-D8620C24CE90}Tagged Values" status="Identical">
+												<CompareItem name="baseuri = https://example.com/Extensions#" type="" guid="{7F4CC5DB-DFD5-4189-9718-65C9155C030C}" status="Model only">
+													<Properties>
+														<Property name="Name" model="baseuri" status="Model only"/>
+														<Property name="Notes" status="Identical"/>
+														<Property name="Value" model="https://example.com/Extensions#" status="Model only"/>
+													</Properties>
+												</CompareItem>
+											</CompareItem>
+										</CompareItem>
+									</CompareItem>
+									<CompareItem name="Tagged Values" type="Tagged Values" guid="{D2783140-058A-42d4-A94D-45E13727F0E1}Tagged Values" status="Identical">
+										<CompareItem name="baseuri = " type="" guid="{AB68C69A-987E-4536-97AB-2A16E5A99455}" status="Model only">
+											<Properties>
+												<Property name="Name" model="baseuri" status="Model only"/>
+												<Property name="Notes" status="Identical"/>
+												<Property name="Value" model="https://example.com/Extensions2#" status="Model only"/>
+											</Properties>
+										</CompareItem>
+									</CompareItem>
+								</CompareItem>
+								<CompareItem name="ExtVendor_Wires" type="" guid="{E41A2415-0BFE-46e8-AE31-DED311FE3833}" status="Changed">
+									<Properties>
+										<Property name="Name" model="ExtVendor_Wires" baseline="ExtVendor_Wires" status="Identical"/>
+										<Property name="Type" model="Logical" baseline="Logical" status="Identical"/>
+										<Property name="Version" model="1.0" baseline="1.0" status="Identical"/>
+										<Property name="Stereotype" status="Identical"/>
+										<Property name="DateCreated" model="09-Sep-26 9:29:13 AM" baseline="09-Sep-26 9:29:13 AM" status="Identical"/>
+										<Property name="DateModified" model="09-Sep-26 9:29:13 AM" baseline="09-Sep-26 9:29:13 AM" status="Identical"/>
+										<Property name="Notes" status="Identical"/>
+										<Property name="Style" model="HideRel=0;ShowTags=0;ShowReqs=0;ShowCons=0;OpParams=1;ShowSN=0;ScalePI=0;PPgs.cx=0;PPgs.cy=0;PSize=9;ShowIcons=1;SuppCN=0;HideProps=0;HideParents=0;UseAlias=0;HideAtts=0;HideOps=0;HideStereo=0;HideEStereo=0;ShowShape=1;FormName=;" baseline="HideRel=0;ShowTags=0;ShowReqs=0;ShowCons=0;OpParams=1;ShowSN=0;ScalePI=0;PPgs.cx=0;PPgs.cy=0;PSize=1;ShowIcons=1;SuppCN=0;HideProps=0;HideParents=0;UseAlias=0;HideAtts=0;HideOps=0;HideStereo=0;HideEStereo=0;ShowShape=1;FormName=;" status="Changed"/>
+										<Property name="StyleEx" model="ExcludeRTF=0;DocAll=0;ShowDiagramInPages=0;RotateImages=0;HideQuals=0;AttPkg=1;ShowTests=0;ShowMaint=0;Layout=;SuppressFOC=0;TConnectorNotation=UML 2.1;TExplicitNavigability=0;AdvancedElementProps=1;AdvancedFeatureProps=1;AdvancedConnectorProps=1;m_bElementClassifier=1;SPT=1;MDGDgm=;MDGView=;DefaultLang=;STBLDgm=;ShowNotes=0;VisibleAttributeDetail=0;ShowOpRetType=1;SuppressBrackets=0;SuppConnectorLabels=0;PrintPageHeadFoot=0;ShowAsList=0;GZ=;OverrideLinkedF=0;MarginL=0;MarginR=0;MarginT=0;MarginB=0;HandDraw=0;Whiteboard=0;HideConnStereotype=0;ShowFQN=0;NoFullScope=0;SuppressedCompartments=;Flow=;SF=0;ULC=0;BkgPath=;Roadmap=;CEE=0;FTV=0;ETV=0;FTM=0;ALLDOCK=0;SUPTAG=;SUPATT=;SUPOP=;GST=0;SD=0;SR=0;SRES=0;SIA=0;SIO=0;SIT=0;SFQT=0;SIR=0;SIC=0;SK=0;AFK=0;DSO=0;ShowProject=0;ShowScenarios=0;HideFeatLink=0;SSetCB=0;Lyrs=;DLKO=0;DDS=0;SupCol=0;SDI=1;SSB=1;SwimlanesActive=1;MatrixActive=0;MatrixLineWidth=1;MatrixLineClr=0;MatrixLocked=0;KanbanActive=0;KanbanType=;KanbanNote=;KanbanFont=;KBS=0;KVS=16;KHH=0;KND=0;KB=0;SubOrder=;SeqTopMargin=50;TDurLow=0;TDurHigh=0;TDurUnit=;TDurHide=0;StartPos=160;TimeIntervalList=;INT_ARGS=;INT_RET=;INT_ATT=;" baseline="ExcludeRTF=0;DocAll=0;ShowDiagramInPages=0;RotateImages=0;HideQuals=0;AttPkg=1;ShowTests=0;ShowMaint=0;Layout=;SuppressFOC=0;TConnectorNotation=UML 2.1;TExplicitNavigability=0;AdvancedElementProps=1;AdvancedFeatureProps=1;AdvancedConnectorProps=1;m_bElementClassifier=1;SPT=1;MDGDgm=;MDGView=;DefaultLang=;STBLDgm=;ShowNotes=0;VisibleAttributeDetail=0;ShowOpRetType=1;SuppressBrackets=0;SuppConnectorLabels=0;PrintPageHeadFoot=0;ShowAsList=0;GZ=;OverrideLinkedF=0;MarginL=0;MarginR=0;MarginT=0;MarginB=0;HandDraw=0;Whiteboard=0;HideConnStereotype=0;ShowFQN=0;NoFullScope=0;SuppressedCompartments=;Flow=;SF=0;ULC=0;BkgPath=;Roadmap=;CEE=0;FTV=0;ETV=0;FTM=0;ALLDOCK=0;SUPTAG=;SUPATT=;SUPOP=;GST=0;SD=0;SR=0;SRES=0;SIA=0;SIO=0;SIT=0;SFQT=0;SIR=0;SIC=0;SK=0;AFK=0;DSO=0;ShowProject=0;ShowScenarios=0;HideFeatLink=0;SSetCB=0;Lyrs=;DLKO=0;DDS=0;SupCol=0;SDI=1;SSB=1;SwimlanesActive=1;MatrixActive=0;MatrixLineWidth=1;MatrixLineClr=0;MatrixLocked=0;KanbanActive=0;KanbanType=;KanbanNote=;KanbanFont=;KBS=0;KVS=16;KHH=0;KND=0;KB=0;SubOrder=;SeqTopMargin=50;TDurLow=0;TDurHigh=0;TDurUnit=;TDurHide=0;StartPos=160;TimeIntervalList=;INT_ARGS=;INT_RET=;INT_ATT=;" status="Identical"/>
+									</Properties>
+								</CompareItem>
+							</CompareItem>
+							<CompareItem name="ExtVendor_Contingency" type="" guid="{2509D484-5917-44ff-B7B1-613FDF63E242}" status="Identical">
+								<Properties>
+									<Property name="Abstract" model="false" baseline="false" status="Identical"/>
+									<Property name="Alias" status="Identical"/>
+									<Property name="Author" model="modeler" baseline="modeler" status="Identical"/>
+									<Property name="DateCreated" model="08-Sep-26 2:39:14 PM" baseline="08-Sep-26 2:39:14 PM" status="Identical"/>
+									<Property name="DateModified" model="08-Sep-26 2:39:14 PM" baseline="08-Sep-26 2:39:14 PM" status="Identical"/>
+									<Property name="Complexity" model="1" baseline="1" status="Identical"/>
+									<Property name="GenFile" status="Identical"/>
+									<Property name="GenType" model="Java" baseline="Java" status="Identical"/>
+									<Property name="IsLeaf" model="false" baseline="false" status="Identical"/>
+									<Property name="IsSpec" model="false" baseline="false" status="Identical"/>
+									<Property name="IsRoot" model="false" baseline="false" status="Identical"/>
+									<Property name="Keywords" status="Identical"/>
+									<Property name="Multiplicity" status="Identical"/>
+									<Property name="Name" model="ExtVendor_Contingency" baseline="ExtVendor_Contingency" status="Identical"/>
+									<Property name="Notes" status="Identical"/>
+									<Property name="Persistence" status="Identical"/>
+									<Property name="Phase" model="1.0" baseline="1.0" status="Identical"/>
+									<Property name="Scope" model="Public" baseline="Public" status="Identical"/>
+									<Property name="Status" model="Proposed" baseline="Proposed" status="Identical"/>
+									<Property name="Stereotype" status="Identical"/>
+									<Property name="Type" model="Package" baseline="Package" status="Identical"/>
+									<Property name="Version" model="1.0" baseline="1.0" status="Identical"/>
+									<Property name="Classifier" status="Identical"/>
+									<Property name="Visibility" status="Identical"/>
+									<Property name="Concurrency" status="Identical"/>
+									<Property name="Cardinality" status="Identical"/>
+									<Property name="Style" status="Identical"/>
+								</Properties>
+								<CompareItem name="ExtVendor_Contingency" type="" guid="{A0F1BDC9-1D62-4027-80F7-B4ADB5FC98DA}" status="Changed">
+									<Properties>
+										<Property name="Name" model="ExtVendor_Contingency" baseline="ExtVendor_Contingency" status="Identical"/>
+										<Property name="Type" model="Logical" baseline="Logical" status="Identical"/>
+										<Property name="Version" model="1.0" baseline="1.0" status="Identical"/>
+										<Property name="Stereotype" status="Identical"/>
+										<Property name="DateCreated" model="08-Sep-26 2:39:16 PM" baseline="08-Sep-26 2:39:16 PM" status="Identical"/>
+										<Property name="DateModified" model="08-Sep-26 2:39:16 PM" baseline="08-Sep-26 2:39:16 PM" status="Identical"/>
+										<Property name="Notes" status="Identical"/>
+										<Property name="Style" model="HideRel=0;ShowTags=0;ShowReqs=0;ShowCons=0;OpParams=1;ShowSN=0;ScalePI=0;PPgs.cx=0;PPgs.cy=0;PSize=9;ShowIcons=1;SuppCN=0;HideProps=0;HideParents=0;UseAlias=0;HideAtts=0;HideOps=0;HideStereo=0;HideEStereo=0;ShowShape=1;FormName=;" baseline="HideRel=0;ShowTags=0;ShowReqs=0;ShowCons=0;OpParams=1;ShowSN=0;ScalePI=0;PPgs.cx=0;PPgs.cy=0;PSize=1;ShowIcons=1;SuppCN=0;HideProps=0;HideParents=0;UseAlias=0;HideAtts=0;HideOps=0;HideStereo=0;HideEStereo=0;ShowShape=1;FormName=;" status="Changed"/>
+										<Property name="StyleEx" model="ExcludeRTF=0;DocAll=0;ShowDiagramInPages=0;RotateImages=0;HideQuals=0;AttPkg=1;ShowTests=0;ShowMaint=0;Layout=;SuppressFOC=0;TConnectorNotation=UML 2.1;TExplicitNavigability=0;AdvancedElementProps=1;AdvancedFeatureProps=1;AdvancedConnectorProps=1;m_bElementClassifier=1;SPT=1;MDGDgm=;MDGView=;DefaultLang=;STBLDgm=;ShowNotes=0;VisibleAttributeDetail=0;ShowOpRetType=1;SuppressBrackets=0;SuppConnectorLabels=0;PrintPageHeadFoot=0;ShowAsList=0;GZ=;OverrideLinkedF=0;MarginL=0;MarginR=0;MarginT=0;MarginB=0;HandDraw=0;Whiteboard=0;HideConnStereotype=0;ShowFQN=0;NoFullScope=0;SuppressedCompartments=;Flow=;SF=0;ULC=0;BkgPath=;Roadmap=;CEE=0;FTV=0;ETV=0;FTM=0;ALLDOCK=0;SUPTAG=;SUPATT=;SUPOP=;GST=0;SD=0;SR=0;SRES=0;SIA=0;SIO=0;SIT=0;SFQT=0;SIR=0;SIC=0;SK=0;AFK=0;DSO=0;ShowProject=0;ShowScenarios=0;HideFeatLink=0;SSetCB=0;Lyrs=;DLKO=0;DDS=0;SupCol=0;SDI=1;SSB=1;SwimlanesActive=1;MatrixActive=0;MatrixLineWidth=1;MatrixLineClr=0;MatrixLocked=0;KanbanActive=0;KanbanType=;KanbanNote=;KanbanFont=;KBS=0;KVS=16;KHH=0;KND=0;KB=0;SubOrder=;SeqTopMargin=50;TDurLow=0;TDurHigh=0;TDurUnit=;TDurHide=0;StartPos=160;TimeIntervalList=;INT_ARGS=;INT_RET=;INT_ATT=;" baseline="ExcludeRTF=0;DocAll=0;ShowDiagramInPages=0;RotateImages=0;HideQuals=0;AttPkg=1;ShowTests=0;ShowMaint=0;Layout=;SuppressFOC=0;TConnectorNotation=UML 2.1;TExplicitNavigability=0;AdvancedElementProps=1;AdvancedFeatureProps=1;AdvancedConnectorProps=1;m_bElementClassifier=1;SPT=1;MDGDgm=;MDGView=;DefaultLang=;STBLDgm=;ShowNotes=0;VisibleAttributeDetail=0;ShowOpRetType=1;SuppressBrackets=0;SuppConnectorLabels=0;PrintPageHeadFoot=0;ShowAsList=0;GZ=;OverrideLinkedF=0;MarginL=0;MarginR=0;MarginT=0;MarginB=0;HandDraw=0;Whiteboard=0;HideConnStereotype=0;ShowFQN=0;NoFullScope=0;SuppressedCompartments=;Flow=;SF=0;ULC=0;BkgPath=;Roadmap=;CEE=0;FTV=0;ETV=0;FTM=0;ALLDOCK=0;SUPTAG=;SUPATT=;SUPOP=;GST=0;SD=0;SR=0;SRES=0;SIA=0;SIO=0;SIT=0;SFQT=0;SIR=0;SIC=0;SK=0;AFK=0;DSO=0;ShowProject=0;ShowScenarios=0;HideFeatLink=0;SSetCB=0;Lyrs=;DLKO=0;DDS=0;SupCol=0;SDI=1;SSB=1;SwimlanesActive=1;MatrixActive=0;MatrixLineWidth=1;MatrixLineClr=0;MatrixLocked=0;KanbanActive=0;KanbanType=;KanbanNote=;KanbanFont=;KBS=0;KVS=16;KHH=0;KND=0;KB=0;SubOrder=;SeqTopMargin=50;TDurLow=0;TDurHigh=0;TDurUnit=;TDurHide=0;StartPos=160;TimeIntervalList=;INT_ARGS=;INT_RET=;INT_ATT=;" status="Identical"/>
+									</Properties>
+								</CompareItem>
+							</CompareItem>
+						</CompareItem>
+					</CompareItem>
+				</CompareItem>
+				<CompareItem name="AccuracyClass" type="" guid="{49515417-1279-4987-B781-50A05ACC574A}" status="Identical">
+					<Properties>
+						<Property name="Abstract" model="false" baseline="false" status="Identical"/>
+						<Property name="Alias" status="Identical"/>
+						<Property name="Author" model="utl" baseline="utl" status="Identical"/>
+						<Property name="DateCreated" model="12-Sep-25 4:42:41 PM" baseline="12-Sep-25 4:42:41 PM" status="Identical"/>
+						<Property name="DateModified" model="16-Sep-25 4:55:25 PM" baseline="16-Sep-25 4:55:25 PM" status="Identical"/>
+						<Property name="Complexity" model="1" baseline="1" status="Identical"/>
+						<Property name="GenFile" status="Identical"/>
+						<Property name="GenType" model="Java" baseline="Java" status="Identical"/>
+						<Property name="IsLeaf" model="false" baseline="false" status="Identical"/>
+						<Property name="IsSpec" model="false" baseline="false" status="Identical"/>
+						<Property name="IsRoot" model="false" baseline="false" status="Identical"/>
+						<Property name="Keywords" status="Identical"/>
+						<Property name="Multiplicity" status="Identical"/>
+						<Property name="Name" model="AccuracyClass" baseline="AccuracyClass" status="Identical"/>
+						<Property name="Notes" model="Holds accuracy information for measurement, generation and load schedules." baseline="Holds accuracy information for measurement, generation and load schedules." status="Identical"/>
+						<Property name="Persistence" status="Identical"/>
+						<Property name="Phase" model="1.0" baseline="1.0" status="Identical"/>
+						<Property name="Scope" model="Public" baseline="Public" status="Identical"/>
+						<Property name="Status" model="Proposed" baseline="Proposed" status="Identical"/>
+						<Property name="Stereotype" model="vnd" baseline="vnd" status="Identical"/>
+						<Property name="Type" model="Class" baseline="Class" status="Identical"/>
+						<Property name="Version" model="1.0" baseline="1.0" status="Identical"/>
+						<Property name="Classifier" status="Identical"/>
+						<Property name="Visibility" status="Identical"/>
+						<Property name="Concurrency" status="Identical"/>
+						<Property name="Cardinality" status="Identical"/>
+						<Property name="Style" status="Identical"/>
+					</Properties>
+					<CompareItem name="Links" type="Links" guid="{49515417-1279-4987-B781-50A05ACC574A}Links" status="Identical">
+						<CompareItem name="Association" type="" guid="{F3F624DE-00BE-4663-B73A-D8620C24CE90}" status="Identical">
+							<Properties>
+								<Property name="Direction" model="Unspecified" baseline="Unspecified" status="Identical"/>
+								<Property name="IsLeaf" model="false" baseline="false" status="Identical"/>
+								<Property name="IsRoot" model="false" baseline="false" status="Identical"/>
+								<Property name="Name" status="Identical"/>
+								<Property name="Alias" status="Identical"/>
+								<Property name="Notes" status="Identical"/>
+								<Property name="Stereotype" status="Identical"/>
+								<Property name="Type" model="Association" baseline="Association" status="Identical"/>
+								<Property name="Source Linked Feature" status="Identical"/>
+								<Property name="Target Linked Feature" status="Identical"/>
+							</Properties>
+							<CompareItem name="Tagged Values" type="Tagged Values" guid="{F3F624DE-00BE-4663-B73A-D8620C24CE90}Tagged Values" status="Identical">
+								<CompareItem name="baseuri = https://example.com/Extensions#" type="" guid="{7F4CC5DB-DFD5-4189-9718-65C9155C030C}" status="Model only">
+									<Properties>
+										<Property name="Name" model="baseuri" status="Model only"/>
+										<Property name="Notes" status="Identical"/>
+										<Property name="Value" model="https://example.com/Extensions#" status="Model only"/>
+									</Properties>
+								</CompareItem>
+							</CompareItem>
+						</CompareItem>
+					</CompareItem>
+				</CompareItem>
+				<CompareItem name="Tagged Values" type="Tagged Values" guid="{DDF9A087-B9EA-4c8e-9578-B68CE2C1C1D6}Tagged Values" status="Identical">
+					<CompareItem name="baseuri = " type="" guid="{02B96720-4145-4b06-A1AB-236BCB3F0951}" status="Changed">
+						<Properties>
+							<Property name="Name" model="baseuri" baseline="baseuri" status="Identical"/>
+							<Property name="Notes" status="Identical"/>
+							<Property name="Value" model="http://example.org/test/vendor-schema-cim16#" baseline="http://example.org/vendor-schema-cim16#" status="Changed"/>
+						</Properties>
+					</CompareItem>
+				</CompareItem>
+			</CompareItem>
+		</CompareResults>
+	</ComparePackage>
+</EA.CompareLog>

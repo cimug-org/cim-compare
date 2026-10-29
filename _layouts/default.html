@@ -66,5 +66,51 @@
         });
       })();
     </script>
+    <script>
+    // Click a screenshot to see it as large as the window allows (up to twice its own
+    // size). Images that are links, logos and the header are left alone.
+    (function () {
+      var imgs = Array.prototype.filter.call(document.querySelectorAll(".markdown-body img"), function (img) {
+        return !img.closest("a, h1, .cc-hero") && !/logo|brand/.test(img.getAttribute("src") || "");
+      });
+      if (!imgs.length) return;
+      var ov = document.createElement("div");
+      ov.className = "lb-overlay";
+      ov.setAttribute("role", "dialog");
+      ov.setAttribute("aria-modal", "true");
+      ov.innerHTML = '<button class="lb-close" type="button" aria-label="Close">×</button><figure><img alt=""><figcaption></figcaption></figure>';
+      document.body.appendChild(ov);
+      var big = ov.querySelector("img"), cap = ov.querySelector("figcaption"), last = null;
+      function zoomable(img) { return img.clientWidth > 0; }
+      function fit() {
+        if (!big.naturalWidth) return;
+        var k = Math.min((window.innerWidth - 48) / big.naturalWidth, (window.innerHeight - 90) / big.naturalHeight, 2);
+        big.style.width = Math.round(big.naturalWidth * k) + "px";
+      }
+      function mark() { imgs.forEach(function (img) { img.classList.toggle("lb-zoomable", zoomable(img)); }); }
+      function close() { ov.classList.remove("open"); big.removeAttribute("src"); if (last) last.focus(); }
+      imgs.forEach(function (img) {
+        img.addEventListener("load", mark);
+        img.addEventListener("click", function () {
+          if (!zoomable(img)) return;
+          last = img;
+          big.style.width = "";
+          big.onload = fit;
+          big.src = img.currentSrc || img.src;
+          if (big.complete) fit();
+          big.alt = img.alt || "";
+          cap.textContent = img.alt || "";
+          cap.hidden = !img.alt;
+          ov.classList.add("open");
+          ov.querySelector(".lb-close").focus();
+        });
+      });
+      ov.addEventListener("click", close);
+      document.addEventListener("keydown", function (e) { if (e.key === "Escape" && ov.classList.contains("open")) close(); });
+      window.addEventListener("resize", function () { mark(); if (ov.classList.contains("open")) fit(); });
+      window.addEventListener("load", mark);
+      mark();
+    })();
+    </script>
   </body>
 </html>

@@ -1,0 +1,508 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.0//EN" "http://www.w3.org/TR/2001/REC-SVG-20010904/DTD/svg10.dtd">
+
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="37.17cm" height="31.22cm" viewBox="0 0 1405 1180">
+<title></title>
+<desc>Created with Enterprise Architect (Build: 1721) 2</desc>
+
+<g style="fill:#FFFFFF;fill-opacity:1.00;">
+	 <rect x="0" y="0" width="1405" height="1180" shape-rendering="auto"/>
+</g><g style="stroke-width:1;stroke-linecap:square;stroke-linejoin:round; fill:#000000;fill-opacity:0.00; stroke:#9A8484; stroke-opacity:1.00;" stroke-dasharray="6,3">
+ <rect x="10" y="333" width="1383" height="794" rx="0.00" shape-rendering="auto" stroke-dasharray="6,3" />
+</g>
+<g style="stroke-width:1;stroke-linecap:square;stroke-linejoin:round; fill:#595959;fill-opacity:1.00; stroke:#000000; stroke-opacity:0.00;">
+	<text x="647.00" y="350.00" textLength="108" style="font-family:'Lucida Sans Unicode','Lucida Grande','DejaVu Sans',Arial,sans-serif; font-weight:700; font-style:normal; font-size:12px; fill:#595959;fill-opacity:1.00; stroke:#000000; stroke-opacity:0.00; stroke-width:0; white-space: pre;" xml:space="preserve" transform="rotate(-0.00 647.00 350.00)">dynamics model</text>
+</g>
+<g style="stroke-width:1;stroke-linecap:square;stroke-linejoin:round; fill:#000000;fill-opacity:0.00; stroke:#9A8484; stroke-opacity:1.00;" stroke-dasharray="6,3">
+ <rect x="10" y="10" width="1385" height="312" rx="0.00" shape-rendering="auto" stroke-dasharray="6,3" />
+</g>
+<g style="stroke-width:1;stroke-linecap:square;stroke-linejoin:round; fill:#000000;fill-opacity:1.00; stroke:#000000; stroke-opacity:0.00;">
+	<text x="613.00" y="27.00" textLength="179" style="font-family:'Lucida Sans Unicode','Lucida Grande','DejaVu Sans',Arial,sans-serif; font-weight:700; font-style:normal; font-size:12px; fill:#000000;fill-opacity:1.00; stroke:#000000; stroke-opacity:0.00; stroke-width:0; white-space: pre;" xml:space="preserve" transform="rotate(-0.00 613.00 27.00)">static power system model</text>
+</g>
+<g style="stroke-width:1;stroke-linecap:round;stroke-linejoin:bevel; fill:#FDFAF7;fill-opacity:1.00; stroke:#9A8484; stroke-opacity:1.00;">
+ <rect x="275" y="22" width="168" height="53" rx="0.00" shape-rendering="auto"  />
+</g>
+<g style="stroke-width:1;stroke-linecap:round;stroke-linejoin:bevel; fill:#595959;fill-opacity:1.00; stroke:#000000; stroke-opacity:0.00;">
+	<text x="364.00" y="36.00" textLength="76" style="font-family:'Lucida Sans Unicode','Lucida Grande','DejaVu Sans',Arial,sans-serif; font-weight:0; font-style:italic; font-size:10px; fill:#595959;fill-opacity:1.00; stroke:#000000; stroke-opacity:0.00; stroke-width:0; white-space: pre;" xml:space="preserve" transform="rotate(-0.00 364.00 36.00)">IdentifiedObject</text>
+	<text x="341.00" y="53.00" textLength="35" style="font-family:'Lucida Sans Unicode','Lucida Grande','DejaVu Sans',Arial,sans-serif; font-weight:700; font-style:normal; font-size:10px; fill:#595959;fill-opacity:1.00; stroke:#000000; stroke-opacity:0.00; stroke-width:0; white-space: pre;" xml:space="preserve" transform="rotate(-0.00 341.00 53.00)">Core::</text>
+	<text x="296.00" y="67.00" textLength="125" style="font-family:'Lucida Sans Unicode','Lucida Grande','DejaVu Sans',Arial,sans-serif; font-weight:700; font-style:normal; font-size:10px; fill:#595959;fill-opacity:1.00; stroke:#000000; stroke-opacity:0.00; stroke-width:0; white-space: pre;" xml:space="preserve" transform="rotate(-0.00 296.00 67.00)">PowerSystemResource</text>
+</g>
+<g style="stroke-width:1;stroke-linecap:round;stroke-linejoin:bevel; fill:#FDFAF7;fill-opacity:1.00; stroke:#9A8484; stroke-opacity:1.00;">
+ <rect x="530" y="27" width="86" height="43" rx="0.00" shape-rendering="auto"  />
+</g>
+<g style="stroke-width:1;stroke-linecap:round;stroke-linejoin:bevel; fill:#595959;fill-opacity:1.00; stroke:#000000; stroke-opacity:0.00;">
+	<text x="555.00" y="47.00" textLength="35" style="font-family:'Lucida Sans Unicode','Lucida Grande','DejaVu Sans',Arial,sans-serif; font-weight:700; font-style:normal; font-size:10px; fill:#595959;fill-opacity:1.00; stroke:#000000; stroke-opacity:0.00; stroke-width:0; white-space: pre;" xml:space="preserve" transform="rotate(-0.00 555.00 47.00)">Core::</text>
+	<text x="544.00" y="61.00" textLength="58" style="font-family:'Lucida Sans Unicode','Lucida Grande','DejaVu Sans',Arial,sans-serif; font-weight:700; font-style:normal; font-size:10px; fill:#595959;fill-opacity:1.00; stroke:#000000; stroke-opacity:0.00; stroke-width:0; white-space: pre;" xml:space="preserve" transform="rotate(-0.00 544.00 61.00)">Equipment</text>
+</g>
+<g style="stroke-width:1;stroke-linecap:round;stroke-linejoin:bevel; fill:#FDFAF7;fill-opacity:1.00; stroke:#9A8484; stroke-opacity:1.00;">
+ <rect x="849" y="25" width="147" height="43" rx="0.00" shape-rendering="auto"  />
+</g>
+<g style="stroke-width:1;stroke-linecap:round;stroke-linejoin:bevel; fill:#595959;fill-opacity:1.00; stroke:#000000; stroke-opacity:0.00;">
+	<text x="905.00" y="45.00" textLength="35" style="font-family:'Lucida Sans Unicode','Lucida Grande','DejaVu Sans',Arial,sans-serif; font-weight:700; font-style:normal; font-size:10px; fill:#595959;fill-opacity:1.00; stroke:#000000; stroke-opacity:0.00; stroke-width:0; white-space: pre;" xml:space="preserve" transform="rotate(-0.00 905.00 45.00)">Core::</text>
+	<text x="861.00" y="59.00" textLength="123" style="font-family:'Lucida Sans Unicode','Lucida Grande','DejaVu Sans',Arial,sans-serif; font-weight:700; font-style:normal; font-size:10px; fill:#595959;fill-opacity:1.00; stroke:#000000; stroke-opacity:0.00; stroke-width:0; white-space: pre;" xml:space="preserve" transform="rotate(-0.00 861.00 59.00)">ConductingEquipment</text>
+</g>
+<g style="stroke-width:1;stroke-linecap:round;stroke-linejoin:bevel; fill:#FDFAF7;fill-opacity:1.00; stroke:#9A8484; stroke-opacity:1.00;">
+ <rect x="348" y="199" width="107" height="39" rx="0.00" shape-rendering="auto"  />
+</g>
+<g style="stroke-width:1;stroke-linecap:round;stroke-linejoin:bevel; fill:#595959;fill-opacity:1.00; stroke:#000000; stroke-opacity:0.00;">
+	<text x="382.00" y="213.00" textLength="70" style="font-family:'Lucida Sans Unicode','Lucida Grande','DejaVu Sans',Arial,sans-serif; font-weight:0; font-style:italic; font-size:10px; fill:#595959;fill-opacity:1.00; stroke:#000000; stroke-opacity:0.00; stroke-width:0; white-space: pre;" xml:space="preserve" transform="rotate(-0.00 382.00 213.00)">ACDCTerminal</text>
+	<text x="359.00" y="230.00" textLength="85" style="font-family:'Lucida Sans Unicode','Lucida Grande','DejaVu Sans',Arial,sans-serif; font-weight:700; font-style:normal; font-size:10px; fill:#595959;fill-opacity:1.00; stroke:#000000; stroke-opacity:0.00; stroke-width:0; white-space: pre;" xml:space="preserve" transform="rotate(-0.00 359.00 230.00)">Core::Terminal</text>
+</g>
+<g style="stroke-width:1;stroke-linecap:round;stroke-linejoin:bevel; fill:#FDFAF7;fill-opacity:1.00; stroke:#9A8484; stroke-opacity:1.00;">
+ <rect x="852" y="252" width="140" height="43" rx="0.00" shape-rendering="auto"  />
+</g>
+<g style="stroke-width:1;stroke-linecap:round;stroke-linejoin:bevel; fill:#595959;fill-opacity:1.00; stroke:#000000; stroke-opacity:0.00;">
+	<text x="902.00" y="272.00" textLength="40" style="font-family:'Lucida Sans Unicode','Lucida Grande','DejaVu Sans',Arial,sans-serif; font-weight:700; font-style:normal; font-size:10px; fill:#595959;fill-opacity:1.00; stroke:#000000; stroke-opacity:0.00; stroke-width:0; white-space: pre;" xml:space="preserve" transform="rotate(-0.00 902.00 272.00)">Wires::</text>
+	<text x="862.00" y="286.00" textLength="120" style="font-family:'Lucida Sans Unicode','Lucida Grande','DejaVu Sans',Arial,sans-serif; font-weight:700; font-style:normal; font-size:10px; fill:#595959;fill-opacity:1.00; stroke:#000000; stroke-opacity:0.00; stroke-width:0; white-space: pre;" xml:space="preserve" transform="rotate(-0.00 862.00 286.00)">SynchronousMachine</text>
+</g>
+<g style="stroke-width:1;stroke-linecap:round;stroke-linejoin:bevel; fill:#FDFAF7;fill-opacity:1.00; stroke:#9A8484; stroke-opacity:1.00;">
+ <rect x="859" y="100" width="124" height="68" rx="0.00" shape-rendering="auto"  />
+</g>
+<g style="stroke-width:1;stroke-linecap:round;stroke-linejoin:bevel; fill:#595959;fill-opacity:1.00; stroke:#000000; stroke-opacity:0.00;">
+	<text x="893.00" y="114.00" textLength="87" style="font-family:'Lucida Sans Unicode','Lucida Grande','DejaVu Sans',Arial,sans-serif; font-weight:0; font-style:italic; font-size:10px; fill:#595959;fill-opacity:1.00; stroke:#000000; stroke-opacity:0.00; stroke-width:0; white-space: pre;" xml:space="preserve" transform="rotate(-0.00 893.00 114.00)">EnergyConnection</text>
+	<text x="901.00" y="131.00" textLength="40" style="font-family:'Lucida Sans Unicode','Lucida Grande','DejaVu Sans',Arial,sans-serif; font-weight:700; font-style:normal; font-size:10px; fill:#595959;fill-opacity:1.00; stroke:#000000; stroke-opacity:0.00; stroke-width:0; white-space: pre;" xml:space="preserve" transform="rotate(-0.00 901.00 131.00)">Wires::</text>
+	<text x="869.00" y="145.00" textLength="103" style="font-family:'Lucida Sans Unicode','Lucida Grande','DejaVu Sans',Arial,sans-serif; font-weight:700; font-style:normal; font-size:10px; fill:#595959;fill-opacity:1.00; stroke:#000000; stroke-opacity:0.00; stroke-width:0; white-space: pre;" xml:space="preserve" transform="rotate(-0.00 869.00 145.00)">RegulatingCondEq</text>
+</g>
+<g style="stroke-width:1;stroke-linecap:round;stroke-linejoin:bevel; fill:#FDFAF7;fill-opacity:1.00; stroke:#9A8484; stroke-opacity:1.00;">
+ <rect x="1110" y="112" width="92" height="55" rx="0.00" shape-rendering="auto"  />
+</g>
+<g style="stroke-width:1;stroke-linecap:round;stroke-linejoin:bevel; fill:#595959;fill-opacity:1.00; stroke:#000000; stroke-opacity:0.00;">
+	<text x="1123.00" y="126.00" textLength="76" style="font-family:'Lucida Sans Unicode','Lucida Grande','DejaVu Sans',Arial,sans-serif; font-weight:0; font-style:italic; font-size:10px; fill:#595959;fill-opacity:1.00; stroke:#000000; stroke-opacity:0.00; stroke-width:0; white-space: pre;" xml:space="preserve" transform="rotate(-0.00 1123.00 126.00)">IdentifiedObject</text>
+	<text x="1138.00" y="143.00" textLength="35" style="font-family:'Lucida Sans Unicode','Lucida Grande','DejaVu Sans',Arial,sans-serif; font-weight:700; font-style:normal; font-size:10px; fill:#595959;fill-opacity:1.00; stroke:#000000; stroke-opacity:0.00; stroke-width:0; white-space: pre;" xml:space="preserve" transform="rotate(-0.00 1138.00 143.00)">Core::</text>
+	<text x="1121.00" y="157.00" textLength="70" style="font-family:'Lucida Sans Unicode','Lucida Grande','DejaVu Sans',Arial,sans-serif; font-weight:700; font-style:normal; font-size:10px; fill:#595959;fill-opacity:1.00; stroke:#000000; stroke-opacity:0.00; stroke-width:0; white-space: pre;" xml:space="preserve" transform="rotate(-0.00 1121.00 157.00)">BaseVoltage</text>
+</g>
+<g style="stroke-width:1;stroke-linecap:round;stroke-linejoin:bevel; fill:#FDFAF7;fill-opacity:1.00; stroke:#9A8484; stroke-opacity:1.00;">
+ <rect x="867" y="174" width="112" height="42" rx="0.00" shape-rendering="auto"  />
+</g>
+<g style="stroke-width:1;stroke-linecap:round;stroke-linejoin:bevel; fill:#595959;fill-opacity:1.00; stroke:#000000; stroke-opacity:0.00;">
+	<text x="903.00" y="194.00" textLength="40" style="font-family:'Lucida Sans Unicode','Lucida Grande','DejaVu Sans',Arial,sans-serif; font-weight:700; font-style:normal; font-size:10px; fill:#595959;fill-opacity:1.00; stroke:#000000; stroke-opacity:0.00; stroke-width:0; white-space: pre;" xml:space="preserve" transform="rotate(-0.00 903.00 194.00)">Wires::</text>
+	<text x="875.00" y="208.00" textLength="96" style="font-family:'Lucida Sans Unicode','Lucida Grande','DejaVu Sans',Arial,sans-serif; font-weight:700; font-style:normal; font-size:10px; fill:#595959;fill-opacity:1.00; stroke:#000000; stroke-opacity:0.00; stroke-width:0; white-space: pre;" xml:space="preserve" transform="rotate(-0.00 875.00 208.00)">RotatingMachine</text>
+</g>
+<g style="stroke-width:1;stroke-linecap:round;stroke-linejoin:bevel; fill:#FDFAF7;fill-opacity:1.00; stroke:#9A8484; stroke-opacity:1.00;">
+ <rect x="322" y="506" width="200" height="58" rx="0.00" shape-rendering="auto"  />
+</g>
+<g style="stroke-width:1;stroke-linecap:round;stroke-linejoin:bevel; fill:#595959;fill-opacity:1.00; stroke:#000000; stroke-opacity:0.00;">
+	<text x="331.00" y="526.00" textLength="181" style="font-family:'Lucida Sans Unicode','Lucida Grande','DejaVu Sans',Arial,sans-serif; font-weight:700; font-style:normal; font-size:10px; fill:#595959;fill-opacity:1.00; stroke:#000000; stroke-opacity:0.00; stroke-width:0; white-space: pre;" xml:space="preserve" transform="rotate(-0.00 331.00 526.00)">VoltageCompensatorDynamics::</text>
+	<text x="335.00" y="540.00" textLength="173" style="font-family:'Lucida Sans Unicode','Lucida Grande','DejaVu Sans',Arial,sans-serif; font-weight:700; font-style:normal; font-size:10px; fill:#595959;fill-opacity:1.00; stroke:#000000; stroke-opacity:0.00; stroke-width:0; white-space: pre;" xml:space="preserve" transform="rotate(-0.00 335.00 540.00)">VoltageCompensatorDynamics</text>
+</g>
+<g style="stroke-width:1;stroke-linecap:round;stroke-linejoin:bevel; fill:#FDFAF7;fill-opacity:1.00; stroke:#9A8484; stroke-opacity:1.00;">
+ <rect x="609" y="780" width="179" height="57" rx="0.00" shape-rendering="auto"  />
+</g>
+<g style="stroke-width:1;stroke-linecap:round;stroke-linejoin:bevel; fill:#595959;fill-opacity:1.00; stroke:#000000; stroke-opacity:0.00;">
+	<text x="619.00" y="800.00" textLength="159" style="font-family:'Lucida Sans Unicode','Lucida Grande','DejaVu Sans',Arial,sans-serif; font-weight:700; font-style:normal; font-size:10px; fill:#595959;fill-opacity:1.00; stroke:#000000; stroke-opacity:0.00; stroke-width:0; white-space: pre;" xml:space="preserve" transform="rotate(-0.00 619.00 800.00)">ExcitationSystemDynamics::</text>
+	<text x="623.00" y="814.00" textLength="151" style="font-family:'Lucida Sans Unicode','Lucida Grande','DejaVu Sans',Arial,sans-serif; font-weight:700; font-style:normal; font-size:10px; fill:#595959;fill-opacity:1.00; stroke:#000000; stroke-opacity:0.00; stroke-width:0; white-space: pre;" xml:space="preserve" transform="rotate(-0.00 623.00 814.00)">ExcitationSystemDynamics</text>
+</g>
+<g style="stroke-width:1;stroke-linecap:round;stroke-linejoin:bevel; fill:#FDFAF7;fill-opacity:1.00; stroke:#9A8484; stroke-opacity:1.00;">
+ <rect x="833" y="627" width="179" height="53" rx="0.00" shape-rendering="auto"  />
+</g>
+<g style="stroke-width:1;stroke-linecap:round;stroke-linejoin:bevel; fill:#595959;fill-opacity:1.00; stroke:#000000; stroke-opacity:0.00;">
+	<text x="842.00" y="647.00" textLength="160" style="font-family:'Lucida Sans Unicode','Lucida Grande','DejaVu Sans',Arial,sans-serif; font-weight:700; font-style:normal; font-size:10px; fill:#595959;fill-opacity:1.00; stroke:#000000; stroke-opacity:0.00; stroke-width:0; white-space: pre;" xml:space="preserve" transform="rotate(-0.00 842.00 647.00)">TurbineGovernorDynamics::</text>
+	<text x="846.00" y="661.00" textLength="152" style="font-family:'Lucida Sans Unicode','Lucida Grande','DejaVu Sans',Arial,sans-serif; font-weight:700; font-style:normal; font-size:10px; fill:#595959;fill-opacity:1.00; stroke:#000000; stroke-opacity:0.00; stroke-width:0; white-space: pre;" xml:space="preserve" transform="rotate(-0.00 846.00 661.00)">TurbineGovernorDynamics</text>
+</g>
+<g style="stroke-width:1;stroke-linecap:round;stroke-linejoin:bevel; fill:#FDFAF7;fill-opacity:1.00; stroke:#9A8484; stroke-opacity:1.00;">
+ <rect x="824" y="388" width="209" height="68" rx="0.00" shape-rendering="auto"  />
+</g>
+<g style="stroke-width:1;stroke-linecap:round;stroke-linejoin:bevel; fill:#595959;fill-opacity:1.00; stroke:#000000; stroke-opacity:0.00;">
+	<text x="837.00" y="408.00" textLength="182" style="font-family:'Lucida Sans Unicode','Lucida Grande','DejaVu Sans',Arial,sans-serif; font-weight:700; font-style:normal; font-size:10px; fill:#595959;fill-opacity:1.00; stroke:#000000; stroke-opacity:0.00; stroke-width:0; white-space: pre;" xml:space="preserve" transform="rotate(-0.00 837.00 408.00)">SynchronousMachineDynamics::</text>
+	<text x="841.00" y="422.00" textLength="174" style="font-family:'Lucida Sans Unicode','Lucida Grande','DejaVu Sans',Arial,sans-serif; font-weight:700; font-style:normal; font-size:10px; fill:#595959;fill-opacity:1.00; stroke:#000000; stroke-opacity:0.00; stroke-width:0; white-space: pre;" xml:space="preserve" transform="rotate(-0.00 841.00 422.00)">SynchronousMachineDynamics</text>
+</g>
+<g style="stroke-width:1;stroke-linecap:round;stroke-linejoin:bevel; fill:#FDFAF7;fill-opacity:1.00; stroke:#9A8484; stroke-opacity:1.00;">
+ <rect x="105" y="841" width="220" height="52" rx="0.00" shape-rendering="auto"  />
+</g>
+<g style="stroke-width:1;stroke-linecap:round;stroke-linejoin:bevel; fill:#595959;fill-opacity:1.00; stroke:#000000; stroke-opacity:0.00;">
+	<text x="118.00" y="861.00" textLength="194" style="font-family:'Lucida Sans Unicode','Lucida Grande','DejaVu Sans',Arial,sans-serif; font-weight:700; font-style:normal; font-size:10px; fill:#595959;fill-opacity:1.00; stroke:#000000; stroke-opacity:0.00; stroke-width:0; white-space: pre;" xml:space="preserve" transform="rotate(-0.00 118.00 861.00)">UnderexcitationLimiterDynamics::</text>
+	<text x="122.00" y="875.00" textLength="186" style="font-family:'Lucida Sans Unicode','Lucida Grande','DejaVu Sans',Arial,sans-serif; font-weight:700; font-style:normal; font-size:10px; fill:#595959;fill-opacity:1.00; stroke:#000000; stroke-opacity:0.00; stroke-width:0; white-space: pre;" xml:space="preserve" transform="rotate(-0.00 122.00 875.00)">UnderexcitationLimiterDynamics</text>
+</g>
+<g style="stroke-width:1;stroke-linecap:round;stroke-linejoin:bevel; fill:#FDFAF7;fill-opacity:1.00; stroke:#9A8484; stroke-opacity:1.00;">
+ <rect x="710" y="898" width="197" height="58" rx="0.00" shape-rendering="auto"  />
+</g>
+<g style="stroke-width:1;stroke-linecap:round;stroke-linejoin:bevel; fill:#595959;fill-opacity:1.00; stroke:#000000; stroke-opacity:0.00;">
+	<text x="715.00" y="918.00" textLength="187" style="font-family:'Lucida Sans Unicode','Lucida Grande','DejaVu Sans',Arial,sans-serif; font-weight:700; font-style:normal; font-size:10px; fill:#595959;fill-opacity:1.00; stroke:#000000; stroke-opacity:0.00; stroke-width:0; white-space: pre;" xml:space="preserve" transform="rotate(-0.00 715.00 918.00)">PFVArControllerType2Dynamics:</text>
+	<text x="715.00" y="932.00" textLength="187" style="font-family:'Lucida Sans Unicode','Lucida Grande','DejaVu Sans',Arial,sans-serif; font-weight:700; font-style:normal; font-size:10px; fill:#595959;fill-opacity:1.00; stroke:#000000; stroke-opacity:0.00; stroke-width:0; white-space: pre;" xml:space="preserve" transform="rotate(-0.00 715.00 932.00)">:PFVArControllerType2Dynamics</text>
+</g>
+<g style="stroke-width:1;stroke-linecap:round;stroke-linejoin:bevel; fill:#FDFAF7;fill-opacity:1.00; stroke:#9A8484; stroke-opacity:1.00;">
+ <rect x="256" y="634" width="273" height="53" rx="0.00" shape-rendering="auto"  />
+</g>
+<g style="stroke-width:1;stroke-linecap:round;stroke-linejoin:bevel; fill:#595959;fill-opacity:1.00; stroke:#000000; stroke-opacity:0.00;">
+	<text x="270.00" y="654.00" textLength="245" style="font-family:'Lucida Sans Unicode','Lucida Grande','DejaVu Sans',Arial,sans-serif; font-weight:700; font-style:normal; font-size:10px; fill:#595959;fill-opacity:1.00; stroke:#000000; stroke-opacity:0.00; stroke-width:0; white-space: pre;" xml:space="preserve" transform="rotate(-0.00 270.00 654.00)">DiscontinuousExcitationControlDynamics::</text>
+	<text x="274.00" y="668.00" textLength="237" style="font-family:'Lucida Sans Unicode','Lucida Grande','DejaVu Sans',Arial,sans-serif; font-weight:700; font-style:normal; font-size:10px; fill:#595959;fill-opacity:1.00; stroke:#000000; stroke-opacity:0.00; stroke-width:0; white-space: pre;" xml:space="preserve" transform="rotate(-0.00 274.00 668.00)">DiscontinuousExcitationControlDynamics</text>
+</g>
+<g style="stroke-width:1;stroke-linecap:round;stroke-linejoin:bevel; fill:#FDFAF7;fill-opacity:1.00; stroke:#9A8484; stroke-opacity:1.00;">
+ <rect x="166" y="730" width="208" height="57" rx="0.00" shape-rendering="auto"  />
+</g>
+<g style="stroke-width:1;stroke-linecap:round;stroke-linejoin:bevel; fill:#595959;fill-opacity:1.00; stroke:#000000; stroke-opacity:0.00;">
+	<text x="176.00" y="750.00" textLength="188" style="font-family:'Lucida Sans Unicode','Lucida Grande','DejaVu Sans',Arial,sans-serif; font-weight:700; font-style:normal; font-size:10px; fill:#595959;fill-opacity:1.00; stroke:#000000; stroke-opacity:0.00; stroke-width:0; white-space: pre;" xml:space="preserve" transform="rotate(-0.00 176.00 750.00)">PowerSystemStabilizerDynamics:</text>
+	<text x="176.00" y="764.00" textLength="188" style="font-family:'Lucida Sans Unicode','Lucida Grande','DejaVu Sans',Arial,sans-serif; font-weight:700; font-style:normal; font-size:10px; fill:#595959;fill-opacity:1.00; stroke:#000000; stroke-opacity:0.00; stroke-width:0; white-space: pre;" xml:space="preserve" transform="rotate(-0.00 176.00 764.00)">:PowerSystemStabilizerDynamics</text>
+</g>
+<g style="stroke-width:1;stroke-linecap:round;stroke-linejoin:bevel; fill:#FDFAF7;fill-opacity:1.00; stroke:#9A8484; stroke-opacity:1.00;">
+ <rect x="469" y="391" width="200" height="65" rx="0.00" shape-rendering="auto"  />
+</g>
+<g style="stroke-width:1;stroke-linecap:round;stroke-linejoin:bevel; fill:#595959;fill-opacity:1.00; stroke:#000000; stroke-opacity:0.00;">
+	<text x="478.00" y="411.00" textLength="181" style="font-family:'Lucida Sans Unicode','Lucida Grande','DejaVu Sans',Arial,sans-serif; font-weight:700; font-style:normal; font-size:10px; fill:#595959;fill-opacity:1.00; stroke:#000000; stroke-opacity:0.00; stroke-width:0; white-space: pre;" xml:space="preserve" transform="rotate(-0.00 478.00 411.00)">VoltageCompensatorDynamics::</text>
+	<text x="521.00" y="425.00" textLength="95" style="font-family:'Lucida Sans Unicode','Lucida Grande','DejaVu Sans',Arial,sans-serif; font-weight:700; font-style:normal; font-size:10px; fill:#595959;fill-opacity:1.00; stroke:#000000; stroke-opacity:0.00; stroke-width:0; white-space: pre;" xml:space="preserve" transform="rotate(-0.00 521.00 425.00)">VCompIEEEType2</text>
+</g>
+<g style="stroke-width:1;stroke-linecap:round;stroke-linejoin:bevel; fill:#000000;fill-opacity:0.00; stroke:#9A8484; stroke-opacity:1.00;">
+  <path d="M 469 433 L 668 433" shape-rendering="auto"/>
+</g>
+<g style="stroke-width:1;stroke-linecap:round;stroke-linejoin:bevel; fill:#66413F;fill-opacity:1.00; stroke:#000000; stroke-opacity:0.00;">
+	<text x="474.00" y="448.00" textLength="11" style="font-family:'Lucida Sans Unicode','Lucida Grande','DejaVu Sans',Arial,sans-serif; font-weight:0; font-style:normal; font-size:10px; fill:#66413F;fill-opacity:1.00; stroke:#000000; stroke-opacity:0.00; stroke-width:0; white-space: pre;" xml:space="preserve" transform="rotate(-0.00 474.00 448.00)">+ </text>
+	<text x="493.00" y="448.00" textLength="80" style="font-family:'Lucida Sans Unicode','Lucida Grande','DejaVu Sans',Arial,sans-serif; font-weight:0; font-style:normal; font-size:10px; fill:#66413F;fill-opacity:1.00; stroke:#000000; stroke-opacity:0.00; stroke-width:0; white-space: pre;" xml:space="preserve" transform="rotate(-0.00 493.00 448.00)">tr: Seconds [0..1]</text>
+</g>
+<g style="stroke-width:1;stroke-linecap:round;stroke-linejoin:bevel; fill:#FDFAF7;fill-opacity:1.00; stroke:#9A8484; stroke-opacity:1.00;">
+ <rect x="587" y="549" width="201" height="91" rx="0.00" shape-rendering="auto"  />
+</g>
+<g style="stroke-width:1;stroke-linecap:round;stroke-linejoin:bevel; fill:#595959;fill-opacity:1.00; stroke:#000000; stroke-opacity:0.00;">
+	<text x="709.00" y="563.00" textLength="76" style="font-family:'Lucida Sans Unicode','Lucida Grande','DejaVu Sans',Arial,sans-serif; font-weight:0; font-style:italic; font-size:10px; fill:#595959;fill-opacity:1.00; stroke:#000000; stroke-opacity:0.00; stroke-width:0; white-space: pre;" xml:space="preserve" transform="rotate(-0.00 709.00 563.00)">IdentifiedObject</text>
+	<text x="597.00" y="580.00" textLength="181" style="font-family:'Lucida Sans Unicode','Lucida Grande','DejaVu Sans',Arial,sans-serif; font-weight:700; font-style:normal; font-size:10px; fill:#595959;fill-opacity:1.00; stroke:#000000; stroke-opacity:0.00; stroke-width:0; white-space: pre;" xml:space="preserve" transform="rotate(-0.00 597.00 580.00)">VoltageCompensatorDynamics::</text>
+	<text x="613.00" y="594.00" textLength="149" style="font-family:'Lucida Sans Unicode','Lucida Grande','DejaVu Sans',Arial,sans-serif; font-weight:700; font-style:normal; font-size:10px; fill:#595959;fill-opacity:1.00; stroke:#000000; stroke-opacity:0.00; stroke-width:0; white-space: pre;" xml:space="preserve" transform="rotate(-0.00 613.00 594.00)">GenICompensationForGenJ</text>
+</g>
+<g style="stroke-width:1;stroke-linecap:round;stroke-linejoin:bevel; fill:#000000;fill-opacity:0.00; stroke:#9A8484; stroke-opacity:1.00;">
+  <path d="M 587 602 L 787 602" shape-rendering="auto"/>
+</g>
+<g style="stroke-width:1;stroke-linecap:round;stroke-linejoin:bevel; fill:#66413F;fill-opacity:1.00; stroke:#000000; stroke-opacity:0.00;">
+	<text x="592.00" y="617.00" textLength="11" style="font-family:'Lucida Sans Unicode','Lucida Grande','DejaVu Sans',Arial,sans-serif; font-weight:0; font-style:normal; font-size:10px; fill:#66413F;fill-opacity:1.00; stroke:#000000; stroke-opacity:0.00; stroke-width:0; white-space: pre;" xml:space="preserve" transform="rotate(-0.00 592.00 617.00)">+ </text>
+	<text x="611.00" y="617.00" textLength="62" style="font-family:'Lucida Sans Unicode','Lucida Grande','DejaVu Sans',Arial,sans-serif; font-weight:0; font-style:normal; font-size:10px; fill:#66413F;fill-opacity:1.00; stroke:#000000; stroke-opacity:0.00; stroke-width:0; white-space: pre;" xml:space="preserve" transform="rotate(-0.00 611.00 617.00)">rcij: PU [0..1]</text>
+	<text x="592.00" y="631.00" textLength="11" style="font-family:'Lucida Sans Unicode','Lucida Grande','DejaVu Sans',Arial,sans-serif; font-weight:0; font-style:normal; font-size:10px; fill:#66413F;fill-opacity:1.00; stroke:#000000; stroke-opacity:0.00; stroke-width:0; white-space: pre;" xml:space="preserve" transform="rotate(-0.00 592.00 631.00)">+ </text>
+	<text x="611.00" y="631.00" textLength="63" style="font-family:'Lucida Sans Unicode','Lucida Grande','DejaVu Sans',Arial,sans-serif; font-weight:0; font-style:normal; font-size:10px; fill:#66413F;fill-opacity:1.00; stroke:#000000; stroke-opacity:0.00; stroke-width:0; white-space: pre;" xml:space="preserve" transform="rotate(-0.00 611.00 631.00)">xcij: PU [0..1]</text>
+</g>
+<g style="stroke-width:1;stroke-linecap:round;stroke-linejoin:bevel; fill:#FDFAF7;fill-opacity:1.00; stroke:#9A8484; stroke-opacity:1.00;">
+ <rect x="464" y="951" width="218" height="53" rx="0.00" shape-rendering="auto"  />
+</g>
+<g style="stroke-width:1;stroke-linecap:round;stroke-linejoin:bevel; fill:#595959;fill-opacity:1.00; stroke:#000000; stroke-opacity:0.00;">
+	<text x="479.00" y="971.00" textLength="188" style="font-family:'Lucida Sans Unicode','Lucida Grande','DejaVu Sans',Arial,sans-serif; font-weight:700; font-style:normal; font-size:10px; fill:#595959;fill-opacity:1.00; stroke:#000000; stroke-opacity:0.00; stroke-width:0; white-space: pre;" xml:space="preserve" transform="rotate(-0.00 479.00 971.00)">OverexcitationLimiterDynamics::</text>
+	<text x="483.00" y="985.00" textLength="180" style="font-family:'Lucida Sans Unicode','Lucida Grande','DejaVu Sans',Arial,sans-serif; font-weight:700; font-style:normal; font-size:10px; fill:#595959;fill-opacity:1.00; stroke:#000000; stroke-opacity:0.00; stroke-width:0; white-space: pre;" xml:space="preserve" transform="rotate(-0.00 483.00 985.00)">OverexcitationLimiterDynamics</text>
+</g>
+<g style="stroke-width:1;stroke-linecap:round;stroke-linejoin:bevel; fill:#FDFAF7;fill-opacity:1.00; stroke:#9A8484; stroke-opacity:1.00;">
+ <rect x="46" y="933" width="196" height="54" rx="0.00" shape-rendering="auto"  />
+</g>
+<g style="stroke-width:1;stroke-linecap:round;stroke-linejoin:bevel; fill:#595959;fill-opacity:1.00; stroke:#000000; stroke-opacity:0.00;">
+	<text x="50.00" y="953.00" textLength="187" style="font-family:'Lucida Sans Unicode','Lucida Grande','DejaVu Sans',Arial,sans-serif; font-weight:700; font-style:normal; font-size:10px; fill:#595959;fill-opacity:1.00; stroke:#000000; stroke-opacity:0.00; stroke-width:0; white-space: pre;" xml:space="preserve" transform="rotate(-0.00 50.00 953.00)">PFVArControllerType1Dynamics:</text>
+	<text x="50.00" y="967.00" textLength="187" style="font-family:'Lucida Sans Unicode','Lucida Grande','DejaVu Sans',Arial,sans-serif; font-weight:700; font-style:normal; font-size:10px; fill:#595959;fill-opacity:1.00; stroke:#000000; stroke-opacity:0.00; stroke-width:0; white-space: pre;" xml:space="preserve" transform="rotate(-0.00 50.00 967.00)">:PFVArControllerType1Dynamics</text>
+</g>
+<g style="stroke-width:1;stroke-linecap:round;stroke-linejoin:bevel; fill:#FDFAF7;fill-opacity:1.00; stroke:#9A8484; stroke-opacity:1.00;">
+ <rect x="52" y="1062" width="170" height="57" rx="0.00" shape-rendering="auto"  />
+</g>
+<g style="stroke-width:1;stroke-linecap:round;stroke-linejoin:bevel; fill:#595959;fill-opacity:1.00; stroke:#000000; stroke-opacity:0.00;">
+	<text x="61.00" y="1082.00" textLength="151" style="font-family:'Lucida Sans Unicode','Lucida Grande','DejaVu Sans',Arial,sans-serif; font-weight:700; font-style:normal; font-size:10px; fill:#595959;fill-opacity:1.00; stroke:#000000; stroke-opacity:0.00; stroke-width:0; white-space: pre;" xml:space="preserve" transform="rotate(-0.00 61.00 1082.00)">VoltageAdjusterDynamics:</text>
+	<text x="61.00" y="1096.00" textLength="151" style="font-family:'Lucida Sans Unicode','Lucida Grande','DejaVu Sans',Arial,sans-serif; font-weight:700; font-style:normal; font-size:10px; fill:#595959;fill-opacity:1.00; stroke:#000000; stroke-opacity:0.00; stroke-width:0; white-space: pre;" xml:space="preserve" transform="rotate(-0.00 61.00 1096.00)">:VoltageAdjusterDynamics</text>
+</g>
+<g style="stroke-width:1;stroke-linecap:round;stroke-linejoin:bevel; fill:#FDFAF7;fill-opacity:1.00; stroke:#9A8484; stroke-opacity:1.00;">
+ <rect x="27" y="357" width="329" height="76" rx="0.00" shape-rendering="auto"  />
+</g>
+<g style="stroke-width:1;stroke-linecap:round;stroke-linejoin:bevel; fill:#595959;fill-opacity:1.00; stroke:#000000; stroke-opacity:0.00;">
+	<text x="277.00" y="371.00" textLength="76" style="font-family:'Lucida Sans Unicode','Lucida Grande','DejaVu Sans',Arial,sans-serif; font-weight:0; font-style:italic; font-size:10px; fill:#595959;fill-opacity:1.00; stroke:#000000; stroke-opacity:0.00; stroke-width:0; white-space: pre;" xml:space="preserve" transform="rotate(-0.00 277.00 371.00)">IdentifiedObject</text>
+	<text x="139.00" y="388.00" textLength="105" style="font-family:'Lucida Sans Unicode','Lucida Grande','DejaVu Sans',Arial,sans-serif; font-weight:700; font-style:normal; font-size:10px; fill:#595959;fill-opacity:1.00; stroke:#000000; stroke-opacity:0.00; stroke-width:0; white-space: pre;" xml:space="preserve" transform="rotate(-0.00 139.00 388.00)">RemoteInputSignal</text>
+</g>
+<g style="stroke-width:1;stroke-linecap:round;stroke-linejoin:bevel; fill:#000000;fill-opacity:0.00; stroke:#9A8484; stroke-opacity:1.00;">
+  <path d="M 27 396 L 355 396" shape-rendering="auto"/>
+</g>
+<g style="stroke-width:1;stroke-linecap:round;stroke-linejoin:bevel; fill:#66413F;fill-opacity:1.00; stroke:#000000; stroke-opacity:0.00;">
+	<text x="32.00" y="411.00" textLength="11" style="font-family:'Lucida Sans Unicode','Lucida Grande','DejaVu Sans',Arial,sans-serif; font-weight:0; font-style:normal; font-size:10px; fill:#66413F;fill-opacity:1.00; stroke:#000000; stroke-opacity:0.00; stroke-width:0; white-space: pre;" xml:space="preserve" transform="rotate(-0.00 32.00 411.00)">+ </text>
+	<text x="51.00" y="411.00" textLength="139" style="font-family:'Lucida Sans Unicode','Lucida Grande','DejaVu Sans',Arial,sans-serif; font-weight:0; font-style:normal; font-size:10px; fill:#66413F;fill-opacity:1.00; stroke:#000000; stroke-opacity:0.00; stroke-width:0; white-space: pre;" xml:space="preserve" transform="rotate(-0.00 51.00 411.00)">phase: SinglePhaseKind [0..1]</text>
+	<text x="32.00" y="425.00" textLength="11" style="font-family:'Lucida Sans Unicode','Lucida Grande','DejaVu Sans',Arial,sans-serif; font-weight:0; font-style:normal; font-size:10px; fill:#66413F;fill-opacity:1.00; stroke:#000000; stroke-opacity:0.00; stroke-width:0; white-space: pre;" xml:space="preserve" transform="rotate(-0.00 32.00 425.00)">+ </text>
+	<text x="51.00" y="425.00" textLength="203" style="font-family:'Lucida Sans Unicode','Lucida Grande','DejaVu Sans',Arial,sans-serif; font-weight:0; font-style:normal; font-size:10px; fill:#66413F;fill-opacity:1.00; stroke:#000000; stroke-opacity:0.00; stroke-width:0; white-space: pre;" xml:space="preserve" transform="rotate(-0.00 51.00 425.00)">remoteSignalType: RemoteSignalKind [0..1]</text>
+</g>
+<g style="stroke-width:1;stroke-linecap:round;stroke-linejoin:bevel; fill:#FDFAF7;fill-opacity:1.00; stroke:#9A8484; stroke-opacity:1.00;">
+ <rect x="393" y="1042" width="389" height="61" rx="0.00" shape-rendering="auto"  />
+</g>
+<g style="stroke-width:1;stroke-linecap:round;stroke-linejoin:bevel; fill:#595959;fill-opacity:1.00; stroke:#000000; stroke-opacity:0.00;">
+	<text x="703.00" y="1056.00" textLength="76" style="font-family:'Lucida Sans Unicode','Lucida Grande','DejaVu Sans',Arial,sans-serif; font-weight:0; font-style:italic; font-size:10px; fill:#595959;fill-opacity:1.00; stroke:#000000; stroke-opacity:0.00; stroke-width:0; white-space: pre;" xml:space="preserve" transform="rotate(-0.00 703.00 1056.00)">IdentifiedObject</text>
+	<text x="470.00" y="1073.00" textLength="234" style="font-family:'Lucida Sans Unicode','Lucida Grande','DejaVu Sans',Arial,sans-serif; font-weight:700; font-style:normal; font-size:10px; fill:#595959;fill-opacity:1.00; stroke:#000000; stroke-opacity:0.00; stroke-width:0; white-space: pre;" xml:space="preserve" transform="rotate(-0.00 470.00 1073.00)">StandardModels::DynamicsFunctionBlock</text>
+</g>
+<g style="stroke-width:1;stroke-linecap:round;stroke-linejoin:bevel; fill:#000000;fill-opacity:0.00; stroke:#9A8484; stroke-opacity:1.00;">
+  <path d="M 393 1081 L 781 1081" shape-rendering="auto"/>
+</g>
+<g style="stroke-width:1;stroke-linecap:round;stroke-linejoin:bevel; fill:#66413F;fill-opacity:1.00; stroke:#000000; stroke-opacity:0.00;">
+	<text x="398.00" y="1096.00" textLength="11" style="font-family:'Lucida Sans Unicode','Lucida Grande','DejaVu Sans',Arial,sans-serif; font-weight:0; font-style:normal; font-size:10px; fill:#66413F;fill-opacity:1.00; stroke:#000000; stroke-opacity:0.00; stroke-width:0; white-space: pre;" xml:space="preserve" transform="rotate(-0.00 398.00 1096.00)">+ </text>
+	<text x="417.00" y="1096.00" textLength="108" style="font-family:'Lucida Sans Unicode','Lucida Grande','DejaVu Sans',Arial,sans-serif; font-weight:0; font-style:normal; font-size:10px; fill:#66413F;fill-opacity:1.00; stroke:#000000; stroke-opacity:0.00; stroke-width:0; white-space: pre;" xml:space="preserve" transform="rotate(-0.00 417.00 1096.00)">enabled: Boolean [0..1]</text>
+</g>
+<g style="stroke-width:1;stroke-linecap:round;stroke-linejoin:bevel; fill:#FDFAF7;fill-opacity:1.00; stroke:#9A8484; stroke-opacity:1.00;">
+ <rect x="1040" y="629" width="157" height="54" rx="0.00" shape-rendering="auto"  />
+</g>
+<g style="stroke-width:1;stroke-linecap:round;stroke-linejoin:bevel; fill:#595959;fill-opacity:1.00; stroke:#000000; stroke-opacity:0.00;">
+	<text x="1044.00" y="649.00" textLength="149" style="font-family:'Lucida Sans Unicode','Lucida Grande','DejaVu Sans',Arial,sans-serif; font-weight:700; font-style:normal; font-size:10px; fill:#595959;fill-opacity:1.00; stroke:#000000; stroke-opacity:0.00; stroke-width:0; white-space: pre;" xml:space="preserve" transform="rotate(-0.00 1044.00 649.00)">MechanicalLoadDynamics:</text>
+	<text x="1044.00" y="663.00" textLength="149" style="font-family:'Lucida Sans Unicode','Lucida Grande','DejaVu Sans',Arial,sans-serif; font-weight:700; font-style:normal; font-size:10px; fill:#595959;fill-opacity:1.00; stroke:#000000; stroke-opacity:0.00; stroke-width:0; white-space: pre;" xml:space="preserve" transform="rotate(-0.00 1044.00 663.00)">:MechanicalLoadDynamics</text>
+</g>
+<g style="stroke-width:1;stroke-linecap:round;stroke-linejoin:bevel; fill:#FDFAF7;fill-opacity:1.00; stroke:#9A8484; stroke-opacity:1.00;">
+ <rect x="1116" y="360" width="265" height="135" rx="0.00" shape-rendering="auto"  />
+</g>
+<g style="stroke-width:1;stroke-linecap:round;stroke-linejoin:bevel; fill:#595959;fill-opacity:1.00; stroke:#000000; stroke-opacity:0.00;">
+	<text x="1123.00" y="380.00" textLength="250" style="font-family:'Lucida Sans Unicode','Lucida Grande','DejaVu Sans',Arial,sans-serif; font-weight:700; font-style:normal; font-size:10px; fill:#595959;fill-opacity:1.00; stroke:#000000; stroke-opacity:0.00; stroke-width:0; white-space: pre;" xml:space="preserve" transform="rotate(-0.00 1123.00 380.00)">StandardModels::RotatingMachineDynamics</text>
+</g>
+<g style="stroke-width:1;stroke-linecap:round;stroke-linejoin:bevel; fill:#000000;fill-opacity:0.00; stroke:#9A8484; stroke-opacity:1.00;">
+  <path d="M 1116 388 L 1380 388" shape-rendering="auto"/>
+</g>
+<g style="stroke-width:1;stroke-linecap:round;stroke-linejoin:bevel; fill:#66413F;fill-opacity:1.00; stroke:#000000; stroke-opacity:0.00;">
+	<text x="1121.00" y="403.00" textLength="11" style="font-family:'Lucida Sans Unicode','Lucida Grande','DejaVu Sans',Arial,sans-serif; font-weight:0; font-style:normal; font-size:10px; fill:#66413F;fill-opacity:1.00; stroke:#000000; stroke-opacity:0.00; stroke-width:0; white-space: pre;" xml:space="preserve" transform="rotate(-0.00 1121.00 403.00)">+ </text>
+	<text x="1140.00" y="403.00" textLength="186" style="font-family:'Lucida Sans Unicode','Lucida Grande','DejaVu Sans',Arial,sans-serif; font-weight:0; font-style:normal; font-size:10px; fill:#66413F;fill-opacity:1.00; stroke:#000000; stroke-opacity:0.00; stroke-width:0; white-space: pre;" xml:space="preserve" transform="rotate(-0.00 1140.00 403.00)">classicalFrictionalDamping: Float [0..1]</text>
+	<text x="1121.00" y="417.00" textLength="11" style="font-family:'Lucida Sans Unicode','Lucida Grande','DejaVu Sans',Arial,sans-serif; font-weight:0; font-style:normal; font-size:10px; fill:#66413F;fill-opacity:1.00; stroke:#000000; stroke-opacity:0.00; stroke-width:0; white-space: pre;" xml:space="preserve" transform="rotate(-0.00 1121.00 417.00)">+ </text>
+	<text x="1140.00" y="417.00" textLength="98" style="font-family:'Lucida Sans Unicode','Lucida Grande','DejaVu Sans',Arial,sans-serif; font-weight:0; font-style:normal; font-size:10px; fill:#66413F;fill-opacity:1.00; stroke:#000000; stroke-opacity:0.00; stroke-width:0; white-space: pre;" xml:space="preserve" transform="rotate(-0.00 1140.00 417.00)">damping: Float [0..1]</text>
+	<text x="1121.00" y="431.00" textLength="11" style="font-family:'Lucida Sans Unicode','Lucida Grande','DejaVu Sans',Arial,sans-serif; font-weight:0; font-style:normal; font-size:10px; fill:#66413F;fill-opacity:1.00; stroke:#000000; stroke-opacity:0.00; stroke-width:0; white-space: pre;" xml:space="preserve" transform="rotate(-0.00 1121.00 431.00)">+ </text>
+	<text x="1140.00" y="431.00" textLength="103" style="font-family:'Lucida Sans Unicode','Lucida Grande','DejaVu Sans',Arial,sans-serif; font-weight:0; font-style:normal; font-size:10px; fill:#66413F;fill-opacity:1.00; stroke:#000000; stroke-opacity:0.00; stroke-width:0; white-space: pre;" xml:space="preserve" transform="rotate(-0.00 1140.00 431.00)">inertia: Seconds [0..1]</text>
+	<text x="1121.00" y="445.00" textLength="11" style="font-family:'Lucida Sans Unicode','Lucida Grande','DejaVu Sans',Arial,sans-serif; font-weight:0; font-style:normal; font-size:10px; fill:#66413F;fill-opacity:1.00; stroke:#000000; stroke-opacity:0.00; stroke-width:0; white-space: pre;" xml:space="preserve" transform="rotate(-0.00 1121.00 445.00)">+ </text>
+	<text x="1140.00" y="445.00" textLength="163" style="font-family:'Lucida Sans Unicode','Lucida Grande','DejaVu Sans',Arial,sans-serif; font-weight:0; font-style:normal; font-size:10px; fill:#66413F;fill-opacity:1.00; stroke:#000000; stroke-opacity:0.00; stroke-width:0; white-space: pre;" xml:space="preserve" transform="rotate(-0.00 1140.00 445.00)">statorLeakageReactance: PU [0..1]</text>
+	<text x="1121.00" y="459.00" textLength="11" style="font-family:'Lucida Sans Unicode','Lucida Grande','DejaVu Sans',Arial,sans-serif; font-weight:0; font-style:normal; font-size:10px; fill:#66413F;fill-opacity:1.00; stroke:#000000; stroke-opacity:0.00; stroke-width:0; white-space: pre;" xml:space="preserve" transform="rotate(-0.00 1121.00 459.00)">+ </text>
+	<text x="1140.00" y="459.00" textLength="126" style="font-family:'Lucida Sans Unicode','Lucida Grande','DejaVu Sans',Arial,sans-serif; font-weight:0; font-style:normal; font-size:10px; fill:#66413F;fill-opacity:1.00; stroke:#000000; stroke-opacity:0.00; stroke-width:0; white-space: pre;" xml:space="preserve" transform="rotate(-0.00 1140.00 459.00)">statorResistance: PU [0..1]</text>
+</g>
+<g style="stroke-width:1;stroke-linecap:round;stroke-linejoin:bevel; fill:#FDFAF7;fill-opacity:1.00; stroke:#9A8484; stroke-opacity:1.00;">
+ <rect x="861" y="756" width="197" height="54" rx="0.00" shape-rendering="auto"  />
+</g>
+<g style="stroke-width:1;stroke-linecap:round;stroke-linejoin:bevel; fill:#595959;fill-opacity:1.00; stroke:#000000; stroke-opacity:0.00;">
+	<text x="865.00" y="776.00" textLength="189" style="font-family:'Lucida Sans Unicode','Lucida Grande','DejaVu Sans',Arial,sans-serif; font-weight:700; font-style:normal; font-size:10px; fill:#595959;fill-opacity:1.00; stroke:#000000; stroke-opacity:0.00; stroke-width:0; white-space: pre;" xml:space="preserve" transform="rotate(-0.00 865.00 776.00)">TurbineLoadControllerDynamics:</text>
+	<text x="957.00" y="790.00" textLength="4" style="font-family:'Lucida Sans Unicode','Lucida Grande','DejaVu Sans',Arial,sans-serif; font-weight:700; font-style:normal; font-size:10px; fill:#595959;fill-opacity:1.00; stroke:#000000; stroke-opacity:0.00; stroke-width:0; white-space: pre;" xml:space="preserve" transform="rotate(-0.00 957.00 790.00)">:</text>
+	<text x="867.00" y="804.00" textLength="185" style="font-family:'Lucida Sans Unicode','Lucida Grande','DejaVu Sans',Arial,sans-serif; font-weight:700; font-style:normal; font-size:10px; fill:#595959;fill-opacity:1.00; stroke:#000000; stroke-opacity:0.00; stroke-width:0; white-space: pre;" xml:space="preserve" transform="rotate(-0.00 867.00 804.00)">TurbineLoadControllerDynamics</text>
+</g>
+<g style="stroke-width:1;stroke-linecap:round;stroke-linejoin:bevel; fill:#000000;fill-opacity:0.00; stroke:#658A99; stroke-opacity:1.00;" stroke-dasharray="3,3">
+  <path d="M 1074 924 L 817 618" shape-rendering="auto"/>
+</g>
+<g style="stroke-width:1;stroke-linecap:round;stroke-linejoin:bevel; fill:#FFFFFF;fill-opacity:1.00; stroke:#658A99; stroke-opacity:1.00;">
+  <polygon points="953 924 953 989 1249 989 1249 936 1237 924" shape-rendering="auto"   style="fill-rule:evenodd;"/>
+</g>
+<g style="stroke-width:1;stroke-linecap:round;stroke-linejoin:bevel; fill:#DCDCDC;fill-opacity:1.00; stroke:#658A99; stroke-opacity:1.00;">
+  <polygon points="1237 924 1237 936 1249 936" shape-rendering="auto"   style="fill-rule:evenodd;"/>
+</g>
+<g style="stroke-width:1;stroke-linecap:round;stroke-linejoin:bevel; fill:#3C3C3C;fill-opacity:1.00; stroke:#000000; stroke-opacity:0.00;">
+	<text x="958.00" y="949.00" textLength="278" style="font-family:'Lucida Sans Unicode','Lucida Grande','DejaVu Sans',Arial,sans-serif; font-weight:0; font-style:normal; font-size:10px; fill:#3C3C3C;fill-opacity:1.00; stroke:#000000; stroke-opacity:0.00; stroke-width:0; white-space: pre;" xml:space="preserve" transform="rotate(-0.00 958.00 949.00)">ExcitationSystemDynamics.SynchronousMachineDynamics</text>
+	<text x="958.00" y="963.00" textLength="158" style="font-family:'Lucida Sans Unicode','Lucida Grande','DejaVu Sans',Arial,sans-serif; font-weight:0; font-style:normal; font-size:10px; fill:#3C3C3C;fill-opacity:1.00; stroke:#000000; stroke-opacity:0.00; stroke-width:0; white-space: pre;" xml:space="preserve" transform="rotate(-0.00 958.00 963.00)">cannot point to an object of type</text>
+	<text x="958.00" y="977.00" textLength="151" style="font-family:'Lucida Sans Unicode','Lucida Grande','DejaVu Sans',Arial,sans-serif; font-weight:0; font-style:normal; font-size:10px; fill:#3C3C3C;fill-opacity:1.00; stroke:#000000; stroke-opacity:0.00; stroke-width:0; white-space: pre;" xml:space="preserve" transform="rotate(-0.00 958.00 977.00)">SynchronousMachineSimplified.</text>
+</g>
+<g style="stroke-width:1;stroke-linecap:round;stroke-linejoin:bevel; fill:#000000;fill-opacity:1.00; stroke:#000000; stroke-opacity:0.00;">
+	<text x="521.00" y="1159.00" textLength="302" style="font-family:Arial,Helvetica,'Liberation Sans',sans-serif; font-weight:400; font-style:normal; font-size:16px; fill:#000000;fill-opacity:1.00; stroke:#000000; stroke-opacity:0.00; stroke-width:0; white-space: pre;" xml:space="preserve" transform="rotate(-0.00 521.00 1159.00)">Reproduced with the permission of UCAIug.</text>
+</g>
+<g style="stroke-width:1;stroke-linecap:round;stroke-linejoin:bevel; fill:#000000;fill-opacity:0.00; stroke:#000000; stroke-opacity:1.00;">
+  <path d="M 455 211 L 884 68" shape-rendering="auto"/>
+  <path d="M 1158 112 L 996 49" shape-rendering="auto"/>
+  <path d="M 849 46 L 616 47" shape-rendering="auto"/>
+</g>
+<g style="stroke-width:1;stroke-linecap:round;stroke-linejoin:bevel; fill:#FAF1EC;fill-opacity:1.00; stroke:#000000; stroke-opacity:1.00;">
+  <polygon points="632 41 632 53 616 47" shape-rendering="auto"   style="fill-rule:evenodd;"/>
+</g>
+<g style="stroke-width:1;stroke-linecap:round;stroke-linejoin:bevel; fill:#000000;fill-opacity:0.00; stroke:#000000; stroke-opacity:1.00;">
+  <path d="M 530 48 L 443 48" shape-rendering="auto"/>
+</g>
+<g style="stroke-width:1;stroke-linecap:round;stroke-linejoin:bevel; fill:#FAF1EC;fill-opacity:1.00; stroke:#000000; stroke-opacity:1.00;">
+  <polygon points="459 42 459 54 443 48" shape-rendering="auto"   style="fill-rule:evenodd;"/>
+</g>
+<g style="stroke-width:1;stroke-linecap:round;stroke-linejoin:bevel; fill:#000000;fill-opacity:0.00; stroke:#000000; stroke-opacity:1.00;">
+  <path d="M 922 252 L 922 216" shape-rendering="auto"/>
+</g>
+<g style="stroke-width:1;stroke-linecap:round;stroke-linejoin:bevel; fill:#FAF1EC;fill-opacity:1.00; stroke:#000000; stroke-opacity:1.00;">
+  <polygon points="928 232 916 232 922 216" shape-rendering="auto"   style="fill-rule:evenodd;"/>
+</g>
+<g style="stroke-width:1;stroke-linecap:round;stroke-linejoin:bevel; fill:#000000;fill-opacity:0.00; stroke:#69738C; stroke-opacity:1.00;">
+  <path d="M 921 174 L 921 168" shape-rendering="auto"/>
+</g>
+<g style="stroke-width:1;stroke-linecap:round;stroke-linejoin:bevel; fill:#FAF1EC;fill-opacity:1.00; stroke:#69738C; stroke-opacity:1.00;">
+  <polygon points="927 184 915 184 921 168" shape-rendering="auto"   style="fill-rule:evenodd;"/>
+</g>
+<g style="stroke-width:1;stroke-linecap:round;stroke-linejoin:bevel; fill:#000000;fill-opacity:0.00; stroke:#69738C; stroke-opacity:1.00;">
+  <path d="M 236 357 L 377 238" shape-rendering="auto"/>
+  <path d="M 1349 495 L 782 1079" shape-rendering="auto"/>
+</g>
+<g style="stroke-width:1;stroke-linecap:round;stroke-linejoin:bevel; fill:#FAF1EC;fill-opacity:1.00; stroke:#69738C; stroke-opacity:1.00;">
+  <polygon points="789 1063 797 1072 782 1079" shape-rendering="auto"   style="fill-rule:evenodd;"/>
+</g>
+<g style="stroke-width:1;stroke-linecap:round;stroke-linejoin:bevel; fill:#000000;fill-opacity:0.00; stroke:#69738C; stroke-opacity:1.00;">
+  <path d="M 958 456 L 896 627" shape-rendering="auto"/>
+  <path d="M 1033 407 L 1116 408" shape-rendering="auto"/>
+</g>
+<g style="stroke-width:1;stroke-linecap:round;stroke-linejoin:bevel; fill:#FAF1EC;fill-opacity:1.00; stroke:#69738C; stroke-opacity:1.00;">
+  <polygon points="1100 414 1100 402 1116 408" shape-rendering="auto"   style="fill-rule:evenodd;"/>
+</g>
+<g style="stroke-width:1;stroke-linecap:round;stroke-linejoin:bevel; fill:#000000;fill-opacity:0.00; stroke:#69738C; stroke-opacity:1.00;">
+  <path d="M 967 388 L 967 295" shape-rendering="auto"/>
+  <path d="M 852 680 L 732 1042" shape-rendering="auto"/>
+</g>
+<g style="stroke-width:1;stroke-linecap:round;stroke-linejoin:bevel; fill:#FAF1EC;fill-opacity:1.00; stroke:#69738C; stroke-opacity:1.00;">
+  <polygon points="731 1025 743 1029 732 1042" shape-rendering="auto"   style="fill-rule:evenodd;"/>
+</g>
+<g style="stroke-width:1;stroke-linecap:round;stroke-linejoin:bevel; fill:#000000;fill-opacity:0.00; stroke:#69738C; stroke-opacity:1.00;">
+  <path d="M 923 756 L 901 680" shape-rendering="auto"/>
+  <path d="M 939 810 L 759 1042" shape-rendering="auto"/>
+</g>
+<g style="stroke-width:1;stroke-linecap:round;stroke-linejoin:bevel; fill:#FAF1EC;fill-opacity:1.00; stroke:#69738C; stroke-opacity:1.00;">
+  <polygon points="764 1026 774 1033 759 1042" shape-rendering="auto"   style="fill-rule:evenodd;"/>
+</g>
+<g style="stroke-width:1;stroke-linecap:round;stroke-linejoin:bevel; fill:#000000;fill-opacity:0.00; stroke:#69738C; stroke-opacity:1.00;">
+  <path d="M 1106 683 L 782 1070" shape-rendering="auto"/>
+</g>
+<g style="stroke-width:1;stroke-linecap:round;stroke-linejoin:bevel; fill:#FAF1EC;fill-opacity:1.00; stroke:#69738C; stroke-opacity:1.00;">
+  <polygon points="788 1054 797 1062 782 1070" shape-rendering="auto"   style="fill-rule:evenodd;"/>
+</g>
+<g style="stroke-width:1;stroke-linecap:round;stroke-linejoin:bevel; fill:#000000;fill-opacity:0.00; stroke:#69738C; stroke-opacity:1.00;">
+  <path d="M 1089 629 L 1013 456" shape-rendering="auto"/>
+  <path d="M 700 837 L 700 1042" shape-rendering="auto"/>
+</g>
+<g style="stroke-width:1;stroke-linecap:round;stroke-linejoin:bevel; fill:#FAF1EC;fill-opacity:1.00; stroke:#69738C; stroke-opacity:1.00;">
+  <polygon points="694 1026 706 1026 700 1042" shape-rendering="auto"   style="fill-rule:evenodd;"/>
+</g>
+<g style="stroke-width:1;stroke-linecap:round;stroke-linejoin:bevel; fill:#000000;fill-opacity:0.00; stroke:#69738C; stroke-opacity:1.00;">
+  <path d="M 734 780 L 901 456" shape-rendering="auto"/>
+  <path d="M 572 1004 L 572 1042" shape-rendering="auto"/>
+</g>
+<g style="stroke-width:1;stroke-linecap:round;stroke-linejoin:bevel; fill:#FAF1EC;fill-opacity:1.00; stroke:#69738C; stroke-opacity:1.00;">
+  <polygon points="566 1026 578 1026 572 1042" shape-rendering="auto"   style="fill-rule:evenodd;"/>
+</g>
+<g style="stroke-width:1;stroke-linecap:round;stroke-linejoin:bevel; fill:#000000;fill-opacity:0.00; stroke:#69738C; stroke-opacity:1.00;">
+  <path d="M 582 951 L 667 837" shape-rendering="auto"/>
+  <path d="M 325 871 L 609 807" shape-rendering="auto"/>
+  <path d="M 132 841 L 120 433" shape-rendering="auto"/>
+  <path d="M 273 893 L 410 1042" shape-rendering="auto"/>
+</g>
+<g style="stroke-width:1;stroke-linecap:round;stroke-linejoin:bevel; fill:#FAF1EC;fill-opacity:1.00; stroke:#69738C; stroke-opacity:1.00;">
+  <polygon points="395 1034 404 1026 410 1042" shape-rendering="auto"   style="fill-rule:evenodd;"/>
+</g>
+<g style="stroke-width:1;stroke-linecap:round;stroke-linejoin:bevel; fill:#000000;fill-opacity:0.00; stroke:#69738C; stroke-opacity:1.00;">
+  <path d="M 210 730 L 163 433" shape-rendering="auto"/>
+  <path d="M 237 787 L 428 1042" shape-rendering="auto"/>
+</g>
+<g style="stroke-width:1;stroke-linecap:round;stroke-linejoin:bevel; fill:#FAF1EC;fill-opacity:1.00; stroke:#69738C; stroke-opacity:1.00;">
+  <polygon points="414 1033 423 1026 428 1042" shape-rendering="auto"   style="fill-rule:evenodd;"/>
+</g>
+<g style="stroke-width:1;stroke-linecap:round;stroke-linejoin:bevel; fill:#000000;fill-opacity:0.00; stroke:#69738C; stroke-opacity:1.00;">
+  <path d="M 374 770 L 609 797" shape-rendering="auto"/>
+  <path d="M 306 687 L 369 854 A 6.00 -6.00 180.00 0 0 373 866 L 441 1042" shape-rendering="auto"/>
+</g>
+<g style="stroke-width:1;stroke-linecap:round;stroke-linejoin:bevel; fill:#FAF1EC;fill-opacity:1.00; stroke:#69738C; stroke-opacity:1.00;">
+  <polygon points="430 1029 441 1025 441 1042" shape-rendering="auto"   style="fill-rule:evenodd;"/>
+</g>
+<g style="stroke-width:1;stroke-linecap:round;stroke-linejoin:bevel; fill:#000000;fill-opacity:0.00; stroke:#69738C; stroke-opacity:1.00;">
+  <path d="M 304 634 L 218 433" shape-rendering="auto"/>
+  <path d="M 491 687 L 667 780" shape-rendering="auto"/>
+  <path d="M 73 933 L 73 433" shape-rendering="auto"/>
+  <path d="M 242 971 L 313 945 A 6.00 -6.00 180.00 0 0 325 941 L 340 935 A 6.00 -6.00 180.00 0 0 352 931 L 387 918 A 6.00 -6.00 180.00 0 0 399 914 L 616 837" shape-rendering="auto"/>
+  <path d="M 212 987 L 393 1061" shape-rendering="auto"/>
+</g>
+<g style="stroke-width:1;stroke-linecap:round;stroke-linejoin:bevel; fill:#FAF1EC;fill-opacity:1.00; stroke:#69738C; stroke-opacity:1.00;">
+  <polygon points="376 1060 380 1049 393 1061" shape-rendering="auto"   style="fill-rule:evenodd;"/>
+</g>
+<g style="stroke-width:1;stroke-linecap:round;stroke-linejoin:bevel; fill:#000000;fill-opacity:0.00; stroke:#69738C; stroke-opacity:1.00;">
+  <path d="M 222 1086 L 393 1079" shape-rendering="auto"/>
+</g>
+<g style="stroke-width:1;stroke-linecap:round;stroke-linejoin:bevel; fill:#FAF1EC;fill-opacity:1.00; stroke:#69738C; stroke-opacity:1.00;">
+  <polygon points="377 1086 377 1074 393 1079" shape-rendering="auto"   style="fill-rule:evenodd;"/>
+</g>
+<g style="stroke-width:1;stroke-linecap:round;stroke-linejoin:bevel; fill:#000000;fill-opacity:0.00; stroke:#69738C; stroke-opacity:1.00;">
+  <path d="M 184 1062 L 184 987" shape-rendering="auto"/>
+  <path d="M 747 898 L 710 837" shape-rendering="auto"/>
+  <path d="M 754 956 L 713 1042" shape-rendering="auto"/>
+</g>
+<g style="stroke-width:1;stroke-linecap:round;stroke-linejoin:bevel; fill:#FAF1EC;fill-opacity:1.00; stroke:#69738C; stroke-opacity:1.00;">
+  <polygon points="714 1025 725 1030 713 1042" shape-rendering="auto"   style="fill-rule:evenodd;"/>
+</g>
+<g style="stroke-width:1;stroke-linecap:round;stroke-linejoin:bevel; fill:#000000;fill-opacity:0.00; stroke:#69738C; stroke-opacity:1.00;">
+  <path d="M 499 564 L 702 780" shape-rendering="auto"/>
+  <path d="M 374 564 L 412 768 A 6.00 -6.00 180.00 0 0 414 780 L 425 842 A 6.00 -6.00 180.00 0 0 427 854 L 435 895 A 6.00 -6.00 180.00 0 0 437 907 L 463 1042" shape-rendering="auto"/>
+</g>
+<g style="stroke-width:1;stroke-linecap:round;stroke-linejoin:bevel; fill:#FAF1EC;fill-opacity:1.00; stroke:#69738C; stroke-opacity:1.00;">
+  <polygon points="454 1027 466 1025 463 1042" shape-rendering="auto"   style="fill-rule:evenodd;"/>
+</g>
+<g style="stroke-width:1;stroke-linecap:round;stroke-linejoin:bevel; fill:#000000;fill-opacity:0.00; stroke:#69738C; stroke-opacity:1.00;">
+  <path d="M 457 506 L 321 433" shape-rendering="auto"/>
+  <path d="M 495 456 L 495 506" shape-rendering="auto"/>
+</g>
+<g style="stroke-width:1;stroke-linecap:round;stroke-linejoin:bevel; fill:#FAF1EC;fill-opacity:1.00; stroke:#69738C; stroke-opacity:1.00;">
+  <polygon points="489 490 501 490 495 506" shape-rendering="auto"   style="fill-rule:evenodd;"/>
+</g>
+<g style="stroke-width:1;stroke-linecap:round;stroke-linejoin:bevel; fill:#000000;fill-opacity:0.00; stroke:#69738C; stroke-opacity:1.00;">
+  <path d="M 689 549 L 636 456" shape-rendering="auto"/>
+  <path d="M 735 549 L 824 440" shape-rendering="auto"/>
+</g>
+<g style="stroke-width:1;stroke-linecap:round;stroke-linejoin:bevel; fill:#595959;fill-opacity:1.00; stroke:#000000; stroke-opacity:0.00;">
+	<text x="42.00" y="1053.00" textLength="132" style="font-family:'Lucida Sans Unicode','Lucida Grande','DejaVu Sans',Arial,sans-serif; font-weight:0; font-style:normal; font-size:10px; fill:#595959;fill-opacity:1.00; stroke:#000000; stroke-opacity:0.00; stroke-width:0; white-space: pre;" xml:space="preserve" transform="rotate(-0.00 42.00 1053.00)">+VoltageAdjusterDynamics</text>
+	<text x="190.00" y="1053.00" textLength="18" style="font-family:'Lucida Sans Unicode','Lucida Grande','DejaVu Sans',Arial,sans-serif; font-weight:0; font-style:normal; font-size:10px; fill:#595959;fill-opacity:1.00; stroke:#000000; stroke-opacity:0.00; stroke-width:0; white-space: pre;" xml:space="preserve" transform="rotate(-0.00 190.00 1053.00)">0..1</text>
+	<text x="10.00" y="1002.00" textLength="163" style="font-family:'Lucida Sans Unicode','Lucida Grande','DejaVu Sans',Arial,sans-serif; font-weight:0; font-style:normal; font-size:10px; fill:#595959;fill-opacity:1.00; stroke:#000000; stroke-opacity:0.00; stroke-width:0; white-space: pre;" xml:space="preserve" transform="rotate(-0.00 10.00 1002.00)">+PFVArControllerType1Dynamics</text>
+	<text x="192.00" y="1000.00" textLength="6" style="font-family:'Lucida Sans Unicode','Lucida Grande','DejaVu Sans',Arial,sans-serif; font-weight:0; font-style:normal; font-size:10px; fill:#595959;fill-opacity:1.00; stroke:#000000; stroke-opacity:0.00; stroke-width:0; white-space: pre;" xml:space="preserve" transform="rotate(-0.00 192.00 1000.00)">1</text>
+	<text x="413.00" y="590.00" textLength="155" style="font-family:'Lucida Sans Unicode','Lucida Grande','DejaVu Sans',Arial,sans-serif; font-weight:0; font-style:normal; font-size:10px; fill:#595959;fill-opacity:1.00; stroke:#000000; stroke-opacity:0.00; stroke-width:0; white-space: pre;" xml:space="preserve" transform="rotate(-0.00 413.00 590.00)">+VoltageCompensatorDynamics</text>
+	<text x="480.00" y="576.00" textLength="6" style="font-family:'Lucida Sans Unicode','Lucida Grande','DejaVu Sans',Arial,sans-serif; font-weight:0; font-style:normal; font-size:10px; fill:#595959;fill-opacity:1.00; stroke:#000000; stroke-opacity:0.00; stroke-width:0; white-space: pre;" xml:space="preserve" transform="rotate(-0.00 480.00 576.00)">1</text>
+	<text x="586.00" y="724.00" textLength="135" style="font-family:'Lucida Sans Unicode','Lucida Grande','DejaVu Sans',Arial,sans-serif; font-weight:0; font-style:normal; font-size:10px; fill:#595959;fill-opacity:1.00; stroke:#000000; stroke-opacity:0.00; stroke-width:0; white-space: pre;" xml:space="preserve" transform="rotate(-0.00 586.00 724.00)">+ExcitationSystemDynamics</text>
+	<text x="705.00" y="775.00" textLength="6" style="font-family:'Lucida Sans Unicode','Lucida Grande','DejaVu Sans',Arial,sans-serif; font-weight:0; font-style:normal; font-size:10px; fill:#595959;fill-opacity:1.00; stroke:#000000; stroke-opacity:0.00; stroke-width:0; white-space: pre;" xml:space="preserve" transform="rotate(-0.00 705.00 775.00)">1</text>
+	<text x="460.00" y="223.00" textLength="55" style="font-family:'Lucida Sans Unicode','Lucida Grande','DejaVu Sans',Arial,sans-serif; font-weight:0; font-style:normal; font-size:10px; fill:#595959;fill-opacity:1.00; stroke:#000000; stroke-opacity:0.00; stroke-width:0; white-space: pre;" xml:space="preserve" transform="rotate(-0.00 460.00 223.00)">+Terminals</text>
+	<text x="457.00" y="196.00" textLength="17" style="font-family:'Lucida Sans Unicode','Lucida Grande','DejaVu Sans',Arial,sans-serif; font-weight:0; font-style:normal; font-size:10px; fill:#595959;fill-opacity:1.00; stroke:#000000; stroke-opacity:0.00; stroke-width:0; white-space: pre;" xml:space="preserve" transform="rotate(-0.00 457.00 196.00)">0..*</text>
+	<text x="727.00" y="79.00" textLength="112" style="font-family:'Lucida Sans Unicode','Lucida Grande','DejaVu Sans',Arial,sans-serif; font-weight:0; font-style:normal; font-size:10px; fill:#595959;fill-opacity:1.00; stroke:#000000; stroke-opacity:0.00; stroke-width:0; white-space: pre;" xml:space="preserve" transform="rotate(-0.00 727.00 79.00)">+ConductingEquipment</text>
+	<text x="880.00" y="81.00" textLength="6" style="font-family:'Lucida Sans Unicode','Lucida Grande','DejaVu Sans',Arial,sans-serif; font-weight:0; font-style:normal; font-size:10px; fill:#595959;fill-opacity:1.00; stroke:#000000; stroke-opacity:0.00; stroke-width:0; white-space: pre;" xml:space="preserve" transform="rotate(-0.00 880.00 81.00)">1</text>
+	<text x="1047.00" y="106.00" textLength="67" style="font-family:'Lucida Sans Unicode','Lucida Grande','DejaVu Sans',Arial,sans-serif; font-weight:0; font-style:normal; font-size:10px; fill:#595959;fill-opacity:1.00; stroke:#000000; stroke-opacity:0.00; stroke-width:0; white-space: pre;" xml:space="preserve" transform="rotate(-0.00 1047.00 106.00)">+BaseVoltage</text>
+	<text x="1155.00" y="105.00" textLength="18" style="font-family:'Lucida Sans Unicode','Lucida Grande','DejaVu Sans',Arial,sans-serif; font-weight:0; font-style:normal; font-size:10px; fill:#595959;fill-opacity:1.00; stroke:#000000; stroke-opacity:0.00; stroke-width:0; white-space: pre;" xml:space="preserve" transform="rotate(-0.00 1155.00 105.00)">0..1</text>
+	<text x="1001.00" y="42.00" textLength="112" style="font-family:'Lucida Sans Unicode','Lucida Grande','DejaVu Sans',Arial,sans-serif; font-weight:0; font-style:normal; font-size:10px; fill:#595959;fill-opacity:1.00; stroke:#000000; stroke-opacity:0.00; stroke-width:0; white-space: pre;" xml:space="preserve" transform="rotate(-0.00 1001.00 42.00)">+ConductingEquipment</text>
+	<text x="1001.00" y="73.00" textLength="17" style="font-family:'Lucida Sans Unicode','Lucida Grande','DejaVu Sans',Arial,sans-serif; font-weight:0; font-style:normal; font-size:10px; fill:#595959;fill-opacity:1.00; stroke:#000000; stroke-opacity:0.00; stroke-width:0; white-space: pre;" xml:space="preserve" transform="rotate(-0.00 1001.00 73.00)">0..*</text>
+	<text x="328.00" y="848.00" textLength="164" style="font-family:'Lucida Sans Unicode','Lucida Grande','DejaVu Sans',Arial,sans-serif; font-weight:0; font-style:normal; font-size:10px; fill:#595959;fill-opacity:1.00; stroke:#000000; stroke-opacity:0.00; stroke-width:0; white-space: pre;" xml:space="preserve" transform="rotate(-0.00 328.00 848.00)">+UnderexcitationLimiterDynamics</text>
+	<text x="328.00" y="885.00" textLength="18" style="font-family:'Lucida Sans Unicode','Lucida Grande','DejaVu Sans',Arial,sans-serif; font-weight:0; font-style:normal; font-size:10px; fill:#595959;fill-opacity:1.00; stroke:#000000; stroke-opacity:0.00; stroke-width:0; white-space: pre;" xml:space="preserve" transform="rotate(-0.00 328.00 885.00)">0..1</text>
+	<text x="442.00" y="824.00" textLength="135" style="font-family:'Lucida Sans Unicode','Lucida Grande','DejaVu Sans',Arial,sans-serif; font-weight:0; font-style:normal; font-size:10px; fill:#595959;fill-opacity:1.00; stroke:#000000; stroke-opacity:0.00; stroke-width:0; white-space: pre;" xml:space="preserve" transform="rotate(-0.00 442.00 824.00)">+ExcitationSystemDynamics</text>
+	<text x="596.00" y="827.00" textLength="6" style="font-family:'Lucida Sans Unicode','Lucida Grande','DejaVu Sans',Arial,sans-serif; font-weight:0; font-style:normal; font-size:10px; fill:#595959;fill-opacity:1.00; stroke:#000000; stroke-opacity:0.00; stroke-width:0; white-space: pre;" xml:space="preserve" transform="rotate(-0.00 596.00 827.00)">1</text>
+	<text x="441.00" y="495.00" textLength="108" style="font-family:'Lucida Sans Unicode','Lucida Grande','DejaVu Sans',Arial,sans-serif; font-weight:0; font-style:normal; font-size:10px; fill:#595959;fill-opacity:1.00; stroke:#000000; stroke-opacity:0.00; stroke-width:0; white-space: pre;" xml:space="preserve" transform="rotate(-0.00 441.00 495.00)">{isSubstitutable=false}</text>
+	<text x="707.00" y="739.00" textLength="135" style="font-family:'Lucida Sans Unicode','Lucida Grande','DejaVu Sans',Arial,sans-serif; font-weight:0; font-style:normal; font-size:10px; fill:#595959;fill-opacity:1.00; stroke:#000000; stroke-opacity:0.00; stroke-width:0; white-space: pre;" xml:space="preserve" transform="rotate(-0.00 707.00 739.00)">+ExcitationSystemDynamics</text>
+	<text x="737.00" y="773.00" textLength="18" style="font-family:'Lucida Sans Unicode','Lucida Grande','DejaVu Sans',Arial,sans-serif; font-weight:0; font-style:normal; font-size:10px; fill:#595959;fill-opacity:1.00; stroke:#000000; stroke-opacity:0.00; stroke-width:0; white-space: pre;" xml:space="preserve" transform="rotate(-0.00 737.00 773.00)">0..1</text>
+	<text x="777.00" y="511.00" textLength="156" style="font-family:'Lucida Sans Unicode','Lucida Grande','DejaVu Sans',Arial,sans-serif; font-weight:0; font-style:normal; font-size:10px; fill:#595959;fill-opacity:1.00; stroke:#000000; stroke-opacity:0.00; stroke-width:0; white-space: pre;" xml:space="preserve" transform="rotate(-0.00 777.00 511.00)">+SynchronousMachineDynamics</text>
+	<text x="910.00" y="472.00" textLength="6" style="font-family:'Lucida Sans Unicode','Lucida Grande','DejaVu Sans',Arial,sans-serif; font-weight:0; font-style:normal; font-size:10px; fill:#595959;fill-opacity:1.00; stroke:#000000; stroke-opacity:0.00; stroke-width:0; white-space: pre;" xml:space="preserve" transform="rotate(-0.00 910.00 472.00)">1</text>
+	<text x="245.00" y="960.00" textLength="163" style="font-family:'Lucida Sans Unicode','Lucida Grande','DejaVu Sans',Arial,sans-serif; font-weight:0; font-style:normal; font-size:10px; fill:#595959;fill-opacity:1.00; stroke:#000000; stroke-opacity:0.00; stroke-width:0; white-space: pre;" xml:space="preserve" transform="rotate(-0.00 245.00 960.00)">+PFVArControllerType1Dynamics</text>
+	<text x="245.00" y="987.00" textLength="18" style="font-family:'Lucida Sans Unicode','Lucida Grande','DejaVu Sans',Arial,sans-serif; font-weight:0; font-style:normal; font-size:10px; fill:#595959;fill-opacity:1.00; stroke:#000000; stroke-opacity:0.00; stroke-width:0; white-space: pre;" xml:space="preserve" transform="rotate(-0.00 245.00 987.00)">0..1</text>
+	<text x="477.00" y="860.00" textLength="135" style="font-family:'Lucida Sans Unicode','Lucida Grande','DejaVu Sans',Arial,sans-serif; font-weight:0; font-style:normal; font-size:10px; fill:#595959;fill-opacity:1.00; stroke:#000000; stroke-opacity:0.00; stroke-width:0; white-space: pre;" xml:space="preserve" transform="rotate(-0.00 477.00 860.00)">+ExcitationSystemDynamics</text>
+	<text x="621.00" y="849.00" textLength="6" style="font-family:'Lucida Sans Unicode','Lucida Grande','DejaVu Sans',Arial,sans-serif; font-weight:0; font-style:normal; font-size:10px; fill:#595959;fill-opacity:1.00; stroke:#000000; stroke-opacity:0.00; stroke-width:0; white-space: pre;" xml:space="preserve" transform="rotate(-0.00 621.00 849.00)">1</text>
+	<text x="83.00" y="824.00" textLength="164" style="font-family:'Lucida Sans Unicode','Lucida Grande','DejaVu Sans',Arial,sans-serif; font-weight:0; font-style:normal; font-size:10px; fill:#595959;fill-opacity:1.00; stroke:#000000; stroke-opacity:0.00; stroke-width:0; white-space: pre;" xml:space="preserve" transform="rotate(-0.00 83.00 824.00)">+UnderexcitationLimiterDynamics</text>
+	<text x="109.00" y="836.00" textLength="18" style="font-family:'Lucida Sans Unicode','Lucida Grande','DejaVu Sans',Arial,sans-serif; font-weight:0; font-style:normal; font-size:10px; fill:#595959;fill-opacity:1.00; stroke:#000000; stroke-opacity:0.00; stroke-width:0; white-space: pre;" xml:space="preserve" transform="rotate(-0.00 109.00 836.00)">0..1</text>
+	<text x="74.00" y="500.00" textLength="96" style="font-family:'Lucida Sans Unicode','Lucida Grande','DejaVu Sans',Arial,sans-serif; font-weight:0; font-style:normal; font-size:10px; fill:#595959;fill-opacity:1.00; stroke:#000000; stroke-opacity:0.00; stroke-width:0; white-space: pre;" xml:space="preserve" transform="rotate(-0.00 74.00 500.00)">+RemoteInputSignal</text>
+	<text x="128.00" y="448.00" textLength="18" style="font-family:'Lucida Sans Unicode','Lucida Grande','DejaVu Sans',Arial,sans-serif; font-weight:0; font-style:normal; font-size:10px; fill:#595959;fill-opacity:1.00; stroke:#000000; stroke-opacity:0.00; stroke-width:0; white-space: pre;" xml:space="preserve" transform="rotate(-0.00 128.00 448.00)">0..1</text>
+	<text x="804.00" y="382.00" textLength="156" style="font-family:'Lucida Sans Unicode','Lucida Grande','DejaVu Sans',Arial,sans-serif; font-weight:0; font-style:normal; font-size:10px; fill:#595959;fill-opacity:1.00; stroke:#000000; stroke-opacity:0.00; stroke-width:0; white-space: pre;" xml:space="preserve" transform="rotate(-0.00 804.00 382.00)">+SynchronousMachineDynamics</text>
+	<text x="973.00" y="382.00" textLength="18" style="font-family:'Lucida Sans Unicode','Lucida Grande','DejaVu Sans',Arial,sans-serif; font-weight:0; font-style:normal; font-size:10px; fill:#595959;fill-opacity:1.00; stroke:#000000; stroke-opacity:0.00; stroke-width:0; white-space: pre;" xml:space="preserve" transform="rotate(-0.00 973.00 382.00)">0..1</text>
+	<text x="845.00" y="311.00" textLength="110" style="font-family:'Lucida Sans Unicode','Lucida Grande','DejaVu Sans',Arial,sans-serif; font-weight:0; font-style:normal; font-size:10px; fill:#595959;fill-opacity:1.00; stroke:#000000; stroke-opacity:0.00; stroke-width:0; white-space: pre;" xml:space="preserve" transform="rotate(-0.00 845.00 311.00)">+SynchronousMachine</text>
+	<text x="974.00" y="311.00" textLength="6" style="font-family:'Lucida Sans Unicode','Lucida Grande','DejaVu Sans',Arial,sans-serif; font-weight:0; font-style:normal; font-size:10px; fill:#595959;fill-opacity:1.00; stroke:#000000; stroke-opacity:0.00; stroke-width:0; white-space: pre;" xml:space="preserve" transform="rotate(-0.00 974.00 311.00)">1</text>
+	<text x="212.00" y="722.00" textLength="163" style="font-family:'Lucida Sans Unicode','Lucida Grande','DejaVu Sans',Arial,sans-serif; font-weight:0; font-style:normal; font-size:10px; fill:#595959;fill-opacity:1.00; stroke:#000000; stroke-opacity:0.00; stroke-width:0; white-space: pre;" xml:space="preserve" transform="rotate(-0.00 212.00 722.00)">+PowerSystemStabilizerDynamics</text>
+	<text x="180.00" y="723.00" textLength="18" style="font-family:'Lucida Sans Unicode','Lucida Grande','DejaVu Sans',Arial,sans-serif; font-weight:0; font-style:normal; font-size:10px; fill:#595959;fill-opacity:1.00; stroke:#000000; stroke-opacity:0.00; stroke-width:0; white-space: pre;" xml:space="preserve" transform="rotate(-0.00 180.00 723.00)">0..1</text>
+	<text x="129.00" y="480.00" textLength="96" style="font-family:'Lucida Sans Unicode','Lucida Grande','DejaVu Sans',Arial,sans-serif; font-weight:0; font-style:normal; font-size:10px; fill:#595959;fill-opacity:1.00; stroke:#000000; stroke-opacity:0.00; stroke-width:0; white-space: pre;" xml:space="preserve" transform="rotate(-0.00 129.00 480.00)">+RemoteInputSignal</text>
+	<text x="173.00" y="447.00" textLength="17" style="font-family:'Lucida Sans Unicode','Lucida Grande','DejaVu Sans',Arial,sans-serif; font-weight:0; font-style:normal; font-size:10px; fill:#595959;fill-opacity:1.00; stroke:#000000; stroke-opacity:0.00; stroke-width:0; white-space: pre;" xml:space="preserve" transform="rotate(-0.00 173.00 447.00)">0..*</text>
+	<text x="401.00" y="712.00" textLength="207" style="font-family:'Lucida Sans Unicode','Lucida Grande','DejaVu Sans',Arial,sans-serif; font-weight:0; font-style:normal; font-size:10px; fill:#595959;fill-opacity:1.00; stroke:#000000; stroke-opacity:0.00; stroke-width:0; white-space: pre;" xml:space="preserve" transform="rotate(-0.00 401.00 712.00)">+DiscontinuousExcitationControlDynamics</text>
+	<text x="469.00" y="700.00" textLength="18" style="font-family:'Lucida Sans Unicode','Lucida Grande','DejaVu Sans',Arial,sans-serif; font-weight:0; font-style:normal; font-size:10px; fill:#595959;fill-opacity:1.00; stroke:#000000; stroke-opacity:0.00; stroke-width:0; white-space: pre;" xml:space="preserve" transform="rotate(-0.00 469.00 700.00)">0..1</text>
+	<text x="512.00" y="744.00" textLength="135" style="font-family:'Lucida Sans Unicode','Lucida Grande','DejaVu Sans',Arial,sans-serif; font-weight:0; font-style:normal; font-size:10px; fill:#595959;fill-opacity:1.00; stroke:#000000; stroke-opacity:0.00; stroke-width:0; white-space: pre;" xml:space="preserve" transform="rotate(-0.00 512.00 744.00)">+ExcitationSystemDynamics</text>
+	<text x="664.00" y="774.00" textLength="6" style="font-family:'Lucida Sans Unicode','Lucida Grande','DejaVu Sans',Arial,sans-serif; font-weight:0; font-style:normal; font-size:10px; fill:#595959;fill-opacity:1.00; stroke:#000000; stroke-opacity:0.00; stroke-width:0; white-space: pre;" xml:space="preserve" transform="rotate(-0.00 664.00 774.00)">1</text>
+	<text x="860.00" y="557.00" textLength="156" style="font-family:'Lucida Sans Unicode','Lucida Grande','DejaVu Sans',Arial,sans-serif; font-weight:0; font-style:normal; font-size:10px; fill:#595959;fill-opacity:1.00; stroke:#000000; stroke-opacity:0.00; stroke-width:0; white-space: pre;" xml:space="preserve" transform="rotate(-0.00 860.00 557.00)">+SynchronousMachineDynamics</text>
+	<text x="966.00" y="472.00" textLength="18" style="font-family:'Lucida Sans Unicode','Lucida Grande','DejaVu Sans',Arial,sans-serif; font-weight:0; font-style:normal; font-size:10px; fill:#595959;fill-opacity:1.00; stroke:#000000; stroke-opacity:0.00; stroke-width:0; white-space: pre;" xml:space="preserve" transform="rotate(-0.00 966.00 472.00)">0..1</text>
+	<text x="908.00" y="617.00" textLength="137" style="font-family:'Lucida Sans Unicode','Lucida Grande','DejaVu Sans',Arial,sans-serif; font-weight:0; font-style:normal; font-size:10px; fill:#595959;fill-opacity:1.00; stroke:#000000; stroke-opacity:0.00; stroke-width:0; white-space: pre;" xml:space="preserve" transform="rotate(-0.00 908.00 617.00)">+TurbineGovernorDynamics</text>
+	<text x="873.00" y="618.00" textLength="17" style="font-family:'Lucida Sans Unicode','Lucida Grande','DejaVu Sans',Arial,sans-serif; font-weight:0; font-style:normal; font-size:10px; fill:#595959;fill-opacity:1.00; stroke:#000000; stroke-opacity:0.00; stroke-width:0; white-space: pre;" xml:space="preserve" transform="rotate(-0.00 873.00 618.00)">0..*</text>
+	<text x="375.00" y="761.00" textLength="163" style="font-family:'Lucida Sans Unicode','Lucida Grande','DejaVu Sans',Arial,sans-serif; font-weight:0; font-style:normal; font-size:10px; fill:#595959;fill-opacity:1.00; stroke:#000000; stroke-opacity:0.00; stroke-width:0; white-space: pre;" xml:space="preserve" transform="rotate(-0.00 375.00 761.00)">+PowerSystemStabilizerDynamics</text>
+	<text x="376.00" y="787.00" textLength="18" style="font-family:'Lucida Sans Unicode','Lucida Grande','DejaVu Sans',Arial,sans-serif; font-weight:0; font-style:normal; font-size:10px; fill:#595959;fill-opacity:1.00; stroke:#000000; stroke-opacity:0.00; stroke-width:0; white-space: pre;" xml:space="preserve" transform="rotate(-0.00 376.00 787.00)">0..1</text>
+	<text x="464.00" y="779.00" textLength="135" style="font-family:'Lucida Sans Unicode','Lucida Grande','DejaVu Sans',Arial,sans-serif; font-weight:0; font-style:normal; font-size:10px; fill:#595959;fill-opacity:1.00; stroke:#000000; stroke-opacity:0.00; stroke-width:0; white-space: pre;" xml:space="preserve" transform="rotate(-0.00 464.00 779.00)">+ExcitationSystemDynamics</text>
+	<text x="599.00" y="791.00" textLength="6" style="font-family:'Lucida Sans Unicode','Lucida Grande','DejaVu Sans',Arial,sans-serif; font-weight:0; font-style:normal; font-size:10px; fill:#595959;fill-opacity:1.00; stroke:#000000; stroke-opacity:0.00; stroke-width:0; white-space: pre;" xml:space="preserve" transform="rotate(-0.00 599.00 791.00)">1</text>
+	<text x="868.00" y="248.00" textLength="108" style="font-family:'Lucida Sans Unicode','Lucida Grande','DejaVu Sans',Arial,sans-serif; font-weight:0; font-style:normal; font-size:10px; fill:#595959;fill-opacity:1.00; stroke:#000000; stroke-opacity:0.00; stroke-width:0; white-space: pre;" xml:space="preserve" transform="rotate(-0.00 868.00 248.00)">{isSubstitutable=false}</text>
+	<text x="509.00" y="932.00" textLength="159" style="font-family:'Lucida Sans Unicode','Lucida Grande','DejaVu Sans',Arial,sans-serif; font-weight:0; font-style:normal; font-size:10px; fill:#595959;fill-opacity:1.00; stroke:#000000; stroke-opacity:0.00; stroke-width:0; white-space: pre;" xml:space="preserve" transform="rotate(-0.00 509.00 932.00)">+OverexcitationLimiterDynamics</text>
+	<text x="563.00" y="946.00" textLength="18" style="font-family:'Lucida Sans Unicode','Lucida Grande','DejaVu Sans',Arial,sans-serif; font-weight:0; font-style:normal; font-size:10px; fill:#595959;fill-opacity:1.00; stroke:#000000; stroke-opacity:0.00; stroke-width:0; white-space: pre;" xml:space="preserve" transform="rotate(-0.00 563.00 946.00)">0..1</text>
+	<text x="549.00" y="882.00" textLength="135" style="font-family:'Lucida Sans Unicode','Lucida Grande','DejaVu Sans',Arial,sans-serif; font-weight:0; font-style:normal; font-size:10px; fill:#595959;fill-opacity:1.00; stroke:#000000; stroke-opacity:0.00; stroke-width:0; white-space: pre;" xml:space="preserve" transform="rotate(-0.00 549.00 882.00)">+ExcitationSystemDynamics</text>
+	<text x="671.00" y="850.00" textLength="6" style="font-family:'Lucida Sans Unicode','Lucida Grande','DejaVu Sans',Arial,sans-serif; font-weight:0; font-style:normal; font-size:10px; fill:#595959;fill-opacity:1.00; stroke:#000000; stroke-opacity:0.00; stroke-width:0; white-space: pre;" xml:space="preserve" transform="rotate(-0.00 671.00 850.00)">1</text>
+	<text x="261.00" y="501.00" textLength="155" style="font-family:'Lucida Sans Unicode','Lucida Grande','DejaVu Sans',Arial,sans-serif; font-weight:0; font-style:normal; font-size:10px; fill:#595959;fill-opacity:1.00; stroke:#000000; stroke-opacity:0.00; stroke-width:0; white-space: pre;" xml:space="preserve" transform="rotate(-0.00 261.00 501.00)">+VoltageCompensatorDynamics</text>
+	<text x="459.00" y="498.00" textLength="18" style="font-family:'Lucida Sans Unicode','Lucida Grande','DejaVu Sans',Arial,sans-serif; font-weight:0; font-style:normal; font-size:10px; fill:#595959;fill-opacity:1.00; stroke:#000000; stroke-opacity:0.00; stroke-width:0; white-space: pre;" xml:space="preserve" transform="rotate(-0.00 459.00 498.00)">0..1</text>
+	<text x="327.00" y="462.00" textLength="96" style="font-family:'Lucida Sans Unicode','Lucida Grande','DejaVu Sans',Arial,sans-serif; font-weight:0; font-style:normal; font-size:10px; fill:#595959;fill-opacity:1.00; stroke:#000000; stroke-opacity:0.00; stroke-width:0; white-space: pre;" xml:space="preserve" transform="rotate(-0.00 327.00 462.00)">+RemoteInputSignal</text>
+	<text x="354.00" y="446.00" textLength="18" style="font-family:'Lucida Sans Unicode','Lucida Grande','DejaVu Sans',Arial,sans-serif; font-weight:0; font-style:normal; font-size:10px; fill:#595959;fill-opacity:1.00; stroke:#000000; stroke-opacity:0.00; stroke-width:0; white-space: pre;" xml:space="preserve" transform="rotate(-0.00 354.00 446.00)">0..1</text>
+	<text x="73.00" y="926.00" textLength="163" style="font-family:'Lucida Sans Unicode','Lucida Grande','DejaVu Sans',Arial,sans-serif; font-weight:0; font-style:normal; font-size:10px; fill:#595959;fill-opacity:1.00; stroke:#000000; stroke-opacity:0.00; stroke-width:0; white-space: pre;" xml:space="preserve" transform="rotate(-0.00 73.00 926.00)">+PFVArControllerType1Dynamics</text>
+	<text x="48.00" y="926.00" textLength="18" style="font-family:'Lucida Sans Unicode','Lucida Grande','DejaVu Sans',Arial,sans-serif; font-weight:0; font-style:normal; font-size:10px; fill:#595959;fill-opacity:1.00; stroke:#000000; stroke-opacity:0.00; stroke-width:0; white-space: pre;" xml:space="preserve" transform="rotate(-0.00 48.00 926.00)">0..1</text>
+	<text x="19.00" y="465.00" textLength="96" style="font-family:'Lucida Sans Unicode','Lucida Grande','DejaVu Sans',Arial,sans-serif; font-weight:0; font-style:normal; font-size:10px; fill:#595959;fill-opacity:1.00; stroke:#000000; stroke-opacity:0.00; stroke-width:0; white-space: pre;" xml:space="preserve" transform="rotate(-0.00 19.00 465.00)">+RemoteInputSignal</text>
+	<text x="78.00" y="447.00" textLength="18" style="font-family:'Lucida Sans Unicode','Lucida Grande','DejaVu Sans',Arial,sans-serif; font-weight:0; font-style:normal; font-size:10px; fill:#595959;fill-opacity:1.00; stroke:#000000; stroke-opacity:0.00; stroke-width:0; white-space: pre;" xml:space="preserve" transform="rotate(-0.00 78.00 447.00)">0..1</text>
+	<text x="747.00" y="891.00" textLength="163" style="font-family:'Lucida Sans Unicode','Lucida Grande','DejaVu Sans',Arial,sans-serif; font-weight:0; font-style:normal; font-size:10px; fill:#595959;fill-opacity:1.00; stroke:#000000; stroke-opacity:0.00; stroke-width:0; white-space: pre;" xml:space="preserve" transform="rotate(-0.00 747.00 891.00)">+PFVArControllerType2Dynamics</text>
+	<text x="716.00" y="893.00" textLength="18" style="font-family:'Lucida Sans Unicode','Lucida Grande','DejaVu Sans',Arial,sans-serif; font-weight:0; font-style:normal; font-size:10px; fill:#595959;fill-opacity:1.00; stroke:#000000; stroke-opacity:0.00; stroke-width:0; white-space: pre;" xml:space="preserve" transform="rotate(-0.00 716.00 893.00)">0..1</text>
+	<text x="721.00" y="849.00" textLength="135" style="font-family:'Lucida Sans Unicode','Lucida Grande','DejaVu Sans',Arial,sans-serif; font-weight:0; font-style:normal; font-size:10px; fill:#595959;fill-opacity:1.00; stroke:#000000; stroke-opacity:0.00; stroke-width:0; white-space: pre;" xml:space="preserve" transform="rotate(-0.00 721.00 849.00)">+ExcitationSystemDynamics</text>
+	<text x="703.00" y="852.00" textLength="6" style="font-family:'Lucida Sans Unicode','Lucida Grande','DejaVu Sans',Arial,sans-serif; font-weight:0; font-style:normal; font-size:10px; fill:#595959;fill-opacity:1.00; stroke:#000000; stroke-opacity:0.00; stroke-width:0; white-space: pre;" xml:space="preserve" transform="rotate(-0.00 703.00 852.00)">1</text>
+	<text x="867.00" y="185.00" textLength="108" style="font-family:'Lucida Sans Unicode','Lucida Grande','DejaVu Sans',Arial,sans-serif; font-weight:0; font-style:normal; font-size:10px; fill:#595959;fill-opacity:1.00; stroke:#000000; stroke-opacity:0.00; stroke-width:0; white-space: pre;" xml:space="preserve" transform="rotate(-0.00 867.00 185.00)">{isSubstitutable=false}</text>
+	<text x="306.00" y="627.00" textLength="207" style="font-family:'Lucida Sans Unicode','Lucida Grande','DejaVu Sans',Arial,sans-serif; font-weight:0; font-style:normal; font-size:10px; fill:#595959;fill-opacity:1.00; stroke:#000000; stroke-opacity:0.00; stroke-width:0; white-space: pre;" xml:space="preserve" transform="rotate(-0.00 306.00 627.00)">+DiscontinuousExcitationControlDynamics</text>
+	<text x="271.00" y="627.00" textLength="18" style="font-family:'Lucida Sans Unicode','Lucida Grande','DejaVu Sans',Arial,sans-serif; font-weight:0; font-style:normal; font-size:10px; fill:#595959;fill-opacity:1.00; stroke:#000000; stroke-opacity:0.00; stroke-width:0; white-space: pre;" xml:space="preserve" transform="rotate(-0.00 271.00 627.00)">0..1</text>
+	<text x="206.00" y="463.00" textLength="96" style="font-family:'Lucida Sans Unicode','Lucida Grande','DejaVu Sans',Arial,sans-serif; font-weight:0; font-style:normal; font-size:10px; fill:#595959;fill-opacity:1.00; stroke:#000000; stroke-opacity:0.00; stroke-width:0; white-space: pre;" xml:space="preserve" transform="rotate(-0.00 206.00 463.00)">+RemoteInputSignal</text>
+	<text x="229.00" y="446.00" textLength="18" style="font-family:'Lucida Sans Unicode','Lucida Grande','DejaVu Sans',Arial,sans-serif; font-weight:0; font-style:normal; font-size:10px; fill:#595959;fill-opacity:1.00; stroke:#000000; stroke-opacity:0.00; stroke-width:0; white-space: pre;" xml:space="preserve" transform="rotate(-0.00 229.00 446.00)">0..1</text>
+	<text x="1006.00" y="590.00" textLength="131" style="font-family:'Lucida Sans Unicode','Lucida Grande','DejaVu Sans',Arial,sans-serif; font-weight:0; font-style:normal; font-size:10px; fill:#595959;fill-opacity:1.00; stroke:#000000; stroke-opacity:0.00; stroke-width:0; white-space: pre;" xml:space="preserve" transform="rotate(-0.00 1006.00 590.00)">+MechanicalLoadDynamics</text>
+	<text x="1092.00" y="621.00" textLength="18" style="font-family:'Lucida Sans Unicode','Lucida Grande','DejaVu Sans',Arial,sans-serif; font-weight:0; font-style:normal; font-size:10px; fill:#595959;fill-opacity:1.00; stroke:#000000; stroke-opacity:0.00; stroke-width:0; white-space: pre;" xml:space="preserve" transform="rotate(-0.00 1092.00 621.00)">0..1</text>
+	<text x="954.00" y="505.00" textLength="156" style="font-family:'Lucida Sans Unicode','Lucida Grande','DejaVu Sans',Arial,sans-serif; font-weight:0; font-style:normal; font-size:10px; fill:#595959;fill-opacity:1.00; stroke:#000000; stroke-opacity:0.00; stroke-width:0; white-space: pre;" xml:space="preserve" transform="rotate(-0.00 954.00 505.00)">+SynchronousMachineDynamics</text>
+	<text x="1025.00" y="472.00" textLength="18" style="font-family:'Lucida Sans Unicode','Lucida Grande','DejaVu Sans',Arial,sans-serif; font-weight:0; font-style:normal; font-size:10px; fill:#595959;fill-opacity:1.00; stroke:#000000; stroke-opacity:0.00; stroke-width:0; white-space: pre;" xml:space="preserve" transform="rotate(-0.00 1025.00 472.00)">0..1</text>
+	<text x="531.00" y="543.00" textLength="134" style="font-family:'Lucida Sans Unicode','Lucida Grande','DejaVu Sans',Arial,sans-serif; font-weight:0; font-style:normal; font-size:10px; fill:#595959;fill-opacity:1.00; stroke:#000000; stroke-opacity:0.00; stroke-width:0; white-space: pre;" xml:space="preserve" transform="rotate(-0.00 531.00 543.00)">+GenICompensationForGenJ</text>
+	<text x="692.00" y="542.00" textLength="17" style="font-family:'Lucida Sans Unicode','Lucida Grande','DejaVu Sans',Arial,sans-serif; font-weight:0; font-style:normal; font-size:10px; fill:#595959;fill-opacity:1.00; stroke:#000000; stroke-opacity:0.00; stroke-width:0; white-space: pre;" xml:space="preserve" transform="rotate(-0.00 692.00 542.00)">2..*</text>
+	<text x="544.00" y="470.00" textLength="87" style="font-family:'Lucida Sans Unicode','Lucida Grande','DejaVu Sans',Arial,sans-serif; font-weight:0; font-style:normal; font-size:10px; fill:#595959;fill-opacity:1.00; stroke:#000000; stroke-opacity:0.00; stroke-width:0; white-space: pre;" xml:space="preserve" transform="rotate(-0.00 544.00 470.00)">+VcompIEEEType2</text>
+	<text x="650.00" y="469.00" textLength="6" style="font-family:'Lucida Sans Unicode','Lucida Grande','DejaVu Sans',Arial,sans-serif; font-weight:0; font-style:normal; font-size:10px; fill:#595959;fill-opacity:1.00; stroke:#000000; stroke-opacity:0.00; stroke-width:0; white-space: pre;" xml:space="preserve" transform="rotate(-0.00 650.00 469.00)">1</text>
+	<text x="265.00" y="352.00" textLength="96" style="font-family:'Lucida Sans Unicode','Lucida Grande','DejaVu Sans',Arial,sans-serif; font-weight:0; font-style:normal; font-size:10px; fill:#595959;fill-opacity:1.00; stroke:#000000; stroke-opacity:0.00; stroke-width:0; white-space: pre;" xml:space="preserve" transform="rotate(-0.00 265.00 352.00)">+RemoteInputSignal</text>
+	<text x="212.00" y="351.00" textLength="17" style="font-family:'Lucida Sans Unicode','Lucida Grande','DejaVu Sans',Arial,sans-serif; font-weight:0; font-style:normal; font-size:10px; fill:#595959;fill-opacity:1.00; stroke:#000000; stroke-opacity:0.00; stroke-width:0; white-space: pre;" xml:space="preserve" transform="rotate(-0.00 212.00 351.00)">0..*</text>
+	<text x="302.00" y="251.00" textLength="50" style="font-family:'Lucida Sans Unicode','Lucida Grande','DejaVu Sans',Arial,sans-serif; font-weight:0; font-style:normal; font-size:10px; fill:#595959;fill-opacity:1.00; stroke:#000000; stroke-opacity:0.00; stroke-width:0; white-space: pre;" xml:space="preserve" transform="rotate(-0.00 302.00 251.00)">+Terminal</text>
+	<text x="378.00" y="251.00" textLength="6" style="font-family:'Lucida Sans Unicode','Lucida Grande','DejaVu Sans',Arial,sans-serif; font-weight:0; font-style:normal; font-size:10px; fill:#595959;fill-opacity:1.00; stroke:#000000; stroke-opacity:0.00; stroke-width:0; white-space: pre;" xml:space="preserve" transform="rotate(-0.00 378.00 251.00)">1</text>
+	<text x="676.00" y="526.00" textLength="134" style="font-family:'Lucida Sans Unicode','Lucida Grande','DejaVu Sans',Arial,sans-serif; font-weight:0; font-style:normal; font-size:10px; fill:#595959;fill-opacity:1.00; stroke:#000000; stroke-opacity:0.00; stroke-width:0; white-space: pre;" xml:space="preserve" transform="rotate(-0.00 676.00 526.00)">+GenICompensationForGenJ</text>
+	<text x="747.00" y="544.00" textLength="17" style="font-family:'Lucida Sans Unicode','Lucida Grande','DejaVu Sans',Arial,sans-serif; font-weight:0; font-style:normal; font-size:10px; fill:#595959;fill-opacity:1.00; stroke:#000000; stroke-opacity:0.00; stroke-width:0; white-space: pre;" xml:space="preserve" transform="rotate(-0.00 747.00 544.00)">0..*</text>
+	<text x="692.00" y="472.00" textLength="156" style="font-family:'Lucida Sans Unicode','Lucida Grande','DejaVu Sans',Arial,sans-serif; font-weight:0; font-style:normal; font-size:10px; fill:#595959;fill-opacity:1.00; stroke:#000000; stroke-opacity:0.00; stroke-width:0; white-space: pre;" xml:space="preserve" transform="rotate(-0.00 692.00 472.00)">+SynchronousMachineDynamics</text>
+	<text x="805.00" y="451.00" textLength="6" style="font-family:'Lucida Sans Unicode','Lucida Grande','DejaVu Sans',Arial,sans-serif; font-weight:0; font-style:normal; font-size:10px; fill:#595959;fill-opacity:1.00; stroke:#000000; stroke-opacity:0.00; stroke-width:0; white-space: pre;" xml:space="preserve" transform="rotate(-0.00 805.00 451.00)">1</text>
+	<text x="931.00" y="749.00" textLength="164" style="font-family:'Lucida Sans Unicode','Lucida Grande','DejaVu Sans',Arial,sans-serif; font-weight:0; font-style:normal; font-size:10px; fill:#595959;fill-opacity:1.00; stroke:#000000; stroke-opacity:0.00; stroke-width:0; white-space: pre;" xml:space="preserve" transform="rotate(-0.00 931.00 749.00)">+TurbineLoadControllerDynamics</text>
+	<text x="896.00" y="750.00" textLength="18" style="font-family:'Lucida Sans Unicode','Lucida Grande','DejaVu Sans',Arial,sans-serif; font-weight:0; font-style:normal; font-size:10px; fill:#595959;fill-opacity:1.00; stroke:#000000; stroke-opacity:0.00; stroke-width:0; white-space: pre;" xml:space="preserve" transform="rotate(-0.00 896.00 750.00)">0..1</text>
+	<text x="912.00" y="693.00" textLength="137" style="font-family:'Lucida Sans Unicode','Lucida Grande','DejaVu Sans',Arial,sans-serif; font-weight:0; font-style:normal; font-size:10px; fill:#595959;fill-opacity:1.00; stroke:#000000; stroke-opacity:0.00; stroke-width:0; white-space: pre;" xml:space="preserve" transform="rotate(-0.00 912.00 693.00)">+TurbineGovernorDynamics</text>
+	<text x="890.00" y="695.00" textLength="6" style="font-family:'Lucida Sans Unicode','Lucida Grande','DejaVu Sans',Arial,sans-serif; font-weight:0; font-style:normal; font-size:10px; fill:#595959;fill-opacity:1.00; stroke:#000000; stroke-opacity:0.00; stroke-width:0; white-space: pre;" xml:space="preserve" transform="rotate(-0.00 890.00 695.00)">1</text>
+</g>
+</svg>

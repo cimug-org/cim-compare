@@ -464,3 +464,6 @@ body.no-rail .rail { display: none; }
   .sec-h { break-after: avoid; }
   .tr-ring { display: none; }
 }
+/* #169: tagged values — the tag icon, and the tag list in the ⓘ popup */
+.sec-h .ico svg.tg { vertical-align: -2px; }
+.notes-src .pop-tags, .pop .pop-tags { margin-top: 8px; }

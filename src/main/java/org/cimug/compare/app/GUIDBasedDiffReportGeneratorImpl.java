@@ -140,6 +140,9 @@ class GUIDBasedDiffReportGeneratorImpl implements DiffReportGenerator {
 	public void processDiffReport() {
 		try {
 			EACompareLog compareLog = processDiffReport(baselineContentType, targetContentType);
+			// #169: user-defined tagged values, as EA's Compare Utility records them
+			org.cimug.compare.TaggedValues.attach(compareLog.getComparePackage().getCompareResults().getCompareItem(),
+					baselineContentType, targetContentType);
 			markDrawnChanges(compareLog);
 			if (drawer != null)
 				drawAndPlace();

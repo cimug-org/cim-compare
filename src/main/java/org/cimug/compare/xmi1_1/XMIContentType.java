@@ -17,6 +17,7 @@ import javax.xml.bind.annotation.XmlType;
 
 import org.cimug.compare.uml1_3.Diagram;
 import org.cimug.compare.uml1_3.Model;
+import org.cimug.compare.uml1_3.TaggedValueType;
 
 /**
  * <p>
@@ -42,13 +43,26 @@ import org.cimug.compare.uml1_3.Model;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "XMI.contentType", propOrder = { "model", "diagrams" })
+@XmlType(name = "XMI.contentType", propOrder = { "model", "diagrams", "taggedValues" })
 public class XMIContentType {
 
 	@XmlElement(name = "Model", namespace = "omg.org/UML1.3", required = true)
 	protected Model model;
 	@XmlElement(name = "Diagram", namespace = "omg.org/UML1.3")
 	protected List<Diagram> diagrams;
+	/**
+	 * #169: tagged values EA writes on their own, after the model, each naming its
+	 * element with modelElement (e.g. a package's user-defined tags).
+	 */
+	@XmlElement(name = "TaggedValue", namespace = "omg.org/UML1.3")
+	protected List<TaggedValueType> taggedValues;
+
+	/** #169: the stand-alone tagged values (never null). */
+	public List<TaggedValueType> getTaggedValues() {
+		if (taggedValues == null)
+			taggedValues = new ArrayList<TaggedValueType>();
+		return taggedValues;
+	}
 
 	/**
 	 * Gets the value of the model property.

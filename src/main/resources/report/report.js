@@ -289,7 +289,7 @@
       var first = $$('.row').filter(function (r) { return r.offsetParent !== null; })[0];
       if (first) first.focus({ preventScroll: true });
     }
-    else if (e.key === 'Escape') { hidePop(); $('#lightbox').classList.remove('on'); }
+    else if (e.key === 'Escape') { hidePop(); }
     else if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
       var rows = $$('.row').filter(function (r) { return r.offsetParent !== null; });
       var cur = document.activeElement.closest ? document.activeElement.closest('.row') : null;
@@ -424,15 +424,140 @@
     refreshEnds(r.closest('.detail'));
   });
 
-  /* ---- lightbox: the image and its highlights ---- */
+  /* ---- lightbox: the image and its highlights; #153 zoom and pan ----
+     The image is zoomed by setting its size (not a CSS scale), so the browser draws an SVG
+     sharp at every zoom; the highlights are placed as percentages of the image, so they
+     follow it, and keep their line width. */
   var lb = $('#lightbox');
-  document.addEventListener('click', function (e) {
-    var wrap = e.target.closest('.diag .dimg'); if (!wrap) return;
+  var Z = null;   /* the open lightbox: { stage, copy, img, lvl, w, h, s, x, y, fit, max } */
+  var HINT = 'Scroll to zoom · drag to move · Esc to close';
+  function lbButton(text, title, fn) {
+    var b = document.createElement('button'); b.type = 'button'; b.textContent = text;
+    b.title = title; b.setAttribute('aria-label', title);
+    b.addEventListener('click', function (e) { e.stopPropagation(); fn(); });
+    return b;
+  }
+  function lbSep() { var s = document.createElement('span'); s.className = 'sep'; return s; }
+  function lbApply() {
+    Z.img.style.width = (Z.w * Z.s) + 'px'; Z.img.style.height = (Z.h * Z.s) + 'px';
+    Z.copy.style.transform = 'translate(' + Z.x + 'px,' + Z.y + 'px)';
+    Z.lvl.textContent = Math.round(Z.s * 100) + '%';
+  }
+  function lbFitScale() {
+    var r = Z.stage.getBoundingClientRect();
+    return Math.min(1, (r.width - 40) / Z.w, (r.height - 40) / Z.h);
+  }
+  /* zoom to scale s, keeping the point (cx, cy) of the stage where it is */
+  function lbZoomAt(s, cx, cy) {
+    s = Math.max(Math.min(Z.fit, 1) / 2, Math.min(Z.max, s));
+    Z.x = cx - (cx - Z.x) * s / Z.s; Z.y = cy - (cy - Z.y) * s / Z.s; Z.s = s;
+    lbKeepInView(); lbApply();
+  }
+  function lbCentre(s) { var r = Z.stage.getBoundingClientRect(); lbZoomAt(s, r.width / 2, r.height / 2); }
+  function lbFit() {
+    var r = Z.stage.getBoundingClientRect();
+    Z.fit = lbFitScale(); Z.s = Z.fit;
+    Z.x = (r.width - Z.w * Z.s) / 2; Z.y = (r.height - Z.h * Z.s) / 2; lbApply();
+  }
+  /* at least 80 px of the image stays in view */
+  function lbKeepInView() {
+    var r = Z.stage.getBoundingClientRect(), w = Z.w * Z.s, h = Z.h * Z.s, m = 80;
+    Z.x = Math.min(r.width - m, Math.max(m - w, Z.x)); Z.y = Math.min(r.height - m, Math.max(m - h, Z.y));
+  }
+  function lbClose() { lb.classList.remove('on'); lb.replaceChildren(); Z = null; }
+  function lbOpen(wrap) {
     var copy = wrap.cloneNode(true);
-    copy.querySelector('img').removeAttribute('loading');
-    lb.replaceChildren(copy); lb.classList.add('on');
+    var img = copy.querySelector('img'); img.removeAttribute('loading');
+    img.draggable = false;   /* the browser's own image drag-and-drop would take over the pointer */
+    var stage = document.createElement('div'); stage.className = 'lb-stage'; stage.appendChild(copy);
+    var tools = document.createElement('div'); tools.className = 'lb-tools';
+    var lvl = document.createElement('span'); lvl.className = 'lvl';
+    tools.append(lbButton('−', 'Zoom out (−)', function () { lbCentre(Z.s / 1.25); }), lvl,
+      lbButton('+', 'Zoom in (+)', function () { lbCentre(Z.s * 1.25); }), lbSep(),
+      lbButton('Fit', 'Fit the whole diagram (0)', lbFit),
+      lbButton('100%', 'The diagram at its own size', function () { lbCentre(1); }), lbSep(),
+      lbButton('✕', 'Close (Esc)', lbClose));
+    var hint = document.createElement('div'); hint.className = 'lb-hint'; hint.textContent = HINT;
+    lb.replaceChildren(stage, tools, hint); lb.classList.add('on');
+    function start() {
+      if (!img.naturalWidth) return;
+      /* SVG stays sharp: zoom far; JPG/PNG/GIF/BMP blur past their own size: up to 200% */
+      var svg = /\.svg(\?|#|$)/i.test(img.getAttribute('src') || '');
+      Z = { stage: stage, copy: copy, img: img, lvl: lvl, w: img.naturalWidth, h: img.naturalHeight,
+            s: 1, x: 0, y: 0, fit: 1, max: svg ? 8 : 2 };
+      placeBoxes(copy); lbFit();
+    }
+    if (img.complete && img.naturalWidth) start(); else img.addEventListener('load', start);
+    lbGestures(stage);
+  }
+  function lbGestures(stage) {
+    var pts = new Map(), moved = 0, last = null, pinch = null, onImage = false;
+    stage.addEventListener('dragstart', function (e) { e.preventDefault(); });
+    function local(e) { var r = stage.getBoundingClientRect(); return { x: e.clientX - r.left, y: e.clientY - r.top }; }
+    stage.addEventListener('wheel', function (e) {
+      if (!Z) return;
+      e.preventDefault();
+      var dy = e.deltaY * (e.deltaMode === 1 ? 16 : e.deltaMode === 2 ? 400 : 1);
+      var p = local(e);   /* a trackpad pinch arrives as a wheel event with ctrlKey */
+      lbZoomAt(Z.s * Math.exp(-dy * (e.ctrlKey ? 0.01 : 0.0015)), p.x, p.y);
+    }, { passive: false });
+    /* Safari's trackpad pinch */
+    var g0 = null;
+    stage.addEventListener('gesturestart', function (e) { if (Z) { e.preventDefault(); g0 = Z.s; } });
+    stage.addEventListener('gesturechange', function (e) {
+      if (!Z || g0 === null) return; e.preventDefault(); var p = local(e); lbZoomAt(g0 * e.scale, p.x, p.y);
+    });
+    stage.addEventListener('gestureend', function () { g0 = null; });
+    stage.addEventListener('pointerdown', function (e) {
+      if (!Z) return;
+      if (e.pointerType === 'mouse') e.preventDefault();   /* no text selection or image drag */
+      try { stage.setPointerCapture(e.pointerId); } catch (ignored) { /* a pointer the browser no longer tracks */ }
+      pts.set(e.pointerId, local(e));
+      if (pts.size === 1) { moved = 0; last = local(e); onImage = !!e.target.closest('.dimg'); stage.classList.add('dragging'); }
+      if (pts.size === 2) {
+        var a = Array.from(pts.values());
+        pinch = { d: Math.hypot(a[0].x - a[1].x, a[0].y - a[1].y), s: Z.s };
+      }
+    });
+    stage.addEventListener('pointermove', function (e) {
+      if (!Z || !pts.has(e.pointerId)) return;
+      var p = local(e); pts.set(e.pointerId, p);
+      if (pts.size >= 2 && pinch) {   /* two fingers: zoom about their midpoint */
+        var a = Array.from(pts.values()), d = Math.hypot(a[0].x - a[1].x, a[0].y - a[1].y);
+        moved += 10; lbZoomAt(pinch.s * d / Math.max(1, pinch.d), (a[0].x + a[1].x) / 2, (a[0].y + a[1].y) / 2);
+      } else if (last) {
+        moved += Math.abs(p.x - last.x) + Math.abs(p.y - last.y);
+        Z.x += p.x - last.x; Z.y += p.y - last.y; last = p; lbKeepInView(); lbApply();
+      }
+    });
+    function up(e) {
+      if (!pts.has(e.pointerId)) return;
+      pts.delete(e.pointerId);
+      if (pts.size < 2) pinch = null;
+      if (pts.size === 1) last = Array.from(pts.values())[0];
+      if (pts.size === 0) {
+        stage.classList.remove('dragging');
+        /* a click (not a drag) outside the image closes the lightbox; where the press began
+           decides, since a captured pointer's events all go to the stage */
+        if (e.type === 'pointerup' && moved < 4 && !onImage) lbClose();
+        last = null;
+      }
+    }
+    stage.addEventListener('pointerup', up); stage.addEventListener('pointercancel', up);
+  }
+  document.addEventListener('click', function (e) {
+    if (lb.contains(e.target)) return;
+    var wrap = e.target.closest('.diag .dimg'); if (!wrap || !wrap.querySelector('img')) return;
+    lbOpen(wrap);
   });
-  lb.addEventListener('click', function () { lb.classList.remove('on'); });
+  document.addEventListener('keydown', function (e) {
+    if (!Z || !lb.classList.contains('on')) return;
+    if (e.key === '+' || e.key === '=') { lbCentre(Z.s * 1.25); e.preventDefault(); e.stopImmediatePropagation(); }
+    else if (e.key === '-' || e.key === '_') { lbCentre(Z.s / 1.25); e.preventDefault(); e.stopImmediatePropagation(); }
+    else if (e.key === '0') { lbFit(); e.preventDefault(); e.stopImmediatePropagation(); }
+    else if (e.key === 'Escape') { lbClose(); }
+  }, true);
+  window.addEventListener('resize', function () { if (Z && Math.abs(Z.s - Z.fit) < 1e-6) lbFit(); });
 
   /* ---- #128 printing: load every diagram image first (images not yet scrolled into view
      would otherwise print blank). "Show full metadata" sections print as they are on screen. ---- */

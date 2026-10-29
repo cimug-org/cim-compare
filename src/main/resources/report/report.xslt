@@ -336,7 +336,7 @@
             </div>
           </div>
         </div>
-        <div id="lightbox" class="lightbox"><img alt=""/></div>
+        <div id="lightbox" class="lightbox"></div>
         <script><xsl:value-of select="$js" disable-output-escaping="yes"/></script>
       </body>
     </html>

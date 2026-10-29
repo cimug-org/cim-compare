@@ -458,4 +458,17 @@ public class ReportRendererTest {
 				+ "<span class=\"cx-what\">multiplicity 0..* \u2192 1..*</span>"));
 		assertTrue(page.contains("1 labels changed"));
 	}
+
+	@Test
+	public void theLightboxCanZoomAndPan() throws Exception {
+		// #153: the report carries the zoom and pan code and styles; the lightbox starts empty
+		File xml = copyFixture();
+		File html = new File(xml.getParentFile(), "report.html");
+		new ReportRenderer(false, null, true, "svg").render(xml, html);
+		String page = read(html);
+		assertTrue(page.contains("<div id=\"lightbox\" class=\"lightbox\"></div>"));
+		assertTrue(page.contains(".lb-tools {"));
+		assertTrue(page.contains("function lbZoomAt("));
+		assertTrue(page.contains("'Fit the whole diagram (0)'"));
+	}
 }

@@ -177,5 +177,8 @@ public class TaggedValueComparisonTest {
 		// the attribute's tag change is in its ⓘ metadata, and marks the row
 		assertTrue(page.contains("<tr data-status=\"changed\"><th class=\"k\">unit</th><td>MVA</td><td>kVA</td></tr>"));
 		assertTrue(page.contains("metadata changed - hover"));
+		// #172: an end's heading keeps the class or role name's own case, under an upper-case label
+		assertTrue(page.contains("Source end — <span class=\"nm-case\">Parts</span>"));
+		assertTrue(page.contains(".sub .nm-case { text-transform: none;"));
 	}
 }

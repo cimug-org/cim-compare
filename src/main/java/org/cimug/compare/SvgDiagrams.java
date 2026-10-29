@@ -177,24 +177,33 @@ public final class SvgDiagrams {
 	/**
 	 * As {@link #boxMap(List, int[])}, and where the SVG ({@code svg}, may be null) has
 	 * a box at the element's place that is larger than the element's stored size, the
-	 * highlight takes the drawn size: EA widens a class whose attribute lines do not
-	 * fit when it draws it, without changing the size stored in the model.
+	 * highlight takes the drawn size, without changing the size stored in the model: EA
+	 * widens a class whose attribute lines do not fit, and makes a class taller when it
+	 * has more stereotype or attribute lines than its stored height holds (#165).
 	 */
 	public static Map<String, String> boxMap(List<DiagramElement> elements, int[] shift, String svg) {
 		Map<String, String> map = new HashMap<>();
 		if (elements == null || shift == null)
 			return map;
-		List<double[]> shapes = svg == null ? java.util.Collections.<double[]>emptyList() : shapes(svg);
+		List<double[]> shapes = svg == null ? new java.util.ArrayList<double[]>() : shapes(svg);
+		// not the diagram's background, which EA draws as a rectangle the size of the image
+		double[] view = viewBox(svg);
+		if (view != null)
+			shapes.removeIf(s -> s[0] <= view[0] + 1 && s[1] <= view[1] + 1 && s[2] >= view[2] - 1 && s[3] >= view[3] - 1);
 		for (DiagramElement e : elements) {
 			int[] g = position(e), img = DiagramElementDiff.box(e);
 			if (g == null)
 				continue;
 			int[] key = img != null ? img : g;
 			int l = g[0] - shift[0], t = g[1] - shift[1], r = g[2] - shift[0], b = g[3] - shift[1];
+			// the box EA drew at the element's corner, when it is at least the stored size
+			// (wider, taller or both); the largest such box if there are several
+			int w = r - l, h = b - t;
 			for (double[] s : shapes)
-				if (Math.abs(s[0] - l) <= 1 && Math.abs(s[1] - t) <= 1 && Math.abs(s[3] - (b - t)) <= 1
-						&& s[2] > r - l + 1)
+				if (Math.abs(s[0] - l) <= 1 && Math.abs(s[1] - t) <= 1 && s[2] >= w - 1 && s[3] >= h - 1) {
 					r = Math.max(r, l + (int) Math.round(s[2]));
+					b = Math.max(b, t + (int) Math.round(s[3]));
+				}
 			map.put(key[0] + "," + key[1] + "," + key[2] + "," + key[3], l + "," + t + "," + r + "," + b);
 		}
 		return map;
@@ -204,8 +213,15 @@ public final class SvgDiagrams {
 
 	/** The height of an SVG's viewBox; -1 when it has none. */
 	public static double height(String svg) {
+		double[] v = viewBox(svg);
+		return v != null ? v[3] : -1;
+	}
+
+	/** An SVG's viewBox as {x, y, width, height}; null when it has none. */
+	private static double[] viewBox(String svg) {
 		Matcher m = svg == null ? null : VIEWBOX.matcher(svg);
-		return m != null && m.find() ? Double.parseDouble(m.group(4)) : -1;
+		return m != null && m.find() ? new double[] { Double.parseDouble(m.group(1)), Double.parseDouble(m.group(2)),
+				Double.parseDouble(m.group(3)), Double.parseDouble(m.group(4)) } : null;
 	}
 
 	/**

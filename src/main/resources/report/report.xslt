@@ -673,7 +673,7 @@
       </td>
     </tr>
     <tr class="meta"><td colspan="4">
-      <div class="lbl">Attribute metadata — <xsl:value-of select="@name"/></div>
+      <div class="lbl">Attribute metadata — <span class="nm-case"><xsl:value-of select="@name"/></span></div>
       <!-- the ⓘ view shows the new name as it is, like the baseline (#67) -->
       <xsl:call-template name="r:prop-table"><xsl:with-param name="e" select="."/><xsl:with-param name="only-changed" select="false()"/><xsl:with-param name="plain" select="'Name'"/></xsl:call-template>
       <xsl:if test="Tags/Tag"><div class="lbl">Tagged values</div><xsl:call-template name="r:tag-table"><xsl:with-param name="e" select="."/><xsl:with-param name="only-changed" select="false()"/></xsl:call-template></xsl:if>

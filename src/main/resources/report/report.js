@@ -144,6 +144,7 @@
                                 : 'Click a count to show only those items';
     var clr = $('#flt-clear');
     if (clr) clr.addEventListener('click', function (e) { e.preventDefault(); active = {}; applyFilters(); });
+    measurePin(); /* #175: the status text can change the counts bar's height */
   }
   $$('.summary .cnt').forEach(function (c) {
     c.addEventListener('click', function () { var k = c.dataset.kind + ':' + c.dataset.status; active[k] = !active[k]; applyFilters(); });
@@ -280,6 +281,7 @@
     if (e.key === '/') { e.preventDefault(); inp.focus(); inp.select(); }
     else if (e.key === 'g') { toggleGuids(); }
     else if (e.key === 'o') { toggleRail(); }
+    else if (e.key === 'p') { cyclePin(); }
     else if (e.key === 'Home') {
       /* back to the top; a history entry lets Back return to where you were */
       e.preventDefault();
@@ -306,7 +308,31 @@
 
   /* ---- package outline (left rail) ---- */
   var hdr = $('.hdr');
-  function setHeaderHeight() { document.documentElement.style.setProperty('--hdr-h', hdr.offsetHeight + 'px'); }
+  function setHeaderHeight() { document.documentElement.style.setProperty('--hdr-h', hdr.offsetHeight + 'px'); measurePin(); }
+
+  /* ---- #175: keep the counts, or the counts and the legend, in view (remembered in this browser) ---- */
+  var PIN_KEY = 'cim-compare.pin', PINS = ['off', 'counts', 'all'];
+  var summaryEl = $('.summary'), legendEl = $('.legend'), noteEl = $('.empty-note'), pinSeg = $('.pinseg');
+  function pinned() { return body.classList.contains('pin-all') ? 'all' : body.classList.contains('pin-counts') ? 'counts' : 'off'; }
+  function measurePin() {
+    var root = document.documentElement.style, p = pinned();
+    var s = summaryEl ? summaryEl.offsetHeight : 0, l = legendEl ? legendEl.offsetHeight : 0, n = noteEl ? noteEl.offsetHeight : 0;
+    root.setProperty('--sum-h', s + 'px');
+    root.setProperty('--leg-h', l + 'px');
+    root.setProperty('--pin-h', (p === 'all' ? s + l + n : p === 'counts' ? s : 0) + 'px');
+  }
+  function setPin(p, remember) {
+    if (PINS.indexOf(p) < 0) p = 'off';
+    body.classList.toggle('pin-counts', p === 'counts');
+    body.classList.toggle('pin-all', p === 'all');
+    if (pinSeg) $$('button', pinSeg).forEach(function (b) { b.classList.toggle('on', b.dataset.pin === p); b.setAttribute('aria-pressed', b.dataset.pin === p); });
+    measurePin();
+    if (remember) { try { localStorage.setItem(PIN_KEY, p); } catch (err) { /* storage unavailable: not remembered */ } }
+  }
+  function cyclePin() { setPin(PINS[(PINS.indexOf(pinned()) + 1) % PINS.length], true); }
+  if (pinSeg) pinSeg.addEventListener('click', function (e) { var b = e.target.closest('button'); if (b) setPin(b.dataset.pin, true); });
+  (function () { var saved = null; try { saved = localStorage.getItem(PIN_KEY); } catch (err) { /* none */ } setPin(saved || 'counts', false); /* the counts stay in view unless set otherwise */ })();
+
   setHeaderHeight();
   window.addEventListener('resize', setHeaderHeight);
 
@@ -328,7 +354,7 @@
   function spy() {
     spyQueued = false;
     if (body.classList.contains('no-rail') || !rail.offsetParent) return;
-    var line = hdr.getBoundingClientRect().bottom + 20, best = null;   /* below the rows' 12px scroll-margin */
+    var line = hdr.getBoundingClientRect().bottom + (parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--pin-h')) || 0) + 20, best = null;   /* below the rows' 12px scroll-margin */
     for (var i = 0; i < pkgRows.length; i++) {
       var r = pkgRows[i]; if (!r.offsetParent) continue;       /* inside a collapsed package */
       if (r.getBoundingClientRect().top <= line) best = r; else break;

@@ -138,6 +138,7 @@ public class ReportRendererTest {
 		// #179: a renamed class's Name row shows the new name as it is, beside the old one
 		assertTrue(page.contains("<th class=\"k\">Name</th><td>ConductingEquipmentBase</td><td>Equipment</td>"));
 		assertFalse(page.contains("<del>ConductingEquipmentBase</del>"));
+		assertTrue("legend", page.contains("baseline wording struck (descriptions and notes, role names, multiplicities)"));
 	}
 
 	@Test

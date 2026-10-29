@@ -363,7 +363,7 @@
             <span><i class="sw s-changed"></i><b>Changed</b> — same GUID and package; properties or members differ</span>
             <span><i class="sw s-identical"></i><b>Identical</b></span>
             <span><i class="sw s-pkg"></i><b>Package</b> (unchanged itself)</span>
-            <span><del>struck</del><ins>inserted</ins> — destination text with baseline wording struck (descriptions, names, role names, multiplicities); the <xsl:copy-of select="$ii"/>metadata view shows both texts verbatim</span>
+            <span><del>struck</del><ins>inserted</ins> — destination text with baseline wording struck (descriptions and notes, role names, multiplicities); the <xsl:copy-of select="$ii"/>metadata view shows both texts verbatim</span>
             <span><b class="chg">Blue</b> — a changed attribute type (the new type)</span>
           </div>
           <!-- #126: what was left out, as the last line under the legend -->

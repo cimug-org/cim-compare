@@ -72,14 +72,19 @@ public class EaLogTaggedValuesTest {
 	public void eaTaggedValuesAreReported() throws Exception {
 		Document log = parse(fixture());
 		Document enriched = new ReportPreProcessor(false, null).process(log);
-		// the compared package itself (ExtVendor, whose baseuri changed) is the log's root, which the
-		// report shows as its scope rather than as a package; its group is in the log (see above)
+		// #188: the compared package itself (ExtVendor, whose baseuri changed) is the log's root; the
+		// report starts there, so its own tag change and the classes directly in it are shown
+		assertEquals("ExtVendor (full model)", XP.evaluate("/ComparisonReport/@scope", enriched));
+		assertEquals("ExtVendor", XP.evaluate("/ComparisonReport/Package/@name", enriched));
+		assertEquals("changed", XP.evaluate("/ComparisonReport/Package/@status", enriched));
+		assertEquals("http://example.org/test/vendor-schema-cim16#",
+				XP.evaluate("/ComparisonReport/Package/Tags/Tag[@name='baseuri']/@model", enriched));
+		assertEquals("1", XP.evaluate("count(/ComparisonReport/Package/Class[@name='AccuracyClass'])", enriched));
 		// the class that gained a tag, and the association under each of its classes
 		assertEquals("changed", XP.evaluate("//Class[@name='ExtVendorSynchronousMachine']/@status", enriched));
 		assertEquals("added", XP.evaluate("//Class[@name='ExtVendorSynchronousMachine']/Tags/Tag/@status", enriched));
-		// (the association is also listed under AccuracyClass, a class directly in the compared
-		// package, which the report does not show for an EA log given as input)
-		assertEquals("1", XP.evaluate("count(//Link[@kind='Association'][Tags/Tag[@status='added']])", enriched));
+		// the association is listed under both its classes, AccuracyClass being directly in the compared package
+		assertEquals("2", XP.evaluate("count(//Link[@kind='Association'][Tags/Tag[@status='added']])", enriched));
 		assertEquals("changed", XP.evaluate("//Link[@kind='Association']/@status", enriched));
 		assertEquals("https://example.com/Extensions#",
 				XP.evaluate("(//Link[@kind='Association']/Tags/Tag/@model)[1]", enriched));

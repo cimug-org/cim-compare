@@ -176,12 +176,18 @@ public class ReportPreProcessor {
 		// children are the model roots. Deleted roots appear with type="".
 		Element eaModel = firstChild(compareResults, "CompareItem");
 		List<Element> roots = new ArrayList<Element>();
-		for (Element c : children(eaModel, "CompareItem")) {
-			if ("package".equals(kindOf(c)))
-				roots.add(c);
-		}
-		if (roots.isEmpty())
+		if (!synthetic(eaModel) && "package".equals(kindOf(eaModel))) {
+			// an EA compare log: its top item is the compared package itself, whose own
+			// classes and diagrams belong in the report as much as its sub-packages'
 			roots.add(eaModel);
+		} else {
+			for (Element c : children(eaModel, "CompareItem")) {
+				if ("package".equals(kindOf(c)))
+					roots.add(c);
+			}
+			if (roots.isEmpty())
+				roots.add(eaModel);
+		}
 
 		String scope;
 		List<String> names = selectedNames(roots);
@@ -244,6 +250,11 @@ public class ReportPreProcessor {
 			summary.appendChild(c);
 		}
 		return out;
+	}
+
+	/** cim-compare's own top item, "EA Model", which stands for no package of the model. */
+	private static boolean synthetic(Element item) {
+		return item != null && attr(item, "guid").startsWith("MX_");
 	}
 
 	// ------------------------------------------------------------ packages

@@ -118,6 +118,33 @@ public class SvgDiagramsTest {
 	}
 
 	@Test
+	public void aClassEaDrewTallerThanItsStoredSizeGetsAHighlightAsTallAsTheDrawing() {
+		// #165: the destination Faults diagram of a CIM16 model whose classes gained extension
+		// stereotypes; EA draws the stereotype lines above the class name and makes the box
+		// taller, but the stored sizes are unchanged. Positions and SVG boxes as EA wrote them.
+		List<DiagramElement> elements = Arrays.asList(at("EAID_IMPEDANCE", 6, 134, 176, 238),
+				at("EAID_EQUIPMENT", 562, 188, 751, 264), at("EAID_CAUSE", 647, 58, 737, 110),
+				at("EAID_TERMINAL", 392, 332, 579, 400), at("EAID_EQUIPMENTFAULT", 436, 214, 526, 253),
+				at("EAID_KIND", 11, 20, 163, 124), at("EAID_SEGMENT", 207, 349, 353, 397),
+				at("EAID_LINEFAULT", 179, 213, 378, 262), at("EAID_FAULT", 215, 36, 451, 132));
+		String svg = "<svg viewBox=\"0 0 765 470\">" + rect(0, 0, 765, 470) + rect(219, 26, 236, 104) + rect(183, 203, 199, 49)
+				+ rect(211, 339, 146, 82) + rect(15, 10, 152, 104) + rect(440, 204, 90, 39) + rect(396, 322, 187, 118)
+				+ rect(651, 48, 90, 52) + rect(566, 178, 189, 118) + rect(10, 124, 170, 104) + "</svg>";
+		int[] shift = SvgDiagrams.shift(svg, elements);
+		assertArrayEquals(new int[] { -4, 10 }, shift);
+		Map<String, String> boxes = SvgDiagrams.boxMap(elements, shift, svg);
+		assertEquals("566,178,755,296", boxes.get("562,188,751,264")); // Equipment: 76 stored, 118 drawn
+		assertEquals("396,322,583,440", boxes.get("392,332,579,400")); // Terminal: 68 stored, 118 drawn
+		assertEquals("211,339,357,421", boxes.get("207,349,353,397")); // ACLineSegment: 48 stored, 82 drawn
+		assertEquals("219,26,455,130", boxes.get("215,36,451,132")); // Fault: 96 stored, 104 drawn
+		assertEquals("15,10,167,114", boxes.get("11,20,163,124")); // drawn at its stored size
+		assertEquals("10,124,180,228", boxes.get("6,134,176,238"));
+		// the diagram's background rectangle is not taken for an element at its corner
+		List<DiagramElement> corner = Arrays.asList(at("EAID_CORNER", -4, 10, 96, 60));
+		assertEquals("0,0,100,50", SvgDiagrams.boxMap(corner, shift, svg).get("-4,10,96,60"));
+	}
+
+	@Test
 	public void packagesAndNotesDrawnAsPolygonsCountForTheShift() {
 		// a package: its tab and body drawn as one polygon, 200 x 120 overall
 		List<DiagramElement> pkg = Arrays.asList(el("EAID_P", 400, 200, 600, 320, 0, 0, 0, 0));

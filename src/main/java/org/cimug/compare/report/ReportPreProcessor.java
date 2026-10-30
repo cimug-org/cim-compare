@@ -83,8 +83,12 @@ public class ReportPreProcessor {
 
 	public static final String GENERATOR = "cim-compare " + org.cimug.compare.Version.VERSION;
 
+	/**
+	 * Free-text properties, the only ones redlined in the report's metadata tables;
+	 * a short value such as a name or alias sits beside its baseline value as it is (#179).
+	 */
 	private static final Set<String> TEXT_PROPS = new HashSet<String>(
-			Arrays.asList("Notes", "RoleNote", "Alias", "Name"));
+			Arrays.asList("Notes", "RoleNote"));
 	private static final Set<String> LINK_NAMES = new HashSet<String>(
 			Arrays.asList("Generalization", "Association", "Aggregation"));
 
@@ -246,6 +250,8 @@ public class ReportPreProcessor {
 
 	private Element renderPackage(Element pkg) {
 		String status = statusOf(pkg);
+		if ("identical".equals(status) && tagsChanged(pkg))
+			status = "changed"; // #169
 		if (!full && !hasChanges(pkg))
 			return null;
 		Element e = element("Package", pkg, status);
@@ -512,6 +518,7 @@ public class ReportPreProcessor {
 	 */
 	private void copyNotesAndProperties(Element src, Element dst, String owner) {
 		boolean bothSides = !"added".equals(owner) && !"deleted".equals(owner);
+		copyTags(src, dst);
 		Element props = firstChild(src, "Properties");
 		if (props == null)
 			return;
@@ -564,6 +571,64 @@ public class ReportPreProcessor {
 		dst.appendChild(propsOut);
 	}
 
+	/**
+	 * #169: an element's user-defined tagged values, from its "Tagged Values" group (as
+	 * EA's Compare Utility and cim-compare record them), as
+	 * {@code <Tags><Tag name status baseline model/></Tags>}; every tag, so the ⓘ
+	 * popup can list them all.
+	 */
+	private void copyTags(Element src, Element dst) {
+		Element group = tagGroup(src);
+		if (group == null)
+			return;
+		Element tags = out.createElement("Tags");
+		for (Element t : children(group, "CompareItem")) {
+			String name = prop(t, "Name", "model");
+			if (name.isEmpty())
+				name = prop(t, "Name", "baseline");
+			if (name.isEmpty())
+				continue;
+			Element te = out.createElement("Tag");
+			te.setAttribute("name", name);
+			te.setAttribute("status", statusOf(t));
+			Element v = valueProperty(t);
+			if (v != null && v.hasAttribute("baseline"))
+				te.setAttribute("baseline", v.getAttribute("baseline"));
+			if (v != null && v.hasAttribute("model"))
+				te.setAttribute("model", v.getAttribute("model"));
+			tags.appendChild(te);
+		}
+		if (tags.hasChildNodes())
+			dst.appendChild(tags);
+	}
+
+	private static Element valueProperty(Element tag) {
+		Element props = firstChild(tag, "Properties");
+		if (props != null)
+			for (Element p : children(props, "Property"))
+				if ("Value".equals(attr(p, "name")))
+					return p;
+		return null;
+	}
+
+	/** #169: an item's "Tagged Values" group, or null. */
+	static Element tagGroup(Element item) {
+		for (Element c : children(item, "CompareItem"))
+			if (org.cimug.compare.TaggedValues.GROUP.equals(attr(c, "type")))
+				return c;
+		return null;
+	}
+
+	/** #169: whether any of an item's tagged values was added, removed or changed. */
+	static boolean tagsChanged(Element item) {
+		Element group = tagGroup(item);
+		if (group != null)
+			for (Element t : children(group, "CompareItem"))
+				if (!"identical".equals(normalize(attr(t, "status"))))
+					return true;
+		return false;
+	}
+
 	private void count(String kind, String status) {
 		String k = kind + "/" + status;
 		Integer n = counts.get(k);
@@ -595,6 +660,11 @@ public class ReportPreProcessor {
 			return "diagramconnector";
 		if ("Src".equals(t) || "Dst".equals(t))
 			return "end";
+		if (org.cimug.compare.TaggedValues.GROUP.equals(t))
+			return "tags"; // #169: not an attribute
+		Node gp = item.getParentNode();
+		if (gp instanceof Element && org.cimug.compare.TaggedValues.GROUP.equals(attr((Element) gp, "type")))
+			return "tag";
 		Node parent = item.getParentNode();
 		if (parent instanceof Element && "Links".equals(attr((Element) parent, "type")))
 			return "link";
@@ -718,6 +788,8 @@ public class ReportPreProcessor {
 	}
 
 	private static boolean hasChangedProperties(Element item) {
+		if (tagsChanged(item)) // #169
+			return true;
 		Element props = firstChild(item, "Properties");
 		if (props == null)
 			return false;

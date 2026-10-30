@@ -352,6 +352,8 @@ public class ReportRendererTest {
 		assertTrue(r, r.contains("<span class=\"info info-chg\""));
 		assertFalse(r, r.contains("metadata changed"));
 		assertFalse(page.contains("<span class=\"info info-chg\" data-id=\"EAID_00000000_0000_0000_0000_000000000115\""));
+		// the dot overlaps the ⓘ ring rather than sitting outside it
+		assertTrue(page.contains(".info.info-chg::after { content: \"\"; position: absolute; top: -1.5px; right: -3.1px; width: 6px; height: 6px;"));
 	}
 
 	@Test

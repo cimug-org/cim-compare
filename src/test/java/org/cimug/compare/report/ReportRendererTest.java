@@ -135,8 +135,10 @@ public class ReportRendererTest {
 				page.contains("<span class=\"chg\"><a href=\"#EAID_00000000_0000_0000_0000_000000000111\">IdentifiedObject</a></span>"));
 		assertFalse("old type not struck", page.contains("<del>Float</del>"));
 		assertTrue("changed bound redlined", page.contains("<del>0</del><ins>1</ins>"));
-		// renamed class: its Name property is redlined in the property table
-		assertTrue(page.contains("<del>ConductingEquipmentBase</del><ins>Equipment</ins>"));
+		// #179: a renamed class's Name row shows the new name as it is, beside the old one
+		assertTrue(page.contains("<th class=\"k\">Name</th><td>ConductingEquipmentBase</td><td>Equipment</td>"));
+		assertFalse(page.contains("<del>ConductingEquipmentBase</del>"));
+		assertTrue("legend", page.contains("baseline wording struck (descriptions and notes, role names, multiplicities)"));
 	}
 
 	@Test
@@ -177,13 +179,13 @@ public class ReportRendererTest {
 		new ReportRenderer(false, null, false, "jpg").render(xml, html);
 		String page = read(html);
 		// #67: in an attribute's ⓘ metadata table the Name row shows the new name plainly
-		int meta = page.indexOf("Attribute metadata — aliasName");
+		int meta = page.indexOf("Attribute metadata — <span class=\"nm-case\">aliasName</span>");
 		assertTrue("aliasName metadata view", meta > 0);
 		String view = page.substring(meta, page.indexOf("</tr>", page.indexOf("<th class=\"k\">Name</th>", meta)));
 		assertTrue(view, view.contains("<td>aliasName</td><td>«deprecated» aliasName</td>"));
 		assertFalse(view, view.contains("<del>") || view.contains("<ins>"));
-		// the class Metadata table still redlines a changed name
-		assertTrue(page.contains("<del>ConductingEquipmentBase</del><ins>Equipment</ins>"));
+		// and so does the class Metadata table (#179)
+		assertTrue(page.contains("<th class=\"k\">Name</th><td>ConductingEquipmentBase</td><td>Equipment</td>"));
 	}
 
 	@Test

@@ -364,7 +364,7 @@ public class AttributeProperties {
 							}
 							return null;
 						default:
-							return tv.getTheValue().replaceAll("\n", "");
+							return NoteText.value(tv.getTheValue(), tv.getTag());
 						}
 				}
 			}

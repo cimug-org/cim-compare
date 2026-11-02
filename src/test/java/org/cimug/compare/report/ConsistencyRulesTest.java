@@ -150,17 +150,23 @@ public class ConsistencyRulesTest {
 	@Test
 	public void aChangedItemsPopupListsChangesOnlyInANormalReportAndEveryPropertyInAFullOne() throws Exception {
 		// a normal report: changes only, "— changes", an empty table says "no changes"
-		String normal = node(render(false), "Switch");
+		String normalPage = render(false), fullPage = render(true);
+		String normal = node(normalPage, "Switch");
 		assertTrue(normal.contains("<div class=\"lbl sp\">Class metadata — changes</div>"));
 		assertFalse(normal.substring(normal.indexOf("<div class=\"notes-src\">")).contains("data-status=\"identical\""));
 		// --full: every property, baseline beside destination, the changed rows tinted
-		String full = node(render(true), "Switch");
+		String full = node(fullPage, "Switch");
 		String pop = full.substring(full.indexOf("<div class=\"notes-src\">"), full.indexOf("<span class=\"badge\""));
 		assertTrue(pop, pop.contains("<div class=\"lbl sp\">Class metadata</div><div class=\"tw\"><table class=\"t\"><thead><tr><th></th><th>Baseline</th><th>Destination</th></tr></thead>"));
 		assertTrue(pop, pop.contains("data-status=\"identical\""));
 		assertTrue(pop, Pattern.compile("<tr data-status=\"(changed|added|deleted)\"").matcher(pop).find());
 		assertFalse(pop, pop.contains("— changes"));
 		assertFalse(pop, pop.contains("<i>no changes</i>"));
+		// the legend and the hover note say what the pop-up shows
+		assertTrue(fullPage.contains("shows the notes and every property</span>"));
+		assertTrue(normalPage.contains("shows the notes and every changed property</span>"));
+		assertTrue(full.contains("Class 'Switch' has no other changes. The ") && full.contains(" shows its notes and every property."));
+		assertTrue(normal.contains(" shows its notes and every changed property."));
 	}
 
 	@Test

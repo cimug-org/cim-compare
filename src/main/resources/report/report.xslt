@@ -422,7 +422,7 @@
             <span><i class="sw s-changed"></i><b>Changed</b> — same GUID and package; properties or members differ</span>
             <span><i class="sw s-identical"></i><b>Identical</b></span>
             <span><i class="sw s-pkg"></i><b>Package</b> (unchanged itself)</span>
-            <span><del>struck</del><ins>inserted</ins> — destination text with baseline wording struck (notes, role notes, role names, multiplicities); the <xsl:copy-of select="$ii"/>shows the notes and every changed property</span>
+            <span><del>struck</del><ins>inserted</ins> — destination text with baseline wording struck (notes, role notes, role names, multiplicities); the <xsl:copy-of select="$ii"/>shows the notes and every <xsl:if test="not($full)">changed </xsl:if>property</span>
             <span><b class="chg">Blue</b> — a changed attribute type (the new type)</span>
           </div>
           <!-- #126: what was left out, as the last line under the legend -->
@@ -562,7 +562,7 @@
        them). An element with nothing else to show says so instead of opening blank. -->
   <xsl:template name="r:hover-note">
     <xsl:param name="e" as="element()"/>
-    <div class="sec hov-only"><div class="hov-note"><xsl:value-of select="r:kind($e)"/> '<xsl:value-of select="$e/@name"/>' <xsl:value-of select="if (r:unchanged($e)) then 'is unchanged' else 'has no other changes'"/>. The <xsl:copy-of select="$ii"/> shows its notes and <xsl:value-of select="if (r:unchanged($e)) then 'metadata' else 'every changed property'"/>.</div></div>
+    <div class="sec hov-only"><div class="hov-note"><xsl:value-of select="r:kind($e)"/> '<xsl:value-of select="$e/@name"/>' <xsl:value-of select="if (r:unchanged($e)) then 'is unchanged' else 'has no other changes'"/>. The <xsl:copy-of select="$ii"/> shows its notes and <xsl:value-of select="if (r:unchanged($e)) then 'metadata' else if ($full) then 'every property' else 'every changed property'"/>.</div></div>
   </xsl:template>
 
   <!-- detail of a class: Notes → Metadata → Tagged values → Attributes → Links.

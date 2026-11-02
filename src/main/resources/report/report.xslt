@@ -830,13 +830,16 @@
       </xsl:call-template>
     </xsl:variable>
     <xsl:variable name="images" select="$st = ('added', 'deleted') or Highlight or Connector"/>
+    <!-- #204: with full, an unchanged diagram shows its one image (the destination's;
+         the baseline is the same picture) in a full-width panel -->
+    <xsl:variable name="single" select="$full and $st = 'identical' and string(@destination-ext) != 'none'"/>
     <div class="node dia closed" id="{@id}" data-depth="{$depth}">
       <xsl:call-template name="r:row"><xsl:with-param name="e" select="."/><xsl:with-param name="ico" select="'▦'"/></xsl:call-template>
       <div class="detail">
         <xsl:call-template name="r:notes-block"><xsl:with-param name="e" select="."/></xsl:call-template>
         <xsl:if test="$meta/*"><div class="sec hov-hide"><div class="sec-h"><span class="ico">▤</span>Metadata</div><xsl:copy-of select="$meta"/></div></xsl:if>
         <xsl:choose>
-          <xsl:when test="$images"/>
+          <xsl:when test="$images or $single"/>
           <xsl:when test="$st = 'identical' and not($meta/*)"><div class="empty">Diagram '<xsl:value-of select="@name"/>' has no changes.</div></xsl:when>
           <xsl:otherwise><xsl:call-template name="r:hover-note"><xsl:with-param name="e" select="."/></xsl:call-template></xsl:otherwise>
         </xsl:choose>
@@ -880,6 +883,15 @@
                 </xsl:for-each>
               </div>
             </xsl:if>
+          </div>
+        </xsl:if>
+        <xsl:if test="$single">
+          <div class="sec"><div class="sec-h"><span class="ico">▦</span>Diagram</div>
+            <div class="diag single">
+              <div><div class="lbl">Baseline and destination (unchanged)</div>
+                <xsl:call-template name="r:diagram-image"><xsl:with-param name="side" select="'destination'"/></xsl:call-template>
+              </div>
+            </div>
           </div>
         </xsl:if>
       </div>

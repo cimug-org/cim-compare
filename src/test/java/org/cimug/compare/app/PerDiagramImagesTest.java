@@ -44,6 +44,7 @@ public class PerDiagramImagesTest {
 	@After
 	public void reset() {
 		GUIDBasedDiffReportGeneratorImpl.drawer = null;
+		GUIDBasedDiffReportGeneratorImpl.full = false;
 	}
 
 	/** Writes what EA would, and records what it was asked to draw. */
@@ -184,6 +185,44 @@ public class PerDiagramImagesTest {
 		compare(ea, 494);
 		assertEquals(java.util.Collections.singleton(DIAGRAM), ea.baseline);
 		assertEquals(java.util.Collections.singleton(DIAGRAM), ea.destination);
+	}
+
+	@Test
+	public void withFullAnUnchangedDiagramIsDrawnFromTheDestinationOnly() throws Exception {
+		// #204: the report shows one image of an unchanged diagram, so EA draws only that one
+		GUIDBasedDiffReportGeneratorImpl.full = true;
+		FakeEa ea = new FakeEa(DiagramImage.SVG);
+		File xml = compare(ea, 394); // nothing moved
+		assertEquals("Identical", diagramStatus(xml));
+		assertTrue(ea.baseline.isEmpty());
+		assertEquals(java.util.Collections.singleton(DIAGRAM), ea.destination);
+
+		File html = new File(tmp.getRoot(), "report.html");
+		new ReportRenderer(true, null, true, "svg").render(xml, html);
+		String page = new String(Files.readAllBytes(html.toPath()), StandardCharsets.UTF_8);
+		assertTrue(page.contains("<div class=\"diag single\"><div><div class=\"lbl\">Baseline and destination (unchanged)</div>"
+				+ "<div class=\"dimg\" data-side=\"destination\"><img loading=\"lazy\" src=\"Images-destination/" + DIAGRAM + ".svg\""));
+		assertFalse("the image replaces the hover note", page.contains("is unchanged. The"));
+		assertTrue("the report keeps the image it shows", new File(tmp.getRoot(), "Images-destination/" + DIAGRAM + ".svg").isFile());
+	}
+
+	@Test
+	public void withFullAndImagesFromTheXmiExportOnlyTheDestinationImageIsKept() throws Exception {
+		// #204: no drawer (XMI input, or EA before 16.1 build 1629); the export wrote both images
+		File baseline = export("baseline.xmi", 394), destination = export("destination.xmi", 394);
+		File b = new File(tmp.getRoot(), "Images-baseline/" + DIAGRAM + ".jpg"), d = new File(tmp.getRoot(), "Images-destination/" + DIAGRAM + ".jpg");
+		for (boolean full : new boolean[] { false, true }) {
+			b.getParentFile().mkdirs();
+			d.getParentFile().mkdirs();
+			b.createNewFile();
+			d.createNewFile();
+			GUIDBasedDiffReportGeneratorImpl.full = full;
+			File xml = new File(tmp.getRoot(), "comparison.xml");
+			DiffXMLGenerator.main(new String[] { baseline.getPath(), destination.getPath(), xml.getPath(), "jpg" });
+			assertEquals("Identical", diagramStatus(xml));
+			assertFalse("baseline image deleted (full=" + full + ")", b.exists());
+			assertEquals("destination image kept only with --full", full, d.exists());
+		}
 	}
 
 	@Test

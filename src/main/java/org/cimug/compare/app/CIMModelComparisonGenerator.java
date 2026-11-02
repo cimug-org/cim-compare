@@ -640,6 +640,7 @@ public class CIMModelComparisonGenerator {
 			Map<String, String> options) {
 		String type = options.containsKey(PARAM_IMAGE_TYPE) ? options.get(PARAM_IMAGE_TYPE) : DiagramImage.JPG.name();
 		GUIDBasedDiffReportGeneratorImpl.drawer = drawer;
+		GUIDBasedDiffReportGeneratorImpl.full = options.containsKey(PARAM_FULL); // #204
 		try {
 			DiffXMLGenerator.main(new String[] { baselineXmiFile, destinationXmiFile, comparisonXml.getAbsolutePath(), type });
 		} finally {

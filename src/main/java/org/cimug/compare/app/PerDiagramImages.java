@@ -83,7 +83,7 @@ class PerDiagramImages {
 	void draw(Set<String> baseline, Set<String> destination) {
 		if (baseline.isEmpty() && destination.isEmpty())
 			return;
-		System.out.println("\nDrawing the " + (baseline.size() + destination.size()) + " image(s) of the diagrams that changed ("
+		System.out.println("\nDrawing the " + (baseline.size() + destination.size()) + " image(s) of the diagrams the report shows ("
 				+ baseline.size() + " baseline, " + destination.size() + " destination) as " + format.name() + ".");
 		drawSide(true, baseline);
 		if (unavailable == null)

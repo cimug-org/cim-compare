@@ -586,7 +586,7 @@
   window.addEventListener('resize', function () { if (Z && Math.abs(Z.s - Z.fit) < 1e-6) lbFit(); });
 
   /* ---- #128 printing: load every diagram image first (images not yet scrolled into view
-     would otherwise print blank). "Show full metadata" sections print as they are on screen. ---- */
+     would otherwise print blank). ---- */
   var pb = $('#btn-print'); if (pb) pb.addEventListener('click', function () { window.print(); });
   window.addEventListener('beforeprint', function () {
     $$('img[loading="lazy"]').forEach(function (i) { i.loading = 'eager'; });

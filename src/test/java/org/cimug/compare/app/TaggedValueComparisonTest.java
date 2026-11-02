@@ -180,7 +180,7 @@ public class TaggedValueComparisonTest {
 		// #172: an end's heading keeps the class or role name's own case, under an upper-case label
 		assertTrue(page.contains("Source end — <span class=\"nm-case\">Parts</span>"));
 		assertTrue(page.contains(".sub .nm-case, .lbl .nm-case { text-transform: none;"));
-		// and so does an attribute's ⓘ metadata heading
-		assertTrue(page.matches("(?s).*Attribute metadata — <span class=\"nm-case\">[^<]+</span>.*"));
+		// #199: an attribute's ⓘ lists its changes under one heading for every attribute
+		assertTrue(page.contains("<div class=\"lbl sp\">Attribute metadata — changes</div>"));
 	}
 }

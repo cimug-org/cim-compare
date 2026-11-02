@@ -254,6 +254,21 @@ public class ReportRendererTest {
 	}
 
 	@Test
+	public void anUnchangedDiagramShownInAFullReportKeepsItsDestinationImageOnly() throws Exception {
+		// #204: a --full report shows one image of an unchanged diagram, the destination's
+		String id = "EAID_00000000_0000_0000_0000_000000000999";
+		File b = new File(tmp.newFolder("Images-baseline"), id + ".png"), d = new File(tmp.newFolder("Images-destination"), id + ".png");
+		b.createNewFile();
+		d.createNewFile();
+		java.util.Set<String> all = java.util.Collections.singleton(id), none = java.util.Collections.emptySet();
+		assertEquals(1, ReportRenderer.deleteUnshownImages(tmp.getRoot(), all, none, all, "png"));
+		assertFalse(b.exists());
+		assertTrue(d.isFile());
+		assertEquals("without --full it is not shown, so both go", 1, ReportRenderer.deleteUnshownImages(tmp.getRoot(), all, none, none, "png"));
+		assertFalse(d.exists());
+	}
+
+	@Test
 	public void scopeAppearsInTheReport() throws Exception {
 		File xml = copyFixture();
 		File html = new File(tmp.getRoot(), "grid.html");

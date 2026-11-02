@@ -325,6 +325,7 @@ table.attrsB td.nt .side { font-size: 10px; text-transform: uppercase; letter-sp
 
 /* diagrams */
 .diag { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.diag.single { grid-template-columns: 1fr; }  /* #204 an unchanged diagram's one image, full width */
 .diag > div { border: 1px solid var(--diag-panel); border-radius: var(--r); background: var(--surface); padding: 6px; text-align: center; display: flex; flex-direction: column; }
 .diag .lbl { font-size: 10.5px; text-transform: uppercase; letter-spacing: .04em; color: var(--muted); margin-bottom: 4px; }
 .diag img { max-width: 100%; height: auto; background: #fff; border: 1px solid var(--diag-img); cursor: zoom-in; }

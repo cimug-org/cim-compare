@@ -33,7 +33,7 @@
     --pkg: #262d35; --pkg-line: #3a434d;
     --ins-bg: #1f4a2a; --ins-ink: #a8e6b8; --del-bg: #4d2226; --del-ink: #f3a7a1;
     --hilite: #5a4d10;
-    --diag-panel: #56616d; --diag-img: #3d4652; --hatch: #ffffff0d;
+    --diag-panel: #6b7785; --diag-img: #56616d; --hatch: #ffffff17;
   }
 }
 :root[data-theme="dark"] {
@@ -51,7 +51,7 @@
   --ins-bg: #1f4a2a; --ins-ink: #a8e6b8; --del-bg: #4d2226; --del-ink: #f3a7a1;
   --hilite: #5a4d10;
 
-  --diag-panel: #56616d; --diag-img: #3d4652; --hatch: #ffffff0d;
+  --diag-panel: #6b7785; --diag-img: #56616d; --hatch: #ffffff17;
 }
 
 *, *::before, *::after { box-sizing: border-box; }

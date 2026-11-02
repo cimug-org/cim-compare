@@ -542,6 +542,10 @@ public class ReportPreProcessor {
 				st = "changed";
 			String b = p.hasAttribute("baseline") ? p.getAttribute("baseline") : null;
 			String m = p.hasAttribute("model") ? p.getAttribute("model") : null;
+			if (TEXT_PROPS.contains(name)) { // #198: the characters the modeller typed
+				b = decodeEntities(b);
+				m = decodeEntities(m);
+			}
 			Element po = out.createElement("Property");
 			po.setAttribute("name", name);
 			po.setAttribute("status", st);
@@ -580,6 +584,42 @@ public class ReportPreProcessor {
 		if (notesOut != null)
 			dst.appendChild(notesOut);
 		dst.appendChild(propsOut);
+	}
+
+	private static final java.util.regex.Pattern ENTITY = java.util.regex.Pattern
+			.compile("&(#[0-9]{1,7}|#[xX][0-9a-fA-F]{1,6}|lt|gt|amp|quot|apos|nbsp);");
+
+	/**
+	 * #198: EA stores some characters in notes as HTML character references
+	 * ({@code &gt;} for {@code >}, {@code &#183;} for {@code ·}); the report shows the
+	 * character the modeller typed, as EA's Notes pane and the published standards do.
+	 * Formatting tags such as {@code <i>} are not touched: they are shown as written.
+	 * Anything that is not one of these references is left as it is.
+	 */
+	static String decodeEntities(String s) {
+		if (s == null || s.indexOf('&') < 0)
+			return s;
+		java.util.regex.Matcher mt = ENTITY.matcher(s);
+		StringBuffer sb = new StringBuffer();
+		while (mt.find()) {
+			String e = mt.group(1);
+			String c;
+			switch (e) {
+			case "lt": c = "<"; break;
+			case "gt": c = ">"; break;
+			case "amp": c = "&"; break;
+			case "quot": c = "\""; break;
+			case "apos": c = "'"; break;
+			case "nbsp": c = "\u00a0"; break;
+			default:
+				int cp = e.charAt(1) == 'x' || e.charAt(1) == 'X' ? Integer.parseInt(e.substring(2), 16)
+						: Integer.parseInt(e.substring(1));
+				c = Character.isValidCodePoint(cp) ? new String(Character.toChars(cp)) : mt.group(0);
+			}
+			mt.appendReplacement(sb, java.util.regex.Matcher.quoteReplacement(c));
+		}
+		mt.appendTail(sb);
+		return sb.toString();
 	}
 
 	/**

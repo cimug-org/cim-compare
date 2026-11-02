@@ -27,7 +27,7 @@ public class DestinationAssociationEndProperties extends AbstractAssociationEndP
 			case "rt":
 				return tv.getTheValue().replaceFirst("\\+", "");
 			default:
-				return tv.getTheValue().replaceAll("\n", "");
+				return NoteText.value(tv.getTheValue(), tv.getTag());
 			}
 	}
 

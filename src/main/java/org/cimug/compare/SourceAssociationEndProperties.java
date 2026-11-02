@@ -27,7 +27,7 @@ public class SourceAssociationEndProperties extends AbstractAssociationEndProper
 			case "lt":
 				return tv.getTheValue().replaceFirst("\\+", "");
 			default:
-				return tv.getTheValue().replaceAll("\n", "");
+				return NoteText.value(tv.getTheValue(), tv.getTag());
 			}
 
 	}

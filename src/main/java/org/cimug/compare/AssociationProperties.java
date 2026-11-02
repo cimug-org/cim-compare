@@ -229,7 +229,7 @@ public class AssociationProperties {
 		if (taggedValues != null) {
 			for (TaggedValueType tv : taggedValues) {
 				if (tv.getTag().equals(name)) {
-					return tv.getTheValue().replaceAll("\n", "");
+					return NoteText.value(tv.getTheValue(), tv.getTag());
 				}
 			}
 		}

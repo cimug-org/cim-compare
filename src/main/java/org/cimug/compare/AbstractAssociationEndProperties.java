@@ -299,7 +299,7 @@ public abstract class AbstractAssociationEndProperties {
 		if (taggedValues != null) {
 			for (TaggedValueType tv : taggedValues) {
 				if (tv.getTag().equals(name)) {
-					return getTheValue(tv).replaceAll("\n", "");
+					return NoteText.value(getTheValue(tv), tv.getTag());
 				}
 			}
 		}
@@ -314,7 +314,7 @@ public abstract class AbstractAssociationEndProperties {
 	 * @return
 	 */
 	protected String getTheValue(TaggedValueType tv) {
-		return tv.getTheValue().replaceAll("\n", "");
+		return NoteText.value(tv.getTheValue(), tv.getTag());
 	}
 
 	public Status getStatus() {

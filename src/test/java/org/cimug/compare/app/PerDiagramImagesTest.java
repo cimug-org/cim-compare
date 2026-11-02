@@ -196,6 +196,7 @@ public class PerDiagramImagesTest {
 		assertEquals("Identical", diagramStatus(xml));
 		assertTrue(ea.baseline.isEmpty());
 		assertEquals(java.util.Collections.singleton(DIAGRAM), ea.destination);
+		assertEquals(1, ea.unchanged);
 
 		File html = new File(tmp.getRoot(), "report.html");
 		new ReportRenderer(true, null, true, "svg").render(xml, html);
@@ -204,6 +205,14 @@ public class PerDiagramImagesTest {
 				+ "<div class=\"dimg\" data-side=\"destination\"><img loading=\"lazy\" src=\"Images-destination/" + DIAGRAM + ".svg\""));
 		assertFalse("the image replaces the hover note", page.contains("is unchanged. The"));
 		assertTrue("the report keeps the image it shows", new File(tmp.getRoot(), "Images-destination/" + DIAGRAM + ".svg").isFile());
+	}
+
+	@Test
+	public void theDrawingMessageCountsTheUnchangedDiagramsApart() {
+		assertEquals("Drawing the 227 image(s) of the diagrams that changed (113 baseline, 114 destination) as SVG.",
+				PerDiagramImages.message(113, 114, 0, "SVG"));
+		assertEquals("Drawing the 507 image(s) of the diagrams that changed and of 280 unchanged one(s) (113 baseline, 394 destination) as SVG.",
+				PerDiagramImages.message(113, 394, 280, "SVG"));
 	}
 
 	@Test

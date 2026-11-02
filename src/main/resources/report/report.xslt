@@ -199,7 +199,7 @@
                   </xsl:choose>
                 </tr>
               </xsl:for-each>
-              <xsl:if test="not($rows)"><tr><td colspan="3" class="none-cell"><i>no changes</i></td></tr></xsl:if>
+              <xsl:if test="not($rows)"><tr><td colspan="3" class="none-cell"><i><xsl:value-of select="if ($only-changed) then 'no changes' else 'none'"/></i></td></tr></xsl:if>
             </tbody>
           </table>
         </div>
@@ -248,7 +248,7 @@
                   </xsl:choose>
                 </tr>
               </xsl:for-each>
-              <xsl:if test="not($rows)"><tr><td colspan="3" class="none-cell"><i>no changes</i></td></tr></xsl:if>
+              <xsl:if test="not($rows)"><tr><td colspan="3" class="none-cell"><i><xsl:value-of select="if ($only-changed) then 'no changes' else 'none'"/></i></td></tr></xsl:if>
             </tbody>
           </table>
         </div>
@@ -306,11 +306,11 @@
     <xsl:variable name="vals" select="r:unchanged($e)"/>
     <div class="notes-src">
       <xsl:call-template name="r:notes-box"><xsl:with-param name="e" select="$e"/><xsl:with-param name="cls" select="'pdesc'"/></xsl:call-template>
-      <div class="lbl sp"><xsl:value-of select="r:kind($e)"/> metadata<xsl:if test="not($vals)"> — changes</xsl:if></div>
-      <xsl:call-template name="r:prop-table"><xsl:with-param name="e" select="$e"/><xsl:with-param name="only-changed" select="not($vals) and not($one)"/><xsl:with-param name="skip" select="'Notes'"/><xsl:with-param name="one-sided" select="$one"/><xsl:with-param name="always" select="true()"/><xsl:with-param name="values" select="$vals"/></xsl:call-template>
+      <div class="lbl sp"><xsl:value-of select="r:kind($e)"/> metadata<xsl:if test="not($full)"> — changes</xsl:if></div>
+      <xsl:call-template name="r:prop-table"><xsl:with-param name="e" select="$e"/><xsl:with-param name="only-changed" select="not($full) and not($one)"/><xsl:with-param name="skip" select="'Notes'"/><xsl:with-param name="one-sided" select="$one"/><xsl:with-param name="always" select="true()"/><xsl:with-param name="values" select="$vals"/></xsl:call-template>
       <xsl:if test="not($e/self::Diagram)">
-        <div class="lbl sp">Tagged values<xsl:if test="not($vals)"> — changes</xsl:if></div>
-        <xsl:call-template name="r:tag-table"><xsl:with-param name="e" select="$e"/><xsl:with-param name="only-changed" select="not($vals) and not($one)"/><xsl:with-param name="always" select="true()"/><xsl:with-param name="values" select="$vals"/></xsl:call-template>
+        <div class="lbl sp">Tagged values<xsl:if test="not($full)"> — changes</xsl:if></div>
+        <xsl:call-template name="r:tag-table"><xsl:with-param name="e" select="$e"/><xsl:with-param name="only-changed" select="not($full) and not($one)"/><xsl:with-param name="always" select="true()"/><xsl:with-param name="values" select="$vals"/></xsl:call-template>
       </xsl:if>
     </div>
   </xsl:template>
@@ -688,10 +688,10 @@
     <xsl:variable name="vals" select="r:unchanged(.)"/>
     <tr class="meta"><td colspan="4">
       <xsl:call-template name="r:notes-box"><xsl:with-param name="e" select="."/><xsl:with-param name="cls" select="'pdesc'"/></xsl:call-template>
-      <div class="lbl sp">Attribute metadata<xsl:if test="not($vals)"> — changes</xsl:if></div>
-      <xsl:call-template name="r:prop-table"><xsl:with-param name="e" select="."/><xsl:with-param name="only-changed" select="not($vals) and not($one)"/><xsl:with-param name="skip" select="'Notes'"/><xsl:with-param name="one-sided" select="$one"/><xsl:with-param name="always" select="true()"/><xsl:with-param name="values" select="$vals"/></xsl:call-template>
-      <div class="lbl sp">Tagged values<xsl:if test="not($vals)"> — changes</xsl:if></div>
-      <xsl:call-template name="r:tag-table"><xsl:with-param name="e" select="."/><xsl:with-param name="only-changed" select="not($vals) and not($one)"/><xsl:with-param name="always" select="true()"/><xsl:with-param name="values" select="$vals"/></xsl:call-template>
+      <div class="lbl sp">Attribute metadata<xsl:if test="not($full)"> — changes</xsl:if></div>
+      <xsl:call-template name="r:prop-table"><xsl:with-param name="e" select="."/><xsl:with-param name="only-changed" select="not($full) and not($one)"/><xsl:with-param name="skip" select="'Notes'"/><xsl:with-param name="one-sided" select="$one"/><xsl:with-param name="always" select="true()"/><xsl:with-param name="values" select="$vals"/></xsl:call-template>
+      <div class="lbl sp">Tagged values<xsl:if test="not($full)"> — changes</xsl:if></div>
+      <xsl:call-template name="r:tag-table"><xsl:with-param name="e" select="."/><xsl:with-param name="only-changed" select="not($full) and not($one)"/><xsl:with-param name="always" select="true()"/><xsl:with-param name="values" select="$vals"/></xsl:call-template>
     </td></tr>
   </xsl:template>
 

@@ -357,6 +357,22 @@ public class ReportRendererTest {
 	}
 
 	@Test
+	public void notesKeepTheirLineBreaks() throws Exception {
+		// #200: a note's line breaks reach the report and are shown as line breaks
+		File xml = copyFixture();
+		String x = read(xml);
+		String before = "model=\"The name is any free human readable string.\"";
+		assertTrue(x.contains(before));
+		Files.write(xml.toPath(), x.replace(before, "model=\"The name is any free human readable string.&#10;Second line.\"")
+				.getBytes(StandardCharsets.UTF_8));
+		File html = new File(tmp.getRoot(), "linebreaks.html");
+		new ReportRenderer(false, null, false, "jpg").render(xml, html);
+		String page = read(html);
+		assertTrue(page.contains("\nSecond line."));
+		assertTrue(page.contains(".desc > div, .notes-src, .pop, td.nt, span.nt, table.t td { white-space: pre-line; }"));
+	}
+
+	@Test
 	public void printKeepsColoursAndTheHeader() throws Exception {
 		File xml = copyFixture();
 		File html = new File(tmp.getRoot(), "print.html");

@@ -12,6 +12,7 @@
   --pkg: #e6e9ed; --pkg-line: #cfd5dc;
   --ins-bg: #d4f8d4; --ins-ink: #146c2e; --del-bg: #f8d4d4; --del-ink: #b3261e;
   --hilite: #fff2a8;
+  --diag-panel: #aab3bd; --diag-img: #d9dee5; --hatch: #0000000a;
   --mono: Consolas, "Cascadia Mono", Menlo, "DejaVu Sans Mono", monospace;
   --sans: system-ui, "Segoe UI", Roboto, Arial, sans-serif;
   --fs: 13px; --fs-s: 11.5px; --fs-l: 14px;
@@ -32,6 +33,7 @@
     --pkg: #262d35; --pkg-line: #3a434d;
     --ins-bg: #1f4a2a; --ins-ink: #a8e6b8; --del-bg: #4d2226; --del-ink: #f3a7a1;
     --hilite: #5a4d10;
+    --diag-panel: #56616d; --diag-img: #3d4652; --hatch: #ffffff0d;
   }
 }
 :root[data-theme="dark"] {
@@ -48,6 +50,8 @@
   --pkg: #262d35; --pkg-line: #3a434d;
   --ins-bg: #1f4a2a; --ins-ink: #a8e6b8; --del-bg: #4d2226; --del-ink: #f3a7a1;
   --hilite: #5a4d10;
+
+  --diag-panel: #56616d; --diag-img: #3d4652; --hatch: #ffffff0d;
 }
 
 *, *::before, *::after { box-sizing: border-box; }
@@ -199,12 +203,12 @@ body.hide-guids .guid { display: none; }
 .row.target { box-shadow: 0 0 0 3px var(--hilite); }
 /* #133 a link or list entry jumped to gets the same rounded blue ring as a row; a table row cannot
    have rounded corners, so report.js lays a ring (.tr-ring) over an attribute row instead */
-ul.plain li.target, ul.plain li:target, .linkB.target { outline: 2px solid var(--focus); outline-offset: 1px; border-radius: var(--r); }
+.linkB.target { outline: 2px solid var(--focus); outline-offset: 1px; border-radius: var(--r); }
 /* #139 under a diagram shown as PNG because EA could not draw it as SVG */
 .dimg .dnone { padding: 28px 12px; text-align: center; font: italic 12px var(--sans); color: var(--muted); border: 1px dashed var(--line); border-radius: var(--r); }
 .dimg .dnote { font: italic 11.5px var(--sans); color: var(--muted); padding: 4px 2px 0; }
 .tr-ring { position: absolute; pointer-events: none; z-index: 2; border: 2px solid var(--focus); border-radius: var(--r); }
-.row, ul.plain li, table.attrs tr, .linkB { scroll-margin-top: calc(var(--hdr-h, 96px) + var(--pin-h, 0px) + 12px); }  /* clear the sticky header when scrolled to */
+.row, table.attrs tr, .linkB { scroll-margin-top: calc(var(--hdr-h, 96px) + var(--pin-h, 0px) + 12px); }  /* clear the sticky header when scrolled to */
 .filtered-out { display: none !important; }
 
 /* ---------- detail ---------- */
@@ -241,7 +245,7 @@ table.t tr[data-status="deleted"] > th.k, td.c-deleted { background: var(--delet
 table.t tr[data-status="moved"] > th.k, td.c-moved { background: var(--moved); color: var(--moved-ink); }
 table.t tr[data-status="changed"] > th.k, td.c-changed { background: var(--changed); color: var(--changed-ink); }
 table.t tr[data-status="identical"] > th.k { background: var(--identical); color: var(--identical-ink); }
-table.t td.void { color: var(--faint); text-align: center; }
+table.t td.void { background: repeating-linear-gradient(135deg, transparent 0 8px, var(--hatch) 8px 10px); }
 /* #109 a multiplicity written differently with the same meaning (1..1 → 1) */
 /* the multiplicity, its tag and the arrow after it wrap as one */
 .cardw { white-space: nowrap; }
@@ -256,8 +260,8 @@ table.attrs td.nm .guid { display: block; font-weight: 400; font-size: 9.5px; co
 table.attrs td.card { font-family: var(--mono); white-space: nowrap; width: 48px; text-align: center; color: var(--ink-2); }
 table.attrs td.ty { font-family: var(--mono); white-space: nowrap; }
 table.attrs td.nt { width: 30%; }
-table.attrs td.gone { text-align: center; color: var(--deleted-ink); font-weight: 600; font-size: var(--fs-s); letter-spacing: .03em; vertical-align: middle; background: repeating-linear-gradient(135deg, transparent 0 8px, #0000000a 8px 10px); }
-table.attrs td.nx { text-align: center; color: var(--muted); font-size: var(--fs-s); vertical-align: middle; background: repeating-linear-gradient(135deg, transparent 0 8px, #0000000a 8px 10px); }
+table.attrs td.gone { text-align: center; color: var(--muted); font-style: italic; font-size: var(--fs-s); vertical-align: middle; background: repeating-linear-gradient(135deg, transparent 0 8px, var(--hatch) 8px 10px); }
+table.attrs td.nx { text-align: center; color: var(--muted); font-style: italic; font-size: var(--fs-s); vertical-align: middle; background: repeating-linear-gradient(135deg, transparent 0 8px, var(--hatch) 8px 10px); }
 table.attrs .info { display: inline-block; color: var(--muted); font-size: 11px; border: 1px solid var(--faint); border-radius: 50%; width: 14px; height: 14px; line-height: 12px; text-align: center; font-family: serif; font-style: italic; cursor: pointer; margin-left: 5px; vertical-align: 1px; }
 table.attrs .info:hover { color: var(--ink); border-color: var(--ink); }
 /* #123 metadata changed that the row does not show: a blue ⓘ with a dot, and a grey note */
@@ -300,7 +304,7 @@ table.attrsB td.nt .side { font-size: 10px; text-transform: uppercase; letter-sp
 .sig .ends .e { font-size: var(--fs-s); }
 .sig .ends .a { color: var(--muted); text-align: center; }
 .sig .ends .a.big { font-size: 16px; }
-.sig .gone { color: var(--deleted-ink); font-weight: 700; letter-spacing: .03em; }
+.sig .gone { color: var(--muted); font-style: italic; }
 .sig .nx { color: var(--muted); font-style: italic; }
 .sigs .mid { text-align: center; color: var(--muted); font-size: 18px; }
 .ends2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
@@ -321,10 +325,10 @@ table.attrsB td.nt .side { font-size: 10px; text-transform: uppercase; letter-sp
 
 /* diagrams */
 .diag { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-.diag > div { border: 1px solid var(--line); border-radius: var(--r); background: var(--surface); padding: 6px; text-align: center; }
+.diag > div { border: 1px solid var(--diag-panel); border-radius: var(--r); background: var(--surface); padding: 6px; text-align: center; display: flex; flex-direction: column; }
 .diag .lbl { font-size: 10.5px; text-transform: uppercase; letter-spacing: .04em; color: var(--muted); margin-bottom: 4px; }
-.diag img { max-width: 100%; height: auto; background: #fff; border: 1px solid var(--line); cursor: zoom-in; }
-.diag .gone { color: var(--deleted-ink); font-weight: 600; padding: 30px 0; }
+.diag img { max-width: 100%; height: auto; background: #fff; border: 1px solid var(--diag-img); cursor: zoom-in; }
+.diag .gone { color: var(--muted); font-style: italic; padding: 30px 0; }
 .diag .nx { color: var(--muted); font-style: italic; padding: 30px 0; }
 .lightbox { position: fixed; inset: 0; background: #000c; z-index: 50; display: none; overflow: hidden; }
 .lightbox.on { display: block; }
@@ -415,23 +419,6 @@ body.no-hl .hl, body.no-hl .hl-legend { display: none !important; }
   .row { transition: filter .12s; }
 }
 
-/* compact rendering for wholly added / deleted classes */
-ul.plain { list-style: none; margin: 0; padding: 0; font-size: 12px; }
-ul.plain li { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px; padding: 2px 6px; border-bottom: 1px solid var(--line); }
-ul.plain li:last-child { border-bottom: 0; }
-ul.plain .nm { font-weight: 600; }
-ul.plain .card { color: var(--ink-2); font-family: var(--mono); }
-ul.plain .kind { font-size: var(--fs-s); color: var(--muted); min-width: 96px; }
-ul.plain .nt { color: var(--ink-2); flex: 1 1 100%; padding-left: 12px; font-size: var(--fs-s); }
-ul.plain .guid { margin-left: auto; font-family: var(--mono); font-size: 10px; color: var(--faint); user-select: all; }
-details.more { margin-top: 8px; }
-details.more > summary { cursor: pointer; color: var(--link); font-size: var(--fs-s); }
-details.more > summary:hover { text-decoration: underline; }
-.sec-h .n { color: var(--muted); font-weight: 400; }
-details.more .sub { font-size: var(--fs-s); font-weight: 600; color: var(--muted); margin: 10px 0 3px; display: flex; gap: 8px; align-items: baseline; }
-details.more .sub .guid { font-weight: 400; font-family: var(--mono); font-size: 10px; color: var(--faint); user-select: all; }
-details.more .endsB { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-details.more table.t th.k { width: 130px; }
 
 /* ---------- package outline (left rail) ---------- */
 .layout { display: grid; grid-template-columns: 280px minmax(0, 1fr); gap: 12px; align-items: start; }
@@ -484,3 +471,35 @@ body.no-rail .rail { display: none; }
 .notes-src .pop-tags, .pop .pop-tags { margin-top: 8px; }
 /* #175: printed once, at the top */
 @media print { .summary .pinseg, .summary .pin-kbd { display: none; } body.pin-counts .summary, body.pin-all .summary, body.pin-all .legend, body.pin-all .empty-note { position: static; box-shadow: none; } }
+
+/* ====================================================== #199 one set of rules */
+/* hover mode keeps the page to the changes: notes, Metadata and Tagged values are in the ⓘ;
+   inline mode and print show them on the page */
+body:not(.meta-inline) .hov-hide { display: none; }
+body:not(.meta-inline) .detail > .sec:has(> .desc.plain:only-child) { display: none; }
+.hov-only { display: none; }
+body:not(.meta-inline) .hov-only { display: block; }
+@media print { .hov-hide, .detail > .sec:has(> .desc.plain:only-child) { display: block !important; } .hov-only { display: none !important; } }
+/* the messages under a row share the package message's wording style and spacing */
+.hov-note { color: var(--muted); font-size: var(--fs-s); padding: 4px 10px; font-style: italic; }
+.hov-note svg.ii { margin-right: 0; }
+.detail > .empty, .detail > .sec.hov-only { margin: 2px 0 -8px 1px; }
+.kids > .pkg-desc { margin: 4px 0 8px 28px; }
+i.nodesc { color: var(--muted); }
+/* the ⓘ pop-up and its inline twin: notes box, then the changes, 24 px apart */
+.pop { max-width: min(620px, 90vw); }
+.pop .desc.pdesc, tr.meta .desc.pdesc { display: grid; }
+.pop .lbl.sp, tr.meta .lbl.sp { margin-top: 24px; }
+.pop table.t td { overflow-wrap: anywhere; min-width: 7em; }
+tr.meta > td { background: var(--surface); }
+tr.meta .lbl { font-size: 10.5px; text-transform: uppercase; letter-spacing: .04em; color: var(--muted); margin-bottom: 3px; }
+table.t td.none-cell { color: var(--muted); text-align: center; }
+table.t.one-col th.k { width: 12em; }
+/* one-sided data: the missing side is hatched; "did not exist" / "removed from model" in grey italic */
+td.hatch { background: repeating-linear-gradient(135deg, transparent 0 8px, var(--hatch) 8px 10px); }
+.nx, .gone { color: var(--muted); font-style: italic; }
+.diag > div > .nx, .diag > div > .gone { flex: 1; display: flex; align-items: center; justify-content: center; min-height: 90px;
+  background: repeating-linear-gradient(135deg, transparent 0 8px, var(--hatch) 8px 10px); border-radius: var(--r); }
+/* link ends stay side by side; a long name wraps between its words (the report adds <wbr>) */
+.linkB .endsB > div { min-width: 0; }
+.linkB table.t td { overflow-wrap: break-word; }

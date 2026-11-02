@@ -138,7 +138,8 @@ public class ReportRendererTest {
 		// #179: a renamed class's Name row shows the new name as it is, beside the old one
 		assertTrue(page.contains("<th class=\"k\">Name</th><td>ConductingEquipmentBase</td><td>Equipment</td>"));
 		assertFalse(page.contains("<del>ConductingEquipmentBase</del>"));
-		assertTrue("legend", page.contains("baseline wording struck (descriptions and notes, role names, multiplicities)"));
+		assertTrue("legend", page.contains("baseline wording struck (notes, role notes, role names, multiplicities)"));
+		assertTrue("legend", page.contains("shows the notes and every changed property"));
 	}
 
 	@Test
@@ -179,7 +180,8 @@ public class ReportRendererTest {
 		new ReportRenderer(false, null, false, "jpg").render(xml, html);
 		String page = read(html);
 		// #67: in an attribute's ⓘ metadata table the Name row shows the new name plainly
-		int meta = page.indexOf("Attribute metadata — <span class=\"nm-case\">aliasName</span>");
+		// #199: the attribute's ⓘ view lists its changes under "Attribute metadata — changes"
+		int meta = page.indexOf("Attribute metadata — changes", page.indexOf("data-name=\"aliasName\""));
 		assertTrue("aliasName metadata view", meta > 0);
 		String view = page.substring(meta, page.indexOf("</tr>", page.indexOf("<th class=\"k\">Name</th>", meta)));
 		assertTrue(view, view.contains("<td>aliasName</td><td>«deprecated» aliasName</td>"));
@@ -304,7 +306,7 @@ public class ReportRendererTest {
 		// #109: still a change, tagged in the end table and the signature line
 		assertTrue(page.contains("<tr data-status=\"changed\"><th class=\"k\">Cardinality</th><td>0..*</td><td>*<span class=\"notation\">notation only</span></td></tr>"));
 		assertTrue(page.contains("<span class=\"card\">[<del>0..*</del><ins>*</ins>]</span><span class=\"notation\">notation only</span>"));
-		assertEquals(3, page.split("class=\"notation\"").length - 1); // two for the multiplicity, one for #118
+		assertEquals(4, page.split("class=\"notation\"").length - 1); // two for the multiplicity, two for #118 (page and ⓘ)
 	}
 
 	@Test
@@ -449,8 +451,8 @@ public class ReportRendererTest {
 		String page = read(html);
 		// #133 links carry their GUID and end classes for the search index: a link card in a changed class ...
 		assertTrue(page.contains("<div class=\"linkB\" data-status=\"changed\" data-link=\"Association\" data-guid=\"{00000000-0000-0000-0000-000000000180}\" data-ends=\"Equipment — IdentifiedObject\">"));
-		// ... and a list entry in a deleted class (baseline names)
-		assertTrue(page.contains("<li data-link=\"Generalization\" data-guid=\"{00000000-0000-0000-0000-000000000116}\" data-ends=\"Plant ▷ PowerSystemResource\">"));
+		// ... and a link block in a deleted class (baseline names; #199 laid out like a changed class)
+		assertTrue(page.contains("<div class=\"linkB\" data-status=\"deleted\" data-link=\"Generalization\" data-guid=\"{00000000-0000-0000-0000-000000000116}\" data-ends=\"Plant ▷ PowerSystemResource\">"));
 		// any common GUID form, case ignored; 8+ hex digits counts as a GUID; a message when nothing matches
 		assertTrue(page.contains(".replace(/[{}]/g, '').replace(/^EAID_/i, '').replace(/[-_\\s]/g, '').toLowerCase()"));
 		assertTrue(page.contains("if (g.length >= 8 && /^[0-9a-f]+$/.test(g))"));
@@ -461,7 +463,7 @@ public class ReportRendererTest {
 		// the attribute-row ring is placed outside the table's sideways-scrolling box, which would clip its left edge
 		assertTrue(page.contains("var table = tr.closest('table'), box = table.parentElement, host = box.parentElement;"));
 		// one rounded ring for every target; attribute rows get the laid-over ring, not a box-shadow on each cell
-		assertTrue(page.contains("ul.plain li.target, ul.plain li:target, .linkB.target { outline: 2px solid var(--focus);"));
+		assertTrue(page.contains(".linkB.target { outline: 2px solid var(--focus);"));
 		assertTrue(page.contains(".tr-ring { position: absolute;"));
 		assertFalse(page.contains("tr.target > td"));
 	}

@@ -269,6 +269,8 @@ table.attrs .info:hover { color: var(--ink); border-color: var(--ink); }
 /* the dot sits on the ring at about 1:30, 9 px from the icon's centre, overlapping it */
 .info.info-chg::after { content: ""; position: absolute; top: -1.5px; right: -3.1px; width: 6px; height: 6px; border-radius: 50%; background: #2864d2; }
 body.meta-inline .info.info-chg::after { display: none; }  /* #199: inline mode shows everything on the page, so no ⓘ marks a hidden change */
+body.meta-inline .info.info-chg { color: var(--muted); border-color: var(--faint); }  /* and the ⓘ is plain grey, like every other */
+body.meta-inline .info.info-chg:hover { color: var(--ink); border-color: var(--ink); }
 table.attrs .mnote { margin-left: 6px; font: italic 400 11px var(--sans); color: var(--muted); white-space: nowrap; }
 /* #137 the drawn ⓘ in running text (legend, "not shown" note, "metadata changed - hover") */
 svg.ii { width: 1.1em; height: 1.1em; vertical-align: -0.2em; margin-right: .3em; flex: none; }
@@ -277,7 +279,7 @@ svg.ii { width: 1.1em; height: 1.1em; vertical-align: -0.2em; margin-right: .3em
 body.meta-inline table.attrs .mnote .m-hover, body:not(.meta-inline) table.attrs .mnote .m-inline { display: none; }
 /* #199: paper cannot hover, and printing shows every section, so a printout reads as inline mode:
    no dot on any ⓘ, and "metadata changed" without "- hover ⓘ" */
-@media print { .info.info-chg::after { display: none !important; } table.attrs .mnote .m-hover { display: none !important; } table.attrs .mnote .m-inline { display: inline !important; } }
+@media print { .info.info-chg::after { display: none !important; } .info.info-chg { color: var(--muted) !important; border-color: var(--faint) !important; } table.attrs .mnote .m-hover { display: none !important; } table.attrs .mnote .m-inline { display: inline !important; } }
 tr.meta { display: none; }
 tr.meta.open { display: table-row; }
 tr.meta > td { background: var(--ground); padding: 6px 10px; }

@@ -202,8 +202,9 @@ public class ConsistencyRulesTest {
 		assertTrue(page.contains("@media print { .xchev, .xdet { display: none !important; } }"));
 		// #199: inline mode shows everything on the page, so no ⓘ anywhere carries the dot
 		assertTrue(page.contains("body.meta-inline .info.info-chg::after { display: none; }"));
+		assertTrue(page.contains("body.meta-inline .info.info-chg { color: var(--muted); border-color: var(--faint); }"));
 		// a printout reads as inline mode, whatever the screen shows
-		assertTrue(page.contains("@media print { .info.info-chg::after { display: none !important; } table.attrs .mnote .m-hover { display: none !important; } table.attrs .mnote .m-inline { display: inline !important; } }"));
+		assertTrue(page.contains("@media print { .info.info-chg::after { display: none !important; } .info.info-chg { color: var(--muted) !important; border-color: var(--faint) !important; } table.attrs .mnote .m-hover { display: none !important; } table.attrs .mnote .m-inline { display: inline !important; } }"));
 		// #204: an unchanged diagram's one image, at its own size, centred in a full-width panel
 		assertTrue(page.contains(".diag.single > div { align-items: center; }"));
 		// dark mode, option B "stronger", in both dark blocks (system setting and explicit theme)

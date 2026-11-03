@@ -141,7 +141,8 @@ public class ReportRenderer {
 				w.close();
 		}
 		if (includeDiagrams && html != null)
-			deleteUnshownImages(html.getAbsoluteFile().getParentFile(), diagrams, shownDiagramIds(enriched), imageType);
+			deleteUnshownImages(html.getAbsoluteFile().getParentFile(), diagrams, shownDiagramIds(enriched),
+					full ? unchangedDiagramIds(enriched) : new HashSet<String>(), imageType);
 		return enrichedFile;
 	}
 
@@ -205,14 +206,35 @@ public class ReportRenderer {
 	}
 
 	/**
+	 * #204: EAIDs of the unchanged diagrams, whose destination image a --full report
+	 * shows (one image: the baseline is the same picture). Matches report.xslt.
+	 */
+	static Set<String> unchangedDiagramIds(Document enriched) {
+		Set<String> ids = new HashSet<String>();
+		NodeList all = enriched.getElementsByTagName("Diagram");
+		for (int i = 0; i < all.getLength(); i++) {
+			Element d = (Element) all.item(i);
+			if ("identical".equals(d.getAttribute("status")))
+				ids.add(d.getAttribute("eaid"));
+		}
+		return ids;
+	}
+
+	static int deleteUnshownImages(File dir, Set<String> diagrams, Set<String> shown, String imageType) {
+		return deleteUnshownImages(dir, diagrams, shown, new HashSet<String>(), imageType);
+	}
+
+	/**
 	 * Deletes the images of diagrams in the comparison that the report does not
 	 * show (a diagram whose only changes are its name or notes, one with nothing
 	 * to highlight, one outside --package), as the comparison step already does
 	 * for identical diagrams. Other files in the image folders are left alone.
+	 * #204: {@code destinationOnly} diagrams keep their destination image only.
 	 *
 	 * @return the number of images deleted
 	 */
-	static int deleteUnshownImages(File dir, Set<String> diagrams, Set<String> shown, String imageType) {
+	static int deleteUnshownImages(File dir, Set<String> diagrams, Set<String> shown, Set<String> destinationOnly,
+			String imageType) {
 		if (dir == null || diagrams == null)
 			return 0;
 		String ext = imageType.toLowerCase();
@@ -221,8 +243,9 @@ public class ReportRenderer {
 			File folder = new File(dir, side);
 			if (!folder.isDirectory())
 				continue;
+			boolean destination = "Images-destination".equals(side);
 			for (String id : diagrams)
-				if (!shown.contains(id)) {
+				if (!shown.contains(id) && !(destination && destinationOnly.contains(id))) {
 					if (new File(folder, id + "." + ext).delete())
 						n++;
 					if ("svg".equals(ext) && new File(folder, id + ".png").delete()) // #139 a PNG in place of an SVG

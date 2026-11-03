@@ -294,6 +294,22 @@ public class ReportPreProcessorTest {
 	}
 
 	@Test
+	public void encodedCharactersInNotesAreDecoded() {
+		// #198: EA's character references become the characters the modeller typed
+		assertEquals("(>= 0)", ReportPreProcessor.decodeEntities("(&gt;= 0)"));
+		assertEquals("Ikk<>0", ReportPreProcessor.decodeEntities("Ikk&lt;&gt;0"));
+		assertEquals("<<enumeration>>", ReportPreProcessor.decodeEntities("&lt;&lt;enumeration&gt;&gt;"));
+		assertEquals("in & out", ReportPreProcessor.decodeEntities("in &amp; out"));
+		assertEquals("\u00b7value space\u00b7", ReportPreProcessor.decodeEntities("&#183;value space&#183;"));
+		assertEquals("\u00de", ReportPreProcessor.decodeEntities("&#xDE;"));
+		assertEquals("Note 2\u00a0:", ReportPreProcessor.decodeEntities("Note 2&nbsp;:"));
+		// formatting tags stay as written; anything else is left alone
+		assertEquals("(<i>Ecr</i>) (>= 0)", ReportPreProcessor.decodeEntities("(<i>Ecr</i>) (&gt;= 0)"));
+		assertEquals("AT&T &unknown; & x", ReportPreProcessor.decodeEntities("AT&T &unknown; & x"));
+		assertNull(ReportPreProcessor.decodeEntities(null));
+	}
+
+	@Test
 	public void onlyFreeTextIsRedlined() throws Exception {
 		// #179: metadata tables redline free text only (Notes, RoleNote); a changed name
 		// or alias sits beside its baseline value as it is, like a changed type.

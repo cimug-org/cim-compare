@@ -275,6 +275,9 @@ svg.ii { width: 1.1em; height: 1.1em; vertical-align: -0.2em; margin-right: .3em
 .legend svg.ii { margin-right: -1px; }
 .mnote svg.ii { margin: 0 0 0 .25em; }
 body.meta-inline table.attrs .mnote .m-hover, body:not(.meta-inline) table.attrs .mnote .m-inline { display: none; }
+/* #199: paper cannot hover, and printing shows every section, so a printout reads as inline mode:
+   no dot on any ⓘ, and "metadata changed" without "- hover ⓘ" */
+@media print { .info.info-chg::after { display: none !important; } table.attrs .mnote .m-hover { display: none !important; } table.attrs .mnote .m-inline { display: inline !important; } }
 tr.meta { display: none; }
 tr.meta.open { display: table-row; }
 tr.meta > td { background: var(--ground); padding: 6px 10px; }

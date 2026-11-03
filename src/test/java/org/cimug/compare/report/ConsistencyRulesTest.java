@@ -184,6 +184,8 @@ public class ConsistencyRulesTest {
 		assertTrue(page.contains("body:not(.meta-inline) .hov-hide { display: none; }"));
 		assertTrue(page.contains(".pop .lbl.sp, tr.meta .lbl.sp { margin-top: 24px; }"));
 		assertTrue(page.contains("--diag-panel: #aab3bd; --diag-img: #d9dee5;"));
+		// #204: an unchanged diagram's one image, at its own size, centred in a full-width panel
+		assertTrue(page.contains(".diag.single > div { align-items: center; }"));
 		// dark mode, option B "stronger", in both dark blocks (system setting and explicit theme)
 		assertEquals(2, count(page, "--diag-panel: #6b7785; --diag-img: #56616d; --hatch: #ffffff17;"));
 		assertTrue(page.contains("table.t td.void { background: repeating-linear-gradient("));

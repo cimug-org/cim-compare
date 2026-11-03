@@ -53,7 +53,7 @@ See an [example report](https://cim-compare.ucaiug.io/example-comparison-report/
 - **With `--full`, unchanged diagrams show their image** ([#204](https://github.com/cimug-org/cim-compare/issues/204)): one image, centred in a full-width panel, since the baseline and destination are the same picture. With EA project files, EA draws it from the destination model, so a `--full` run with `--include-diagrams` takes longer than before. See [Diagrams](#diagrams).
 - **Fix:** notes showed characters such as `>` and `&` as codes, for example `(&gt;= 0)` ([#198](https://github.com/cimug-org/cim-compare/issues/198)). They now show as the characters; formatting tags such as `<i>` are still shown as written.
 - **Fix:** notes lost their line breaks, so separate lines and lists ran together ([#200](https://github.com/cimug-org/cim-compare/issues/200)). Line breaks are now kept in the comparison and shown in the report.
-- **Fix:** the dot that marks a change shown only in an ⓘ pop-up sat outside the ⓘ ([#197](https://github.com/cimug-org/cim-compare/pull/197)). It now overlaps the ⓘ's ring.
+- **Fix:** the dot that marks a change shown only in an ⓘ pop-up sat outside the ⓘ ([#196](https://github.com/cimug-org/cim-compare/issues/196)). It now overlaps the ⓘ's ring.
 - **Fix:** with an EA compare log as input, the report left out the compared package's own classes, diagrams and changes, and its header named a sub-package ([#188](https://github.com/cimug-org/cim-compare/issues/188)). The report now starts at the compared package.
 
 </details>

@@ -62,6 +62,8 @@ class GUIDBasedDiffReportGeneratorImpl implements DiffReportGenerator {
 	 * their coordinates. Set by the run around the comparison.
 	 */
 	static PerDiagramImages drawer;
+	/** #204: --full keeps (and with #141 draws) the destination image of every unchanged diagram (set per run). */
+	static boolean full;
 	/** #141: the diagrams to draw on each side. */
 	private final java.util.Set<String> drawBaseline = new java.util.LinkedHashSet<>(),
 			drawDestination = new java.util.LinkedHashSet<>();
@@ -144,6 +146,10 @@ class GUIDBasedDiffReportGeneratorImpl implements DiffReportGenerator {
 			org.cimug.compare.TaggedValues.attach(compareLog.getComparePackage().getCompareResults().getCompareItem(),
 					baselineContentType, targetContentType);
 			markDrawnChanges(compareLog);
+			if (full && drawer != null)
+				for (DiagramRecord r : diagramRecords)
+					if (r.elementItems == null && r.destination != null && drawDestination.add(r.destination.getXmiId()))
+						drawer.unchanged++; // #204: unchanged, destination only
 			if (drawer != null)
 				drawAndPlace();
 			deleteUnchangedImages();
@@ -820,7 +826,8 @@ class GUIDBasedDiffReportGeneratorImpl implements DiffReportGenerator {
 
 	/**
 	 * Deletes the images of the diagrams that stayed unchanged (images the XMI export
-	 * wrote for every diagram; none when they are drawn one at a time, #141).
+	 * wrote for every diagram; none when they are drawn one at a time, #141). #204:
+	 * with --full the destination image is kept, since the report shows it.
 	 */
 	private void deleteUnchangedImages() {
 		if (imageType == null || imageType.ext() == null)
@@ -828,7 +835,8 @@ class GUIDBasedDiffReportGeneratorImpl implements DiffReportGenerator {
 		for (DiagramRecord r : diagramRecords)
 			if (r.elementItems == null) {
 				new File(this.baselineImagesDir, r.destination.getXmiId() + "." + imageType.ext()).delete();
-				new File(this.destinationImagesDir, r.destination.getXmiId() + "." + imageType.ext()).delete();
+				if (!full)
+					new File(this.destinationImagesDir, r.destination.getXmiId() + "." + imageType.ext()).delete();
 			}
 	}
 

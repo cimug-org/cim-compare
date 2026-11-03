@@ -148,8 +148,8 @@ class GUIDBasedDiffReportGeneratorImpl implements DiffReportGenerator {
 			markDrawnChanges(compareLog);
 			if (full && drawer != null)
 				for (DiagramRecord r : diagramRecords)
-					if (r.elementItems == null && r.destination != null)
-						drawDestination.add(r.destination.getXmiId()); // #204: unchanged, destination only
+					if (r.elementItems == null && r.destination != null && drawDestination.add(r.destination.getXmiId()))
+						drawer.unchanged++; // #204: unchanged, destination only
 			if (drawer != null)
 				drawAndPlace();
 			deleteUnchangedImages();

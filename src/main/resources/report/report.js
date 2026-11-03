@@ -16,8 +16,36 @@
     var n = el.parentElement;
     while (n) { if (n.classList && n.classList.contains('node')) setOpen(n, true); n = n.parentElement; }
   }
-  window.expandAll = function () { $$('.node').forEach(function (n) { setOpen(n, true); }); };
-  window.collapseAll = function () { $$('.node').forEach(function (n) { if (n.dataset.depth !== '0') setOpen(n, false); }); };
+  /* #199: an attribute's details row (tr.meta) and its ▶ / "show details" controls */
+  function syncDetails(m) {
+    var tr = m.previousElementSibling; if (!tr) return;
+    var open = m.classList.contains('open'), c = tr.querySelector('.xchev'), d = tr.querySelector('.xdet');
+    if (c) c.setAttribute('aria-expanded', open);
+    if (d) d.textContent = open ? 'hide details' : 'show details';
+  }
+  function setDetails(m, open) { m.classList.toggle('open', open); syncDetails(m); }
+  function allDetails(open) { $$('tr.meta').forEach(function (m) { setDetails(m, open); }); }
+  /* Expand all also opens the attribute details in inline mode; Collapse all closes them */
+  window.expandAll = function () {
+    $$('.node').forEach(function (n) { setOpen(n, true); });
+    if (body.classList.contains('meta-inline')) allDetails(true);
+  };
+  window.collapseAll = function () {
+    $$('.node').forEach(function (n) { if (n.dataset.depth !== '0') setOpen(n, false); });
+    allDetails(false);
+  };
+  function detailsOf(el) { var tr = el.closest('tr'), m = tr && tr.nextElementSibling; return m && m.classList.contains('meta') ? m : null; }
+  document.addEventListener('click', function (e) {
+    var t = e.target.closest('.xchev, .xdet'); if (!t) return;
+    e.stopPropagation();
+    var m = detailsOf(t); if (m) setDetails(m, !m.classList.contains('open'));
+  }, true);
+  document.addEventListener('keydown', function (e) {
+    var t = e.target.closest && e.target.closest('.xchev, .xdet');
+    if (!t || (e.key !== 'Enter' && e.key !== ' ')) return;
+    e.preventDefault(); e.stopPropagation();
+    var m = detailsOf(t); if (m) setDetails(m, !m.classList.contains('open'));
+  }, true);
 
   document.addEventListener('click', function (e) {
     var t = e.target;
@@ -42,7 +70,7 @@
       metaMode = b.dataset.mode;
       body.classList.toggle('meta-inline', metaMode === 'inline');
       $$('#seg-meta button').forEach(function (x) { x.classList.toggle('on', x === b); });
-      if (metaMode === 'hover') $$('tr.meta.open').forEach(function (r) { r.classList.remove('open'); });
+      if (metaMode === 'hover') $$('tr.meta.open').forEach(function (r) { setDetails(r, false); });
       hidePop();
     });
   });
@@ -81,7 +109,7 @@
       pop.dataset.pinned = info.dataset.id; pop.style.pointerEvents = 'auto';
       return;
     }
-    if (src.classList.contains('meta')) src.classList.toggle('open');
+    if (src.classList.contains('meta')) setDetails(src, !src.classList.contains('open'));
     else { /* row notes in inline mode: expand the row, its description block is first */
       var node = info.closest('.node'); if (node) setOpen(node, true);
       var d = $(':scope > .detail .desc', node); if (d) d.scrollIntoView({ block: 'nearest' });

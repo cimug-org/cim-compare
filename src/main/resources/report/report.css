@@ -505,3 +505,16 @@ td.hatch { background: repeating-linear-gradient(135deg, transparent 0 8px, var(
 /* link ends stay side by side; a long name wraps between its words (the report adds <wbr>) */
 .linkB .endsB > div { min-width: 0; }
 .linkB table.t td { overflow-wrap: break-word; }
+
+/* #199 inline mode: each attribute's details open with a ▶ and "show details" (or its ⓘ);
+   closed by default; Expand all opens them all. Hidden in hover mode. */
+body:not(.meta-inline) .xchev, body:not(.meta-inline) .xdet { display: none; }
+.xchev { display: inline-block; width: 13px; height: 8px; vertical-align: 0; cursor: pointer; user-select: none; }
+.xchev::before { content: ""; display: block; width: 0; height: 0; margin-left: 1px; border-style: solid; border-width: 4px 0 4px 6px;
+  border-color: transparent transparent transparent var(--muted); transition: transform .1s; transform-origin: 3px 4px; }
+.xchev[aria-expanded="true"]::before { transform: rotate(90deg); }
+.xchev:hover::before { border-left-color: var(--link); }
+.xdet { display: block; margin-top: 2px; font: italic 11px var(--sans); color: var(--link); cursor: pointer; user-select: none; width: max-content; }
+.xdet:hover { text-decoration: underline; }
+.xchev:focus-visible, .xdet:focus-visible { outline: 2px solid var(--focus); outline-offset: 1px; border-radius: 2px; }
+@media print { .xchev, .xdet { display: none !important; } }

@@ -170,6 +170,19 @@ public class ConsistencyRulesTest {
 	}
 
 	@Test
+	public void inInlineModeEachAttributeHasVisibleControlsForItsDetails() throws Exception {
+		String page = render(false);
+		int row = page.indexOf("data-name=\"phaseCode\"");
+		String cell = page.substring(row, page.indexOf("</td>", row));
+		assertTrue(cell, cell.contains("<td class=\"nm c-changed\"><span class=\"xchev\" role=\"button\" tabindex=\"0\" aria-expanded=\"false\""));
+		assertTrue(cell, cell.contains("<span class=\"xdet\" role=\"button\" tabindex=\"0\">show details</span>"));
+		assertEquals("one ▶ per attribute row", count(page, "<tr class=\"meta\">"), count(page, "class=\"xchev\""));
+		// closed by default; Expand all opens them in inline mode, Collapse all closes them; hidden in hover mode and print
+		assertFalse(page.contains("<tr class=\"meta open\">"));
+		assertTrue(page.contains("if (body.classList.contains('meta-inline')) allDetails(true);"));
+	}
+
+	@Test
 	public void theStylesFollowTheRules() throws Exception {
 		File xml = tmp.newFile("c.xml");
 		InputStream in = getClass().getClassLoader().getResourceAsStream(ReportPreProcessorTest.FIXTURE);
@@ -184,6 +197,9 @@ public class ConsistencyRulesTest {
 		assertTrue(page.contains("body:not(.meta-inline) .hov-hide { display: none; }"));
 		assertTrue(page.contains(".pop .lbl.sp, tr.meta .lbl.sp { margin-top: 24px; }"));
 		assertTrue(page.contains("--diag-panel: #aab3bd; --diag-img: #d9dee5;"));
+		// #199: the inline-mode ▶ / "show details" controls are hidden in hover mode and in print
+		assertTrue(page.contains("body:not(.meta-inline) .xchev, body:not(.meta-inline) .xdet { display: none; }"));
+		assertTrue(page.contains("@media print { .xchev, .xdet { display: none !important; } }"));
 		// #204: an unchanged diagram's one image, at its own size, centred in a full-width panel
 		assertTrue(page.contains(".diag.single > div { align-items: center; }"));
 		// dark mode, option B "stronger", in both dark blocks (system setting and explicit theme)

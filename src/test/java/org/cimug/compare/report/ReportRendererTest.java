@@ -348,7 +348,7 @@ public class ReportRendererTest {
 		String cell = page.substring(row, page.indexOf("</td>", row));
 		assertTrue(cell, cell.contains("<span class=\"info info-chg\""));
 		assertTrue(cell, cell.contains("metadata changed - hover"));
-		assertTrue(cell, cell.contains("metadata changed - see below"));
+		assertTrue(cell, cell.contains("metadata changed - show details"));
 		// ratedS changed its type and multiplicity, which its row shows: plain ⓘ, no note
 		row = page.indexOf("data-name=\"ratedS\"");
 		cell = page.substring(row, page.indexOf("</td>", row));

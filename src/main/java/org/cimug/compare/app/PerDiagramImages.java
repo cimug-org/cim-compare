@@ -79,15 +79,24 @@ class PerDiagramImages {
 		return new File(imagesDir(baseline), eaid + "." + format.ext());
 	}
 
+	/** #204: how many of the destination diagrams are unchanged ones drawn for --full (set per run). */
+	int unchanged;
+
 	/** Draws the images of the diagrams given for each side. */
 	void draw(Set<String> baseline, Set<String> destination) {
 		if (baseline.isEmpty() && destination.isEmpty())
 			return;
-		System.out.println("\nDrawing the " + (baseline.size() + destination.size()) + " image(s) of the diagrams that changed ("
-				+ baseline.size() + " baseline, " + destination.size() + " destination) as " + format.name() + ".");
+		System.out.println("\n" + message(baseline.size(), destination.size(), unchanged, format.name()));
 		drawSide(true, baseline);
 		if (unavailable == null)
 			drawSide(false, destination);
+	}
+
+	/** The line printed before drawing; the unchanged diagrams (#204, --full) are counted apart. */
+	static String message(int baseline, int destination, int unchanged, String format) {
+		return "Drawing the " + (baseline + destination) + " image(s) of the diagrams that changed"
+				+ (unchanged > 0 ? " and of " + unchanged + " unchanged one(s)" : "") + " (" + baseline + " baseline, "
+				+ destination + " destination) as " + format + ".";
 	}
 
 	/** Draws one side's images with EA. Overridden in tests. */

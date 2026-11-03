@@ -197,6 +197,9 @@ public class ConsistencyRulesTest {
 		assertTrue(page.contains("body:not(.meta-inline) .hov-hide { display: none; }"));
 		assertTrue(page.contains(".pop .lbl.sp, tr.meta .lbl.sp { margin-top: 24px; }"));
 		assertTrue(page.contains("--diag-panel: #aab3bd; --diag-img: #d9dee5;"));
+		// #219: the report uses the full width of the window
+		assertTrue(page.contains(".wrap { padding: 12px 16px 60px; }"));
+		assertFalse(page.contains("max-width: 1880px"));
 		// #199: the inline-mode ▶ / "show details" controls are hidden in hover mode and in print
 		assertTrue(page.contains("body:not(.meta-inline) .xchev, body:not(.meta-inline) .xdet { display: none; }"));
 		assertTrue(page.contains("@media print { .xchev, .xdet { display: none !important; } }"));

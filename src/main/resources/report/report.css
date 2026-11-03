@@ -268,12 +268,18 @@ table.attrs .info:hover { color: var(--ink); border-color: var(--ink); }
 .info.info-chg { position: relative; color: var(--changed-ink); border-color: var(--changed-ink); }
 /* the dot sits on the ring at about 1:30, 9 px from the icon's centre, overlapping it */
 .info.info-chg::after { content: ""; position: absolute; top: -1.5px; right: -3.1px; width: 6px; height: 6px; border-radius: 50%; background: #2864d2; }
+body.meta-inline .info.info-chg::after { display: none; }  /* #199: inline mode shows everything on the page, so no ⓘ marks a hidden change */
+body.meta-inline .info.info-chg { color: var(--muted); border-color: var(--faint); }  /* and the ⓘ is plain grey, like every other */
+body.meta-inline .info.info-chg:hover { color: var(--ink); border-color: var(--ink); }
 table.attrs .mnote { margin-left: 6px; font: italic 400 11px var(--sans); color: var(--muted); white-space: nowrap; }
 /* #137 the drawn ⓘ in running text (legend, "not shown" note, "metadata changed - hover") */
 svg.ii { width: 1.1em; height: 1.1em; vertical-align: -0.2em; margin-right: .3em; flex: none; }
 .legend svg.ii { margin-right: -1px; }
 .mnote svg.ii { margin: 0 0 0 .25em; }
 body.meta-inline table.attrs .mnote .m-hover, body:not(.meta-inline) table.attrs .mnote .m-inline { display: none; }
+/* #199: paper cannot hover, and printing shows every section, so a printout reads as inline mode:
+   no dot on any ⓘ, and "metadata changed" without "- hover ⓘ" */
+@media print { .info.info-chg::after { display: none !important; } .info.info-chg { color: var(--muted) !important; border-color: var(--faint) !important; } table.attrs .mnote .m-hover { display: none !important; } table.attrs .mnote .m-inline { display: inline !important; } }
 tr.meta { display: none; }
 tr.meta.open { display: table-row; }
 tr.meta > td { background: var(--ground); padding: 6px 10px; }
@@ -505,3 +511,16 @@ td.hatch { background: repeating-linear-gradient(135deg, transparent 0 8px, var(
 /* link ends stay side by side; a long name wraps between its words (the report adds <wbr>) */
 .linkB .endsB > div { min-width: 0; }
 .linkB table.t td { overflow-wrap: break-word; }
+
+/* #199 inline mode: each attribute's details open with a ▶ and "show details" (or its ⓘ);
+   closed by default; Expand all opens them all. Hidden in hover mode. */
+body:not(.meta-inline) .xchev, body:not(.meta-inline) .xdet { display: none; }
+.xchev { display: inline-block; width: 13px; height: 8px; vertical-align: 0; cursor: pointer; user-select: none; }
+.xchev::before { content: ""; display: block; width: 0; height: 0; margin-left: 1px; border-style: solid; border-width: 4px 0 4px 6px;
+  border-color: transparent transparent transparent var(--muted); transition: transform .1s; transform-origin: 3px 4px; }
+.xchev[aria-expanded="true"]::before { transform: rotate(90deg); }
+.xchev:hover::before { border-left-color: var(--link); }
+.xdet { display: block; margin-top: 2px; font: italic 11px var(--sans); color: var(--link); cursor: pointer; user-select: none; width: max-content; }
+.xdet:hover { text-decoration: underline; }
+.xchev:focus-visible, .xdet:focus-visible { outline: 2px solid var(--focus); outline-offset: 1px; border-radius: 2px; }
+@media print { .xchev, .xdet { display: none !important; } }

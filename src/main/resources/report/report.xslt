@@ -628,6 +628,8 @@
     <xsl:variable name="nm" select="r:prop(., 'Name', 'model')"/>
     <tr data-status="{$st}" id="{@id}" data-name="{@name}" data-kind="•" data-path="{r:path(.)}::{../@name}">
       <td class="nm c-{$st}">
+        <!-- #199: in inline mode the details (notes, metadata, tagged values) are opened here, or with the ⓘ -->
+        <span class="xchev" role="button" tabindex="0" aria-expanded="false" title="Show or hide this attribute’s notes, metadata and tagged values"></span>
         <xsl:choose>
           <xsl:when test="@renamedFrom"><xsl:value-of select="r:new-name(.)"/></xsl:when>
           <xsl:otherwise><xsl:value-of select="@name"/></xsl:otherwise>
@@ -635,9 +637,10 @@
         <!-- #123: a change the row does not show (e.g. Default, Const, Stereotype) marks the ⓘ and adds a note -->
         <xsl:variable name="hidden" select="$st = 'changed' and (exists(Properties/Property[@status != 'identical' and not(@name = $row-shown)]) or exists(Tags/Tag[@status != 'identical']))"/>
         <span class="info{if ($hidden) then ' info-chg' else ''}" data-id="{@guid}">i</span>
-        <xsl:if test="$hidden"><span class="mnote"><span class="m-hover">metadata changed - hover<xsl:copy-of select="$ii"/></span><span class="m-inline">metadata changed - see below</span></span></xsl:if>
+        <xsl:if test="$hidden"><span class="mnote"><span class="m-hover">metadata changed - hover<xsl:copy-of select="$ii"/></span><span class="m-inline">metadata changed</span></span></xsl:if>
         <xsl:if test="@renamedFrom"><span class="renamed-from">renamed from <xsl:value-of select="@renamedFrom"/></span></xsl:if>
         <span class="guid"><xsl:value-of select="@guid"/></span>
+        <span class="xdet" role="button" tabindex="0">show details</span>
       </td>
       <xsl:choose>
         <xsl:when test="$st = 'added'"><td class="nx">did not exist</td></xsl:when>

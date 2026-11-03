@@ -122,7 +122,7 @@ button { font: inherit; }
 .hdr .seg button.on { background: var(--head-ink); color: var(--head); }
 
 /* ---------- summary & legend ---------- */
-.wrap { padding: 12px 16px 60px; max-width: 1880px; margin: 0 auto; }
+.wrap { padding: 12px 16px 60px; }  /* #219: the full width of the window */
 .note { background: var(--moved); border: 1px solid var(--moved-line); color: var(--moved-ink); padding: 6px 10px; border-radius: var(--r); margin-bottom: 10px; font-size: var(--fs-s); }
 .summary { display: flex; flex-wrap: wrap; gap: 6px 18px; align-items: center; background: var(--surface); border: 1px solid var(--line);
   border-radius: var(--r); padding: 8px 12px; margin-bottom: 8px; }

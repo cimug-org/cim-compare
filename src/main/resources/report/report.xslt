@@ -637,7 +637,7 @@
         <!-- #123: a change the row does not show (e.g. Default, Const, Stereotype) marks the ⓘ and adds a note -->
         <xsl:variable name="hidden" select="$st = 'changed' and (exists(Properties/Property[@status != 'identical' and not(@name = $row-shown)]) or exists(Tags/Tag[@status != 'identical']))"/>
         <span class="info{if ($hidden) then ' info-chg' else ''}" data-id="{@guid}">i</span>
-        <xsl:if test="$hidden"><span class="mnote"><span class="m-hover">metadata changed - hover<xsl:copy-of select="$ii"/></span><span class="m-inline">metadata changed - show details</span></span></xsl:if>
+        <xsl:if test="$hidden"><span class="mnote"><span class="m-hover">metadata changed - hover<xsl:copy-of select="$ii"/></span><span class="m-inline">metadata changed</span></span></xsl:if>
         <xsl:if test="@renamedFrom"><span class="renamed-from">renamed from <xsl:value-of select="@renamedFrom"/></span></xsl:if>
         <span class="guid"><xsl:value-of select="@guid"/></span>
         <span class="xdet" role="button" tabindex="0">show details</span>

@@ -200,6 +200,8 @@ public class ConsistencyRulesTest {
 		// #199: the inline-mode ▶ / "show details" controls are hidden in hover mode and in print
 		assertTrue(page.contains("body:not(.meta-inline) .xchev, body:not(.meta-inline) .xdet { display: none; }"));
 		assertTrue(page.contains("@media print { .xchev, .xdet { display: none !important; } }"));
+		// #199: inline mode shows everything on the page, so no ⓘ anywhere carries the dot
+		assertTrue(page.contains("body.meta-inline .info.info-chg::after { display: none; }"));
 		// #204: an unchanged diagram's one image, at its own size, centred in a full-width panel
 		assertTrue(page.contains(".diag.single > div { align-items: center; }"));
 		// dark mode, option B "stronger", in both dark blocks (system setting and explicit theme)

@@ -268,6 +268,7 @@ table.attrs .info:hover { color: var(--ink); border-color: var(--ink); }
 .info.info-chg { position: relative; color: var(--changed-ink); border-color: var(--changed-ink); }
 /* the dot sits on the ring at about 1:30, 9 px from the icon's centre, overlapping it */
 .info.info-chg::after { content: ""; position: absolute; top: -1.5px; right: -3.1px; width: 6px; height: 6px; border-radius: 50%; background: #2864d2; }
+body.meta-inline .info.info-chg::after { display: none; }  /* #199: inline mode shows everything on the page, so no ⓘ marks a hidden change */
 table.attrs .mnote { margin-left: 6px; font: italic 400 11px var(--sans); color: var(--muted); white-space: nowrap; }
 /* #137 the drawn ⓘ in running text (legend, "not shown" note, "metadata changed - hover") */
 svg.ii { width: 1.1em; height: 1.1em; vertical-align: -0.2em; margin-right: .3em; flex: none; }

@@ -200,6 +200,9 @@ public class ConsistencyRulesTest {
 		// #219: the report uses the full width of the window
 		assertTrue(page.contains(".wrap { padding: 12px 16px 60px; }"));
 		assertFalse(page.contains("max-width: 1880px"));
+		// and the highlight boxes stay on the image when a panel is wider than it
+		assertTrue(page.contains(".diag > div > .dimg { align-self: flex-start; }"));
+		assertTrue(page.contains(".diag.single > div > .dimg { align-self: center; }"));
 		// #199: the inline-mode ▶ / "show details" controls are hidden in hover mode and in print
 		assertTrue(page.contains("body:not(.meta-inline) .xchev, body:not(.meta-inline) .xdet { display: none; }"));
 		assertTrue(page.contains("@media print { .xchev, .xdet { display: none !important; } }"));

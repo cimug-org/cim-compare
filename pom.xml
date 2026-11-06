@@ -200,4 +200,44 @@
             </plugin>
         </plugins>
     </build>
+    <!-- Browser layout tests (#219): opt-in, because they need Chromium. Run with
+             mvn verify -Playout
+         The first run downloads Chromium (about 150 MB) unless -Dlayout.chromium=<path to a
+         Chromium executable> is given. The normal build neither compiles nor runs them. -->
+    <profiles>
+        <profile>
+            <id>layout</id>
+            <dependencies>
+                <dependency>
+                    <groupId>com.microsoft.playwright</groupId>
+                    <artifactId>playwright</artifactId>
+                    <version>1.49.0</version>
+                    <scope>test</scope>
+                </dependency>
+            </dependencies>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>build-helper-maven-plugin</artifactId>
+                        <version>3.6.0</version>
+                        <executions>
+                            <execution>
+                                <id>add-layout-tests</id>
+                                <phase>generate-test-sources</phase>
+                                <goals>
+                                    <goal>add-test-source</goal>
+                                </goals>
+                                <configuration>
+                                    <sources>
+                                        <source>${maven.multiModuleProjectDirectory}/src/layout-test/java</source>
+                                    </sources>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 </project>

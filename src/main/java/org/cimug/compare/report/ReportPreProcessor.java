@@ -64,7 +64,7 @@ import org.w3c.dom.NodeList;
  *         Properties
  *         End @side (source|target) @guid @status [@baselineClassId] [@modelClassId]
  *           Properties
- *     Diagram @name @guid @id @eaid @status [@renamedFrom]
+ *     Diagram @name @guid @id @eaid @status [@renamedFrom] [@shift (dx,dy: EA shifted the whole diagram, #225)]
  *       Notes, Properties
  *       Highlight @kind (added|removed|moved|changed|restyled) @side (baseline|destination)
  *                 @box (left,top,right,bottom in image pixels) @name
@@ -417,10 +417,55 @@ public class ReportPreProcessor {
 		Element e = element("Diagram", d, status);
 		e.setAttribute("eaid", eaid(attr(d, "guid")));
 		copyNotesAndProperties(d, e);
-		if (!"identical".equals(status))
+		if (!"identical".equals(status)) {
 			addHighlights(d, e);
+			String shift = shift(d);
+			if (shift != null)
+				e.setAttribute("shift", shift);
+		}
 		count("diagram", status);
 		return e;
+	}
+
+	/** #225: elements that must agree on a whole-diagram shift before the report uses it. */
+	static final int SHIFT_VOTES = 2;
+
+	/**
+	 * #225: how far EA shifted the whole diagram between the two images ("dx,dy",
+	 * destination minus baseline, in image pixels): the offset most of the elements on
+	 * both images share, counting those whose box kept its size. Null when there is no
+	 * shift, or fewer than {@link #SHIFT_VOTES} elements agree on it.
+	 */
+	static String shift(Element d) {
+		java.util.Map<String, Integer> votes = new java.util.HashMap<>();
+		for (Element o : children(d, "CompareItem")) {
+			if (!"diagramobject".equals(kindOf(o)))
+				continue;
+			int[] b = box(prop(o, "Box", "baseline")), m = box(prop(o, "Box", "model"));
+			if (b == null || m == null || b[2] - b[0] != m[2] - m[0] || b[3] - b[1] != m[3] - m[1])
+				continue;
+			votes.merge((m[0] - b[0]) + "," + (m[1] - b[1]), 1, Integer::sum);
+		}
+		String best = null;
+		int n = 0;
+		for (java.util.Map.Entry<String, Integer> v : votes.entrySet())
+			if (v.getValue() > n || (v.getValue() == n && v.getKey().compareTo(best) < 0)) {
+				best = v.getKey();
+				n = v.getValue();
+			}
+		return best == null || n < SHIFT_VOTES || "0,0".equals(best) ? null : best;
+	}
+
+	/** A box "left,top,right,bottom"; null when it is not one. */
+	private static int[] box(String s) {
+		String[] v = s.split(",");
+		if (v.length != 4)
+			return null;
+		try {
+			return new int[] { Integer.parseInt(v[0].trim()), Integer.parseInt(v[1].trim()), Integer.parseInt(v[2].trim()), Integer.parseInt(v[3].trim()) };
+		} catch (NumberFormatException e) {
+			return null;
+		}
 	}
 
 	/**

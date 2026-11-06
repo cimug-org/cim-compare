@@ -478,13 +478,18 @@
     refreshEnds(r.closest('.detail'));
   });
 
-  /* ---- lightbox: the image and its highlights; #153 zoom and pan ----
+  /* ---- lightbox: the image and its highlights; #153 zoom and pan; #225 both images ----
      The image is zoomed by setting its size (not a CSS scale), so the browser draws an SVG
      sharp at every zoom; the highlights are placed as percentages of the image, so they
-     follow it, and keep their line width. */
+     follow it, and keep their line width. A diagram with a baseline and a destination
+     image opens both, side by side: zooming and moving act on the two at once, at one
+     scale, from the same place in each pane. Where EA shifted the whole diagram
+     (data-shift), the destination is drawn that much the other way, so an element on
+     both images is at the same place in both panes ("on the diagram"). */
   var lb = $('#lightbox');
-  var Z = null;   /* the open lightbox: { stage, copy, img, lvl, w, h, s, x, y, fit, max } */
+  var Z = null;   /* the open lightbox: { panes: [{ stage, copy, img, w, h, dest }], lvl, s, x, y, fit, max, shift, align } */
   var HINT = 'Scroll to zoom · drag to move · Esc to close';
+  var HINT2 = 'Scroll to zoom · drag to move · both images move together · Esc to close';
   function lbButton(text, title, fn) {
     var b = document.createElement('button'); b.type = 'button'; b.textContent = text;
     b.title = title; b.setAttribute('aria-label', title);
@@ -492,57 +497,118 @@
     return b;
   }
   function lbSep() { var s = document.createElement('span'); s.className = 'sep'; return s; }
+  /* where a pane's image is drawn from, in image pixels: the destination moved back by the shift */
+  function lbOff(p) { return p.dest && Z.align === 'diagram' ? [-Z.shift[0], -Z.shift[1]] : [0, 0]; }
   function lbApply() {
-    Z.img.style.width = (Z.w * Z.s) + 'px'; Z.img.style.height = (Z.h * Z.s) + 'px';
-    Z.copy.style.transform = 'translate(' + Z.x + 'px,' + Z.y + 'px)';
+    Z.panes.forEach(function (p) {
+      var o = lbOff(p);
+      p.img.style.width = (p.w * Z.s) + 'px'; p.img.style.height = (p.h * Z.s) + 'px';
+      p.copy.style.transform = 'translate(' + (Z.x + o[0] * Z.s) + 'px,' + (Z.y + o[1] * Z.s) + 'px)';
+    });
     Z.lvl.textContent = Math.round(Z.s * 100) + '%';
   }
-  function lbFitScale() {
-    var r = Z.stage.getBoundingClientRect();
-    return Math.min(1, (r.width - 40) / Z.w, (r.height - 40) / Z.h);
+  /* the images together, in image pixels */
+  function lbUnion() {
+    var x0 = Infinity, y0 = Infinity, x1 = -Infinity, y1 = -Infinity;
+    Z.panes.forEach(function (p) {
+      var o = lbOff(p);
+      x0 = Math.min(x0, o[0]); y0 = Math.min(y0, o[1]); x1 = Math.max(x1, o[0] + p.w); y1 = Math.max(y1, o[1] + p.h);
+    });
+    return { x0: x0, y0: y0, w: x1 - x0, h: y1 - y0 };
   }
-  /* zoom to scale s, keeping the point (cx, cy) of the stage where it is */
+  function lbRect() { return Z.panes[0].stage.getBoundingClientRect(); }
+  /* one scale for both images, so an element is the same size on each side */
+  function lbFitScale() {
+    var r = lbRect(), s = 1;
+    Z.panes.forEach(function (p) { s = Math.min(s, (r.width - 40) / p.w, (r.height - 40) / p.h); });
+    return s;
+  }
+  /* zoom to scale s, keeping the point (cx, cy) of the pane where it is */
   function lbZoomAt(s, cx, cy) {
     s = Math.max(Math.min(Z.fit, 1) / 2, Math.min(Z.max, s));
     Z.x = cx - (cx - Z.x) * s / Z.s; Z.y = cy - (cy - Z.y) * s / Z.s; Z.s = s;
     lbKeepInView(); lbApply();
   }
-  function lbCentre(s) { var r = Z.stage.getBoundingClientRect(); lbZoomAt(s, r.width / 2, r.height / 2); }
+  function lbCentre(s) { var r = lbRect(); lbZoomAt(s, r.width / 2, r.height / 2); }
   function lbFit() {
-    var r = Z.stage.getBoundingClientRect();
-    Z.fit = lbFitScale(); Z.s = Z.fit;
-    Z.x = (r.width - Z.w * Z.s) / 2; Z.y = (r.height - Z.h * Z.s) / 2; lbApply();
+    var r = lbRect(), u;
+    Z.fit = lbFitScale(); Z.s = Z.fit; u = lbUnion();
+    Z.x = (r.width - u.w * Z.s) / 2 - u.x0 * Z.s; Z.y = (r.height - u.h * Z.s) / 2 - u.y0 * Z.s; lbApply();
   }
-  /* at least 80 px of the image stays in view */
+  /* at least 80 px of the images stays in view */
   function lbKeepInView() {
-    var r = Z.stage.getBoundingClientRect(), w = Z.w * Z.s, h = Z.h * Z.s, m = 80;
-    Z.x = Math.min(r.width - m, Math.max(m - w, Z.x)); Z.y = Math.min(r.height - m, Math.max(m - h, Z.y));
+    var r = lbRect(), u = lbUnion(), m = 80;
+    var left = Z.x + u.x0 * Z.s, top = Z.y + u.y0 * Z.s, w = u.w * Z.s, h = u.h * Z.s;
+    Z.x += Math.min(r.width - m, Math.max(m - w, left)) - left;
+    Z.y += Math.min(r.height - m, Math.max(m - h, top)) - top;
   }
-  function lbClose() { lb.classList.remove('on'); lb.replaceChildren(); Z = null; }
+  function lbClose() { lb.classList.remove('on', 'two', 'keyed'); lb.replaceChildren(); Z = null; }
+  function lbMinus(n) { return String(n).replace('-', '−'); }
   function lbOpen(wrap) {
-    var copy = wrap.cloneNode(true);
-    var img = copy.querySelector('img'); img.removeAttribute('loading');
-    img.draggable = false;   /* the browser's own image drag-and-drop would take over the pointer */
-    var stage = document.createElement('div'); stage.className = 'lb-stage'; stage.appendChild(copy);
+    var diag = wrap.closest('.diag');
+    var wraps = [].filter.call(diag.querySelectorAll('.dimg'), function (w) { return w.querySelector('img'); });
+    var two = wraps.length === 2;
+    if (!two) wraps = [wrap];
+    var shift = two && diag.dataset.shift ? diag.dataset.shift.split(',').map(Number) : null;
+    var panes = [], parts = [];
+    wraps.forEach(function (w) {
+      var copy = w.cloneNode(true);
+      var img = copy.querySelector('img'); img.removeAttribute('loading');
+      img.draggable = false;   /* the browser's own image drag-and-drop would take over the pointer */
+      var stage = document.createElement('div'); stage.className = 'lb-stage'; stage.appendChild(copy);
+      panes.push({ stage: stage, copy: copy, img: img, dest: w.dataset.side === 'destination' });
+      if (two) {
+        var pane = document.createElement('div'); pane.className = 'lb-pane';
+        var lbl = document.createElement('div'); lbl.className = 'lb-lbl';
+        lbl.textContent = w.dataset.side === 'destination' ? 'Destination' : 'Baseline';
+        pane.append(lbl, stage); parts.push(pane);
+      } else parts.push(stage);
+    });
+    var body = parts[0];
+    if (two) { body = document.createElement('div'); body.className = 'lb-panes'; body.append(parts[0], parts[1]); }
     var tools = document.createElement('div'); tools.className = 'lb-tools';
     var lvl = document.createElement('span'); lvl.className = 'lvl';
     tools.append(lbButton('−', 'Zoom out (−)', function () { lbCentre(Z.s / 1.25); }), lvl,
       lbButton('+', 'Zoom in (+)', function () { lbCentre(Z.s * 1.25); }), lbSep(),
-      lbButton('Fit', 'Fit the whole diagram (0)', lbFit),
-      lbButton('100%', 'The diagram at its own size', function () { lbCentre(1); }), lbSep(),
-      lbButton('✕', 'Close (Esc)', lbClose));
-    var hint = document.createElement('div'); hint.className = 'lb-hint'; hint.textContent = HINT;
-    lb.replaceChildren(stage, tools, hint); lb.classList.add('on');
-    function start() {
-      if (!img.naturalWidth) return;
-      /* SVG stays sharp: zoom far; JPG/PNG/GIF/BMP blur past their own size: up to 200% */
-      var svg = /\.svg(\?|#|$)/i.test(img.getAttribute('src') || '');
-      Z = { stage: stage, copy: copy, img: img, lvl: lvl, w: img.naturalWidth, h: img.naturalHeight,
-            s: 1, x: 0, y: 0, fit: 1, max: svg ? 8 : 2 };
-      placeBoxes(copy); lbFit();
+      lbButton('Fit', two ? 'Fit both diagrams (0)' : 'Fit the whole diagram (0)', lbFit),
+      lbButton('100%', two ? 'The diagrams at their own size' : 'The diagram at its own size', function () { lbCentre(1); }), lbSep());
+    var seg = null;
+    if (shift) {   /* only where EA shifted the diagram: elsewhere the two would be the same */
+      var lab = document.createElement('span'); lab.className = 'seg-lbl'; lab.textContent = 'Align';
+      seg = document.createElement('span'); seg.className = 'seg';
+      seg.append(lbButton('on the diagram', 'Line the two images up so an element on both is at the same place', function () { lbAlign('diagram'); }),
+        lbButton('top-left corners', 'Line the two images up at their top-left corners', function () { lbAlign('corners'); }));
+      tools.append(lab, seg, lbSep());
     }
-    if (img.complete && img.naturalWidth) start(); else img.addEventListener('load', start);
-    lbGestures(stage);
+    tools.append(lbButton('✕', 'Close (Esc)', lbClose));
+    /* the diagram's highlight key, across the top, beneath the controls (not with highlights off) */
+    var key = null, legend = diag.previousElementSibling;
+    if (legend && legend.classList.contains('hl-legend') && !document.body.classList.contains('no-hl')) {
+      key = document.createElement('div'); key.className = 'lb-key'; key.appendChild(legend.cloneNode(true));
+    }
+    var hint = document.createElement('div'); hint.className = 'lb-hint';
+    hint.textContent = two ? HINT2 + (shift ? ' · EA shifted this diagram ' + lbMinus(shift[0]) + ', ' + lbMinus(shift[1]) + ' px' : '') : HINT;
+    lb.replaceChildren.apply(lb, [body].concat(key ? [key] : [], [tools, hint]));
+    lb.classList.toggle('two', two); lb.classList.toggle('keyed', !!key); lb.classList.add('on');
+    function lbAlign(a) {
+      if (!Z) return;
+      Z.align = a;
+      [].forEach.call(seg.children, function (b, i) { b.classList.toggle('on', (i === 0) === (a === 'diagram')); });
+      lbFit();
+    }
+    var pending = panes.length;
+    function start() {
+      if (--pending > 0 || lb.firstChild !== body) return;
+      /* SVG stays sharp: zoom far; JPG/PNG/GIF/BMP blur past their own size: up to 200% */
+      var svg = /\.svg(\?|#|$)/i.test(panes[0].img.getAttribute('src') || '');
+      panes.forEach(function (p) { p.w = p.img.naturalWidth; p.h = p.img.naturalHeight; placeBoxes(p.copy); });
+      Z = { panes: panes, lvl: lvl, s: 1, x: 0, y: 0, fit: 1, max: svg ? 8 : 2, shift: shift || [0, 0], align: 'corners' };
+      if (shift) lbAlign('diagram'); else lbFit();
+    }
+    panes.forEach(function (p) {
+      if (p.img.complete && p.img.naturalWidth) start(); else p.img.addEventListener('load', start);
+      lbGestures(p.stage);
+    });
   }
   function lbGestures(stage) {
     var pts = new Map(), moved = 0, last = null, pinch = null, onImage = false;
@@ -591,7 +657,7 @@
       if (pts.size === 1) last = Array.from(pts.values())[0];
       if (pts.size === 0) {
         stage.classList.remove('dragging');
-        /* a click (not a drag) outside the image closes the lightbox; where the press began
+        /* a click (not a drag) outside the images closes the lightbox; where the press began
            decides, since a captured pointer's events all go to the stage */
         if (e.type === 'pointerup' && moved < 4 && !onImage) lbClose();
         last = null;

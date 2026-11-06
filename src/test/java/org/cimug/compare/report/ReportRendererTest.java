@@ -541,5 +541,11 @@ public class ReportRendererTest {
 		assertTrue(page.contains(".lb-tools {"));
 		assertTrue(page.contains("function lbZoomAt("));
 		assertTrue(page.contains("'Fit the whole diagram (0)'"));
+		// #225: a diagram's two images open side by side, with its highlight key; the fixture's
+		// diagrams were not shifted, so none carries a shift
+		assertTrue(page.contains("'Fit both diagrams (0)'"));
+		assertTrue(page.contains(".lb-panes {"));
+		assertTrue(page.contains(".lb-key {"));
+		assertFalse(page.contains("data-shift="));
 	}
 }

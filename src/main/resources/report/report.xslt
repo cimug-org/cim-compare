@@ -861,6 +861,11 @@
               </div>
             </xsl:if>
             <div class="diag">
+              <!-- #225: the whole-diagram shift lines the two images up in the enlarged view
+                   (not when either image is a PNG drawn instead of an SVG, #139) -->
+              <xsl:if test="@shift and (@baseline-ext, $image-type)[1] = $image-type and (@destination-ext, $image-type)[1] = $image-type">
+                <xsl:attribute name="data-shift" select="@shift"/>
+              </xsl:if>
               <div><div class="lbl">Baseline</div>
                 <xsl:choose>
                   <xsl:when test="$st = 'added'"><div class="nx">Diagram did not exist in the baseline model.</div></xsl:when>

@@ -27,7 +27,7 @@ import com.microsoft.playwright.Page;
 import com.microsoft.playwright.Playwright;
 
 /**
- * Checks the report's layout in a real browser (#219): the things the text-based tests cannot
+ * Checks the report's layout in a real browser (#219, #225): the things the text-based tests cannot
  * see. Opt-in: {@code mvn verify -Playout} (see pom.xml). Uses the mini comparison fixture with a
  * real EA diagram image (373 px wide, narrower than a diagram panel at every width tested), so a
  * stretched image frame would put the highlight boxes off the image at once.
@@ -166,6 +166,110 @@ public class ReportLayoutTest {
 					+ " const img = r.parentElement.querySelector('.diag.single img').getBoundingClientRect();"
 					+ " return Math.abs((panel.left + panel.width / 2) - (img.left + img.width / 2)); }");
 			assertTrue("the unchanged diagram's image is centred at " + width + " px (off by " + offset + " px)", offset.doubleValue() <= 1.5);
+			page.close();
+		}
+	}
+
+	/**
+	 * Opens the enlarged view of a diagram by clicking one of its images (after {@code prep}, a
+	 * script run on the diagram's .diag first) and returns the page, with the view at Fit.
+	 */
+	private static Page enlarge(File html, int width, String diagram, String side, String prep) {
+		Page page = open(html, width);
+		page.evaluate("([name, side, prep]) => { const d = [...document.querySelectorAll('.node.dia > .row')].find(r => r.dataset.name === name)"
+				+ ".parentElement.querySelector('.diag'); if (prep) new Function('diag', prep)(d);"
+				+ " d.querySelector('.dimg[data-side=\"' + side + '\"]').scrollIntoView(); d.querySelector('.dimg[data-side=\"' + side + '\"] img').click(); }",
+				java.util.Arrays.asList(diagram, side, prep == null ? "" : prep));
+		page.waitForFunction("() => document.querySelector('#lightbox.on .lb-stage .dimg img') && document.querySelector('#lightbox .lb-tools .lvl').textContent !== ''");
+		return page;
+	}
+
+	/** Each pane's image in the enlarged view: [left, top] in its pane, its width, and its natural width. */
+	@SuppressWarnings("unchecked")
+	private static List<List<Number>> panes(Page page) {
+		return (List<List<Number>>) page.evaluate("() => [...document.querySelectorAll('#lightbox .lb-stage')].map(s => {"
+				+ " const r = s.getBoundingClientRect(), i = s.querySelector('img'), g = i.getBoundingClientRect();"
+				+ " return [g.left - r.left, g.top - r.top, g.width, i.naturalWidth]; })");
+	}
+
+	private static void sameView(String where, List<List<Number>> p, double dx, double dy) {
+		assertEquals(where + ": two panes", 2, p.size());
+		double s = p.get(0).get(2).doubleValue() / p.get(0).get(3).doubleValue();
+		assertEquals(where + ": one scale for both images", s, p.get(1).get(2).doubleValue() / p.get(1).get(3).doubleValue(), 0.002);
+		assertEquals(where + ": across", dx * s, p.get(1).get(0).doubleValue() - p.get(0).get(0).doubleValue(), 1.0);
+		assertEquals(where + ": down", dy * s, p.get(1).get(1).doubleValue() - p.get(0).get(1).doubleValue(), 1.0);
+	}
+
+	@Test
+	public void bothImagesOpenSideBySideAndMoveTogether() {
+		for (int width : WIDTHS) {
+			Page page = enlarge(normal, width, "CoreOverview", "destination", null);
+			String where = "CoreOverview at " + width + " px";
+			assertEquals(where + ": labelled panes", "Baseline,Destination",
+					page.evaluate("() => [...document.querySelectorAll('#lightbox .lb-lbl')].map(l => l.textContent).join(',')"));
+			sameView(where + " at Fit", panes(page), 0, 0);
+			// zoom on one pane and drag in the other: both images follow
+			page.mouse().move(width / 4.0, 500);
+			page.mouse().wheel(0, -400);
+			page.mouse().move(width * 0.75, 500);
+			page.mouse().down();
+			page.mouse().move(width * 0.75 - 120, 440, new com.microsoft.playwright.Mouse.MoveOptions().setSteps(5));
+			page.mouse().up();
+			List<List<Number>> p = panes(page);
+			assertTrue(where + ": zoomed in", p.get(0).get(2).doubleValue() / p.get(0).get(3).doubleValue() > 1);
+			sameView(where + " after zooming and dragging", p, 0, 0);
+			assertEquals(where + ": no Align setting on a diagram EA did not shift", 0, ((Number) page.evaluate("() => document.querySelectorAll('#lightbox .seg').length")).intValue());
+			page.keyboard().press("Escape");
+			assertEquals(where + ": Esc closes the view", Boolean.FALSE, page.evaluate("() => document.querySelector('#lightbox').classList.contains('on')"));
+			page.close();
+		}
+	}
+
+	@Test
+	public void aShiftedDiagramLinesUpOnTheDiagram() {
+		for (int width : WIDTHS) {
+			// the shift the report computed (ReportPreProcessorTest checks how): destination minus baseline
+			Page page = enlarge(normal, width, "CoreOverview", "baseline", "diag.dataset.shift = '-40,25';");
+			String where = "a shifted CoreOverview at " + width + " px";
+			sameView(where + ", on the diagram", panes(page), 40, -25);
+			assertTrue(where + ": the hint gives the shift", ((String) page.evaluate("() => document.querySelector('#lightbox .lb-hint').textContent"))
+					.endsWith("EA shifted this diagram \u221240, 25 px"));
+			page.click("#lightbox .seg button:has-text('top-left corners')");
+			sameView(where + ", at the corners", panes(page), 0, 0);
+			page.click("#lightbox .seg button:has-text('on the diagram')");
+			sameView(where + ", on the diagram again", panes(page), 40, -25);
+			page.close();
+		}
+	}
+
+	@Test
+	public void theEnlargedViewShowsTheDiagramsHighlightKeyAcrossTheTop() {
+		for (int width : WIDTHS) {
+			Page page = enlarge(normal, width, "CoreOverview", "destination", null);
+			String where = "at " + width + " px";
+			@SuppressWarnings("unchecked")
+			Map<String, Object> k = (Map<String, Object>) page.evaluate("() => { const k = document.querySelector('#lightbox .lb-key .hl-legend').getBoundingClientRect(),"
+					+ " p = [...document.querySelectorAll('#lightbox .lb-pane')].map(e => e.getBoundingClientRect()),"
+					+ " t = document.querySelector('#lightbox .lb-tools').getBoundingClientRect(),"
+					+ " page = [...document.querySelectorAll('.node.dia > .row')].find(r => r.dataset.name === 'CoreOverview').parentElement.querySelector('.hl-legend');"
+					+ " return { left: k.left - p[0].left, right: p[1].right - k.right, belowTools: k.top - t.bottom, abovePanes: p[0].top - k.bottom,"
+					+ "   keys: document.querySelector('#lightbox .lb-key .hl-legend').textContent, pageKeys: page.textContent }; }");
+			assertEquals(where + ": the key starts at the baseline pane", 0, ((Number) k.get("left")).doubleValue(), 1);
+			assertEquals(where + ": and ends at the destination pane", 0, ((Number) k.get("right")).doubleValue(), 1);
+			assertTrue(where + ": beneath the controls", ((Number) k.get("belowTools")).doubleValue() >= 0);
+			assertTrue(where + ": above the images", ((Number) k.get("abovePanes")).doubleValue() >= 0);
+			assertEquals(where + ": the diagram's own key", k.get("pageKeys"), k.get("keys"));
+			page.close();
+			// one image (here the baseline image taken away): the single view, with the key above the image
+			page = enlarge(normal, width, "CoreOverview", "destination", "diag.querySelector('.dimg[data-side=\"baseline\"]').remove();");
+			Number gap = (Number) page.evaluate("() => document.querySelector('#lightbox .lb-stage').getBoundingClientRect().top"
+					+ " - document.querySelector('#lightbox .lb-key').getBoundingClientRect().bottom");
+			assertEquals(where + ": one image, no panes", 0, ((Number) page.evaluate("() => document.querySelectorAll('#lightbox .lb-pane').length")).intValue());
+			assertTrue(where + ": one image, the key above it", gap.doubleValue() >= 0);
+			page.close();
+			// highlights turned off: no key
+			page = enlarge(normal, width, "CoreOverview", "destination", "document.body.classList.add('no-hl');");
+			assertEquals(where + ": no key with highlights off", 0, ((Number) page.evaluate("() => document.querySelectorAll('#lightbox .lb-key').length")).intValue());
 			page.close();
 		}
 	}

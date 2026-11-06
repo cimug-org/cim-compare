@@ -22,7 +22,7 @@ The tests are in `src/test/java`; Maven runs the classes whose names end in `Tes
 
 #### Layout tests in a browser
 
-The tests above read the generated report as text, so they cannot see how a browser lays it out. `ReportLayoutTest` (in `src/layout-test/java`) opens the report in Chromium at 1,440, 2,560 and 3,840 px wide and checks that every diagram highlight box is where its coordinates put it on the image, that the page fills the window without scrolling sideways, and that an unchanged diagram's single image is centred ([#219](https://github.com/cimug-org/cim-compare/issues/219)). They need a browser, so they run only when asked:
+The tests above read the generated report as text, so they cannot see how a browser lays it out. `ReportLayoutTest` (in `src/layout-test/java`) opens the report in Chromium at 1,440, 2,560 and 3,840 px wide and checks that every diagram highlight box is where its coordinates put it on the image, that the page fills the window without scrolling sideways, and that an unchanged diagram's single image is centred ([#219](https://github.com/cimug-org/cim-compare/issues/219)). It also opens the enlarged view and checks that a diagram's two images open side by side at one scale, move together when zoomed and dragged, line up on the diagram when EA shifted it (and at their corners when asked), and have the diagram's highlight key across the top ([#225](https://github.com/cimug-org/cim-compare/issues/225)). They need a browser, so they run only when asked:
 
 ```
 mvn clean verify -Playout

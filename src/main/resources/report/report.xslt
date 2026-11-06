@@ -879,6 +879,10 @@
                 </xsl:choose>
               </div>
             </div>
+            <xsl:call-template name="r:diagram-hint">
+              <xsl:with-param name="images" select="count((if ($st != 'added' and string(@baseline-ext) != 'none') then 1 else (),
+                if ($st != 'deleted' and string(@destination-ext) != 'none') then 1 else ()))"/>
+            </xsl:call-template>
             <xsl:if test="Connector">
               <xsl:variable name="cx" select="Connector"/>
               <div class="cx-list">
@@ -900,10 +904,21 @@
                 <xsl:call-template name="r:diagram-image"><xsl:with-param name="side" select="'destination'"/></xsl:call-template>
               </div>
             </div>
+            <xsl:call-template name="r:diagram-hint"><xsl:with-param name="images" select="1"/></xsl:call-template>
           </div>
         </xsl:if>
       </div>
     </div>
+  </xsl:template>
+
+  <!-- #225: under a diagram's images, how to open the enlarged view (not printed) -->
+  <xsl:template name="r:diagram-hint">
+    <xsl:param name="images" as="xs:integer"/>
+    <xsl:if test="$images > 0">
+      <div class="diag-hint"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><circle cx="7" cy="7" r="4.6"/><path d="M10.4 10.4 14 14M7 5v4M5 7h4" stroke-linecap="round"/></svg>
+        <xsl:value-of select="if ($images = 2) then 'Click either image to compare the two side by side: scroll to zoom, drag to move.'
+          else 'Click the image to enlarge it: scroll to zoom, drag to move.'"/></div>
+    </xsl:if>
   </xsl:template>
 
   <!-- One diagram image with its #37 highlight boxes. The boxes are in the

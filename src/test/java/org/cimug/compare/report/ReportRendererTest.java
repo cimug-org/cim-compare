@@ -547,5 +547,10 @@ public class ReportRendererTest {
 		assertTrue(page.contains(".lb-panes {"));
 		assertTrue(page.contains(".lb-key {"));
 		assertFalse(page.contains("data-shift="));
+		// how to open the enlarged view goes under a diagram's images, and not where there are
+		// none (this fixture has no image files; ReportLayoutTest checks it with images); not printed
+		assertTrue(page.contains("<div class=\"diag\""));
+		assertFalse(page.contains("class=\"diag-hint\""));
+		assertTrue(page.contains("@media print { .diag-hint { display: none; } }"));
 	}
 }

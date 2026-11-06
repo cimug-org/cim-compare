@@ -166,6 +166,9 @@ public class ReportLayoutTest {
 					+ " const img = r.parentElement.querySelector('.diag.single img').getBoundingClientRect();"
 					+ " return Math.abs((panel.left + panel.width / 2) - (img.left + img.width / 2)); }");
 			assertTrue("the unchanged diagram's image is centred at " + width + " px (off by " + offset + " px)", offset.doubleValue() <= 1.5);
+			String hint = (String) page.evaluate("() => [...document.querySelectorAll('.node.dia > .row')].find(r => r.dataset.name === 'DocUnchanged')"
+					+ ".parentElement.querySelector('.diag-hint').textContent.trim()");
+			assertEquals("the single image's hint", "Click the image to enlarge it: scroll to zoom, drag to move.", hint);
 			page.close();
 		}
 	}
@@ -205,6 +208,9 @@ public class ReportLayoutTest {
 		for (int width : WIDTHS) {
 			Page page = enlarge(normal, width, "CoreOverview", "destination", null);
 			String where = "CoreOverview at " + width + " px";
+			assertEquals(where + ": every diagram with two images says how to open them", "",
+					page.evaluate("() => [...document.querySelectorAll('.diag')].map(d => d.nextElementSibling)"
+							+ ".filter(h => !h || !h.matches('.diag-hint') || h.textContent.trim() !== 'Click either image to compare the two side by side: scroll to zoom, drag to move.').length ? 'missing' : ''"));
 			assertEquals(where + ": labelled panes", "Baseline,Destination",
 					page.evaluate("() => [...document.querySelectorAll('#lightbox .lb-lbl')].map(l => l.textContent).join(',')"));
 			sameView(where + " at Fit", panes(page), 0, 0);

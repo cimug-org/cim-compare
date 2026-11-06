@@ -407,6 +407,10 @@ body.no-hl .hl, body.no-hl .hl-legend { display: none !important; }
    breaks inside itself rather than overflowing. */
 .end-sig { display: inline-block; max-width: 100%; }
 .sigline > div { overflow-wrap: anywhere; }
+/* #225: under a diagram's images, how to open the enlarged view */
+.diag-hint { display: flex; justify-content: center; align-items: center; gap: 6px; margin: 6px 0 2px; font-size: var(--fs-s); color: var(--muted); }
+.diag-hint svg { width: 13px; height: 13px; flex: none; }
+@media print { .diag-hint { display: none; } }
 .hl-legend { display: flex; flex-wrap: wrap; gap: 4px 16px; font-size: var(--fs-s); color: var(--ink-2); margin: 0 0 6px; }
 .hl-key { display: inline-flex; align-items: center; gap: 6px; }
 .hl-sw { display: inline-block; width: 14px; height: 11px; border-width: 2px; border-style: solid; box-sizing: border-box; }

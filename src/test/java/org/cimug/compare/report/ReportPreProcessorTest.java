@@ -576,4 +576,29 @@ public class ReportPreProcessorTest {
 		assertEquals("changed", str(all, "//Class[@name='Breaker']/Properties/Property[@name='Phase']/@status"));
 		assertEquals(1, count(all, "//Class[@name='Breaker']/Attribute[@name='open']"));
 	}
+
+	private static Element diagram(String... boxes) throws Exception {
+		StringBuilder x = new StringBuilder("<CompareItem type=\"Diagram\">");
+		for (String b : boxes) {
+			String[] v = b.split(" ");
+			x.append("<CompareItem type=\"DiagramObject\"><Properties><Property name=\"Box\"")
+					.append(v[0].isEmpty() ? "" : " baseline=\"" + v[0] + "\"").append(v.length < 2 ? "" : " model=\"" + v[1] + "\"")
+					.append("/></Properties></CompareItem>");
+		}
+		return DocumentBuilderFactory.newInstance().newDocumentBuilder()
+				.parse(new InputSource(new StringReader(x.append("</CompareItem>").toString()))).getDocumentElement();
+	}
+
+	@Test
+	public void theWholeDiagramShiftIsTheOffsetMostElementsShare() throws Exception {
+		// #225: destination minus baseline, from elements whose box kept its size
+		assertEquals("-301,62", ReportPreProcessor.shift(diagram("2586,727,2700,800 2285,789,2399,862", "100,100,200,150 -201,162,-101,212",
+				"500,500,600,600 450,450,600,600", "10,10,50,50 30,10,70,50")));
+		// one element is not enough to go on; a resized one does not count
+		assertNull(ReportPreProcessor.shift(diagram("100,100,200,150 -201,162,-101,212", "500,500,600,600 199,562,349,712")));
+		// a diagram EA did not shift, and elements on one side only
+		assertNull(ReportPreProcessor.shift(diagram("40,20,200,80 40,20,200,80", "220,20,380,80 220,20,380,80", "300,200,420,260", " 500,40,640,90")));
+		// in the report: the fixture's diagrams were not shifted
+		assertEquals(0, count(enrich(true, null), "//Diagram[@shift]"));
+	}
 }

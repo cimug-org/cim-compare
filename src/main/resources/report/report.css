@@ -122,7 +122,7 @@ button { font: inherit; }
 .hdr .seg button.on { background: var(--head-ink); color: var(--head); }
 
 /* ---------- summary & legend ---------- */
-.wrap { padding: 12px 16px 60px; max-width: 1880px; margin: 0 auto; }
+.wrap { padding: 12px 16px 60px; }  /* #219: the full width of the window */
 .note { background: var(--moved); border: 1px solid var(--moved-line); color: var(--moved-ink); padding: 6px 10px; border-radius: var(--r); margin-bottom: 10px; font-size: var(--fs-s); }
 .summary { display: flex; flex-wrap: wrap; gap: 6px 18px; align-items: center; background: var(--surface); border: 1px solid var(--line);
   border-radius: var(--r); padding: 8px 12px; margin-bottom: 8px; }
@@ -353,6 +353,23 @@ table.attrsB td.nt .side { font-size: 10px; text-transform: uppercase; letter-sp
 .lb-tools button:hover, .lb-tools button:focus-visible { background: #ffffff1f; }
 .lb-tools .lvl { min-width: 54px; text-align: center; font-variant-numeric: tabular-nums; }
 .lb-tools .sep { width: 1px; height: 20px; background: #ffffff2e; margin: 0 4px; }
+/* #225: a diagram's two images side by side, each in its own pane; the panes' frames are solid */
+.lb-panes { position: absolute; inset: 0; display: grid; grid-template-columns: 1fr 1fr; gap: 6px; padding: 56px 10px 46px; box-sizing: border-box; }
+.lightbox.keyed .lb-panes { padding-top: 92px; }
+.lightbox.keyed:not(.two) > .lb-stage { top: 92px; }
+.lb-pane { position: relative; overflow: hidden; border-radius: 6px; background: #1b2129; outline: 1px solid #ffffff1f; }
+.lb-lbl { position: absolute; top: 8px; left: 10px; z-index: 2; font: 600 11px/1 var(--sans); letter-spacing: .08em; text-transform: uppercase;
+  color: #fff; background: #1f2933cc; padding: 5px 8px; border-radius: 4px; pointer-events: none; }
+.lb-tools .seg { display: inline-flex; border: 1px solid #ffffff3d; border-radius: 6px; overflow: hidden; margin: 0 2px; }
+.lb-tools .seg button { border-radius: 0; min-width: 0; padding: 0 9px; height: 26px; line-height: 26px; }
+.lb-tools .seg button.on { background: #ffffff33; }
+.lb-tools .seg-lbl { font-size: 11.5px; opacity: .75; margin: 0 2px 0 6px; }
+/* #225: the diagram's highlight key across the top, beneath the controls */
+.lb-key { position: absolute; top: 58px; left: 10px; right: 10px; z-index: 2; display: flex; height: 28px; }
+.lb-key .hl-legend { flex: 1; box-sizing: border-box; margin: 0; padding: 0 12px; height: 28px; align-items: center; gap: 4px 18px; border-radius: 6px;
+  background: #1f2933e6; color: #fff; font-size: 12.5px; box-shadow: 0 2px 10px #0006; }
+.lb-key .hl-legend::before { content: "Highlights"; font-weight: 600; font-size: 11px; letter-spacing: .08em; text-transform: uppercase; opacity: .7; margin-right: -4px; }
+.lb-key .hl-sw { width: 16px; height: 12px; }
 .lb-hint { position: absolute; left: 50%; bottom: 14px; transform: translateX(-50%); z-index: 2; padding: 5px 12px; border-radius: 14px;
   background: #1f2933cc; color: #d5dde5; font: 12px var(--sans); pointer-events: none; white-space: nowrap; }
 /* #37 diagram highlights: fixed colours, since diagram images are always white */
@@ -390,6 +407,10 @@ body.no-hl .hl, body.no-hl .hl-legend { display: none !important; }
    breaks inside itself rather than overflowing. */
 .end-sig { display: inline-block; max-width: 100%; }
 .sigline > div { overflow-wrap: anywhere; }
+/* #225: under a diagram's images, how to open the enlarged view */
+.diag-hint { display: flex; justify-content: center; align-items: center; gap: 6px; margin: 6px 0 2px; font-size: var(--fs-s); color: var(--muted); }
+.diag-hint svg { width: 13px; height: 13px; flex: none; }
+@media print { .diag-hint { display: none; } }
 .hl-legend { display: flex; flex-wrap: wrap; gap: 4px 16px; font-size: var(--fs-s); color: var(--ink-2); margin: 0 0 6px; }
 .hl-key { display: inline-flex; align-items: center; gap: 6px; }
 .hl-sw { display: inline-block; width: 14px; height: 11px; border-width: 2px; border-style: solid; box-sizing: border-box; }
@@ -506,6 +527,10 @@ table.t.one-col th.k { width: 12em; }
 /* one-sided data: the missing side is hatched; "did not exist" / "removed from model" in grey italic */
 td.hatch { background: repeating-linear-gradient(135deg, transparent 0 8px, var(--hatch) 8px 10px); }
 .nx, .gone { color: var(--muted); font-style: italic; }
+/* #219: the frame the highlight boxes are placed in keeps the image's own size (a stretched frame put the boxes off the image
+   when the panel is wider than the image); changed diagrams' images at the left, an unchanged diagram's centred */
+.diag > div > .dimg { align-self: flex-start; }
+.diag.single > div > .dimg { align-self: center; }
 .diag > div > .nx, .diag > div > .gone { flex: 1; display: flex; align-items: center; justify-content: center; min-height: 90px;
   background: repeating-linear-gradient(135deg, transparent 0 8px, var(--hatch) 8px 10px); border-radius: var(--r); }
 /* link ends stay side by side; a long name wraps between its words (the report adds <wbr>) */

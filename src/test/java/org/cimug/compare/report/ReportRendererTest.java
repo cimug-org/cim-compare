@@ -541,5 +541,16 @@ public class ReportRendererTest {
 		assertTrue(page.contains(".lb-tools {"));
 		assertTrue(page.contains("function lbZoomAt("));
 		assertTrue(page.contains("'Fit the whole diagram (0)'"));
+		// #225: a diagram's two images open side by side, with its highlight key; the fixture's
+		// diagrams were not shifted, so none carries a shift
+		assertTrue(page.contains("'Fit both diagrams (0)'"));
+		assertTrue(page.contains(".lb-panes {"));
+		assertTrue(page.contains(".lb-key {"));
+		assertFalse(page.contains("data-shift="));
+		// how to open the enlarged view goes under a diagram's images, and not where there are
+		// none (this fixture has no image files; ReportLayoutTest checks it with images); not printed
+		assertTrue(page.contains("<div class=\"diag\""));
+		assertFalse(page.contains("class=\"diag-hint\""));
+		assertTrue(page.contains("@media print { .diag-hint { display: none; } }"));
 	}
 }

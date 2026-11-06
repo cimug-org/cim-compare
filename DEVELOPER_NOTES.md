@@ -20,6 +20,16 @@ The tests are in `src/test/java`; Maven runs the classes whose names end in `Tes
 - `CleanupTest` – `--zip --cleanup` never deletes the user's input files.
 - `XmlProcessingLimitsTest` – a large comparison XML is read under Java 24's XML entity size limits once cim-compare has removed them (#65).
 
+#### Layout tests in a browser
+
+The tests above read the generated report as text, so they cannot see how a browser lays it out. `ReportLayoutTest` (in `src/layout-test/java`) opens the report in Chromium at 1,440, 2,560 and 3,840 px wide and checks that every diagram highlight box is where its coordinates put it on the image, that the page fills the window without scrolling sideways, and that an unchanged diagram's single image is centred ([#219](https://github.com/cimug-org/cim-compare/issues/219)). It also opens the enlarged view and checks that a diagram's two images open side by side at one scale, move together when zoomed and dragged, line up on the diagram when EA shifted it (and at their corners when asked), and have the diagram's highlight key across the top ([#225](https://github.com/cimug-org/cim-compare/issues/225)). They need a browser, so they run only when asked:
+
+```
+mvn clean verify -Playout
+```
+
+The first run downloads Chromium (about 150 MB) for Playwright; to use a Chromium already installed, add `-Dlayout.chromium=<path to the Chromium executable>` and set the environment variable `PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD=1`. Run them before every release and after any change to the report's styles or script; the normal build neither compiles nor runs them.
+
 `CIMModelComparisonGeneratorUTEST` runs the whole comparison over large XMI files in `src/test/resources`; Maven doesn't run it by default, so run it by hand when changing the XMI comparison.
 
 ### Java Versions: XML Limits and Native Access
